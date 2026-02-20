@@ -1,0 +1,20 @@
+# Storyworld AI - Core Engineering Directives
+
+This file contains the core conventions and rules for the Storyworld AI project. Future AI interactions will automatically read and adhere to these principles.
+
+## 🎨 Styling & Theming
+- **Strictly use CSS Modules** (`.module.css`). Do NOT use Tailwind or any other utility class frameworks.
+- **Global Theme Variables**: All spacing, sizing, colors, typography, and border radius variables MUST be sourced from `src/styles/theme.css`. Avoid hardcoding values (e.g., use `var(--space-4)` instead of `16px`).
+- **Spacing Scale**: We use a strict 4-point spacing scale (4px, 8px, 12px, 16px, etc.).
+- **Typography Tone**: Use `var(--font-family-serif)` (Lora) for story/reading content to invoke a classic "author" feel, and `var(--font-family-sans)` (Inter) for functional UI elements.
+- **Color Separation**: Color values are strictly isolated from structural variables to maintain a seamless dark/light mode toggle.
+
+## 🏗️ Architecture & Component Design
+- **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards) strictly within `src/components/ui/`.
+- **Feature Modules**: Group feature-specific logic, state, and components into distinct domain folders inside `src/features/` (e.g., `features/editor/`, `features/player/`).
+- **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in `src/types/models.ts`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
+- **Props Interfaces**: Always define and export the TypeScript interface for a React component's props directly above the component definition.
+
+## 🛠️ State Management
+- **Client-Side First**: The engine is designed as a 100% client-side application.
+- **React State**: Prefer standard React state hooks (`useState`, `useMemo`, `useCallback`) for localized component state.
