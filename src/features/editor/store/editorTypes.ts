@@ -9,13 +9,17 @@ export interface EditorState {
   nodes: EditorNode[];
   edges: Edge[];
 
-  // Graph Handlers
+  // React Flow Handlers
   onNodesChange: OnNodesChange<EditorNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: EditorNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   loadStory: (nodes: EditorNode[], edges: Edge[]) => void;
+
+  // UI Handlers
+  selectedPageId: string | null;
+  setSelectedPage: (pageId: string | null) => void;
 
   // Domain Handlers - Page
   addPage: (x: number, y: number) => string;

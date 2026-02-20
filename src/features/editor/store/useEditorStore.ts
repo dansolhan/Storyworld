@@ -4,6 +4,7 @@ import { createGraphSlice } from './slices/graphSlice';
 import { createPageSlice } from './slices/pageSlice';
 import { createParagraphSlice } from './slices/paragraphSlice';
 import { createChoiceSlice } from './slices/choiceSlice';
+import { createUISlice } from './slices/uiSlice';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our
@@ -12,6 +13,7 @@ import { createChoiceSlice } from './slices/choiceSlice';
  * Never dump domain logic directly into this file. Add a Slice instead!
  */
 export const useEditorStore = create<EditorState>()((...a) => ({
+  ...createUISlice(...a),
   ...createGraphSlice(...a),
   ...createPageSlice(...a),
   ...createParagraphSlice(...a),

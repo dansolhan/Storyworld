@@ -12,6 +12,7 @@ import { useEditorStore } from './store/useEditorStore';
 import { compileGraphToStory, parseStoryToGraph } from '../../lib/storyMapper';
 import { exportToJson, exportToStoryworld } from '../../utils/exportUtils';
 import { Button } from '../../components/ui/Button/Button';
+import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
 import type { Page } from '../../domain/Page/Page';
 import styles from './GraphEditor.module.css';
 
@@ -107,6 +108,16 @@ export const GraphEditor: React.FC = () => {
     addPage(x, y);
   };
 
+  const { setSelectedPage } = useEditorStore();
+
+  const handleNodeClick = (_: React.MouseEvent, node: { id: string }) => {
+    setSelectedPage(node.id);
+  };
+
+  const handlePaneClick = () => {
+    setSelectedPage(null);
+  };
+
   return (
     <div className={styles.container}>
       {/* Hidden file input for importing */}
@@ -144,6 +155,8 @@ export const GraphEditor: React.FC = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={handleNodeClick}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
       >
@@ -151,6 +164,9 @@ export const GraphEditor: React.FC = () => {
         <Controls />
         <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />
       </ReactFlow>
+
+      {/* Contextual Editor Sidebar */}
+      <EditorSidebar />
     </div>
   );
 };
