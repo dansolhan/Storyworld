@@ -1,0 +1,16 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-bg-secondary);
+}
+
+/* Override default React Flow edge styles to use our CSS variables */
+:global(.react-flow__edge-path) {
+  stroke: var(--color-edge-default);
+  stroke-width: 2;
+}
+
+:global(.react-flow__edge.selected .react-flow__edge-path) {
+  stroke: var(--color-edge-selected);
+  stroke-width: 3;
+}

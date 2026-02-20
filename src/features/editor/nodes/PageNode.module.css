@@ -1,0 +1,118 @@
+.nodeWrapper {
+  width: 300px;
+  position: relative;
+}
+
+.targetHandle {
+  background-color: var(--color-primary-500);
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--color-bg-primary);
+}
+
+.sourceHandle {
+  background-color: var(--color-primary-500);
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-bg-primary);
+  /* Position absolute to the edge of the choice item */
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.card {
+  border-width: 2px;
+}
+
+/* Update border when node is selected (React Flow adds .selected class) */
+:global(.react-flow__node.selected) .card {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 4px var(--color-primary-100);
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-family-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-family: var(--font-family-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.paragraphItem {
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.paragraphText {
+  font-family: var(--font-family-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  /* Truncate long text */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.choiceItem {
+  position: relative;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+}
+
+.choiceText {
+  font-family: var(--font-family-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  width: 100%;
+}
+
+.emptyText {
+  font-family: var(--font-family-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
