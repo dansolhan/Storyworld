@@ -1,18 +1,30 @@
 import { useState } from 'react';
 import { GraphEditor } from './features/editor/GraphEditor';
 import { Player } from './features/player/Player';
-import { mockStory } from './data/mockStory';
 import { Button } from './components/ui/Button/Button';
+import { useEditorStore } from './features/editor/store/useEditorStore';
+import { compileGraphToStory } from './lib/storyMapper';
+import type { Page } from './domain/Page/Page';
 
 function App() {
   const [mode, setMode] = useState<'editor' | 'player'>('editor');
+  const [playingStory, setPlayingStory] = useState<Page[]>([]);
+
+  const handlePlay = () => {
+    // We get the state non-reactively so App.tsx doesn't re-render 
+    // every single time a node is dragged on the canvas!
+    const { nodes, edges } = useEditorStore.getState();
+    const compiledStory = compileGraphToStory(nodes, edges);
+    setPlayingStory(compiledStory);
+    setMode('player');
+  };
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       {/* Floating Toggle Button */}
       <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 100 }}>
         {mode === 'editor' ? (
-          <Button variant="primary" onClick={() => setMode('player')}>
+          <Button variant="primary" onClick={handlePlay}>
             ▶ Play Story
           </Button>
         ) : (
@@ -25,7 +37,7 @@ function App() {
       {mode === 'editor' ? (
         <GraphEditor />
       ) : (
-        <Player storyData={mockStory} onExit={() => setMode('editor')} />
+        <Player storyData={playingStory} onExit={() => setMode('editor')} />
       )}
     </div>
   );
