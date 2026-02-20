@@ -1,4 +1,4 @@
-import type { Page } from '../types/models';
+import type { Page } from '../domain/Page/Page';
 
 /**
  * Triggers a browser download of a generated file

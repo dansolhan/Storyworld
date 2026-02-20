@@ -1,6 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
-import type { Paragraph } from '../../../../types/models';
+import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
 
 export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addParagraph' | 'updateParagraph'>> = (set, get) => ({
   addParagraph: (pageId) => {

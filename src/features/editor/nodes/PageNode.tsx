@@ -2,7 +2,7 @@ import React from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { Card } from '../../../components/ui/Card/Card';
 import { Button } from '../../../components/ui/Button/Button';
-import type { Page } from '../../../types/models';
+import type { Page } from '../../../domain/Page/Page';
 import styles from './PageNode.module.css';
 
 export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {

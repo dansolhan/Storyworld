@@ -1,6 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
-import type { Choice } from '../../../../types/models';
+import type { Choice } from '../../../../domain/Choice/Choice';
 
 export const createChoiceSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addChoice' | 'updateChoiceText'>> = (set, get) => ({
   addChoice: (pageId) => {

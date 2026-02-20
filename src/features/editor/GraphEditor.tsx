@@ -12,7 +12,7 @@ import { useEditorStore } from './store/useEditorStore';
 import { compileGraphToStory, parseStoryToGraph } from '../../lib/storyMapper';
 import { exportToJson, exportToStoryworld } from '../../utils/exportUtils';
 import { Button } from '../../components/ui/Button/Button';
-import type { Page } from '../../types/models';
+import type { Page } from '../../domain/Page/Page';
 import styles from './GraphEditor.module.css';
 
 const nodeTypes = {

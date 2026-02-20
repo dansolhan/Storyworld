@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import type { EditorState } from '../domain/editorTypes';
-import { createGraphSlice } from '../domain/Graph/graphSlice';
-import { createPageSlice } from '../domain/Page/pageSlice';
-import { createParagraphSlice } from '../domain/Paragraph/paragraphSlice';
-import { createChoiceSlice } from '../domain/Choice/choiceSlice';
+import type { EditorState } from './editorTypes';
+import { createGraphSlice } from './slices/graphSlice';
+import { createPageSlice } from './slices/pageSlice';
+import { createParagraphSlice } from './slices/paragraphSlice';
+import { createChoiceSlice } from './slices/choiceSlice';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our

@@ -1,6 +1,7 @@
 import type { Edge } from '@xyflow/react';
 import type { PageNodeType } from '../features/editor/nodes/PageNode';
-import type { Page, Choice } from '../types/models';
+import type { Page } from '../domain/Page/Page';
+import type { Choice } from '../domain/Choice/Choice';
 
 /**
  * Compiles the raw React Flow nodes and edges back into our pure domain Page[] array.

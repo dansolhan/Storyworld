@@ -1,4 +1,4 @@
-import type { Page } from '../types/models';
+import type { Page } from '../domain/Page/Page';
 
 export const mockStory: Page[] = [
   {

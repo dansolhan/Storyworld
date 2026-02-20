@@ -9,7 +9,25 @@ This file contains the core conventions and rules for the Storyworld AI project.
 - **Typography Tone**: Use `var(--font-family-serif)` (Lora) for story/reading content to invoke a classic "author" feel, and `var(--font-family-sans)` (Inter) for functional UI elements.
 - **Color Separation**: Color values are strictly isolated from structural variables to maintain a seamless dark/light mode toggle.
 
-## 🏗️ Architecture & Component Design
+## 🏗️ Architecture & Organization
+- **Component Driven**: Build everything as functional React components.
+- **Client-Only Architecture**: The engine will be a 100% client-side React App using Vite.
+- **Feature-Sliced Design**: Organize code by domains/features rather than strictly by technical type. 
+  ```text
+  src/
+   ├── domain/                      <-- PURE DOMAIN (No UI dependencies, just pure Types & Business Logic)
+   │    ├── Page/Page.ts            
+   │    └── Choice/Choice.ts        
+   ├── features/
+   │    ├── editor/                 <-- FEATURE MODULE (Depends on UI libraries like React Flow)
+   │    │    ├── store/             <-- Feature-specific Global State
+   │    │    │    ├── slices/       <-- Slices specific to mutating Editor logic
+   │    │    │    └── useEditorStore.ts
+   │    │    └── components/        <-- Feature-specific UI
+   │    └── player/                 <-- FEATURE MODULE
+   └── components/ui/               <-- GENERIC UI (Buttons, Cards - Highly reusable)
+  ```
+- **[CRITICAL] Strict Logical Separation**: Always organize code (including types, constants, and utilities) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files" like `models.ts` or `types.ts`.
 - **Strict Typing**: Enforce strict TypeScript typing. NEVER use `any` to bypass type checking. Only use `unknown` when mathematically or structurally necessary, never as a crutch to get around tricky types.
 - **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards) strictly within `src/components/ui/`.
 - **Feature Modules**: Group feature-specific logic, state, and components into distinct domain folders inside `src/features/` (e.g., `features/editor/`, `features/player/`).

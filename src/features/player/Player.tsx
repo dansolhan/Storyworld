@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import type { Page } from '../../types/models';
+import type { Page } from '../../domain/Page/Page';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import styles from './Player.module.css';
