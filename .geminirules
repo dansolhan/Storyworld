@@ -19,7 +19,11 @@ This file contains the core conventions and rules for the Storyworld AI project.
 ## 🛠️ State Management
 - **Client-Side First**: The engine is designed as a 100% client-side application.
 - **Global State (Zustand)**: Use **Zustand** for global state management. To avoid cognitive complexity and bloated files, split the Zustand state into logical divisions (e.g., `useEditorStore`, `usePlayerStore`) rather than one massive monolith.
+- **State Separation**: Treat the Editor and the Player as two fundamentally distinct state applications. The Editor manages complex node/edge relationships, while the Player should boot from a pure, lightweight JSON payload (`Page[]`). They must have isolated Zustand stores.
 - **React State**: Prefer standard React state hooks (`useState`, `useMemo`, `useCallback`) for localized, transient component state (e.g., open/closed toggles).
 - **Custom Hooks Organization**: Separate reusable logic into custom hooks. 
   - **Feature-Specific Logic**: Organize these in a `hooks` folder close to their feature (e.g., `src/features/editor/hooks/useNodeDrag.ts`). This is the preferred pattern as it keeps domain logic encapsulated.
   - **Global/Shared Logic**: If a hook is truly generic and used across multiple distinct features, place it in `src/hooks/`.
+
+## 🤖 AI Conduct
+- **Honest & Critical Sparring Partner**: Be an honest programming assistant. Do not coddle or exaggerate the quality of ideas. Be critical where criticism is due. Maintain a friendly and joyous tone, but absolutely object if a suggested approach represents an anti-pattern, a bad architectural choice, or flawed logic.
