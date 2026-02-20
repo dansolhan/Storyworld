@@ -1,77 +1,145 @@
-import React, { useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  type Connection,
-  type Edge,
-  type Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { PageNode } from './nodes/PageNode';
-import { mockStory } from '../../data/mockStory';
+import { useEditorStore } from './store/useEditorStore';
+import { compileGraphToStory, parseStoryToGraph } from '../../lib/storyMapper';
+import { exportToJson, exportToStoryworld } from '../../utils/exportUtils';
+import { Button } from '../../components/ui/Button/Button';
+import type { Page } from '../../types/models';
 import styles from './GraphEditor.module.css';
 
 const nodeTypes = {
   pageNode: PageNode,
 };
 
-// Convert our mock data into React Flow nodes and edges
-const generateInitialElements = () => {
-  const initialNodes: Node[] = [];
-  const initialEdges: Edge[] = [];
-
-  mockStory.forEach((page, index) => {
-    // Basic layout algorithm (just spread them out for now)
-    const x = (index % 3) * 350;
-    const y = Math.floor(index / 3) * 400;
-
-    initialNodes.push({
-      id: page.id,
-      type: 'pageNode',
-      position: { x, y },
-      data: {
-        ...page,
-        onAddParagraph: (id: string) => alert(`Add paragraph to ${id}`),
-        onAddChoice: (id: string) => alert(`Add choice to ${id}`),
-      },
-    });
-
-    page.choices.forEach((choice) => {
-      initialEdges.push({
-        id: `e-${choice.id}-${choice.targetPageId}`,
-        source: page.id,
-        target: choice.targetPageId,
-        sourceHandle: choice.id,
-        animated: true,
-        style: { stroke: 'var(--color-edge-default)' },
-      });
-    });
-  });
-
-  return { initialNodes, initialEdges };
-};
-
-const { initialNodes, initialEdges } = generateInitialElements();
-
 export const GraphEditor: React.FC = () => {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addPage,
+    addParagraph,
+    addChoice,
+    loadStory
+  } = useEditorStore();
 
-  const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialization: Just add one starting node if the canvas is completely empty.
+  // In a real app we'd load a saved project here.
+  useEffect(() => {
+    if (nodes.length === 0) {
+      addPage(100, 100);
+    }
+  }, [nodes.length, addPage]);
+
+  // We wrap the add actions so they are compatible with the Node data interface
+  const handleAddParagraph = (id: string) => addParagraph(id);
+  const handleAddChoice = (id: string) => addChoice(id);
+
+  // We have to inject these domain handlers into the React Flow nodes
+  const nodesWithHandlers = nodes.map(node => ({
+    ...node,
+    data: {
+      ...node.data,
+      onAddParagraph: handleAddParagraph,
+      onAddChoice: handleAddChoice,
+    }
+  }));
+
+  const handleExportJson = () => {
+    const storyData = compileGraphToStory(nodes, edges);
+    exportToJson(storyData);
+  };
+
+  const handleExportStoryworld = () => {
+    const storyData = compileGraphToStory(nodes, edges);
+    exportToStoryworld(storyData);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const parsedData: Page[] = JSON.parse(content);
+
+        // Simplistic validation to ensure it's our graph format
+        if (Array.isArray(parsedData) && parsedData.length > 0 && 'id' in parsedData[0] && 'title' in parsedData[0]) {
+          const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
+          loadStory(parsedNodes, parsedEdges);
+        } else {
+          alert("Invalid story format.");
+        }
+      } catch (error) {
+        console.error("Error parsing file", error);
+        alert("Failed to parse the file.");
+      }
+
+      // Reset input so the same file can be uploaded again if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleAddNewPage = () => {
+    // Determine a dynamic position to drop the new node (a bit chaotic currently, but it works)
+    const x = Math.random() * 400;
+    const y = Math.random() * 400;
+    addPage(x, y);
+  };
 
   return (
     <div className={styles.container}>
+      {/* Hidden file input for importing */}
+      <input
+        type="file"
+        accept=".json"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      {/* Editor Toolbar */}
+      <div className={styles.toolbar}>
+        <div className={styles.toolbarGroup}>
+          <Button variant="primary" size="sm" onClick={handleAddNewPage}>
+            + Add Page Node
+          </Button>
+        </div>
+        <div className={styles.toolbarGroup}>
+          <Button variant="secondary" size="sm" onClick={handleImportClick}>
+            Import JSON
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleExportJson}>
+            Export to JSON
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleExportStoryworld}>
+            Export to .storyworld
+          </Button>
+        </div>
+      </div>
+
       <ReactFlow
-        nodes={nodes}
+        nodes={nodesWithHandlers}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
