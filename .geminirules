@@ -10,6 +10,7 @@ This file contains the core conventions and rules for the Storyworld AI project.
 - **Color Separation**: Color values are strictly isolated from structural variables to maintain a seamless dark/light mode toggle.
 
 ## 🏗️ Architecture & Component Design
+- **Strict Typing**: Enforce strict TypeScript typing. NEVER use `any` to bypass type checking. Only use `unknown` when mathematically or structurally necessary, never as a crutch to get around tricky types.
 - **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards) strictly within `src/components/ui/`.
 - **Feature Modules**: Group feature-specific logic, state, and components into distinct domain folders inside `src/features/` (e.g., `features/editor/`, `features/player/`).
 - **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in `src/types/models.ts`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
