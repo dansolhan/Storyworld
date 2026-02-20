@@ -1,17 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import styles from './RichTextEditor.module.css';
-import { Button } from '../Button/Button';
+import type { RTEFeature } from './RTEFeature';
 
 export interface RichTextEditorProps {
   content: string;
+  features: RTEFeature[];
   onChange: (html: string) => void;
 }
 
-export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, onChange }) => {
+export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, features, onChange }) => {
+  // Extract all extensions dynamically from the provided features array
+  const extensions = useMemo(() => {
+    const featureExts = features.flatMap((feature) => feature.getExtensions());
+    // StarterKit is our base, plus whatever features we inject
+    return [StarterKit, ...featureExts];
+  }, [features]);
+
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions,
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -32,24 +40,23 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, onChang
   return (
     <div className={styles.editorContainer}>
       <div className={styles.toolbar}>
-        <Button
-          className={styles.toolbarBtn}
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          variant={editor.isActive('bold') ? 'primary' : 'secondary'}
-          size="sm"
-        >
-          B
-        </Button>
-        <Button
-          className={styles.toolbarBtn}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          variant={editor.isActive('italic') ? 'primary' : 'secondary'}
-          size="sm"
-        >
-          I
-        </Button>
+        {features.map((feature) => {
+          const btn = feature.renderToolbarButton(editor);
+          if (!btn) return null;
+          return (
+            <React.Fragment key={feature.name}>
+              {btn}
+            </React.Fragment>
+          );
+        })}
       </div>
-      <EditorContent editor={editor} className={styles.editorContent} />
+
+      <div className={styles.contentWrapper}>
+        <EditorContent editor={editor} className={styles.editorContent} />
+
+        {/* Render any supplementary UI layers from the features (like the context menu) */}
+        {features.map((feature) => feature.renderUI(editor))}
+      </div>
     </div>
   );
 };

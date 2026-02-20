@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { StoryData } from '../../domain/Story/StoryData';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
@@ -12,9 +12,9 @@ export interface PlayerProps {
 }
 
 export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
-  // If no startPageId is provided, default to the first page in the array
   const defaultStartId = startPageId || storyData.pages[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
+  const [contextualPopover, setContextualPopover] = useState<{ text: string; x: number; y: number } | null>(null);
 
   // Derive the current page from the state
   const currentPage = useMemo(() => {
@@ -28,6 +28,29 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const handleRestart = () => {
     setCurrentPageId(defaultStartId);
   };
+
+  useEffect(() => {
+    const handleDocumentClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.classList.contains('contextual-text-mark')) {
+        const text = target.getAttribute('data-context');
+        if (text) {
+          // Calculate a rough position right below the clicked word
+          const rect = target.getBoundingClientRect();
+          setContextualPopover({
+            text,
+            x: rect.left + rect.width / 2, // center horizontally
+            y: rect.bottom + 8, // below the text
+          });
+        }
+      } else {
+        // Close popover if clicking anywhere else
+        setContextualPopover(null);
+      }
+    };
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
 
   if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (
@@ -101,6 +124,20 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
           </div>
         </Card>
       </main>
+
+      {contextualPopover && (
+        <div
+          className={styles.popover}
+          style={{
+            left: `${contextualPopover.x}px`,
+            top: `${contextualPopover.y}px`
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={styles.popoverArrow} />
+          <p className={styles.popoverText}>{contextualPopover.text}</p>
+        </div>
+      )}
     </div>
   );
 };

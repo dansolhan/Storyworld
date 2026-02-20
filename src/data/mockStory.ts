@@ -2,38 +2,42 @@ import type { StoryData } from '../domain/Story/StoryData';
 
 export const mockStory: StoryData = {
   variables: {
-    playerName: "Hero"
+    playerName: "Arthur",
+    heroClass: "Knight",
+    weapon: "Rusty Longsword"
   },
   pages: [
     {
       id: "page-1",
       title: "The Awakening",
       paragraphs: [
-        { id: "p1-1", text: "You wake up in a dimly lit room. The air is cold, and you can scarcely see your own hands." },
-        { id: "p1-2", text: "A heavy wooden door stands to your north. To your right, a small window lets in a sliver of moonlight." }
+        { id: "p1-1", text: "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>" },
+        { id: "p1-2", text: "<p>A heavy wooden door stands to your north. To your right, a <span class=\"contextual-text-mark\" data-context=\"The window is covered in soot and barely lets any light in. At the bottom right corner, there is a small crack.\">small window</span> lets in a sliver of moonlight.</p>" },
+        { id: "p1-3", text: "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>" }
       ],
       choices: [
         { id: "c1-1", text: "Inspect the door", targetPageId: "page-2" },
-        { id: "c1-2", text: "Look out the window", targetPageId: "page-3" }
+        { id: "c1-2", text: "Look out the window", targetPageId: "page-3" },
+        { id: "c1-3", text: "Search your pockets", targetPageId: "page-5" }
       ]
     },
     {
       id: "page-2",
       title: "The Locked Door",
       paragraphs: [
-        { id: "p2-1", text: "The door is made of solid oak. You rattle the iron handle, but it doesn't budge." },
-        { id: "p2-2", text: "There seems to be no keyhole. How peculiar." }
+        { id: "p2-1", text: "<p>The door is made of solid oak, reinforced with <span class=\"contextual-text-mark\" data-context=\"The iron bands are rusted, but thick. Forcing the door open without a tool seems impossible.\">iron bands</span>. You rattle the iron handle, but it doesn't budge.</p>" },
+        { id: "p2-2", text: "<p>There seems to be no keyhole. How peculiar.</p>" }
       ],
       choices: [
-        { id: "c2-1", text: "Go back", targetPageId: "page-1" }
+        { id: "c2-1", text: "Go back to the center of the room", targetPageId: "page-1" }
       ]
     },
     {
       id: "page-3",
       title: "A Glimpse Outside",
       paragraphs: [
-        { id: "p3-1", text: "You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky." },
-        { id: "p3-2", text: "Suddenly, you notice a faint glow moving through the trees." }
+        { id: "p3-1", text: "<p>You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky.</p>" },
+        { id: "p3-2", text: "<p>Suddenly, you notice a faint glow moving through the trees. It looks like... a <span class=\"contextual-text-mark\" data-context=\"A spherical object emitting a warm, pulsating orange light. It bobs up and down rhythmically.\">floating lantern</span>.</p>" }
       ],
       choices: [
         { id: "c3-1", text: "Watch the glow closely", targetPageId: "page-4" },
@@ -44,19 +48,43 @@ export const mockStory: StoryData = {
       id: "page-4",
       title: "The Approaching Light",
       paragraphs: [
-        { id: "p4-1", text: "The glow slowly grows brighter and takes the shape of a floating lantern, held by a cloaked figure." },
-        { id: "p4-2", text: "The figure stops directly beneath your window, looks up, and beckons to you." }
+        { id: "p4-1", text: "<p>The glow slowly grows brighter and takes the shape of the lantern, held by a <span class=\"contextual-text-mark\" data-context=\"The figure is shrouded in a dark, worn cloak. You cannot see their face, only a pair of glowing yellow eyes from beneath the hood.\">cloaked figure</span>.</p>" },
+        { id: "p4-2", text: "<p>The figure stops directly beneath your window, looks up, and beckons to you. They point towards a hidden lever beside your window.</p>" }
       ],
       choices: [
-        { id: "c4-1", text: "Try to open the window", targetPageId: "page-end" }
+        { id: "c4-1", text: "Pull the hidden lever", targetPageId: "page-end" },
+        { id: "c4-2", text: "Ignore the figure and turn back", targetPageId: "page-1" }
+      ]
+    },
+    {
+      id: "page-5",
+      title: "Checking Pockets",
+      paragraphs: [
+        { id: "p5-1", text: "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>{{weapon}}</strong> hanging at your side.</p>" },
+        { id: "p5-2", text: "<p>Deep in your left pocket, your hand brushes against something cold and geometric. A <span class=\"contextual-text-mark\" data-context=\"The key has no teeth, just a complex series of grooves carved into strange, iridescent metal.\">strange golden key</span>.</p>" }
+      ],
+      choices: [
+        { id: "c5-1", text: "Take the key to the door", targetPageId: "page-6" },
+        { id: "c5-2", text: "Keep looking around", targetPageId: "page-1" }
+      ]
+    },
+    {
+      id: "page-6",
+      title: "The Hidden Lock",
+      paragraphs: [
+        { id: "p6-1", text: "<p>Holding the strange golden key, you approach the oak door again. Though there's no visible keyhole, bringing the key close causes a <span class=\"contextual-text-mark\" data-context=\"A shimmering projection of light forms a complex lock mechanism mid-air.\">holographic lock</span> to materialize on the wood.</p>" },
+        { id: "p6-2", text: "<p>You insert the key. The door groans and swings open heavily, revealing a dark stone corridor ahead.</p>" }
+      ],
+      choices: [
+        { id: "c6-1", text: "Step into the corridor", targetPageId: "page-end" }
       ]
     },
     {
       id: "page-end",
       title: "To Be Continued...",
       paragraphs: [
-        { id: "pend-1", text: "You tug at the iron latch. With a sudden CRACK, it gives way, and the cold night air rushes in." },
-        { id: "pend-2", text: "A new adventure awaits." }
+        { id: "pend-1", text: "<p>You take your first steps out of the room. The air changes instantly, carrying the scent of damp earth and old magic.</p>" },
+        { id: "pend-2", text: "<p>A new adventure awaits you, <em>{{playerName}}</em>.</p>" }
       ],
       choices: []
     }

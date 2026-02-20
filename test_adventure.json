@@ -1,86 +1,176 @@
 {
   "variables": {
-    "playerName": "Hero"
+    "playerName": "Arthur",
+    "heroClass": "Knight",
+    "weapon": "Rusty Longsword"
   },
   "pages": [
     {
       "id": "page-1",
-      "title": "The Dark Forest",
+      "title": "The Awakening",
       "paragraphs": [
         {
-          "id": "p-1-1",
-          "text": "You stand at the edge of a dark, foreboding forest. The ancient trees loom over you like silent sentinels."
+          "id": "p1-1",
+          "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>"
         },
         {
-          "id": "p-1-2",
-          "text": "The wind howls through the branches, carrying a faint, sweet smell. What will you do?"
+          "id": "p1-2",
+          "text": "<p>A heavy wooden door stands to your north. To your right, a <span class=\"contextual-text-mark\" data-context=\"The window is covered in soot and barely lets any light in. At the bottom right corner, there is a small crack.\">small window</span> lets in a sliver of moonlight.</p>"
+        },
+        {
+          "id": "p1-3",
+          "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>"
         }
       ],
       "choices": [
         {
-          "id": "c-1-1",
-          "text": "Enter the forest boldly",
+          "id": "c1-1",
+          "text": "Inspect the door",
           "targetPageId": "page-2"
         },
         {
-          "id": "c-1-2",
-          "text": "Turn back to safety",
+          "id": "c1-2",
+          "text": "Look out the window",
           "targetPageId": "page-3"
+        },
+        {
+          "id": "c1-3",
+          "text": "Search your pockets",
+          "targetPageId": "page-5"
         }
       ]
     },
     {
       "id": "page-2",
-      "title": "The Hidden Clearing",
+      "title": "The Locked Door",
       "paragraphs": [
         {
-          "id": "p-2-1",
-          "text": "Pushing past the thorny underbrush, you stumble into a small, perfectly circular clearing."
+          "id": "p2-1",
+          "text": "<p>The door is made of solid oak, reinforced with <span class=\"contextual-text-mark\" data-context=\"The iron bands are rusted, but thick. Forcing the door open without a tool seems impossible.\">iron bands</span>. You rattle the iron handle, but it doesn't budge.</p>"
         },
         {
-          "id": "p-2-2",
-          "text": "In the center rests a pedestal holding a gently pulsating blue stone."
+          "id": "p2-2",
+          "text": "<p>There seems to be no keyhole. How peculiar.</p>"
         }
       ],
       "choices": [
         {
-          "id": "c-2-1",
-          "text": "Take the blue stone",
-          "targetPageId": "page-4"
-        },
-        {
-          "id": "c-2-2",
-          "text": "Leave it alone and return to the edge",
+          "id": "c2-1",
+          "text": "Go back to the center of the room",
           "targetPageId": "page-1"
         }
       ]
     },
     {
       "id": "page-3",
-      "title": "The Village Tavern",
+      "title": "A Glimpse Outside",
       "paragraphs": [
         {
-          "id": "p-3-1",
-          "text": "You decide the forest is too dangerous for today. You walk back to the village and head straight to the tavern."
+          "id": "p3-1",
+          "text": "<p>You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky.</p>"
         },
         {
-          "id": "p-3-2",
-          "text": "Sitting by the fire with a warm drink, you wonder what adventures you might have missed."
+          "id": "p3-2",
+          "text": "<p>Suddenly, you notice a faint glow moving through the trees. It looks like... a <span class=\"contextual-text-mark\" data-context=\"A spherical object emitting a warm, pulsating orange light. It bobs up and down rhythmically.\">floating lantern</span>.</p>"
         }
       ],
-      "choices": []
+      "choices": [
+        {
+          "id": "c3-1",
+          "text": "Watch the glow closely",
+          "targetPageId": "page-4"
+        },
+        {
+          "id": "c3-2",
+          "text": "Step away from the window",
+          "targetPageId": "page-1"
+        }
+      ]
     },
     {
       "id": "page-4",
-      "title": "Ascension",
+      "title": "The Approaching Light",
       "paragraphs": [
         {
-          "id": "p-4-1",
-          "text": "As your fingers brush the stone, a surge of energy flows through your veins."
+          "id": "p4-1",
+          "text": "<p>The glow slowly grows brighter and takes the shape of the lantern, held by a <span class=\"contextual-text-mark\" data-context=\"The figure is shrouded in a dark, worn cloak. You cannot see their face, only a pair of glowing yellow eyes from beneath the hood.\">cloaked figure</span>.</p>"
         },
         {
-          "id": "p-4-2",
-          "text": "You feel weightless. Ethereal wings of pure light erupt from your back, lifting you above the forest canopy and into the starry night sky!"
+          "id": "p4-2",
+          "text": "<p>The figure stops directly beneath your window, looks up, and beckons to you. They point towards a hidden lever beside your window.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "c4-1",
+          "text": "Pull the hidden lever",
+          "targetPageId": "page-end"
+        },
+        {
+          "id": "c4-2",
+          "text": "Ignore the figure and turn back",
+          "targetPageId": "page-1"
+        }
+      ]
+    },
+    {
+      "id": "page-5",
+      "title": "Checking Pockets",
+      "paragraphs": [
+        {
+          "id": "p5-1",
+          "text": "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>{{weapon}}</strong> hanging at your side.</p>"
+        },
+        {
+          "id": "p5-2",
+          "text": "<p>Deep in your left pocket, your hand brushes against something cold and geometric. A <span class=\"contextual-text-mark\" data-context=\"The key has no teeth, just a complex series of grooves carved into strange, iridescent metal.\">strange golden key</span>.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "c5-1",
+          "text": "Take the key to the door",
+          "targetPageId": "page-6"
+        },
+        {
+          "id": "c5-2",
+          "text": "Keep looking around",
+          "targetPageId": "page-1"
+        }
+      ]
+    },
+    {
+      "id": "page-6",
+      "title": "The Hidden Lock",
+      "paragraphs": [
+        {
+          "id": "p6-1",
+          "text": "<p>Holding the strange golden key, you approach the oak door again. Though there's no visible keyhole, bringing the key close causes a <span class=\"contextual-text-mark\" data-context=\"A shimmering projection of light forms a complex lock mechanism mid-air.\">holographic lock</span> to materialize on the wood.</p>"
+        },
+        {
+          "id": "p6-2",
+          "text": "<p>You insert the key. The door groans and swings open heavily, revealing a dark stone corridor ahead.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "c6-1",
+          "text": "Step into the corridor",
+          "targetPageId": "page-end"
+        }
+      ]
+    },
+    {
+      "id": "page-end",
+      "title": "To Be Continued...",
+      "paragraphs": [
+        {
+          "id": "pend-1",
+          "text": "<p>You take your first steps out of the room. The air changes instantly, carrying the scent of damp earth and old magic.</p>"
+        },
+        {
+          "id": "pend-2",
+          "text": "<p>A new adventure awaits you, <em>{{playerName}}</em>.</p>"
         }
       ],
       "choices": []

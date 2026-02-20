@@ -3,7 +3,17 @@ import { useEditorStore } from '../../store/useEditorStore';
 import { Drawer } from '../../../../components/ui/Drawer/Drawer';
 import { Button } from '../../../../components/ui/Button/Button';
 import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTextEditor';
+import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/BoldFeature';
+import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
+import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import styles from './EditorSidebar.module.css';
+
+// Define the standard set of features for paragraphs
+const PARAGRAPH_FEATURES = [
+  new BoldFeature(),
+  new ItalicFeature(),
+  new ContextualTextFeature(),
+];
 
 export const EditorSidebar: React.FC = () => {
   const {
@@ -67,6 +77,7 @@ export const EditorSidebar: React.FC = () => {
               <div key={p.id} className={styles.paragraphBlock}>
                 <RichTextEditor
                   content={p.text}
+                  features={PARAGRAPH_FEATURES}
                   onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
                 />
               </div>
