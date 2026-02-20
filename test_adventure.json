@@ -1,84 +1,89 @@
-[
-  {
-    "id": "page-1",
-    "title": "The Dark Forest",
-    "paragraphs": [
-      {
-        "id": "p-1-1",
-        "text": "You stand at the edge of a dark, foreboding forest. The ancient trees loom over you like silent sentinels."
-      },
-      {
-        "id": "p-1-2",
-        "text": "The wind howls through the branches, carrying a faint, sweet smell. What will you do?"
-      }
-    ],
-    "choices": [
-      {
-        "id": "c-1-1",
-        "text": "Enter the forest boldly",
-        "targetPageId": "page-2"
-      },
-      {
-        "id": "c-1-2",
-        "text": "Turn back to safety",
-        "targetPageId": "page-3"
-      }
-    ]
+{
+  "variables": {
+    "playerName": "Hero"
   },
-  {
-    "id": "page-2",
-    "title": "The Hidden Clearing",
-    "paragraphs": [
-      {
-        "id": "p-2-1",
-        "text": "Pushing past the thorny underbrush, you stumble into a small, perfectly circular clearing."
-      },
-      {
-        "id": "p-2-2",
-        "text": "In the center rests a pedestal holding a gently pulsating blue stone."
-      }
-    ],
-    "choices": [
-      {
-        "id": "c-2-1",
-        "text": "Take the blue stone",
-        "targetPageId": "page-4"
-      },
-      {
-        "id": "c-2-2",
-        "text": "Leave it alone and return to the edge",
-        "targetPageId": "page-1"
-      }
-    ]
-  },
-  {
-    "id": "page-3",
-    "title": "The Village Tavern",
-    "paragraphs": [
-      {
-        "id": "p-3-1",
-        "text": "You decide the forest is too dangerous for today. You walk back to the village and head straight to the tavern."
-      },
-      {
-        "id": "p-3-2",
-        "text": "Sitting by the fire with a warm drink, you wonder what adventures you might have missed."
-      }
-    ],
-    "choices": []
-  },
-  {
-    "id": "page-4",
-    "title": "Ascension",
-    "paragraphs": [
-      {
-        "id": "p-4-1",
-        "text": "As your fingers brush the stone, a surge of energy flows through your veins."
-      },
-      {
-        "id": "p-4-2",
-        "text": "You feel weightless. Ethereal wings of pure light erupt from your back, lifting you above the forest canopy and into the starry night sky!"
-      }
-    ],
-    "choices": []
-  }
-]
+  "pages": [
+    {
+      "id": "page-1",
+      "title": "The Dark Forest",
+      "paragraphs": [
+        {
+          "id": "p-1-1",
+          "text": "You stand at the edge of a dark, foreboding forest. The ancient trees loom over you like silent sentinels."
+        },
+        {
+          "id": "p-1-2",
+          "text": "The wind howls through the branches, carrying a faint, sweet smell. What will you do?"
+        }
+      ],
+      "choices": [
+        {
+          "id": "c-1-1",
+          "text": "Enter the forest boldly",
+          "targetPageId": "page-2"
+        },
+        {
+          "id": "c-1-2",
+          "text": "Turn back to safety",
+          "targetPageId": "page-3"
+        }
+      ]
+    },
+    {
+      "id": "page-2",
+      "title": "The Hidden Clearing",
+      "paragraphs": [
+        {
+          "id": "p-2-1",
+          "text": "Pushing past the thorny underbrush, you stumble into a small, perfectly circular clearing."
+        },
+        {
+          "id": "p-2-2",
+          "text": "In the center rests a pedestal holding a gently pulsating blue stone."
+        }
+      ],
+      "choices": [
+        {
+          "id": "c-2-1",
+          "text": "Take the blue stone",
+          "targetPageId": "page-4"
+        },
+        {
+          "id": "c-2-2",
+          "text": "Leave it alone and return to the edge",
+          "targetPageId": "page-1"
+        }
+      ]
+    },
+    {
+      "id": "page-3",
+      "title": "The Village Tavern",
+      "paragraphs": [
+        {
+          "id": "p-3-1",
+          "text": "You decide the forest is too dangerous for today. You walk back to the village and head straight to the tavern."
+        },
+        {
+          "id": "p-3-2",
+          "text": "Sitting by the fire with a warm drink, you wonder what adventures you might have missed."
+        }
+      ],
+      "choices": []
+    },
+    {
+      "id": "page-4",
+      "title": "Ascension",
+      "paragraphs": [
+        {
+          "id": "p-4-1",
+          "text": "As your fingers brush the stone, a surge of energy flows through your veins."
+        },
+        {
+          "id": "p-4-2",
+          "text": "You feel weightless. Ethereal wings of pure light erupt from your back, lifting you above the forest canopy and into the starry night sky!"
+        }
+      ],
+      "choices": []
+    }
+  ]
+}

@@ -15,7 +15,14 @@ export interface EditorState {
   onConnect: OnConnect;
   setNodes: (nodes: EditorNode[]) => void;
   setEdges: (edges: Edge[]) => void;
-  loadStory: (nodes: EditorNode[], edges: Edge[]) => void;
+  loadStory: (nodes: EditorNode[], edges: Edge[], variables?: Record<string, string>) => void;
+
+  // Variables
+  variables: Record<string, string>;
+  setVariables: (variables: Record<string, string>) => void;
+  addVariable: (key: string, value: string) => void;
+  updateVariable: (key: string, newValue: string) => void;
+  removeVariable: (key: string) => void;
 
   // UI Handlers
   selectedPageId: string | null;

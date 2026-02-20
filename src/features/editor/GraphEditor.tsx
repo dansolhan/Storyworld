@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ReactFlow,
   Background,
@@ -13,7 +13,8 @@ import { compileGraphToStory, parseStoryToGraph } from '../../lib/storyMapper';
 import { exportToJson, exportToStoryworld } from '../../utils/exportUtils';
 import { Button } from '../../components/ui/Button/Button';
 import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
-import type { Page } from '../../domain/Page/Page';
+import { VariableManager } from './components/VariableManager/VariableManager';
+import type { StoryData } from '../../domain/Story/StoryData';
 import styles from './GraphEditor.module.css';
 
 const nodeTypes = {
@@ -30,10 +31,12 @@ export const GraphEditor: React.FC = () => {
     addPage,
     addParagraph,
     addChoice,
-    loadStory
+    loadStory,
+    variables
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isVariableManagerOpen, setIsVariableManagerOpen] = useState(false);
 
   // Initialization: Just add one starting node if the canvas is completely empty.
   // In a real app we'd load a saved project here.
@@ -58,12 +61,12 @@ export const GraphEditor: React.FC = () => {
   }));
 
   const handleExportJson = () => {
-    const storyData = compileGraphToStory(nodes, edges);
+    const storyData = compileGraphToStory(nodes, edges, variables);
     exportToJson(storyData);
   };
 
   const handleExportStoryworld = () => {
-    const storyData = compileGraphToStory(nodes, edges);
+    const storyData = compileGraphToStory(nodes, edges, variables);
     exportToStoryworld(storyData);
   };
 
@@ -79,12 +82,12 @@ export const GraphEditor: React.FC = () => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const parsedData: Page[] = JSON.parse(content);
+        const parsedData: StoryData = JSON.parse(content);
 
         // Simplistic validation to ensure it's our graph format
-        if (Array.isArray(parsedData) && parsedData.length > 0 && 'id' in parsedData[0] && 'title' in parsedData[0]) {
+        if (parsedData && Array.isArray(parsedData.pages) && parsedData.pages.length > 0 && 'id' in parsedData.pages[0]) {
           const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
-          loadStory(parsedNodes, parsedEdges);
+          loadStory(parsedNodes, parsedEdges, parsedData.variables || {});
         } else {
           alert("Invalid story format.");
         }
@@ -135,6 +138,9 @@ export const GraphEditor: React.FC = () => {
           <Button variant="primary" size="sm" onClick={handleAddNewPage}>
             + Add Page Node
           </Button>
+          <Button variant="secondary" size="sm" onClick={() => setIsVariableManagerOpen(true)}>
+            Variables
+          </Button>
         </div>
         <div className={styles.toolbarGroup}>
           <Button variant="secondary" size="sm" onClick={handleImportClick}>
@@ -167,6 +173,9 @@ export const GraphEditor: React.FC = () => {
 
       {/* Contextual Editor Sidebar */}
       <EditorSidebar />
+
+      {/* Global Variables Manager */}
+      <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
     </div>
   );
 };

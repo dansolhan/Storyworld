@@ -1,7 +1,8 @@
 import type { Edge } from '@xyflow/react';
 import type { PageNodeType } from '../features/editor/nodes/PageNode';
-import type { Page } from '../domain/Page/Page';
+// import type { Page } from '../domain/Page/Page';
 import type { Choice } from '../domain/Choice/Choice';
+import type { StoryData } from '../domain/Story/StoryData';
 
 /**
  * Compiles the raw React Flow nodes and edges back into our pure domain Page[] array.
@@ -10,9 +11,10 @@ import type { Choice } from '../domain/Choice/Choice';
  */
 export const compileGraphToStory = (
   nodes: PageNodeType[],
-  edges: Edge[]
-): Page[] => {
-  return nodes.map((node) => {
+  edges: Edge[],
+  variables: Record<string, string>
+): StoryData => {
+  const pages = nodes.map((node) => {
     // Reconstruct Choices by finding any React Flow edges where this node is the source.
     // We map the choice.id to the edge's sourceHandle to figure out where it points.
     const compiledChoices: Choice[] = (node.data.choices || []).map((choice) => {
@@ -35,15 +37,19 @@ export const compileGraphToStory = (
       choices: compiledChoices,
     };
   });
+
+  return { pages, variables };
 };
 
 /**
  * Parses a pure domain Page[] array back into React Flow nodes and edges.
  * Used for importing a saved JSON or .storyworld file back into the Editor.
  */
-export const parseStoryToGraph = (pages: Page[]): { nodes: PageNodeType[], edges: Edge[] } => {
+export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[], edges: Edge[] } => {
   const nodes: PageNodeType[] = [];
   const edges: Edge[] = [];
+
+  const pages = storyData.pages || [];
 
   pages.forEach((page, index) => {
     // Generate a basic grid layout since pure JSON doesn't save x/y coordinates.

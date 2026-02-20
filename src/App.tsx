@@ -4,17 +4,17 @@ import { Player } from './features/player/Player';
 import { Button } from './components/ui/Button/Button';
 import { useEditorStore } from './features/editor/store/useEditorStore';
 import { compileGraphToStory } from './lib/storyMapper';
-import type { Page } from './domain/Page/Page';
+import type { StoryData } from './domain/Story/StoryData';
 
 function App() {
   const [mode, setMode] = useState<'editor' | 'player'>('editor');
-  const [playingStory, setPlayingStory] = useState<Page[]>([]);
+  const [playingStory, setPlayingStory] = useState<StoryData | null>(null);
 
   const handlePlay = () => {
     // We get the state non-reactively so App.tsx doesn't re-render 
     // every single time a node is dragged on the canvas!
-    const { nodes, edges } = useEditorStore.getState();
-    const compiledStory = compileGraphToStory(nodes, edges);
+    const { nodes, edges, variables } = useEditorStore.getState();
+    const compiledStory = compileGraphToStory(nodes, edges, variables);
     setPlayingStory(compiledStory);
     setMode('player');
   };
@@ -37,7 +37,7 @@ function App() {
       {mode === 'editor' ? (
         <GraphEditor />
       ) : (
-        <Player storyData={playingStory} onExit={() => setMode('editor')} />
+        playingStory && <Player storyData={playingStory} onExit={() => setMode('editor')} />
       )}
     </div>
   );

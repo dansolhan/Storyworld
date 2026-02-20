@@ -1,23 +1,24 @@
 import React, { useState, useMemo } from 'react';
-import type { Page } from '../../domain/Page/Page';
+import type { StoryData } from '../../domain/Story/StoryData';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
+import { parseTextTokens } from '../../utils/textParser';
 import styles from './Player.module.css';
 
 export interface PlayerProps {
-  storyData: Page[];
+  storyData: StoryData;
   startPageId?: string;
   onExit?: () => void;
 }
 
 export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
   // If no startPageId is provided, default to the first page in the array
-  const defaultStartId = startPageId || storyData[0]?.id;
+  const defaultStartId = startPageId || storyData.pages[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
 
   // Derive the current page from the state
   const currentPage = useMemo(() => {
-    return storyData.find((p) => p.id === currentPageId);
+    return storyData.pages.find((p) => p.id === currentPageId);
   }, [storyData, currentPageId]);
 
   const handleChoiceClick = (targetPageId: string) => {
@@ -28,7 +29,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     setCurrentPageId(defaultStartId);
   };
 
-  if (!storyData || storyData.length === 0) {
+  if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (
       <div className={styles.container}>
         <Card padding="lg" className={styles.errorCard}>
@@ -61,11 +62,16 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
           <h2 className={styles.pageTitle}>{currentPage.title}</h2>
 
           <div className={styles.paragraphs}>
-            {currentPage.paragraphs.map((p) => (
-              <p key={p.id} className={styles.paragraphText}>
-                {p.text}
-              </p>
-            ))}
+            {currentPage.paragraphs.map((p) => {
+              const parsedHtml = parseTextTokens(p.text, storyData.variables || {});
+              return (
+                <div
+                  key={p.id}
+                  className={styles.paragraphText}
+                  dangerouslySetInnerHTML={{ __html: parsedHtml }}
+                />
+              );
+            })}
           </div>
 
           <div className={styles.choicesContainer}>

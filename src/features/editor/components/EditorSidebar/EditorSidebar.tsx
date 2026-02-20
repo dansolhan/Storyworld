@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { Drawer } from '../../../../components/ui/Drawer/Drawer';
 import { Button } from '../../../../components/ui/Button/Button';
+import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTextEditor';
 import styles from './EditorSidebar.module.css';
 
 export const EditorSidebar: React.FC = () => {
@@ -62,15 +63,13 @@ export const EditorSidebar: React.FC = () => {
             {selectedNode.data.paragraphs.length === 0 && (
               <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
             )}
-            {selectedNode.data.paragraphs.map((p, index) => (
-              <textarea
-                key={p.id}
-                className={styles.textarea}
-                value={p.text}
-                onChange={(e) => updateParagraph(selectedPageId, p.id, e.target.value)}
-                placeholder={`Paragraph ${index + 1}...`}
-                rows={3}
-              />
+            {selectedNode.data.paragraphs.map((p) => (
+              <div key={p.id} className={styles.paragraphBlock}>
+                <RichTextEditor
+                  content={p.text}
+                  onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
+                />
+              </div>
             ))}
           </div>
         </section>
