@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
+import type { Paragraph } from '../../../../types/models';
 
 export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addParagraph' | 'updateParagraph'>> = (set, get) => ({
   addParagraph: (pageId) => {
@@ -28,7 +29,7 @@ export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<Editor
             ...node,
             data: {
               ...node.data,
-              paragraphs: node.data.paragraphs.map(p =>
+              paragraphs: node.data.paragraphs.map((p: Paragraph) =>
                 p.id === paragraphId ? { ...p, text: newText } : p
               ),
             },

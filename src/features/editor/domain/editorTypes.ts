@@ -1,5 +1,5 @@
 import type { Edge, OnNodesChange, OnEdgesChange, OnConnect } from '@xyflow/react';
-import type { PageNodeType } from '../../nodes/PageNode';
+import type { PageNodeType } from '../nodes/PageNode';
 
 export type EditorNode = PageNodeType;
 

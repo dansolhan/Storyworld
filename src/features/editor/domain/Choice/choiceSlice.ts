@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
+import type { Choice } from '../../../../types/models';
 
 export const createChoiceSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addChoice' | 'updateChoiceText'>> = (set, get) => ({
   addChoice: (pageId) => {
@@ -28,7 +29,7 @@ export const createChoiceSlice: StateCreator<EditorState, [], [], Pick<EditorSta
             ...node,
             data: {
               ...node.data,
-              choices: node.data.choices.map(c =>
+              choices: node.data.choices.map((c: Choice) =>
                 c.id === choiceId ? { ...c, text: newText } : c
               ),
             },
