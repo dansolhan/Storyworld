@@ -20,6 +20,49 @@
         {
           "id": "p1-3",
           "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>"
+        },
+        {
+          "id": "p1-4",
+          "text": "<p>You can feel the heavy golden key resting in your pocket.</p>",
+          "conditionals": [
+            {
+              "id": "cond-p1",
+              "blueprintId": "visited_page",
+              "params": {
+                "not": false,
+                "pageId": "page-5"
+              }
+            }
+          ]
+        },
+        {
+          "id": "p1-5",
+          "text": "<p><em>Wait, you have already been to this room... You feel a sense of déjà vu.</em></p>",
+          "conditionals": [
+            {
+              "id": "cond-p1-5-or",
+              "blueprintId": "or_group",
+              "params": {},
+              "children": [
+                {
+                  "id": "cond-p1-5-c1",
+                  "blueprintId": "visited_page",
+                  "params": {
+                    "not": false,
+                    "pageId": "page-2"
+                  }
+                },
+                {
+                  "id": "cond-p1-5-c2",
+                  "blueprintId": "visited_page",
+                  "params": {
+                    "not": false,
+                    "pageId": "page-3"
+                  }
+                }
+              ]
+            }
+          ]
         }
       ],
       "choices": [

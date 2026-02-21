@@ -4,17 +4,19 @@ import { useEditorStore } from '../../store/useEditorStore';
 import type { EditorNode } from '../../store/editorTypes';
 import { Popover } from '../../../../components/ui/Popover/Popover';
 import { Combobox } from '../../../../components/ui/Combobox/Combobox';
+import { ConditionalsEditor } from './ConditionalsEditor';
 import styles from './ConditionalsEditor.module.css';
 
 interface ConditionalCardProps {
+  targetType: 'choice' | 'paragraph';
   pageId: string;
-  choiceId: string;
+  targetId: string;
   conditional: Conditional;
   blueprint: ConditionalBlueprint<any>;
 }
 
-export const ConditionalCard: React.FC<ConditionalCardProps> = ({ pageId, choiceId, conditional, blueprint }) => {
-  const { updateChoiceConditional, removeChoiceConditional, nodes } = useEditorStore();
+export const ConditionalCard: React.FC<ConditionalCardProps> = ({ targetType, pageId, targetId, conditional, blueprint }) => {
+  const { updateConditional, removeConditional, nodes } = useEditorStore();
   const [popoverState, setPopoverState] = useState<{ isOpen: boolean; x: number; y: number; tokenTarget: string }>({
     isOpen: false,
     x: 0,
@@ -23,7 +25,7 @@ export const ConditionalCard: React.FC<ConditionalCardProps> = ({ pageId, choice
   });
 
   const handleToggleBoolean = (key: string) => {
-    updateChoiceConditional(pageId, choiceId, conditional.id, {
+    updateConditional(targetType, pageId, targetId, conditional.id, {
       ...conditional.params,
       [key]: !conditional.params[key],
     });
@@ -84,17 +86,29 @@ export const ConditionalCard: React.FC<ConditionalCardProps> = ({ pageId, choice
   const pageOptions = nodes.map((n: EditorNode) => ({ label: n.data.title || `Page ${n.id}`, value: n.id }));
 
   return (
-    <div className={styles.card}>
-      <div className={styles.cardText}>
-        {renderTemplate()}
+    <div className={styles.card} style={blueprint.isGroup ? { flexDirection: 'column', alignItems: 'stretch' } : {}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.cardText}>
+          {renderTemplate()}
+        </div>
+        <button
+          className={styles.deleteBtn}
+          onClick={() => removeConditional(targetType, pageId, targetId, conditional.id)}
+          title="Remove Conditional"
+        >
+          &times;
+        </button>
       </div>
-      <button
-        className={styles.deleteBtn}
-        onClick={() => removeChoiceConditional(pageId, choiceId, conditional.id)}
-        title="Remove Conditional"
-      >
-        &times;
-      </button>
+
+      {blueprint.isGroup && (
+        <ConditionalsEditor
+          targetType={targetType}
+          pageId={pageId}
+          targetId={targetId}
+          conditionals={conditional.children || []}
+          parentId={conditional.id}
+        />
+      )}
 
       <Popover
         isOpen={popoverState.isOpen}
@@ -109,7 +123,7 @@ export const ConditionalCard: React.FC<ConditionalCardProps> = ({ pageId, choice
               options={pageOptions}
               autoFocus
               onSelect={(val) => {
-                updateChoiceConditional(pageId, choiceId, conditional.id, {
+                updateConditional(targetType, pageId, targetId, conditional.id, {
                   ...conditional.params,
                   pageId: val
                 });

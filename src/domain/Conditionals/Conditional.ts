@@ -8,9 +8,8 @@ export interface Conditional<TParams = Record<string, unknown>> {
   id: string;
   blueprintId: string;
   params: TParams;
+  children?: Conditional[];
 }
-
-export type ConditionalLogic = 'AND' | 'OR';
 
 export interface ConditionalBlueprint<
   TParams = Record<string, unknown>,
@@ -19,6 +18,12 @@ export interface ConditionalBlueprint<
   id: string;
   name: string;
   template: string;
+  isGroup?: boolean;
   defaultParams: TParams;
-  evaluate: (params: TParams, context: EvaluationContext<TVariables>) => boolean;
+  evaluate: (
+    params: TParams,
+    context: EvaluationContext<TVariables>,
+    children?: Conditional[],
+    evaluateNode?: (cond: Conditional) => boolean
+  ) => boolean;
 }

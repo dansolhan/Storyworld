@@ -6,6 +6,7 @@ import { createParagraphSlice } from './slices/paragraphSlice';
 import { createChoiceSlice } from './slices/choiceSlice';
 import { createUISlice } from './slices/uiSlice';
 import { createVariableSlice } from './slices/variableSlice';
+import { createConditionalSlice } from './slices/conditionalSlice';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our
@@ -20,4 +21,5 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createParagraphSlice(...a),
   ...createChoiceSlice(...a),
   ...createVariableSlice(...a),
+  ...createConditionalSlice(...a),
 }));

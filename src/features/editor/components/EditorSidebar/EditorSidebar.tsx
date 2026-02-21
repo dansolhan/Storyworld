@@ -83,6 +83,12 @@ export const EditorSidebar: React.FC = () => {
                   features={PARAGRAPH_FEATURES}
                   onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
                 />
+                <ConditionalsEditor
+                  targetType="paragraph"
+                  pageId={selectedPageId}
+                  targetId={p.id}
+                  conditionals={p.conditionals || []}
+                />
               </div>
             ))}
           </div>
@@ -112,7 +118,12 @@ export const EditorSidebar: React.FC = () => {
                 <small className={styles.choiceMeta}>
                   Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
                 </small>
-                <ConditionalsEditor pageId={selectedPageId} choice={c} />
+                <ConditionalsEditor
+                  targetType="choice"
+                  pageId={selectedPageId}
+                  targetId={c.id}
+                  conditionals={c.conditionals || []}
+                />
               </div>
             ))}
           </div>

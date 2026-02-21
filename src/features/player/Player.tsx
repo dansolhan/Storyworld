@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { parseTextTokens } from '../../utils/textParser';
 import { useContextualPopover } from './hooks/useContextualPopover';
-import { evaluateChoiceStatus } from './conditionals/evaluator';
+import { evaluateVisibility } from './conditionals/evaluator';
 import styles from './Player.module.css';
 
 export interface PlayerProps {
@@ -47,7 +47,20 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
       currentPageId
     };
 
-    return currentPage.choices.filter(choice => evaluateChoiceStatus(choice, context));
+    return currentPage.choices.filter(choice => evaluateVisibility(choice, context));
+  }, [currentPage, storyData.variables, visitedPageIds, currentPageId]);
+
+  // Derive evaluated visible paragraphs
+  const visibleParagraphs = useMemo(() => {
+    if (!currentPage || !currentPage.paragraphs) return [];
+
+    const context = {
+      variables: storyData.variables || {},
+      visitedPageIds,
+      currentPageId
+    };
+
+    return currentPage.paragraphs.filter(p => evaluateVisibility(p, context));
   }, [currentPage, storyData.variables, visitedPageIds, currentPageId]);
 
   const handleChoiceClick = (targetPageId: string) => {
@@ -94,7 +107,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
           <h2 className={styles.pageTitle}>{currentPage.title}</h2>
 
           <div className={styles.paragraphs}>
-            {currentPage.paragraphs.map((p) => {
+            {visibleParagraphs.map((p) => {
               const parsedHtml = parseTextTokens(p.text, storyData.variables || {});
               return (
                 <div
