@@ -6,6 +6,7 @@ import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTex
 import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/BoldFeature';
 import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
+import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import styles from './EditorSidebar.module.css';
 
 // Define the standard set of features for paragraphs
@@ -13,6 +14,7 @@ const PARAGRAPH_FEATURES = [
   new BoldFeature(),
   new ItalicFeature(),
   new ContextualTextFeature(),
+  new InsertVariableFeature(),
 ];
 
 export const EditorSidebar: React.FC = () => {
