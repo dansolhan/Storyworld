@@ -39,4 +39,10 @@ export interface EditorState {
   // Domain Handlers - Choice
   addChoice: (pageId: string) => void;
   updateChoiceText: (pageId: string, choiceId: string, newText: string) => void;
+
+  // Domain Handlers - Choice Conditionals
+  addChoiceConditional: (pageId: string, choiceId: string, blueprintId: string) => void;
+  updateChoiceConditional: (pageId: string, choiceId: string, conditionalId: string, params: Record<string, unknown>) => void;
+  removeChoiceConditional: (pageId: string, choiceId: string, conditionalId: string) => void;
+  updateChoiceConditionalLogic: (pageId: string, choiceId: string, logic: 'AND' | 'OR') => void;
 }

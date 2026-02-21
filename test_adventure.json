@@ -37,6 +37,36 @@
           "id": "c1-3",
           "text": "Search your pockets",
           "targetPageId": "page-5"
+        },
+        {
+          "id": "c1-4",
+          "text": "Unlock the door with the golden key",
+          "targetPageId": "page-6",
+          "conditionals": [
+            {
+              "id": "cond-1",
+              "blueprintId": "visited_page",
+              "params": {
+                "not": false,
+                "pageId": "page-5"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c1-5",
+          "text": "Investigate the hidden alcove",
+          "targetPageId": "page-7",
+          "conditionals": [
+            {
+              "id": "cond-2",
+              "blueprintId": "visited_page",
+              "params": {
+                "not": false,
+                "pageId": "page-3"
+              }
+            }
+          ]
         }
       ]
     },
@@ -174,6 +204,27 @@
         }
       ],
       "choices": []
+    },
+    {
+      "id": "page-7",
+      "title": "The Hidden Alcove",
+      "paragraphs": [
+        {
+          "id": "p7-1",
+          "text": "<p>Now that you have seen the glint of moonlight from the window, you notice a subtle indentation in the wall.</p>"
+        },
+        {
+          "id": "p7-2",
+          "text": "<p>You press against it, and a small drawer slides open seamlessly. Inside is a vial of shimmering liquid.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "c7-1",
+          "text": "Take the vial and return",
+          "targetPageId": "page-1"
+        }
+      ]
     }
   ]
 }

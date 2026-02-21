@@ -7,9 +7,10 @@ import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/B
 import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
+import { ConditionalsEditor } from '../ConditionalsEditor/ConditionalsEditor';
 import styles from './EditorSidebar.module.css';
 
-// Define the standard set of features for paragraphs
+// Define the standard set of features for paragraphs... (handled slightly lower down, I need multiple chunks)
 const PARAGRAPH_FEATURES = [
   new BoldFeature(),
   new ItalicFeature(),
@@ -111,6 +112,7 @@ export const EditorSidebar: React.FC = () => {
                 <small className={styles.choiceMeta}>
                   Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
                 </small>
+                <ConditionalsEditor pageId={selectedPageId} choice={c} />
               </div>
             ))}
           </div>

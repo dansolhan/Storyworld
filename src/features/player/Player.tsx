@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { StoryData } from '../../domain/Story/StoryData';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { parseTextTokens } from '../../utils/textParser';
 import { useContextualPopover } from './hooks/useContextualPopover';
+import { evaluateChoiceStatus } from './conditionals/evaluator';
 import styles from './Player.module.css';
 
 export interface PlayerProps {
@@ -17,17 +18,44 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const { contextualPopover, setContextualPopover } = useContextualPopover();
   const defaultStartId = startPageId || storyData?.pages?.[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
+  const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
+
+  // Track visited pages
+  useEffect(() => {
+    if (currentPageId) {
+      setVisitedPageIds(prev => {
+        if (!prev.includes(currentPageId)) {
+          return [...prev, currentPageId];
+        }
+        return prev;
+      });
+    }
+  }, [currentPageId]);
 
   // Derive the current page from the state
   const currentPage = useMemo(() => {
     return storyData.pages.find((p) => p.id === currentPageId);
   }, [storyData, currentPageId]);
 
+  // Derive evaluated visible choices
+  const visibleChoices = useMemo(() => {
+    if (!currentPage || !currentPage.choices) return [];
+
+    const context = {
+      variables: storyData.variables || {},
+      visitedPageIds,
+      currentPageId
+    };
+
+    return currentPage.choices.filter(choice => evaluateChoiceStatus(choice, context));
+  }, [currentPage, storyData.variables, visitedPageIds, currentPageId]);
+
   const handleChoiceClick = (targetPageId: string) => {
     setCurrentPageId(targetPageId);
   };
 
   const handleRestart = () => {
+    setVisitedPageIds([]);
     setCurrentPageId(defaultStartId);
   };
 
@@ -79,9 +107,9 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
           </div>
 
           <div className={styles.choicesContainer}>
-            {currentPage.choices && currentPage.choices.length > 0 ? (
+            {visibleChoices && visibleChoices.length > 0 ? (
               <div className={styles.choicesList}>
-                {currentPage.choices.map((choice) => (
+                {visibleChoices.map((choice) => (
                   <Button
                     key={choice.id}
                     variant="primary"
