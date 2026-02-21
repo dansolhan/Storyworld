@@ -26,7 +26,7 @@ This file contains the core conventions and strict rules for the Storyworld AI p
   ```
 - **Strict Typing**: Enforce strict TypeScript typing. NEVER use `any` to bypass type checking. Only use `unknown` when mathematically or structurally necessary.
 - **Feature Modules**: Group feature-specific logic, state, and components into distinct domain folders inside `src/features/` (e.g., `features/editor/`, `features/player/`).
-- **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in `src/types/models.ts`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
+- **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in their respective domain folders `src/domain/`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
 - **Props Interfaces**: Always define and export the TypeScript interface for a React component's props directly above the component definition.
 
 ## 🧱 Component Rules & Extraction

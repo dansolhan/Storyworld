@@ -1,0 +1,18 @@
+.toolbar {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 100;
+  display: flex;
+  gap: var(--space-4);
+  background-color: var(--color-bg-primary);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-default);
+}
+
+.toolbarGroup {
+  display: flex;
+  gap: var(--space-2);
+}
