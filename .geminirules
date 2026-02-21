@@ -1,44 +1,45 @@
 # Storyworld AI - Core Engineering Directives
 
-This file contains the core conventions and rules for the Storyworld AI project. Future AI interactions will automatically read and adhere to these principles.
+This file contains the core conventions and strict rules for the Storyworld AI project. Future AI interactions MUST automatically read and strictly adhere to these principles.
 
 ## 🎨 Styling & Theming
 - **Strictly use CSS Modules** (`.module.css`). Do NOT use Tailwind or any other utility class frameworks.
 - **Global Theme Variables**: All spacing, sizing, colors, typography, and border radius variables MUST be sourced from `src/styles/theme.css`. Avoid hardcoding values (e.g., use `var(--space-4)` instead of `16px`).
-- **Spacing Scale**: We use a strict 4-point spacing scale (4px, 8px, 12px, 16px, etc.).
+- **Spacing Scale**: Enforce a strict 4-point spacing scale (4px, 8px, 12px, 16px, etc.).
 - **Typography Tone**: Use `var(--font-family-serif)` (Lora) for story/reading content to invoke a classic "author" feel, and `var(--font-family-sans)` (Inter) for functional UI elements.
 - **Color Separation**: Color values are strictly isolated from structural variables to maintain a seamless dark/light mode toggle.
 
 ## 🏗️ Architecture & Organization
 - **Component Driven**: Build everything as functional React components.
-- **Client-Only Architecture**: The engine will be a 100% client-side React App using Vite.
+- **Client-Only Architecture**: The engine is designed as a 100% client-side React App using Vite.
+- **[CRITICAL] Strict Logical Separation**: Always organize code (including types, constants, and utilities) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files" like `models.ts` or `types.ts`.
 - **Feature-Sliced Design**: Organize code by domains/features rather than strictly by technical type. 
   ```text
   src/
-   ├── domain/                      <-- PURE DOMAIN (No UI dependencies, just pure Types & Business Logic)
-   │    ├── Page/Page.ts            
-   │    └── Choice/Choice.ts        
+   ├── domain/                      <-- PURE DOMAIN (No UI dependencies, pure Types & Business Logic)
    ├── features/
    │    ├── editor/                 <-- FEATURE MODULE (Depends on UI libraries like React Flow)
-   │    │    ├── store/             <-- Feature-specific Global State
-   │    │    │    ├── slices/       <-- Slices specific to mutating Editor logic
-   │    │    │    └── useEditorStore.ts
+   │    │    ├── store/             <-- Feature-specific Global State (separated into slices)
    │    │    └── components/        <-- Feature-specific UI
    │    └── player/                 <-- FEATURE MODULE
    └── components/ui/               <-- GENERIC UI (Buttons, Cards - Highly reusable)
   ```
-- **[CRITICAL] Strict Logical Separation**: Always organize code (including types, constants, and utilities) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files" like `models.ts` or `types.ts`.
-- **Strict Typing**: Enforce strict TypeScript typing. NEVER use `any` to bypass type checking. Only use `unknown` when mathematically or structurally necessary, never as a crutch to get around tricky types.
-- **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards) strictly within `src/components/ui/`.
+- **Strict Typing**: Enforce strict TypeScript typing. NEVER use `any` to bypass type checking. Only use `unknown` when mathematically or structurally necessary.
 - **Feature Modules**: Group feature-specific logic, state, and components into distinct domain folders inside `src/features/` (e.g., `features/editor/`, `features/player/`).
 - **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in `src/types/models.ts`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
 - **Props Interfaces**: Always define and export the TypeScript interface for a React component's props directly above the component definition.
+
+## 🧱 Component Rules & Extraction
+- **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards, Popovers) strictly within `src/components/ui/`.
+- **[CRITICAL] DRY Principle & Extraction**: Actively identify UI elements, hooks, or logic that can be extracted into isolated, generalized code. Do not duplicate code. Always maintain a healthy separation of concerns by creating reusable utility functions or generic UI components wherever appropriate. If you write the same code twice, abstract it.
+- **Component Size Limit**: Components must rarely exceed 200 lines of code. If a component grows beyond this threshold, actively extract internal state and logic into custom local hooks (or shared hooks) or imported functions to maintain readability and separation of concerns.
 
 ## 🛠️ State Management
 - **Client-Side First**: The engine is designed as a 100% client-side application.
 - **Global State (Zustand)**: Use **Zustand** for global state management. To avoid cognitive complexity and bloated files, split the Zustand state into logical divisions (e.g., `useEditorStore`, `usePlayerStore`) rather than one massive monolith.
 - **State Separation (Editor vs Player)**: Treat the Editor and the Player as two fundamentally distinct state applications. The Editor manages complex node/edge relationships, while the Player should boot from a pure, lightweight JSON payload (`Page[]`). They must have isolated Zustand stores.
-- **Domain Slicing Pattern**: Never create "God Files" for Zustand stores that mix library-specific mapping (like React Flow nodes/edges) with domain business logic (like adding Pages/Choices). 
+- **[CRITICAL] Domain Slicing Pattern for Stores**: 
+  - Never create "God Files" for Zustand stores that mix library-specific mapping (like React Flow nodes/edges) with domain business logic (like adding Pages/Choices). 
   - Subdivide complex stores into **Slices** organized by domain entities (e.g., `src/features/editor/domain/Page/pageSlice.ts`). 
   - The root store (e.g., `useEditorStore.ts`) should strictly act as a coordinator that combines the slices, and should contain exactly zero business logic itself.
 - **React State**: Prefer standard React state hooks (`useState`, `useMemo`, `useCallback`) for localized, transient component state (e.g., open/closed toggles).
@@ -48,3 +49,7 @@ This file contains the core conventions and rules for the Storyworld AI project.
 
 ## 🤖 AI Conduct
 - **Honest & Critical Sparring Partner**: Be an honest programming assistant. Do not coddle or exaggerate the quality of ideas. Be critical where criticism is due. Maintain a friendly and joyous tone, but absolutely object if a suggested approach represents an anti-pattern, a bad architectural choice, or flawed logic.
+
+## 🛠️ Shell Execution
+ENV: Windows.
+Always use 'cmd /c' for all shell executions to ensure the process terminates correctly and sends an EOF signal. Example: Use 'cmd /c pip list' instead of just 'pip list'.

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import type { StoryData } from '../../domain/Story/StoryData';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
+import { Popover } from '../../components/ui/Popover/Popover';
 import { parseTextTokens } from '../../utils/textParser';
 import styles from './Player.module.css';
 
@@ -125,19 +126,16 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         </Card>
       </main>
 
-      {contextualPopover && (
-        <div
-          className={styles.popover}
-          style={{
-            left: `${contextualPopover.x}px`,
-            top: `${contextualPopover.y}px`
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className={styles.popoverArrow} />
-          <p className={styles.popoverText}>{contextualPopover.text}</p>
-        </div>
-      )}
+      <Popover
+        isOpen={!!contextualPopover}
+        onClose={() => setContextualPopover(null)}
+        x={contextualPopover?.x || 0}
+        y={contextualPopover?.y || 0}
+        className={styles.popover}
+      >
+        <div className={styles.popoverArrow} />
+        <p className={styles.popoverText}>{contextualPopover?.text}</p>
+      </Popover>
     </div>
   );
 };

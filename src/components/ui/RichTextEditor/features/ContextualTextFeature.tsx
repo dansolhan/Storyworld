@@ -5,8 +5,16 @@ import { RTEFeature } from '../RTEFeature';
 import { ContextualText } from '../extensions/ContextualText';
 import { Button } from '../../Button/Button';
 import styles from '../RichTextEditor.module.css';
+import { TextArea } from '../../TextArea/TextArea';
+import { Popover } from '../../Popover/Popover';
+
+
 
 export class ContextualTextFeature extends RTEFeature {
+  private listener: ((action: any) => void) | null = null;
+
+  public setListener(fn: any) { this.listener = fn; }
+
   get name() {
     return 'contextualText';
   }
@@ -24,10 +32,19 @@ export class ContextualTextFeature extends RTEFeature {
         return;
       }
 
-      const context = window.prompt('Enter the contextual information:');
-      if (context) {
-        editor.chain().focus().setContextualText({ context }).run();
+      const { from, to } = editor.state.selection;
+      let coords;
+      try {
+        coords = editor.view.coordsAtPos(from);
+      } catch (e) {
+        const rect = editor.view.dom.getBoundingClientRect();
+        coords = { left: rect.left, bottom: rect.top + 30 };
       }
+
+      this.listener?.({
+        type: 'open_popover',
+        payload: { x: coords.left, y: coords.bottom, text: '', pos: from, isEdit: false, range: { from, to } }
+      });
     };
 
     return (
@@ -45,8 +62,8 @@ export class ContextualTextFeature extends RTEFeature {
   }
 
   renderUI(editor: Editor) {
-    // Return a React component that manages the context menu state for this feature.
-    return <ContextualTextContextMenu key="context-menu" editor={editor} />;
+    // Return a React component that manages the context menu and input popover state.
+    return <ContextualTextUI key="contextual-text-ui" editor={editor} feature={this} />;
   }
 }
 
@@ -54,106 +71,158 @@ export class ContextualTextFeature extends RTEFeature {
  * A hidden component that mounts alongside the editor and listens for right-clicks
  * specifically on contextual-text marks to show a custom edit/remove menu.
  */
-const ContextualTextContextMenu: React.FC<{ editor: Editor }> = ({ editor }) => {
+const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeature }> = ({ editor, feature }) => {
   const [menuState, setMenuState] = useState<{
     visible: boolean;
     x: number;
     y: number;
     text: string;
-    pos: number | null; // The document position of the mark
+    pos: number | null;
   }>({ visible: false, x: 0, y: 0, text: '', pos: null });
+
+  const [popoverState, setPopoverState] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    text: string;
+    isEdit: boolean;
+    pos: number | null;
+    range?: { from: number; to: number };
+  } | null>(null);
+
+  useEffect(() => {
+    feature.setListener((action: any) => {
+      if (action.type === 'open_popover') {
+        setPopoverState({ visible: true, ...action.payload });
+        setMenuState((prev) => ({ ...prev, visible: false })); // close context menu if open
+      }
+    });
+    return () => feature.setListener(null);
+  }, [feature]);
 
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // If they click elsewhere or in a different editor, close the menu
-      if (!editor.view.dom.contains(target)) {
-        setMenuState((prev) => (prev.visible ? { ...prev, visible: false } : prev));
-        return;
-      }
-
-      // Check if we right-clicked on our specific mark
-      if (target.classList.contains('contextual-text-mark')) {
-        e.preventDefault(); // Prevent standard browser right-click menu
-
-        // Try to get pos via coords, fallback to posAtDOM (more reliable for inline marks)
-        let resolvedPos: number | null = null;
-        const coordsPos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY });
-
-        if (coordsPos) {
-          resolvedPos = coordsPos.pos;
-        } else {
-          // Fallback
-          resolvedPos = editor.view.posAtDOM(target, 0);
+      if (target && target.classList.contains('contextual-text-mark')) {
+        // Only the editor that contains this target should handle it
+        if (!editor.view.dom.contains(target)) {
+          setMenuState((prev) => (prev.visible ? { ...prev, visible: false } : prev));
+          return;
         }
+
+        e.preventDefault();
+
+        const coordsPos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY });
 
         setMenuState({
           visible: true,
           x: e.clientX,
           y: e.clientY,
           text: target.getAttribute('data-context') || '',
-          pos: resolvedPos,
+          pos: coordsPos ? coordsPos.pos : null,
         });
       } else {
-        // Clicked inside this editor but not on a mark
         setMenuState((prev) => (prev.visible ? { ...prev, visible: false } : prev));
       }
     };
 
-    const handleClickOutside = () => {
-      setMenuState((prev) => prev.visible ? { ...prev, visible: false } : prev);
-    };
-
-    // Attach to document to catch all events
     document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('click', handleClickOutside);
 
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('click', handleClickOutside);
     };
   }, [editor]);
 
-  if (!menuState.visible || menuState.pos === null) return null;
-
   const handleEdit = () => {
-    const newContext = window.prompt('Edit contextual information:', menuState.text);
-    if (newContext !== null) {
-      // Set cursor inside the mark, select the whole mark, then update it
+    setPopoverState({
+      visible: true,
+      x: menuState.x,
+      y: menuState.y,
+      text: menuState.text,
+      isEdit: true,
+      pos: menuState.pos,
+    });
+    setMenuState((prev) => ({ ...prev, visible: false }));
+  };
+
+  const handleRemove = () => {
+    if (menuState.pos !== null) {
       editor.chain()
         .focus()
-        .setTextSelection(menuState.pos!)
+        .setTextSelection(menuState.pos)
         .extendMarkRange('contextualText')
-        .setContextualText({ context: newContext })
+        .unsetContextualText()
         .run();
     }
     setMenuState((prev) => ({ ...prev, visible: false }));
   };
 
-  const handleRemove = () => {
-    // Set cursor inside the mark, select the whole mark, then remove it
-    editor.chain()
-      .focus()
-      .setTextSelection(menuState.pos!)
-      .extendMarkRange('contextualText')
-      .unsetContextualText()
-      .run();
-    setMenuState((prev) => ({ ...prev, visible: false }));
+  const handleSavePopover = () => {
+    if (popoverState) {
+      if (popoverState.isEdit && popoverState.pos !== null) {
+        editor.chain()
+          .focus()
+          .setTextSelection(popoverState.pos)
+          .extendMarkRange('contextualText')
+          .setContextualText({ context: popoverState.text })
+          .run();
+      } else if (!popoverState.isEdit && popoverState.range) {
+        editor.chain()
+          .focus()
+          .setTextSelection({ from: popoverState.range.from, to: popoverState.range.to })
+          .setContextualText({ context: popoverState.text })
+          .run();
+      }
+    }
+    setPopoverState(null);
   };
 
   return (
-    <div
-      className={styles.contextMenu}
-      style={{ top: menuState.y, left: menuState.x }}
-      onClick={(e) => e.stopPropagation()} // Prevent click from bubbling and closing immediately
-    >
-      <button className={styles.contextMenuItem} onClick={handleEdit}>
-        Edit Context
-      </button>
-      <button className={styles.contextMenuItem} onClick={handleRemove}>
-        Remove Context
-      </button>
-    </div>
+    <>
+      <Popover
+        isOpen={menuState.visible && menuState.pos !== null}
+        onClose={() => setMenuState((prev) => ({ ...prev, visible: false }))}
+        x={menuState.x}
+        y={menuState.y}
+        className={styles.contextMenu}
+      >
+        <button className={styles.contextMenuItem} onClick={handleEdit}>
+          Edit Context
+        </button>
+        <button className={styles.contextMenuItem} onClick={handleRemove}>
+          Remove Context
+        </button>
+      </Popover>
+
+      <Popover
+        isOpen={!!popoverState?.visible}
+        onClose={() => setPopoverState(null)}
+        x={popoverState?.x || 0}
+        y={(popoverState?.y || 0) + 10}
+        className={styles.popoverInput}
+      >
+        <h4 className={styles.popoverInputTitle}>
+          {popoverState?.isEdit ? 'Edit Context' : 'Add Context'}
+        </h4>
+        <TextArea
+          fullWidth
+          placeholder="Type your context text here..."
+          value={popoverState?.text || ''}
+          onChange={(e) =>
+            popoverState && setPopoverState({ ...popoverState, text: e.target.value })
+          }
+          autoFocus
+        />
+        <div className={styles.popoverActions}>
+          <Button variant="secondary" size="sm" onClick={() => setPopoverState(null)}>
+            Cancel
+          </Button>
+          <Button variant="primary" size="sm" onClick={handleSavePopover}>
+            Save
+          </Button>
+        </div>
+      </Popover>
+    </>
   );
 };
