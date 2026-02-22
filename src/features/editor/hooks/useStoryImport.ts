@@ -24,7 +24,16 @@ export const useStoryImport = () => {
         // Simplistic validation to ensure it's our graph format
         if (parsedData && Array.isArray(parsedData.pages) && parsedData.pages.length > 0 && 'id' in parsedData.pages[0]) {
           const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
-          loadStory(parsedNodes, parsedEdges, parsedData.variables || {});
+          loadStory(
+            parsedNodes,
+            parsedEdges,
+            parsedData.variables || {},
+            {
+              title: parsedData.title,
+              description: parsedData.description,
+              startPageId: parsedData.startPageId
+            }
+          );
         } else {
           alert("Invalid story format.");
         }

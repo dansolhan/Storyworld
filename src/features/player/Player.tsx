@@ -16,7 +16,7 @@ export interface PlayerProps {
 
 export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
   const { contextualPopover, setContextualPopover } = useContextualPopover();
-  const defaultStartId = startPageId || storyData?.pages?.[0]?.id;
+  const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
   const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
 

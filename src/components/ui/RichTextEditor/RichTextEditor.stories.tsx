@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { RichTextEditor } from './RichTextEditor';
 import { BoldFeature } from './features/BoldFeature';

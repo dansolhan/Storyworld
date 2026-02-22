@@ -1,10 +1,11 @@
-import React from 'react';
-import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
+import React, { useEffect } from 'react';
+import { Handle, Position, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react';
 import { Card } from '../../../components/ui/Card/Card';
 import type { Page } from '../../../domain/Page/Page';
 import styles from './PageNode.module.css';
 
 export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
+  isStartNode?: boolean;
   onAddParagraph?: (pageId: string) => void;
   onAddChoice?: (pageId: string) => void;
   onChoiceConnect?: (sourceId: string, choiceId: string, targetId: string) => void;
@@ -12,7 +13,13 @@ export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
 
 export type PageNodeType = Node<PageNodeData, 'pageNode'>;
 
-export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data }) => {
+export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [data.choices?.length, id, updateNodeInternals]);
+
   return (
     <div className={styles.nodeWrapper}>
       {/* Target handle - where this page can be connected TO */}
@@ -22,7 +29,10 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data }) => {
         className={styles.targetHandle}
       />
 
-      <Card padding="md" className={styles.card}>
+      <Card padding="md" className={styles.card} style={data.isStartNode ? { borderColor: 'var(--color-primary-500)' } : {}}>
+        {data.isStartNode && (
+          <div className={styles.startNodeBadge}>Start Node</div>
+        )}
         <div className={styles.header}>
           <h3 className={styles.title}>{data.title || 'Untitled Page'}</h3>
         </div>

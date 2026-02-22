@@ -13,8 +13,12 @@ function App() {
   const handlePlay = () => {
     // We get the state non-reactively so App.tsx doesn't re-render 
     // every single time a node is dragged on the canvas!
-    const { nodes, edges, variables } = useEditorStore.getState();
-    const compiledStory = compileGraphToStory(nodes, edges, variables);
+    const { nodes, edges, variables, storyTitle, storyDescription, startPageId } = useEditorStore.getState();
+    const compiledStory = compileGraphToStory(nodes, edges, variables, {
+      title: storyTitle,
+      description: storyDescription,
+      startPageId
+    });
     setPlayingStory(compiledStory);
     setMode('player');
   };

@@ -9,13 +9,26 @@ export interface EditorState {
   nodes: EditorNode[];
   edges: Edge[];
 
+  // Story Metadata
+  storyTitle: string;
+  storyDescription: string;
+  startPageId: string | null;
+  setStoryTitle: (title: string) => void;
+  setStoryDescription: (description: string) => void;
+  setStartPageId: (pageId: string | null) => void;
+
   // React Flow Handlers
   onNodesChange: OnNodesChange<EditorNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: EditorNode[]) => void;
   setEdges: (edges: Edge[]) => void;
-  loadStory: (nodes: EditorNode[], edges: Edge[], variables?: Record<string, string>) => void;
+  loadStory: (
+    nodes: EditorNode[],
+    edges: Edge[],
+    variables?: Record<string, string>,
+    metadata?: { title?: string; description?: string; startPageId?: string }
+  ) => void;
 
   // Variables
   variables: Record<string, string>;
@@ -28,6 +41,20 @@ export interface EditorState {
   selectedPageId: string | null;
   setSelectedPage: (pageId: string | null) => void;
 
+  isStorySettingsOpen: boolean;
+  setIsStorySettingsOpen: (isOpen: boolean) => void;
+
+  isVariableManagerOpen: boolean;
+  setIsVariableManagerOpen: (isOpen: boolean) => void;
+
+  // State for when user clicks "Connect" on a choice and is waiting to click a target page
+  connectingChoice: { sourcePageId: string; choiceId: string } | null;
+  setConnectingChoice: (choice: { sourcePageId: string; choiceId: string } | null) => void;
+
+  // State for selecting starting node from the story settings
+  isSelectingStartNode: boolean;
+  setIsSelectingStartNode: (isSelecting: boolean) => void;
+
   // Domain Handlers - Page
   addPage: (x: number, y: number) => string;
   updatePageTitle: (pageId: string, newTitle: string) => void;
@@ -39,6 +66,8 @@ export interface EditorState {
   // Domain Handlers - Choice
   addChoice: (pageId: string) => void;
   updateChoiceText: (pageId: string, choiceId: string, newText: string) => void;
+  setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string) => void;
+  createPageFromChoice: (sourcePageId: string, choiceId: string) => void;
 
   // Domain Handlers - Conditionals (Unified for Choice and Paragraph)
   addConditional: (targetType: 'choice' | 'paragraph', pageId: string, targetId: string, blueprintId: string, parentId?: string) => void;

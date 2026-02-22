@@ -53,4 +53,10 @@ const PopoverWithTrigger = () => {
 
 export const Default: Story = {
   render: () => <PopoverWithTrigger />,
+  args: {
+    isOpen: false,
+    x: 0,
+    y: 0,
+    children: <div>Content</div>,
+  },
 };

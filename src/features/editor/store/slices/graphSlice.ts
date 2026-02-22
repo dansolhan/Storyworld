@@ -19,13 +19,33 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   },
 
   onConnect: (connection) => {
-    set({
-      edges: addEdge(connection, get().edges),
-    });
+    // Determine source page, choice, and target page and push through our custom action
+    // so that nodes and edges stay perfectly locked in sync
+    const sourcePageId = connection.source;
+    const choiceId = connection.sourceHandle;
+    const targetPageId = connection.target;
+
+    if (sourcePageId && choiceId && targetPageId) {
+      // If we don't cast to any, TypeScript will yell since get() won't know about the
+      // full EditorState in this partial slice context, but our central store has it.
+      (get() as any).setChoiceDestination(sourcePageId, choiceId, targetPageId);
+    } else {
+      // Fallback
+      set({
+        edges: addEdge(connection, get().edges),
+      });
+    }
   },
 
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
-  loadStory: (nodes, edges, variables) => set(() => ({ nodes, edges, ...(variables ? { variables } : {}) })),
+  loadStory: (nodes, edges, variables, metadata) => set(() => ({
+    nodes,
+    edges,
+    ...(variables ? { variables } : {}),
+    ...(metadata?.title ? { storyTitle: metadata.title } : {}),
+    ...(metadata?.description !== undefined ? { storyDescription: metadata.description } : {}),
+    ...(metadata?.startPageId !== undefined ? { startPageId: metadata.startPageId } : {})
+  })),
 });

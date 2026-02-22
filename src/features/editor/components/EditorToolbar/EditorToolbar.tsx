@@ -8,10 +8,14 @@ import styles from './EditorToolbar.module.css';
 
 interface EditorToolbarProps {
   onOpenVariableManager: () => void;
+  onOpenStorySettings: () => void;
 }
 
-export const EditorToolbar: React.FC<EditorToolbarProps> = ({ onOpenVariableManager }) => {
-  const { nodes, edges, variables, addPage } = useEditorStore();
+export const EditorToolbar: React.FC<EditorToolbarProps> = ({
+  onOpenVariableManager,
+  onOpenStorySettings
+}) => {
+  const { nodes, edges, variables, storyTitle, storyDescription, startPageId, addPage } = useEditorStore();
   const { fileInputRef, handleImportClick, handleFileChange } = useStoryImport();
 
   const handleAddNewPage = () => {
@@ -21,12 +25,20 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({ onOpenVariableMana
   };
 
   const handleExportJson = () => {
-    const storyData = compileGraphToStory(nodes, edges, variables);
+    const storyData = compileGraphToStory(nodes, edges, variables, {
+      title: storyTitle,
+      description: storyDescription,
+      startPageId
+    });
     exportToJson(storyData);
   };
 
   const handleExportStoryworld = () => {
-    const storyData = compileGraphToStory(nodes, edges, variables);
+    const storyData = compileGraphToStory(nodes, edges, variables, {
+      title: storyTitle,
+      description: storyDescription,
+      startPageId
+    });
     exportToStoryworld(storyData);
   };
 
@@ -49,6 +61,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({ onOpenVariableMana
           </Button>
         </div>
         <div className={styles.toolbarGroup}>
+          <Button variant="secondary" size="sm" onClick={onOpenStorySettings}>
+            Story Settings
+          </Button>
           <Button variant="secondary" size="sm" onClick={handleImportClick}>
             Import JSON
           </Button>

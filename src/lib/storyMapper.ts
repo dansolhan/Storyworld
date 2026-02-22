@@ -12,7 +12,8 @@ import type { StoryData } from '../domain/Story/StoryData';
 export const compileGraphToStory = (
   nodes: PageNodeType[],
   edges: Edge[],
-  variables: Record<string, string>
+  variables: Record<string, string>,
+  metadata?: { title: string; description: string; startPageId: string | null }
 ): StoryData => {
   const pages = nodes.map((node) => {
     // Reconstruct Choices by finding any React Flow edges where this node is the source.
@@ -38,7 +39,13 @@ export const compileGraphToStory = (
     };
   });
 
-  return { pages, variables };
+  return {
+    pages,
+    variables,
+    title: metadata?.title || 'Untitled Story',
+    description: metadata?.description || '',
+    startPageId: metadata?.startPageId || undefined,
+  };
 };
 
 /**

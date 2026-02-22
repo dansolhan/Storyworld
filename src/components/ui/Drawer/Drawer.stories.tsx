@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Drawer } from './Drawer';
 import { Button } from '../Button/Button';
@@ -39,6 +39,7 @@ export const Default: Story = {
     title: 'Example Drawer',
     isOpen: false,
     onClose: () => { },
+    children: <div>Content</div>,
   },
 };
 
@@ -49,5 +50,6 @@ export const CustomWidth: Story = {
     width: '600px',
     isOpen: false,
     onClose: () => { },
+    children: <div>Content</div>,
   },
 };

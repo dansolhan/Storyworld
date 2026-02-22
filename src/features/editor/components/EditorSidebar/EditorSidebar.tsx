@@ -27,7 +27,10 @@ export const EditorSidebar: React.FC = () => {
     addParagraph,
     updateParagraph,
     addChoice,
-    updateChoiceText
+    updateChoiceText,
+    connectingChoice,
+    setConnectingChoice,
+    createPageFromChoice
   } = useEditorStore();
 
   const selectedNode = useMemo(
@@ -45,8 +48,10 @@ export const EditorSidebar: React.FC = () => {
 
   return (
     <Drawer
-      isOpen={true}
-      onClose={() => setSelectedPage(null)}
+      isOpen={!connectingChoice}
+      onClose={() => {
+        if (!connectingChoice) setSelectedPage(null);
+      }}
       title="Edit Page"
       width="450px"
     >
@@ -106,26 +111,56 @@ export const EditorSidebar: React.FC = () => {
             {selectedNode.data.choices.length === 0 && (
               <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
             )}
-            {selectedNode.data.choices.map((c, index) => (
-              <div key={c.id} className={styles.choiceCard}>
-                <input
-                  type="text"
-                  className={styles.input}
-                  value={c.text}
-                  onChange={(e) => updateChoiceText(selectedPageId, c.id, e.target.value)}
-                  placeholder={`Choice ${index + 1}...`}
-                />
-                <small className={styles.choiceMeta}>
-                  Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
-                </small>
-                <ConditionalsEditor
-                  targetType="choice"
-                  pageId={selectedPageId}
-                  targetId={c.id}
-                  conditionals={c.conditionals || []}
-                />
-              </div>
-            ))}
+            {selectedNode.data.choices.map((c, index) => {
+              const isConnecting = connectingChoice?.choiceId === c.id;
+
+              return (
+                <div key={c.id} className={styles.choiceCard}>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={c.text}
+                    onChange={(e) => updateChoiceText(selectedPageId, c.id, e.target.value)}
+                    placeholder={`Choice ${index + 1}...`}
+                  />
+
+                  <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                    <small className={styles.choiceMeta} style={{ margin: 0 }}>
+                      Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
+                    </small>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <Button
+                        size="sm"
+                        variant={isConnecting ? "primary" : "secondary"}
+                        onClick={() => {
+                          if (isConnecting) {
+                            setConnectingChoice(null);
+                          } else {
+                            setConnectingChoice({ sourcePageId: selectedPageId, choiceId: c.id });
+                          }
+                        }}
+                      >
+                        {isConnecting ? "Cancel" : "Connect"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => createPageFromChoice(selectedPageId, c.id)}
+                      >
+                        New Page
+                      </Button>
+                    </div>
+                  </div>
+
+                  <ConditionalsEditor
+                    targetType="choice"
+                    pageId={selectedPageId}
+                    targetId={c.id}
+                    conditionals={c.conditionals || []}
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
 

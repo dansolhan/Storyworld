@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -12,6 +12,9 @@ import { useEditorStore } from './store/useEditorStore';
 import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
 import { VariableManager } from './components/VariableManager/VariableManager';
+import { StorySettingsDrawer } from './components/StorySettings/StorySettingsDrawer';
+import { Button } from '../../components/ui/Button/Button';
+import { useInteractionStrategy } from './interactions/useInteractionStrategy';
 
 import styles from './GraphEditor.module.css';
 
@@ -29,10 +32,14 @@ export const GraphEditor: React.FC = () => {
     addPage,
     addParagraph,
     addChoice,
+    startPageId,
+    isStorySettingsOpen,
+    setIsStorySettingsOpen,
+    isVariableManagerOpen,
+    setIsVariableManagerOpen,
   } = useEditorStore();
 
-
-  const [isVariableManagerOpen, setIsVariableManagerOpen] = useState(false);
+  const interactionStrategy = useInteractionStrategy();
 
   // Initialization: Just add one starting node if the canvas is completely empty.
   // In a real app we'd load a saved project here.
@@ -51,6 +58,7 @@ export const GraphEditor: React.FC = () => {
     ...node,
     data: {
       ...node.data,
+      isStartNode: node.id === startPageId,
       onAddParagraph: handleAddParagraph,
       onAddChoice: handleAddChoice,
     }
@@ -58,20 +66,38 @@ export const GraphEditor: React.FC = () => {
 
 
 
-  const { setSelectedPage } = useEditorStore();
-
+  // React Flow Handlers bound to the strategy
   const handleNodeClick = (_: React.MouseEvent, node: { id: string }) => {
-    setSelectedPage(node.id);
+    interactionStrategy.onNodeClick(node.id);
   };
 
   const handlePaneClick = () => {
-    setSelectedPage(null);
+    interactionStrategy.onPaneClick();
   };
 
   return (
     <div className={styles.container}>
+      {/* Selection Overlay */}
+      {interactionStrategy.overlayMessage && (
+        <div className={styles.selectionOverlay}>
+          <p className={styles.selectionOverlayText}>
+            {interactionStrategy.overlayMessage}
+          </p>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => interactionStrategy.onCancel()}
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
+
       {/* Editor Toolbar */}
-      <EditorToolbar onOpenVariableManager={() => setIsVariableManagerOpen(true)} />
+      <EditorToolbar
+        onOpenVariableManager={() => setIsVariableManagerOpen(true)}
+        onOpenStorySettings={() => setIsStorySettingsOpen(true)}
+      />
 
       <ReactFlow
         nodes={nodesWithHandlers}
@@ -83,6 +109,7 @@ export const GraphEditor: React.FC = () => {
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
+        style={{ cursor: interactionStrategy.cursor }}
       >
         <Background gap={16} color="var(--color-border-default)" />
         <Controls />
@@ -91,6 +118,9 @@ export const GraphEditor: React.FC = () => {
 
       {/* Contextual Editor Sidebar */}
       <EditorSidebar />
+
+      {/* Global Story Settings */}
+      <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={() => setIsStorySettingsOpen(false)} />
 
       {/* Global Variables Manager */}
       <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
