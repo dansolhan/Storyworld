@@ -20,6 +20,10 @@ export class ConnectingChoiceStrategy implements InteractionStrategy {
     }
   }
 
+  onNodeDoubleClick() {
+    // No-op during connection
+  }
+
   onPaneClick() {
     const state = useEditorStore.getState();
     state.setConnectingChoice(null);

@@ -77,6 +77,12 @@ export const GraphEditor: React.FC = () => {
     interactionStrategy.onNodeClick(node.id);
   };
 
+  const handleNodeDoubleClick = (_: React.MouseEvent, node: { id: string }) => {
+    if (interactionStrategy.onNodeDoubleClick) {
+      interactionStrategy.onNodeDoubleClick(node.id);
+    }
+  };
+
   const handlePaneClick = () => {
     interactionStrategy.onPaneClick();
   };
@@ -110,6 +116,7 @@ export const GraphEditor: React.FC = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={handleNodeClick}
+          onNodeDoubleClick={handleNodeDoubleClick}
           onPaneClick={handlePaneClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}

@@ -47,6 +47,9 @@ export interface EditorState {
   selectedPageId: string | null;
   setSelectedPage: (pageId: string | null) => void;
 
+  isEditorSidebarExpanded: boolean;
+  setIsEditorSidebarExpanded: (expanded: boolean) => void;
+
   isStorySettingsOpen: boolean;
   setIsStorySettingsOpen: (isOpen: boolean) => void;
 

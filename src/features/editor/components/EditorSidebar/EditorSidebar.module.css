@@ -5,6 +5,18 @@
   /* Reduced from 6 */
 }
 
+.stickyTabs {
+  position: sticky;
+  top: calc(var(--space-6) * -1);
+  /* Offset the padding from SidePanel content */
+  margin-top: calc(var(--space-6) * -1);
+  margin-left: calc(var(--space-6) * -1);
+  margin-right: calc(var(--space-6) * -1);
+  padding: var(--space-6) var(--space-6) 0 var(--space-6);
+  background-color: var(--color-bg-primary);
+  z-index: 10;
+}
+
 .section {
   display: flex;
   flex-direction: column;

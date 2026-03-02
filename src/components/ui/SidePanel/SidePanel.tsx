@@ -7,7 +7,9 @@ export interface SidePanelProps {
   /** Callback triggered when the close button is clicked */
   onClose?: () => void;
   /** Optional title displayed at the top of the panel */
-  title?: string;
+  title?: ReactNode;
+  /** Optional actions displayed next to the close button */
+  headerActions?: ReactNode;
   /** Rendered content inside the panel */
   children: ReactNode;
   /** Position of the drawer: 'left' | 'right' (default: 'right') */
@@ -22,6 +24,7 @@ export const SidePanel: React.FC<SidePanelProps> = ({
   isOpen,
   onClose,
   title,
+  headerActions,
   children,
   position = 'right',
   width = '350px',
@@ -47,18 +50,21 @@ export const SidePanel: React.FC<SidePanelProps> = ({
       aria-hidden={!isOpen}
     >
       <div className={styles.inner} style={isVertical ? { width } : { height }}>
-        {(title || onClose) && (
+        {(title || onClose || headerActions) && (
           <header className={styles.header}>
             {title && <h2 className={styles.title}>{title}</h2>}
-            {onClose && (
-              <button
-                className={styles.closeButton}
-                onClick={onClose}
-                aria-label="Close panel"
-              >
-                ×
-              </button>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {headerActions}
+              {onClose && (
+                <button
+                  className={styles.closeButton}
+                  onClick={onClose}
+                  aria-label="Close panel"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </header>
         )}
         <div className={styles.content}>

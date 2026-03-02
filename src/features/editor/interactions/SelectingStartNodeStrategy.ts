@@ -17,6 +17,10 @@ export class SelectingStartNodeStrategy implements InteractionStrategy {
     state.setIsStorySettingsOpen(true);
   }
 
+  onNodeDoubleClick() {
+    // No-op during node selection
+  }
+
   onPaneClick() {
     const state = useEditorStore.getState();
     state.setIsSelectingStartNode(false);

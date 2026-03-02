@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { Target } from 'lucide-react';
+import { Target, ChevronUp, ChevronDown } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { SidePanel } from '../../../../components/ui/SidePanel/SidePanel';
 import { Button } from '../../../../components/ui/Button/Button';
@@ -11,9 +11,9 @@ import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import { ConditionalsEditor } from '../ConditionalsEditor/ConditionalsEditor';
 import { ActionsEditor } from '../ActionsEditor/ActionsEditor';
+import { Tabs } from '../../../../components/ui/Tabs/Tabs';
 import styles from './EditorSidebar.module.css';
 
-// Define the standard set of features for paragraphs... (handled slightly lower down, I need multiple chunks)
 const PARAGRAPH_FEATURES = [
   new BoldFeature(),
   new ItalicFeature(),
@@ -25,6 +25,8 @@ export const EditorSidebar: React.FC = () => {
   const {
     selectedPageId,
     setSelectedPage,
+    isEditorSidebarExpanded,
+    setIsEditorSidebarExpanded,
     nodes,
     updatePageTitle,
     updatePageType,
@@ -36,6 +38,9 @@ export const EditorSidebar: React.FC = () => {
     setConnectingChoice,
     createPageFromChoice
   } = useEditorStore();
+
+  const [activeTab, setActiveTab] = useState('page');
+  const [previewStory, setPreviewStory] = useState(false);
 
   const selectedNode = useMemo(
     () => nodes.find((n) => n.id === selectedPageId),
@@ -58,7 +63,7 @@ export const EditorSidebar: React.FC = () => {
   };
 
   if (!selectedPageId || !selectedNode) {
-    return <SidePanel position="bottom" height="50vh" isOpen={false} onClose={() => setSelectedPage(null)}><div /></SidePanel>;
+    return <SidePanel position="bottom" height={isEditorSidebarExpanded ? "100%" : "50vh"} isOpen={false} onClose={() => setSelectedPage(null)}><div /></SidePanel>;
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +74,26 @@ export const EditorSidebar: React.FC = () => {
     updatePageType(selectedPageId, e.target.value as 'location' | 'plot');
   };
 
+  const headerChevron = (
+    <button
+      onClick={() => setIsEditorSidebarExpanded(!isEditorSidebarExpanded)}
+      style={{
+        background: 'none',
+        border: 'none',
+        padding: '4px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'var(--color-text-secondary)',
+        borderRadius: 'var(--radius-sm)'
+      }}
+      title={isEditorSidebarExpanded ? "Collapse" : "Expand fully"}
+    >
+      {isEditorSidebarExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+    </button>
+  );
+
   return (
     <SidePanel
       isOpen={!connectingChoice}
@@ -76,162 +101,211 @@ export const EditorSidebar: React.FC = () => {
         if (!connectingChoice) setSelectedPage(null);
       }}
       title="Edit Page"
+      headerActions={headerChevron}
       position="bottom"
-      height="50vh"
+      height={isEditorSidebarExpanded ? "100%" : "50vh"}
     >
       <div className={styles.sidebarContent}>
-
-        {/* Title Section */}
-        <section className={styles.section}>
-          <label className={styles.label}>Page Title</label>
-          <input
-            type="text"
-            className={styles.input}
-            value={selectedNode.data.title}
-            onChange={handleTitleChange}
-            placeholder="e.g. The Dark Forest"
-            style={{ marginBottom: '0.5rem' }}
+        <div className={styles.stickyTabs}>
+          <Tabs
+            tabs={[
+              { id: 'page', label: 'Page' },
+              { id: 'actions', label: 'Actions' },
+              { id: 'choices', label: 'Choices' }
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
           />
+        </div>
 
-          <label className={styles.label}>Page Type</label>
-          <select
-            className={styles.input}
-            value={selectedNode.data.type || 'location'}
-            onChange={handleTypeChange}
-          >
-            <option value="location">Location</option>
-            <option value="plot">Plot / Action</option>
-          </select>
+        {activeTab === 'page' && (
+          <>
+            <section className={styles.section}>
+              <label className={styles.label}>Page Title</label>
+              <input
+                type="text"
+                className={styles.input}
+                value={selectedNode.data.title}
+                onChange={handleTitleChange}
+                placeholder="e.g. The Dark Forest"
+                style={{ marginBottom: '0.5rem' }}
+              />
 
-          <div style={{ marginTop: '0.5rem' }}>
+              <label className={styles.label}>Page Type</label>
+              <select
+                className={styles.input}
+                value={selectedNode.data.type || 'location'}
+                onChange={handleTypeChange}
+              >
+                <option value="location">Location</option>
+                <option value="plot">Plot / Action</option>
+              </select>
+            </section>
+
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <label className={styles.label}>Content Blocks</label>
+                <Button size="sm" variant="secondary" onClick={() => addParagraph(selectedPageId)}>
+                  + Add
+                </Button>
+              </div>
+              <div className={styles.itemList}>
+                {selectedNode.data.paragraphs.length === 0 && (
+                  <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
+                )}
+                {selectedNode.data.paragraphs.map((p) => (
+                  <div key={p.id} className={styles.paragraphBlock}>
+                    <RichTextEditor
+                      content={p.text}
+                      features={PARAGRAPH_FEATURES}
+                      onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
+                    />
+                    <ConditionalsEditor
+                      targetType="paragraph"
+                      pageId={selectedPageId}
+                      targetId={p.id}
+                      conditionals={p.conditionals || []}
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
+        {activeTab === 'actions' && (
+          <section className={styles.section}>
+            <label className={styles.label}>Page Actions</label>
             <ActionsEditor
               targetType="page"
               pageId={selectedPageId}
               targetId={selectedPageId}
               actions={selectedNode.data.actions || []}
             />
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* Paragraphs Section */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <label className={styles.label}>Content Blocks</label>
-            <Button size="sm" variant="secondary" onClick={() => addParagraph(selectedPageId)}>
-              + Add
-            </Button>
-          </div>
-          <div className={styles.itemList}>
-            {selectedNode.data.paragraphs.length === 0 && (
-              <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
-            )}
-            {selectedNode.data.paragraphs.map((p) => (
-              <div key={p.id} className={styles.paragraphBlock}>
-                <RichTextEditor
-                  content={p.text}
-                  features={PARAGRAPH_FEATURES}
-                  onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
-                />
-                <ConditionalsEditor
-                  targetType="paragraph"
-                  pageId={selectedPageId}
-                  targetId={p.id}
-                  conditionals={p.conditionals || []}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+        {activeTab === 'choices' && (
+          <>
+            <section className={styles.section} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+              <input type="checkbox" id="previewStory" checked={previewStory} onChange={(e) => setPreviewStory(e.target.checked)} />
+              <label htmlFor="previewStory" className={styles.label} style={{ margin: 0, cursor: 'pointer', textTransform: 'none' }}>Preview story blocks</label>
+            </section>
 
-        {/* Choices Section */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <label className={styles.label}>Choices (Outbound Edges)</label>
-            <Button size="sm" variant="secondary" onClick={() => addChoice(selectedPageId)}>
-              + Add
-            </Button>
-          </div>
-          <div className={styles.itemList}>
-            {selectedNode.data.choices.length === 0 && (
-              <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
-            )}
-            {selectedNode.data.choices.map((c, index) => {
-              const isConnecting = connectingChoice?.choiceId === c.id;
-
-              return (
-                <div key={c.id} className={styles.choiceCard}>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    value={c.text}
-                    onChange={(e) => updateChoiceText(selectedPageId, c.id, e.target.value)}
-                    placeholder={`Choice ${index + 1}...`}
-                  />
-
-                  <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                    <small className={styles.choiceMeta} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
-                      {c.targetPageId && (
-                        <button
-                          type="button"
-                          onClick={() => handleGoToTarget(c.targetPageId!)}
-                          title="Locate in graph"
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: 0,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            color: 'var(--color-primary-500)'
-                          }}
-                        >
-                          <Target size={14} />
-                        </button>
+            {previewStory && (
+              <section className={styles.section} style={{ marginBottom: '2rem' }}>
+                <div className={styles.itemList}>
+                  {selectedNode.data.paragraphs.length === 0 && (
+                    <p className={styles.emptyText}>No content to preview.</p>
+                  )}
+                  {selectedNode.data.paragraphs.map(p => (
+                    <div key={p.id} className={styles.paragraphBlock} style={{ padding: '0.75rem', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-bg-primary)' }}>
+                      <div dangerouslySetInnerHTML={{ __html: p.text }} style={{ fontFamily: 'var(--font-family-serif)', lineHeight: 1.6 }} />
+                      {p.conditionals && p.conditionals.length > 0 && (
+                        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--color-border-default)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <small style={{ color: 'var(--color-primary-500)', fontWeight: 600 }}>Enabled when:</small>
+                          {p.conditionals.map(c => (
+                            <small key={c.id} style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+                              [{c.blueprintId}] {JSON.stringify(c.params)}
+                            </small>
+                          ))}
+                        </div>
                       )}
-                    </small>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Button
-                        size="sm"
-                        variant={isConnecting ? "primary" : "secondary"}
-                        onClick={() => {
-                          if (isConnecting) {
-                            setConnectingChoice(null);
-                          } else {
-                            setConnectingChoice({ sourcePageId: selectedPageId, choiceId: c.id });
-                          }
-                        }}
-                      >
-                        {isConnecting ? "Cancel" : "Connect"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => createPageFromChoice(selectedPageId, c.id)}
-                      >
-                        New Page
-                      </Button>
                     </div>
-                  </div>
-
-                  <ConditionalsEditor
-                    targetType="choice"
-                    pageId={selectedPageId}
-                    targetId={c.id}
-                    conditionals={c.conditionals || []}
-                  />
-                  <ActionsEditor
-                    targetType="choice"
-                    pageId={selectedPageId}
-                    targetId={c.id}
-                    actions={c.actions || []}
-                  />
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-        </section>
+              </section>
+            )}
 
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <label className={styles.label}>Choices (Outbound Edges)</label>
+                <Button size="sm" variant="secondary" onClick={() => addChoice(selectedPageId)}>
+                  + Add
+                </Button>
+              </div>
+              <div className={styles.itemList}>
+                {selectedNode.data.choices.length === 0 && (
+                  <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
+                )}
+                {selectedNode.data.choices.map((c, index) => {
+                  const isConnecting = connectingChoice?.choiceId === c.id;
+
+                  return (
+                    <div key={c.id} className={styles.choiceCard}>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={c.text}
+                        onChange={(e) => updateChoiceText(selectedPageId, c.id, e.target.value)}
+                        placeholder={`Choice ${index + 1}...`}
+                      />
+
+                      <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                        <small className={styles.choiceMeta} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
+                          {c.targetPageId && (
+                            <button
+                              type="button"
+                              onClick={() => handleGoToTarget(c.targetPageId!)}
+                              title="Locate in graph"
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                color: 'var(--color-primary-500)'
+                              }}
+                            >
+                              <Target size={14} />
+                            </button>
+                          )}
+                        </small>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <Button
+                            size="sm"
+                            variant={isConnecting ? "primary" : "secondary"}
+                            onClick={() => {
+                              if (isConnecting) {
+                                setConnectingChoice(null);
+                              } else {
+                                setConnectingChoice({ sourcePageId: selectedPageId, choiceId: c.id });
+                              }
+                            }}
+                          >
+                            {isConnecting ? "Cancel" : "Connect"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => createPageFromChoice(selectedPageId, c.id)}
+                          >
+                            New Page
+                          </Button>
+                        </div>
+                      </div>
+
+                      <ConditionalsEditor
+                        targetType="choice"
+                        pageId={selectedPageId}
+                        targetId={c.id}
+                        conditionals={c.conditionals || []}
+                      />
+                      <ActionsEditor
+                        targetType="choice"
+                        pageId={selectedPageId}
+                        targetId={c.id}
+                        actions={c.actions || []}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </SidePanel>
   );
