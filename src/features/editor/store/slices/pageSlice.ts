@@ -4,6 +4,8 @@ import type { EditorState, EditorNode } from '../editorTypes';
 export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
   addPage: (x, y) => {
     const newId = `page-${crypto.randomUUID()}`;
+    const currentPlotId = get().currentPlotId; // Fetch the active plot id
+
     const newNode: EditorNode = {
       id: newId,
       type: 'pageNode',
@@ -13,6 +15,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
         title: 'New Page',
         paragraphs: [],
         choices: [],
+        ...(currentPlotId ? { subplotId: currentPlotId } : {})
       }
     };
 

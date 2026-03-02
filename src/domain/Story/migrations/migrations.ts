@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = 2;
+export const CURRENT_VERSION = 3;
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -12,11 +12,21 @@ const migrateV1ToV2: MigrationFunction = (v1Story) => {
   };
 };
 
+const migrateV2ToV3: MigrationFunction = (v2Story) => {
+  // Version 3 introduces subplots.
+  // We ensure that the subplots array is initialized.
+  return {
+    ...v2Story,
+    subplots: v2Story.subplots || [],
+  };
+};
+
 // A dictionary mapping the *starting* version to the migration function
 // that upgrades it to starting version + 1.
 // Expected usage: If the story is version 1, it will run `migrationSteps[1]` to get version 2.
 const migrationSteps: Record<number, MigrationFunction> = {
   1: migrateV1ToV2,
+  2: migrateV2ToV3,
 };
 
 export function migrateStory(storyJson: any): StoryData {

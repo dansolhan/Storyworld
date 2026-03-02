@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Handle, Position, useUpdateNodeInternals, useHandleConnections, type NodeProps, type Node } from '@xyflow/react';
 import { Card } from '../../../components/ui/Card/Card';
 import type { Page } from '../../../domain/Page/Page';
+import { useEditorStore } from '../store/useEditorStore';
+import type { EditorState } from '../store/editorTypes';
 import styles from './PageNode.module.css';
 
 export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
@@ -18,11 +20,23 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
   const targetConnections = useHandleConnections({ type: 'target' });
   const hasIncoming = targetConnections.length > 0;
 
+  const subplots = useEditorStore((state: EditorState) => state.subplots);
+  const allNodes = useEditorStore((state: EditorState) => state.nodes);
+
   useEffect(() => {
     updateNodeInternals(id);
   }, [data.choices?.length, id, updateNodeInternals]);
 
   const typeClass = data.type === 'plot' ? styles.typePlot : styles.typeLocation;
+
+  const goToSubplotAction = data.actions?.find(a => a.blueprintId === 'go_to_subplot');
+  let portalTooltip = '';
+  if (goToSubplotAction) {
+    const params = goToSubplotAction.params as Record<string, string>;
+    const subplotName = subplots?.find((s: any) => s.id === params.subplotId)?.name || 'Unknown Subplot';
+    const pageName = allNodes.find((n: any) => n.id === params.targetPageId)?.data.title || 'Unknown Page';
+    portalTooltip = `Portal to: ${subplotName} -> ${pageName}`;
+  }
 
   return (
     <div className={`${styles.nodeWrapper} ${typeClass}`}>
@@ -37,6 +51,11 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
       <Card padding="md" className={styles.card} style={data.isStartNode ? { borderColor: 'var(--color-primary-500)' } : {}}>
         {data.isStartNode && (
           <div className={styles.startNodeBadge}>Start Node</div>
+        )}
+        {goToSubplotAction && (
+          <div className={styles.portalBadge} title={portalTooltip}>
+            🔮 Portal
+          </div>
         )}
         <div className={styles.header}>
           <h3 className={styles.title}>{data.title || 'Untitled Page'}</h3>

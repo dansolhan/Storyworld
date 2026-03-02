@@ -40,12 +40,13 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
-  loadStory: (nodes, edges, variables, metadata) => set(() => ({
+  loadStory: (nodes, edges, variables, metadata, subplots) => set(() => ({
     nodes,
     edges,
     ...(variables ? { variables } : {}),
     ...(metadata?.title ? { storyTitle: metadata.title } : {}),
     ...(metadata?.description !== undefined ? { storyDescription: metadata.description } : {}),
-    ...(metadata?.startPageId !== undefined ? { startPageId: metadata.startPageId } : {})
+    ...(metadata?.startPageId !== undefined ? { startPageId: metadata.startPageId } : {}),
+    ...(subplots !== undefined ? { subplots } : {}),
   })),
 });

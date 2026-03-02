@@ -8,6 +8,7 @@ export interface Page {
   id: string;
   type?: PageType;
   title: string;
+  subplotId?: string;
   paragraphs: Paragraph[];
   choices: Choice[];
   actions?: Action[];

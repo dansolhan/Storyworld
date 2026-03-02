@@ -22,7 +22,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   onRemove,
   children
 }) => {
-  const { nodes, variables } = useEditorStore();
+  const { nodes, variables, subplots } = useEditorStore();
   const [popoverState, setPopoverState] = useState<{ isOpen: boolean; x: number; y: number; tokenTarget: string }>({
     isOpen: false,
     x: 0,
@@ -73,8 +73,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
           );
         }
 
-        if (key === 'page') {
-          const selectedPageId = params.pageId as string | null;
+        if (key === 'page' || key === 'pageId') {
+          const selectedPageId = params[key] as string | null;
           const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
           const label = selectedNode ? selectedNode.data.title || `Page ${selectedNode.id}` : 'Select a page...';
 
@@ -82,7 +82,39 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
             <span
               key={index}
               className={styles.interactiveToken}
-              onClick={(e) => handleOpenPopover(e, 'pageId')}
+              onClick={(e) => handleOpenPopover(e, key)}
+            >
+              {label}
+            </span>
+          );
+        }
+
+        if (key === 'targetPageId') {
+          const selectedPageId = params['targetPageId'] as string | null;
+          const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
+          const label = selectedNode ? selectedNode.data.title || `Page ${selectedNode.id}` : 'Select a page...';
+
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'targetPageId')}
+            >
+              {label}
+            </span>
+          );
+        }
+
+        if (key === 'subplotId') {
+          const selectedSubplotId = params['subplotId'] as string | null;
+          const selectedSubplot = subplots?.find(s => s.id === selectedSubplotId);
+          const label = selectedSubplot ? selectedSubplot.name : 'Select a subplot...';
+
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'subplotId')}
             >
               {label}
             </span>
@@ -123,7 +155,14 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   };
 
   const pageOptions = nodes.map((n: EditorNode) => ({ label: n.data.title || `Page ${n.id}`, value: n.id }));
+  // When selecting a target page for a subplot, we might want to filter, but for now we'll show all pages or filter by the selected subplot
+  const currentSelectedSubplotId = params['subplotId'] as string | null;
+  const targetPageOptions = currentSelectedSubplotId
+    ? nodes.filter(n => n.data.subplotId === currentSelectedSubplotId).map(n => ({ label: n.data.title || `Page ${n.id}`, value: n.id }))
+    : pageOptions;
+
   const variableOptions = Object.keys(variables).map((k) => ({ label: k, value: k }));
+  const subplotOptions = (subplots || []).map(s => ({ label: s.name, value: s.id }));
 
   return (
     <div className={styles.card} style={isGroup ? { flexDirection: 'column', alignItems: 'stretch' } : {}}>
@@ -156,6 +195,38 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
               autoFocus
               onSelect={(val) => {
                 onChangeParam('pageId', val);
+                handleClosePopover();
+              }}
+            />
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'targetPageId' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a target page:</p>
+            <Combobox
+              options={targetPageOptions}
+              autoFocus
+              onSelect={(val) => {
+                onChangeParam('targetPageId', val);
+                handleClosePopover();
+              }}
+            />
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'subplotId' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a subplot:</p>
+            <Combobox
+              options={subplotOptions}
+              autoFocus
+              onSelect={(val) => {
+                // If they change subplot, reset target page to avoid invalid combinations
+                if (params['subplotId'] !== val) {
+                  onChangeParam('targetPageId', null);
+                }
+                onChangeParam('subplotId', val);
                 handleClosePopover();
               }}
             />

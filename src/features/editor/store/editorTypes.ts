@@ -1,5 +1,6 @@
 import type { Edge, OnNodesChange, OnEdgesChange, OnConnect } from '@xyflow/react';
 import type { PageNodeType } from '../nodes/PageNode';
+import type { Subplot } from '../../../domain/Story/Subplot';
 
 export type EditorNode = PageNodeType;
 
@@ -23,6 +24,14 @@ export interface EditorState {
   setStoryDescription: (description: string) => void;
   setStartPageId: (pageId: string | null) => void;
 
+  // Subplots
+  subplots: Subplot[];
+  currentPlotId: string | null;
+  setCurrentPlotId: (plotId: string | null) => void;
+  addSubplot: (name: string, description: string) => string;
+  updateSubplot: (id: string, name: string, description: string) => void;
+  deleteSubplot: (id: string) => void;
+
   // React Flow Handlers
   onNodesChange: OnNodesChange<EditorNode>;
   onEdgesChange: OnEdgesChange;
@@ -33,7 +42,8 @@ export interface EditorState {
     nodes: EditorNode[],
     edges: Edge[],
     variables?: Record<string, string>,
-    metadata?: { title?: string; description?: string; startPageId?: string }
+    metadata?: { title?: string; description?: string; startPageId?: string },
+    subplots?: Subplot[]
   ) => void;
 
   // Variables

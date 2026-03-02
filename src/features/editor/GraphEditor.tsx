@@ -55,12 +55,30 @@ export const GraphEditor: React.FC = () => {
     }
   }, [nodes.length, addPage, _hasHydrated]);
 
+  // Filter nodes and edges by current subplot
+  const currentPlotId = useEditorStore((state) => state.currentPlotId);
+
+  const visibleNodes = React.useMemo(() => {
+    if (!currentPlotId) {
+      // Main plot: show nodes without a subplotId
+      return nodes.filter(node => !node.data.subplotId);
+    }
+    // Subplot: show nodes belonging to this subplot
+    return nodes.filter(node => node.data.subplotId === currentPlotId);
+  }, [nodes, currentPlotId]);
+
+  const visibleEdges = React.useMemo(() => {
+    // Only show edges where both source and target are visible
+    const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
+    return edges.filter(edge => visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target));
+  }, [edges, visibleNodes]);
+
   // We wrap the add actions so they are compatible with the Node data interface
   const handleAddParagraph = (id: string) => addParagraph(id);
   const handleAddChoice = (id: string) => addChoice(id);
 
   // We have to inject these domain handlers into the React Flow nodes
-  const nodesWithHandlers = nodes.map(node => ({
+  const nodesWithHandlers = visibleNodes.map(node => ({
     ...node,
     data: {
       ...node.data,
@@ -111,7 +129,7 @@ export const GraphEditor: React.FC = () => {
 
         <ReactFlow
           nodes={nodesWithHandlers}
-          edges={edges}
+          edges={visibleEdges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}

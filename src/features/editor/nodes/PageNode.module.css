@@ -130,3 +130,24 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.portalBadge {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  background-color: #9c27b0;
+  color: white;
+  font-family: var(--font-family-sans);
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: help;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

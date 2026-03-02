@@ -56,11 +56,12 @@ useEditorStore.subscribe((state) => {
   // Only save if we are successfully hydrated and actually inside a valid story with an ID
   if (state._hasHydrated && state.storyId) {
     const snapshot = {
-      version: 2, // Editor storage version
+      version: 3, // Editor storage version
       state: {
         nodes: state.nodes,
         edges: state.edges,
         variables: state.variables,
+        subplots: state.subplots || [],
         storyTitle: state.storyTitle,
         storyDescription: state.storyDescription,
         startPageId: state.startPageId,
