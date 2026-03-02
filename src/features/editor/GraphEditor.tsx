@@ -8,6 +8,7 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { PageNode } from './nodes/PageNode';
+import { FloatingEdge } from './edges/FloatingEdge';
 import { useEditorStore } from './store/useEditorStore';
 import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
@@ -20,6 +21,10 @@ import styles from './GraphEditor.module.css';
 
 const nodeTypes = {
   pageNode: PageNode,
+};
+
+const edgeTypes = {
+  floating: FloatingEdge,
 };
 
 export const GraphEditor: React.FC = () => {
@@ -106,6 +111,7 @@ export const GraphEditor: React.FC = () => {
           onNodeClick={handleNodeClick}
           onPaneClick={handlePaneClick}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           style={{ width: '100%', height: '100%', cursor: interactionStrategy.cursor }}
         >

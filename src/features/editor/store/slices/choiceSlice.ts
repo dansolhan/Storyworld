@@ -1,4 +1,5 @@
 import type { StateCreator } from 'zustand';
+import { MarkerType } from '@xyflow/react';
 import type { EditorState } from '../editorTypes';
 import type { Choice } from '../../../../domain/Choice/Choice';
 export const createChoiceSlice: StateCreator<
@@ -81,8 +82,13 @@ export const createChoiceSlice: StateCreator<
         source: sourcePageId,
         target: targetPageId,
         sourceHandle: choiceId,
+        type: 'floating',
         animated: true,
         style: { stroke: 'var(--color-edge-default)' },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: 'var(--color-edge-default)'
+        }
       },
     ] : filteredEdges;
 

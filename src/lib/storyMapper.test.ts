@@ -40,6 +40,7 @@ describe('storyMapper', () => {
   ];
 
   const expectedStoryData: StoryData = {
+    version: 1,
     title: 'Test Story',
     description: 'A story for testing mapping',
     startPageId: 'page-1',

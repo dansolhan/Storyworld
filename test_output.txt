@@ -1,0 +1,1061 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Kreativitet/StoryworldAI[39m
+
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould return empty string for empty input[32m 1[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould return the original string if no tokens are present[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould replace a single valid token[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould replace multiple instances of the same token[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould replace multiple different tokens[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould tolerate whitespace inside the token brackets[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould leave unknown tokens unparsed[32m 0[2mms[22m[39m
+ [32m✓[39m src/utils/textParser.test.ts[2m > [22mparseTextTokens[2m > [22mshould handle undefined variables gracefully when replacing[32m 0[2mms[22m[39m
+ [32m✓[39m src/domain/Story/migrations/migrations.test.ts[2m > [22mStory Migrations[2m > [22mshould attach the current version to an unversioned story[32m 2[2mms[22m[39m
+ [32m✓[39m src/domain/Story/migrations/migrations.test.ts[2m > [22mStory Migrations[2m > [22mshould throw when no story structure is passed[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mshould return true if no conditionals exist[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mvisited pages tracking[2m > [22mshould evaluate visited_page correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mvisited pages tracking[2m > [22mshould evaluate visited_page (not=true) correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mlogic gates (AND / OR)[2m > [22mshould evaluate and_group correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mlogic gates (AND / OR)[2m > [22mshould evaluate or_group correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/player/conditionals/evaluator.test.ts[2m > [22mevaluateVisibility[2m > [22mfails gracefully on unknown blueprints[32m 3[2mms[22m[39m
+ [32m✓[39m src/lib/storyMapper.test.ts[2m > [22mstoryMapper[2m > [22mcompileGraphToStory[2m > [22mshould correctly map React Flow nodes and edges into pure StoryData[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/storyMapper.test.ts[2m > [22mstoryMapper[2m > [22mcompileGraphToStory[2m > [22mshould handle choices with missing edges gracefully[32m 0[2mms[22m[39m
+ [32m✓[39m src/lib/storyMapper.test.ts[2m > [22mstoryMapper[2m > [22mparseStoryToGraph[2m > [22mshould parse pure StoryData back into nodes and correctly linked edges[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/storyMapper.test.ts[2m > [22mstoryMapper[2m > [22mparseStoryToGraph[2m > [22mshould not create edges for choices lacking a targetPageId[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/metadataSlice.test.ts[2m > [22mmetadataSlice[2m > [22mshould initialize with default metadata[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/metadataSlice.test.ts[2m > [22mmetadataSlice[2m > [22mshould update storyTitle[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/metadataSlice.test.ts[2m > [22mmetadataSlice[2m > [22mshould update storyDescription[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/metadataSlice.test.ts[2m > [22mmetadataSlice[2m > [22mshould update startPageId[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/uiSlice.test.ts[2m > [22muiSlice[2m > [22mshould initialize with default UI states[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/uiSlice.test.ts[2m > [22muiSlice[2m > [22mshould successfully update selectedPageId[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/uiSlice.test.ts[2m > [22muiSlice[2m > [22mshould manage connectingChoice state[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/uiSlice.test.ts[2m > [22muiSlice[2m > [22mshould toggle isSelectingStartNode[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/uiSlice.test.ts[2m > [22muiSlice[2m > [22mshould mutually exclude bottom drawers[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/pageSlice.test.ts[2m > [22mpageSlice[2m > [22mshould add a new page to the nodes array with correct coordinates[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/pageSlice.test.ts[2m > [22mpageSlice[2m > [22mshould update the title of an existing page[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/pageSlice.test.ts[2m > [22mpageSlice[2m > [22mshould not mutate other nodes when updating title[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/pageSlice.test.ts[2m > [22mpageSlice[2m > [22mshould update the type of an existing page[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/choiceSlice.test.ts[2m > [22mchoiceSlice[2m > [22mshould add a choice to a specific page[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/choiceSlice.test.ts[2m > [22mchoiceSlice[2m > [22mshould update the text of a specific choice[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/choiceSlice.test.ts[2m > [22mchoiceSlice[2m > [22mshould set choice destination and sync the graph edges automatically[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/editor/store/slices/choiceSlice.test.ts[2m > [22mchoiceSlice[2m > [22mshould automatically create a completely new page connected to a choice[32m 1[2mms[22m[39m
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 48 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setStoryTitle src/features/editor/store/slices/metadataSlice.ts:[2m15:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m20:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setStoryDescription src/features/editor/store/slices/metadataSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m25:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setStartPageId src/features/editor/store/slices/metadataSlice.ts:[2m23:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/metadataSlice.test.ts:[2m30:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/metadataSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setSelectedPage src/features/editor/store/slices/uiSlice.ts:[2m17:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m22:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setSelectedPage src/features/editor/store/slices/uiSlice.ts:[2m17:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m26:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setConnectingChoice src/features/editor/store/slices/uiSlice.ts:[2m28:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m32:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setIsSelectingStartNode src/features/editor/store/slices/uiSlice.ts:[2m32:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m37:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m8:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setIsStorySettingsOpen src/features/editor/store/slices/uiSlice.ts:[2m36:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m42:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setIsVariableManagerOpen src/features/editor/store/slices/uiSlice.ts:[2m47:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m45:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m12:49[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setSelectedPage src/features/editor/store/slices/uiSlice.ts:[2m17:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/uiSlice.test.ts:[2m49:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/uiSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m8:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m11:44[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m28:46[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.updatePageTitle src/features/editor/store/slices/pageSlice.ts:[2m24:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m30:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addChoice src/features/editor/store/slices/choiceSlice.ts:[2m18:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m15:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m8:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m37:47[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m38:47[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m11:44[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.updatePageTitle src/features/editor/store/slices/pageSlice.ts:[2m24:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m40:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addChoice src/features/editor/store/slices/choiceSlice.ts:[2m18:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m25:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m8:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.updateChoiceText src/features/editor/store/slices/choiceSlice.ts:[2m36:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m28:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m48:46[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.updatePageType src/features/editor/store/slices/pageSlice.ts:[2m35:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/pageSlice.test.ts:[2m50:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/pageSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m11:44[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addChoice src/features/editor/store/slices/choiceSlice.ts:[2m18:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m35:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m36:52[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.setChoiceDestination src/features/editor/store/slices/choiceSlice.ts:[2m94:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m40:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m useBoundStore.api.setState node_modules/zustand/esm/middleware.mjs:[2m366:12[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m9:20[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m11:44[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m Object.addChoice src/features/editor/store/slices/choiceSlice.ts:[2m18:5[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m56:31[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m addPage src/features/editor/store/slices/pageSlice.ts:[2m19:5[22m[39m
+[90m [2m❯[22m Object.createPageFromChoice src/features/editor/store/slices/choiceSlice.ts:[2m106:25[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m59:31[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: indexedDB is not defined[39m
+[90m [2m❯[22m getDB node_modules/idb-keyval/dist/index.js:[2m14:25[22m[39m
+[90m [2m❯[22m node_modules/idb-keyval/dist/index.js:[2m24:34[22m[39m
+[90m [2m❯[22m set node_modules/idb-keyval/dist/index.js:[2m50:12[22m[39m
+[36m [2m❯[22m Object.setItem src/features/editor/store/useEditorStore.ts:[2m20:11[22m[39m
+    [90m 18| [39m  }[33m,[39m
+    [90m 19| [39m  setItem[33m:[39m [35masync[39m (name[33m:[39m string[33m,[39m value[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+    [90m 20| [39m    [35mawait[39m [35mset[39m(name[33m,[39m value)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 21| [39m  }[33m,[39m
+    [90m 22| [39m  removeItem[33m:[39m [35masync[39m (name[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m [33m=>[39m {
+[90m [2m❯[22m Object.setItem node_modules/zustand/esm/middleware.mjs:[2m298:42[22m[39m
+[90m [2m❯[22m setItem node_modules/zustand/esm/middleware.mjs:[2m358:20[22m[39m
+[90m [2m❯[22m node_modules/zustand/esm/middleware.mjs:[2m371:14[22m[39m
+[90m [2m❯[22m setChoiceDestination src/features/editor/store/slices/choiceSlice.ts:[2m94:5[22m[39m
+[90m [2m❯[22m Object.createPageFromChoice src/features/editor/store/slices/choiceSlice.ts:[2m107:7[22m[39m
+[90m [2m❯[22m src/features/editor/store/slices/choiceSlice.test.ts:[2m59:31[22m[39m
+
+[31mThis error originated in "[1msrc/features/editor/store/slices/choiceSlice.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m37 passed[39m[22m[90m (37)[39m
+[2m     Errors [22m [1m[31m48 errors[39m[22m
+[2m   Start at [22m 23:31:13
+[2m   Duration [22m 730ms[2m (transform 876ms, setup 199ms, import 2.16s, tests 50ms, environment 1ms)[22m
+

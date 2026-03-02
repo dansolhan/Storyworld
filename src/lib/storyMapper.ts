@@ -1,4 +1,4 @@
-import type { Edge } from '@xyflow/react';
+import { type Edge, MarkerType } from '@xyflow/react';
 import type { PageNodeType } from '../features/editor/nodes/PageNode';
 // import type { Page } from '../domain/Page/Page';
 import type { Choice } from '../domain/Choice/Choice';
@@ -96,8 +96,13 @@ export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[]
             source: page.id,
             target: choice.targetPageId,
             sourceHandle: choice.id,
+            type: 'floating',
             animated: true,
             style: { stroke: 'var(--color-edge-default)' },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: 'var(--color-edge-default)'
+            }
           });
         }
       });

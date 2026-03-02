@@ -1,2 +1,7 @@
-// No global setup needed for pure domain unit testing.
-// @testing-library/jest-dom was removed because it caused ESM crashes via @asamuzakjp/css-color.
+import { vi } from 'vitest';
+
+vi.mock('idb-keyval', () => ({
+  get: vi.fn().mockResolvedValue(undefined),
+  set: vi.fn().mockResolvedValue(undefined),
+  del: vi.fn().mockResolvedValue(undefined),
+}));
