@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { Drawer } from '../../../../components/ui/Drawer/Drawer';
+import { SidePanel } from '../../../../components/ui/SidePanel/SidePanel';
 import { Button } from '../../../../components/ui/Button/Button';
 import styles from './VariableManager.module.css';
 
@@ -23,7 +23,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClos
   };
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} title="Global Variables" width="400px">
+    <SidePanel isOpen={isOpen} onClose={onClose} title="Global Variables" position="bottom" height="400px">
       <div className={styles.container}>
         <p className={styles.description}>
           Define variables to be used in paragraphs. Example: <code>{'{'}{'{'}playerName{'}'}{'}'}</code>
@@ -66,6 +66,6 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClos
           )}
         </div>
       </div>
-    </Drawer>
+    </SidePanel>
   );
 };

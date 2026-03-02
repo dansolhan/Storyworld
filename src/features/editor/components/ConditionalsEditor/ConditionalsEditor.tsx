@@ -6,7 +6,7 @@ import { ConditionalCard } from './ConditionalCard';
 import styles from './ConditionalsEditor.module.css';
 
 interface ConditionalsEditorProps {
-  targetType: 'choice' | 'paragraph';
+  targetType: 'choice' | 'paragraph' | 'action';
   pageId: string;
   targetId: string;
   conditionals: Conditional[];

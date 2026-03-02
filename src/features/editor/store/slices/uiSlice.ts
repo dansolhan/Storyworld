@@ -14,7 +14,14 @@ export const createUISlice: StateCreator<
   isVariableManagerOpen: false,
 
   setSelectedPage: (pageId) => {
-    set({ selectedPageId: pageId });
+    set((state) => ({
+      ...state,
+      selectedPageId: pageId,
+      ...(pageId !== null && {
+        isStorySettingsOpen: false,
+        isVariableManagerOpen: false,
+      }),
+    }));
   },
 
   setConnectingChoice: (choice) => {
@@ -26,10 +33,24 @@ export const createUISlice: StateCreator<
   },
 
   setIsStorySettingsOpen: (isOpen) => {
-    set({ isStorySettingsOpen: isOpen });
+    set((state) => ({
+      ...state,
+      isStorySettingsOpen: isOpen,
+      ...(isOpen && {
+        selectedPageId: null,
+        isVariableManagerOpen: false,
+      }),
+    }));
   },
 
   setIsVariableManagerOpen: (isOpen) => {
-    set({ isVariableManagerOpen: isOpen });
+    set((state) => ({
+      ...state,
+      isVariableManagerOpen: isOpen,
+      ...(isOpen && {
+        selectedPageId: null,
+        isStorySettingsOpen: false,
+      }),
+    }));
   }
 });

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ReactFlowProvider } from '@xyflow/react';
 import { GraphEditor } from './features/editor/GraphEditor';
 import { Player } from './features/player/Player';
 import { Button } from './components/ui/Button/Button';
@@ -39,7 +40,9 @@ function App() {
       </div>
 
       {mode === 'editor' ? (
-        <GraphEditor />
+        <ReactFlowProvider>
+          <GraphEditor />
+        </ReactFlowProvider>
       ) : (
         playingStory && <Player storyData={playingStory} onExit={() => setMode('editor')} />
       )}

@@ -77,52 +77,50 @@ export const GraphEditor: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Selection Overlay */}
-      {interactionStrategy.overlayMessage && (
-        <div className={styles.selectionOverlay}>
-          <p className={styles.selectionOverlayText}>
-            {interactionStrategy.overlayMessage}
-          </p>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => interactionStrategy.onCancel()}
-          >
-            Cancel
-          </Button>
-        </div>
-      )}
-
-      {/* Editor Toolbar */}
+      {/* Left Panel */}
       <EditorToolbar
         onOpenVariableManager={() => setIsVariableManagerOpen(true)}
         onOpenStorySettings={() => setIsStorySettingsOpen(true)}
       />
 
-      <ReactFlow
-        nodes={nodesWithHandlers}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeClick={handleNodeClick}
-        onPaneClick={handlePaneClick}
-        nodeTypes={nodeTypes}
-        fitView
-        style={{ cursor: interactionStrategy.cursor }}
-      >
-        <Background gap={16} color="var(--color-border-default)" />
-        <Controls />
-        <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />
-      </ReactFlow>
+      <div className={styles.flowWrapper}>
+        {/* Selection Overlay */}
+        {interactionStrategy.overlayMessage && (
+          <div className={styles.selectionOverlay}>
+            <p className={styles.selectionOverlayText}>
+              {interactionStrategy.overlayMessage}
+            </p>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => interactionStrategy.onCancel()}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
 
-      {/* Contextual Editor Sidebar */}
+        <ReactFlow
+          nodes={nodesWithHandlers}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onNodeClick={handleNodeClick}
+          onPaneClick={handlePaneClick}
+          nodeTypes={nodeTypes}
+          fitView
+          style={{ width: '100%', height: '100%', cursor: interactionStrategy.cursor }}
+        >
+          <Background gap={16} color="var(--color-border-default)" />
+          <Controls />
+          <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />
+        </ReactFlow>
+      </div>
+
+      {/* Right Panels */}
       <EditorSidebar />
-
-      {/* Global Story Settings */}
       <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={() => setIsStorySettingsOpen(false)} />
-
-      {/* Global Variables Manager */}
       <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
     </div>
   );

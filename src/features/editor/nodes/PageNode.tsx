@@ -20,8 +20,10 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
     updateNodeInternals(id);
   }, [data.choices?.length, id, updateNodeInternals]);
 
+  const typeClass = data.type === 'plot' ? styles.typePlot : styles.typeLocation;
+
   return (
-    <div className={styles.nodeWrapper}>
+    <div className={`${styles.nodeWrapper} ${typeClass}`}>
       {/* Target handle - where this page can be connected TO */}
       <Handle
         type="target"

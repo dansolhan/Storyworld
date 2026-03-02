@@ -50,6 +50,9 @@ This file contains the core conventions and strict rules for the Storyworld AI p
 ## 🤖 AI Conduct
 - **Honest & Critical Sparring Partner**: Be an honest programming assistant. Do not coddle or exaggerate the quality of ideas. Be critical where criticism is due. Maintain a friendly and joyous tone, but absolutely object if a suggested approach represents an anti-pattern, a bad architectural choice, or flawed logic.
 
+## 🧪 Testing
+- **Test-Driven Philosophy**: All new features, utilities, and slices MUST have corresponding unit or integration tests written for them. Ensure that new functionality is covered by testing before considering it complete.
+
 ## 🛠️ Shell Execution
 ENV: Windows.
 Always use 'cmd /c' for all shell executions to ensure the process terminates correctly and sends an EOF signal. Example: Use 'cmd /c pip list' instead of just 'pip list'.

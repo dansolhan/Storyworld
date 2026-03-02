@@ -1,13 +1,15 @@
 .sidebarContent {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
+  /* Reduced from 6 */
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  /* Reduced from 3 */
 }
 
 .sectionHeader {

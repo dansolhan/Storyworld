@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
+import { useReactFlow } from '@xyflow/react';
+import { Target } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { Drawer } from '../../../../components/ui/Drawer/Drawer';
+import { SidePanel } from '../../../../components/ui/SidePanel/SidePanel';
 import { Button } from '../../../../components/ui/Button/Button';
 import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTextEditor';
 import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/BoldFeature';
@@ -8,6 +10,7 @@ import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import { ConditionalsEditor } from '../ConditionalsEditor/ConditionalsEditor';
+import { ActionsEditor } from '../ActionsEditor/ActionsEditor';
 import styles from './EditorSidebar.module.css';
 
 // Define the standard set of features for paragraphs... (handled slightly lower down, I need multiple chunks)
@@ -24,6 +27,7 @@ export const EditorSidebar: React.FC = () => {
     setSelectedPage,
     nodes,
     updatePageTitle,
+    updatePageType,
     addParagraph,
     updateParagraph,
     addChoice,
@@ -38,22 +42,42 @@ export const EditorSidebar: React.FC = () => {
     [nodes, selectedPageId]
   );
 
+  const { fitView, setNodes } = useReactFlow();
+
+  const handleGoToTarget = (targetId: string) => {
+    setSelectedPage(targetId);
+    setNodes((nds) =>
+      nds.map((node) => ({
+        ...node,
+        selected: node.id === targetId,
+      }))
+    );
+    setTimeout(() => {
+      fitView({ nodes: [{ id: targetId }], duration: 800, maxZoom: 1 });
+    }, 50);
+  };
+
   if (!selectedPageId || !selectedNode) {
-    return <Drawer isOpen={false} onClose={() => setSelectedPage(null)}><div /></Drawer>;
+    return <SidePanel position="bottom" height="50vh" isOpen={false} onClose={() => setSelectedPage(null)}><div /></SidePanel>;
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updatePageTitle(selectedPageId, e.target.value);
   };
 
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updatePageType(selectedPageId, e.target.value as 'location' | 'plot');
+  };
+
   return (
-    <Drawer
+    <SidePanel
       isOpen={!connectingChoice}
       onClose={() => {
         if (!connectingChoice) setSelectedPage(null);
       }}
       title="Edit Page"
-      width="450px"
+      position="bottom"
+      height="50vh"
     >
       <div className={styles.sidebarContent}>
 
@@ -66,7 +90,27 @@ export const EditorSidebar: React.FC = () => {
             value={selectedNode.data.title}
             onChange={handleTitleChange}
             placeholder="e.g. The Dark Forest"
+            style={{ marginBottom: '0.5rem' }}
           />
+
+          <label className={styles.label}>Page Type</label>
+          <select
+            className={styles.input}
+            value={selectedNode.data.type || 'location'}
+            onChange={handleTypeChange}
+          >
+            <option value="location">Location</option>
+            <option value="plot">Plot / Action</option>
+          </select>
+
+          <div style={{ marginTop: '0.5rem' }}>
+            <ActionsEditor
+              targetType="page"
+              pageId={selectedPageId}
+              targetId={selectedPageId}
+              actions={selectedNode.data.actions || []}
+            />
+          </div>
         </section>
 
         {/* Paragraphs Section */}
@@ -125,8 +169,26 @@ export const EditorSidebar: React.FC = () => {
                   />
 
                   <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                    <small className={styles.choiceMeta} style={{ margin: 0 }}>
+                    <small className={styles.choiceMeta} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
                       Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
+                      {c.targetPageId && (
+                        <button
+                          type="button"
+                          onClick={() => handleGoToTarget(c.targetPageId!)}
+                          title="Locate in graph"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'var(--color-primary-500)'
+                          }}
+                        >
+                          <Target size={14} />
+                        </button>
+                      )}
                     </small>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <Button
@@ -158,6 +220,12 @@ export const EditorSidebar: React.FC = () => {
                     targetId={c.id}
                     conditionals={c.conditionals || []}
                   />
+                  <ActionsEditor
+                    targetType="choice"
+                    pageId={selectedPageId}
+                    targetId={c.id}
+                    actions={c.actions || []}
+                  />
                 </div>
               );
             })}
@@ -165,6 +233,6 @@ export const EditorSidebar: React.FC = () => {
         </section>
 
       </div>
-    </Drawer>
+    </SidePanel>
   );
 };

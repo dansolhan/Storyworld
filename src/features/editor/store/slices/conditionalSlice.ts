@@ -2,6 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
 import type { Choice } from '../../../../domain/Choice/Choice';
 import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
+import type { Action } from '../../../../domain/Actions/Action';
 import { conditionalBlueprints } from '../../../../domain/Conditionals/registry';
 import { addConditionalToTree, updateConditionalInTree, removeConditionalFromTree } from '../utils/conditionalUtils';
 
@@ -61,6 +62,22 @@ export const createConditionalSlice: StateCreator<
                 }),
               },
             };
+          } else if (targetType === 'action' && node.data.actions) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                actions: node.data.actions.map((a: Action) => {
+                  if (a.id === targetId) {
+                    return {
+                      ...a,
+                      conditionals: addConditionalToTree(a.conditionals, parentId || null, newConditional),
+                    };
+                  }
+                  return a;
+                }),
+              },
+            };
           }
         }
         return node;
@@ -101,6 +118,22 @@ export const createConditionalSlice: StateCreator<
                     };
                   }
                   return p;
+                }),
+              },
+            };
+          } else if (targetType === 'action' && node.data.actions) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                actions: node.data.actions.map((a: Action) => {
+                  if (a.id === targetId && a.conditionals) {
+                    return {
+                      ...a,
+                      conditionals: updateConditionalInTree(a.conditionals, conditionalId, params),
+                    };
+                  }
+                  return a;
                 }),
               },
             };

@@ -1,0 +1,89 @@
+.sidePanel {
+  background-color: var(--color-bg-primary);
+  box-shadow: var(--shadow-xl);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Position configurations */
+.right {
+  border-left: 1px solid var(--color-border-default);
+  height: 100%;
+}
+
+.right:not(.open) {
+  border-left: none;
+}
+
+.left {
+  border-right: 1px solid var(--color-border-default);
+  height: 100%;
+}
+
+.left:not(.open) {
+  border-right: none;
+}
+
+.bottom {
+  border-top: 1px solid var(--color-border-default);
+  width: 100%;
+}
+
+.bottom:not(.open) {
+  border-top: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-secondary);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}

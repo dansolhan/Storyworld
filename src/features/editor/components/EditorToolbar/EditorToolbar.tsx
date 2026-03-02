@@ -56,14 +56,22 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <Button variant="primary" size="sm" onClick={handleAddNewPage}>
             + Add Page Node
           </Button>
+        </div>
+
+        <div className={styles.divider} />
+
+        <div className={styles.toolbarGroup}>
           <Button variant="secondary" size="sm" onClick={onOpenVariableManager}>
             Variables
           </Button>
-        </div>
-        <div className={styles.toolbarGroup}>
           <Button variant="secondary" size="sm" onClick={onOpenStorySettings}>
             Story Settings
           </Button>
+        </div>
+
+        <div className={styles.divider} />
+
+        <div className={styles.toolbarGroup}>
           <Button variant="secondary" size="sm" onClick={handleImportClick}>
             Import JSON
           </Button>
