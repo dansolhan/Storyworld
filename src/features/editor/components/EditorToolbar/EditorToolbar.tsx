@@ -1,22 +1,10 @@
 import React from 'react';
 import { Button } from '../../../../components/ui/Button/Button';
 import { useEditorStore } from '../../store/useEditorStore';
-import { compileGraphToStory } from '../../../../lib/storyMapper';
-import { exportToJson, exportToStoryworld } from '../../../../utils/exportUtils';
-import { useStoryImport } from '../../hooks/useStoryImport';
 import styles from './EditorToolbar.module.css';
 
-interface EditorToolbarProps {
-  onOpenVariableManager: () => void;
-  onOpenStorySettings: () => void;
-}
-
-export const EditorToolbar: React.FC<EditorToolbarProps> = ({
-  onOpenVariableManager,
-  onOpenStorySettings
-}) => {
-  const { nodes, edges, variables, storyTitle, storyDescription, startPageId, addPage } = useEditorStore();
-  const { fileInputRef, handleImportClick, handleFileChange } = useStoryImport();
+export const EditorToolbar: React.FC = () => {
+  const { addPage } = useEditorStore();
 
   const handleAddNewPage = () => {
     const x = Math.random() * 400;
@@ -24,62 +12,12 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     addPage(x, y);
   };
 
-  const handleExportJson = () => {
-    const storyData = compileGraphToStory(nodes, edges, variables, {
-      title: storyTitle,
-      description: storyDescription,
-      startPageId
-    });
-    exportToJson(storyData);
-  };
-
-  const handleExportStoryworld = () => {
-    const storyData = compileGraphToStory(nodes, edges, variables, {
-      title: storyTitle,
-      description: storyDescription,
-      startPageId
-    });
-    exportToStoryworld(storyData);
-  };
-
   return (
     <>
-      <input
-        type="file"
-        accept=".json"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
       <div className={styles.toolbar}>
         <div className={styles.toolbarGroup}>
           <Button variant="primary" size="sm" onClick={handleAddNewPage}>
             + Add Page Node
-          </Button>
-        </div>
-
-        <div className={styles.divider} />
-
-        <div className={styles.toolbarGroup}>
-          <Button variant="secondary" size="sm" onClick={onOpenVariableManager}>
-            Variables
-          </Button>
-          <Button variant="secondary" size="sm" onClick={onOpenStorySettings}>
-            Story Settings
-          </Button>
-        </div>
-
-        <div className={styles.divider} />
-
-        <div className={styles.toolbarGroup}>
-          <Button variant="secondary" size="sm" onClick={handleImportClick}>
-            Import JSON
-          </Button>
-          <Button variant="secondary" size="sm" onClick={handleExportJson}>
-            Export to JSON
-          </Button>
-          <Button variant="secondary" size="sm" onClick={handleExportStoryworld}>
-            Export to .storyworld
           </Button>
         </div>
       </div>

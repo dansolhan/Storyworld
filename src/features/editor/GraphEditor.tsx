@@ -78,10 +78,7 @@ export const GraphEditor: React.FC = () => {
   return (
     <div className={styles.container}>
       {/* Left Panel */}
-      <EditorToolbar
-        onOpenVariableManager={() => setIsVariableManagerOpen(true)}
-        onOpenStorySettings={() => setIsStorySettingsOpen(true)}
-      />
+      <EditorToolbar />
 
       <div className={styles.flowWrapper}>
         {/* Selection Overlay */}
