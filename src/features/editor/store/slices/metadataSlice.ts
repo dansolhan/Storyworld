@@ -5,8 +5,10 @@ export const createMetadataSlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, 'storyTitle' | 'storyDescription' | 'startPageId' | 'setStoryTitle' | 'setStoryDescription' | 'setStartPageId'>
+  Pick<EditorState, 'storyId' | 'setStoryId' | 'storyTitle' | 'storyDescription' | 'startPageId' | 'setStoryTitle' | 'setStoryDescription' | 'setStartPageId'>
 > = (set) => ({
+  storyId: null,
+  setStoryId: (id) => set({ storyId: id }),
   storyTitle: 'Untitled Story',
   storyDescription: '',
   startPageId: null,

@@ -10,8 +10,10 @@ import { useStoryImport } from './features/editor/hooks/useStoryImport';
 import type { StoryData } from './domain/Story/StoryData';
 import { MenuBar, type MenuConfig } from './components/ui/MenuBar/MenuBar';
 
+import { Dashboard } from './features/dashboard/Dashboard';
+
 function App() {
-  const [mode, setMode] = useState<'editor' | 'player'>('editor');
+  const [mode, setMode] = useState<'dashboard' | 'editor' | 'player'>('dashboard');
   const [playingStory, setPlayingStory] = useState<StoryData | null>(null);
   const { fileInputRef, handleImportClick, handleFileChange } = useStoryImport();
 
@@ -52,6 +54,8 @@ function App() {
     {
       label: 'File',
       items: [
+        { label: '< Back to Dashboard', onClick: () => setMode('dashboard') },
+        { divider: true },
         { label: 'Open File...', onClick: handleImportClick },
         { divider: true },
         { label: 'Save / Export to JSON', onClick: handleExportJson },
@@ -81,7 +85,7 @@ function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <MenuBar menus={menus} />
+      {mode !== 'dashboard' && <MenuBar menus={menus} />}
       <input
         type="file"
         accept=".json"
@@ -91,19 +95,26 @@ function App() {
       />
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {/* Floating Toggle Button */}
-        <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 100 }}>
-          {mode === 'editor' ? (
-            <Button variant="primary" onClick={handlePlay}>
-              ▶ Play Story
-            </Button>
-          ) : (
-            <Button variant="secondary" onClick={() => setMode('editor')}>
-              ■ Stop Playing
-            </Button>
-          )}
-        </div>
+        {mode !== 'dashboard' && (
+          <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 100 }}>
+            {mode === 'editor' ? (
+              <Button variant="primary" onClick={handlePlay}>
+                ▶ Play Story
+              </Button>
+            ) : (
+              <Button variant="secondary" onClick={() => setMode('editor')}>
+                ■ Stop Playing
+              </Button>
+            )}
+          </div>
+        )}
 
-        {mode === 'editor' ? (
+        {mode === 'dashboard' ? (
+          <Dashboard
+            onOpenStory={() => setMode('editor')}
+            onImportClick={handleImportClick}
+          />
+        ) : mode === 'editor' ? (
           <ReactFlowProvider>
             <GraphEditor />
           </ReactFlowProvider>

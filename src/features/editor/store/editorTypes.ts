@@ -9,7 +9,13 @@ export interface EditorState {
   nodes: EditorNode[];
   edges: Edge[];
 
+  // System State
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+
   // Story Metadata
+  storyId: string | null;
+  setStoryId: (id: string | null) => void;
   storyTitle: string;
   storyDescription: string;
   startPageId: string | null;

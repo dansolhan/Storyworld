@@ -5,8 +5,11 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, 'selectedPageId' | 'setSelectedPage' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen'>
+  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen'>
 > = (set) => ({
+  _hasHydrated: false,
+  setHasHydrated: (state) => set({ _hasHydrated: state }),
+
   selectedPageId: null,
   connectingChoice: null,
   isSelectingStartNode: false,

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Handle, Position, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react';
+import { Handle, Position, useUpdateNodeInternals, useHandleConnections, type NodeProps, type Node } from '@xyflow/react';
 import { Card } from '../../../components/ui/Card/Card';
 import type { Page } from '../../../domain/Page/Page';
 import styles from './PageNode.module.css';
@@ -15,6 +15,8 @@ export type PageNodeType = Node<PageNodeData, 'pageNode'>;
 
 export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
   const updateNodeInternals = useUpdateNodeInternals();
+  const targetConnections = useHandleConnections({ type: 'target' });
+  const hasIncoming = targetConnections.length > 0;
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -29,6 +31,7 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
         type="target"
         position={Position.Top}
         className={styles.targetHandle}
+        style={{ opacity: hasIncoming ? 1 : 0 }}
       />
 
       <Card padding="md" className={styles.card} style={data.isStartNode ? { borderColor: 'var(--color-primary-500)' } : {}}>
@@ -48,7 +51,7 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
                 position={Position.Right}
                 id={choice.id}
                 className={styles.sourceHandle}
-                style={{ top: `${(index + 1) * (100 / (data.choices.length + 1))}%` }}
+                style={{ top: `${(index + 1) * (100 / (data.choices.length + 1))}%`, opacity: choice.targetPageId ? 1 : 0 }}
               />
             </div>
           ))}

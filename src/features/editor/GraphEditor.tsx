@@ -42,17 +42,18 @@ export const GraphEditor: React.FC = () => {
     setIsStorySettingsOpen,
     isVariableManagerOpen,
     setIsVariableManagerOpen,
+    _hasHydrated,
   } = useEditorStore();
 
   const interactionStrategy = useInteractionStrategy();
 
   // Initialization: Just add one starting node if the canvas is completely empty.
-  // In a real app we'd load a saved project here.
+  // We wait for _hasHydrated so we don't accidentally write defaults over async-loading storage!
   useEffect(() => {
-    if (nodes.length === 0) {
+    if (_hasHydrated && nodes.length === 0) {
       addPage(100, 100);
     }
-  }, [nodes.length, addPage]);
+  }, [nodes.length, addPage, _hasHydrated]);
 
   // We wrap the add actions so they are compatible with the Node data interface
   const handleAddParagraph = (id: string) => addParagraph(id);
@@ -112,6 +113,7 @@ export const GraphEditor: React.FC = () => {
           onPaneClick={handlePaneClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          nodesConnectable={false}
           fitView
           style={{ width: '100%', height: '100%', cursor: interactionStrategy.cursor }}
         >
