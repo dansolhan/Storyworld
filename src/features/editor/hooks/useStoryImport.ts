@@ -1,7 +1,7 @@
 import { useRef } from 'react';
-import type { StoryData } from '../../../domain/Story/StoryData';
 import { parseStoryToGraph } from '../../../lib/storyMapper';
 import { useEditorStore } from '../store/useEditorStore';
+import { migrateStory } from '../../../domain/Story/migrations/migrations';
 
 export const useStoryImport = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,10 +19,11 @@ export const useStoryImport = () => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const parsedData: StoryData = JSON.parse(content);
+        const initialParsedData = JSON.parse(content);
+        const parsedData = migrateStory(initialParsedData);
 
         // Simplistic validation to ensure it's our graph format
-        if (parsedData && Array.isArray(parsedData.pages) && parsedData.pages.length > 0 && 'id' in parsedData.pages[0]) {
+        if (parsedData && Array.isArray(parsedData.pages) && (parsedData.pages.length === 0 || 'id' in parsedData.pages[0])) {
           const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
           loadStory(
             parsedNodes,

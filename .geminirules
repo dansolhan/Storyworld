@@ -29,6 +29,13 @@ This file contains the core conventions and strict rules for the Storyworld AI p
 - **Data Models**: Maintain clean interfaces for domain entities (like `Page`, `Choice`, `Paragraph`) in their respective domain folders `src/domain/`. Use type-only imports (e.g., `import type { Page } from ...`) when importing them into components.
 - **Props Interfaces**: Always define and export the TypeScript interface for a React component's props directly above the component definition.
 
+## 🚚 Schema & Data Migrations
+- **Strict Backward Compatibility**: The root JSON schema (`StoryData`) keeps an internal `version` number for save/import flows.
+- **[CRITICAL] Migration Rule**: EVERY time a breaking change is made to the JSON structure of a story (e.g., adding a new required field, renaming properties, changing data shapes), you MUST:
+  1. Increment the `CURRENT_VERSION` in `src/domain/Story/migrations/migrations.ts`.
+  2. Write a new migration script in `migrations.ts` that safely upcasts the old schema version to the new version without data loss.
+  3. Ensure the test suite in `migrations.test.ts` is updated to verify this specific migration flow works correctly.
+
 ## 🧱 Component Rules & Extraction
 - **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards, Popovers) strictly within `src/components/ui/`.
 - **[CRITICAL] DRY Principle & Extraction**: Actively identify UI elements, hooks, or logic that can be extracted into isolated, generalized code. Do not duplicate code. Always maintain a healthy separation of concerns by creating reusable utility functions or generic UI components wherever appropriate. If you write the same code twice, abstract it.

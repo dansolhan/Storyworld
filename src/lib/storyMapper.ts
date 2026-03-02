@@ -3,6 +3,7 @@ import type { PageNodeType } from '../features/editor/nodes/PageNode';
 // import type { Page } from '../domain/Page/Page';
 import type { Choice } from '../domain/Choice/Choice';
 import type { StoryData } from '../domain/Story/StoryData';
+import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
 
 /**
  * Compiles the raw React Flow nodes and edges back into our pure domain Page[] array.
@@ -40,6 +41,7 @@ export const compileGraphToStory = (
   });
 
   return {
+    version: CURRENT_VERSION,
     pages,
     variables,
     title: metadata?.title || 'Untitled Story',
