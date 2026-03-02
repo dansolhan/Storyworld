@@ -7,4 +7,7 @@ export interface StoryData {
   startPageId?: string;
   pages: Page[];
   variables: Record<string, string>;
+  uiMetadata?: {
+    nodePositions?: Record<string, { x: number; y: number }>;
+  };
 }

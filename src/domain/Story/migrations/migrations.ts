@@ -1,15 +1,22 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
 type MigrationFunction = (oldStory: any) => any;
+
+const migrateV1ToV2: MigrationFunction = (v1Story) => {
+  // Version 2 introduces uiMetadata containing nodePositions for Editor layout.
+  // We simply step the version and ensure the object structure is prepared to receive it if needed.
+  return {
+    ...v1Story,
+  };
+};
 
 // A dictionary mapping the *starting* version to the migration function
 // that upgrades it to starting version + 1.
 // Expected usage: If the story is version 1, it will run `migrationSteps[1]` to get version 2.
 const migrationSteps: Record<number, MigrationFunction> = {
-  // 1: migrateV1ToV2,
-  // 2: migrateV2ToV3,
+  1: migrateV1ToV2,
 };
 
 export function migrateStory(storyJson: any): StoryData {

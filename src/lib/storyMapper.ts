@@ -40,6 +40,11 @@ export const compileGraphToStory = (
     };
   });
 
+  const nodePositions: Record<string, { x: number; y: number }> = {};
+  nodes.forEach(node => {
+    nodePositions[node.id] = { x: node.position.x, y: node.position.y };
+  });
+
   return {
     version: CURRENT_VERSION,
     pages,
@@ -47,6 +52,9 @@ export const compileGraphToStory = (
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,
+    uiMetadata: {
+      nodePositions,
+    }
   };
 };
 
@@ -61,15 +69,17 @@ export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[]
   const pages = storyData.pages || [];
 
   pages.forEach((page, index) => {
-    // Generate a basic grid layout since pure JSON doesn't save x/y coordinates.
-    // In the true future, we might save x/y in metadata, but for now we arrange them.
-    const x = (index % 4) * 350;
-    const y = Math.floor(index / 4) * 400;
+    // Read the saved x/y coordinate, or fallback to a basic grid layout if it doesn't exist.
+    const savedPosition = storyData.uiMetadata?.nodePositions?.[page.id];
+    const position = savedPosition || {
+      x: (index % 4) * 350,
+      y: Math.floor(index / 4) * 400
+    };
 
     nodes.push({
       id: page.id,
       type: 'pageNode',
-      position: { x, y },
+      position,
       data: {
         title: page.title,
         paragraphs: page.paragraphs,
