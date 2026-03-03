@@ -2,6 +2,8 @@ import type { StateCreator } from 'zustand';
 import { MarkerType } from '@xyflow/react';
 import type { EditorState } from '../editorTypes';
 import type { Choice } from '../../../../domain/Choice/Choice';
+import type { Action } from '../../../../domain/Actions/Action';
+
 export const createChoiceSlice: StateCreator<
   EditorState,
   [],
@@ -9,8 +11,10 @@ export const createChoiceSlice: StateCreator<
   Pick<
     EditorState,
     | 'addChoice'
+    | 'addActionOnlyChoice'
     | 'updateChoiceText'
     | 'setChoiceDestination'
+    | 'setChoiceActions'
     | 'createPageFromChoice'
   >
 > = (set, get) => ({
@@ -18,7 +22,26 @@ export const createChoiceSlice: StateCreator<
     set({
       nodes: get().nodes.map((node) => {
         if (node.id === pageId) {
-          const newChoice = { id: `c-${Date.now()}`, text: 'New Choice...', targetPageId: '' };
+          const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...' };
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              choices: [...(node.data.choices || []), newChoice],
+            },
+          };
+        }
+        return node;
+      }),
+    });
+  },
+
+  addActionOnlyChoice: (pageId) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === pageId) {
+          // No targetPageId — this is an action-only choice
+          const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', actions: [] };
           return {
             ...node,
             data: {
@@ -51,7 +74,26 @@ export const createChoiceSlice: StateCreator<
     });
   },
 
-  setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string) => {
+  setChoiceActions: (pageId: string, choiceId: string, actions: Action[]) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === pageId && node.data.choices) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              choices: node.data.choices.map((c: Choice) =>
+                c.id === choiceId ? { ...c, actions } : c
+              ),
+            },
+          };
+        }
+        return node;
+      }),
+    });
+  },
+
+  setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string | undefined) => {
     const { nodes, edges } = get();
 
     // 1. Update the choice's targetPageId in the nodes array
@@ -62,7 +104,7 @@ export const createChoiceSlice: StateCreator<
           data: {
             ...node.data,
             choices: node.data.choices.map((c: Choice) =>
-              c.id === choiceId ? { ...c, targetPageId } : c
+              c.id === choiceId ? { ...c, targetPageId: targetPageId || undefined } : c
             ),
           },
         };

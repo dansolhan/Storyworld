@@ -85,10 +85,11 @@ describe('storyMapper', () => {
     });
 
     it('should handle choices with missing edges gracefully', () => {
-      // Pass empty edges array to see if choices fallback to '' targetPageId
+      // Pass empty edges array to see if choices fallback to undefined targetPageId
       const result = compileGraphToStory(mockNodes, [], mockVariables);
-      expect(result.pages[0].choices![0].targetPageId).toBe('');
+      expect(result.pages[0].choices![0].targetPageId).toBeUndefined();
     });
+
   });
 
   describe('parseStoryToGraph', () => {

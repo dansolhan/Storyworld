@@ -1,0 +1,46 @@
+.node {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 2px solid #9333ea;
+  background-color: #f5f3ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.node:hover {
+  background-color: #ede9fe;
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.35);
+}
+
+:global(.react-flow__node.selected) .node {
+  border-color: #7e22ce;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .node {
+    background-color: rgba(147, 51, 234, 0.15);
+    border-color: rgba(147, 51, 234, 0.6);
+  }
+
+  .node:hover {
+    background-color: rgba(147, 51, 234, 0.28);
+  }
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  color: #6b21a8;
+}
+
+.handle {
+  background-color: #9333ea;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-bg-primary);
+}

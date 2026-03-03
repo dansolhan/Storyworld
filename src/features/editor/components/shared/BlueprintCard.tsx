@@ -9,6 +9,8 @@ interface BlueprintCardProps {
   template: string;
   isGroup?: boolean;
   params: Record<string, unknown>;
+  trigger?: 'on_enter' | 'on_exit';
+  onChangeTrigger?: (trigger: 'on_enter' | 'on_exit') => void;
   onChangeParam: (key: string, value: unknown) => void;
   onRemove: () => void;
   children?: React.ReactNode;
@@ -18,6 +20,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   template,
   isGroup,
   params,
+  trigger,
+  onChangeTrigger,
   onChangeParam,
   onRemove,
   children
@@ -148,6 +152,19 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
           );
         }
 
+        if (key === 'message') {
+          const msg = params.message as string;
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'message', msg || '')}
+            >
+              {msg ? `"${msg}"` : '...'}
+            </span>
+          );
+        }
+
         return <span key={index}>{part}</span>;
       }
       return <span key={index}>{part}</span>;
@@ -178,6 +195,32 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
           &times;
         </button>
       </div>
+
+      {/* Trigger toggle — shown only when the parent passes trigger/onChangeTrigger */}
+      {onChangeTrigger && (
+        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.65rem', color: 'var(--color-text-secondary)', marginRight: '0.25rem' }}>Fires:</span>
+          {(['on_enter', 'on_exit'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => onChangeTrigger(t)}
+              style={{
+                fontSize: '0.62rem',
+                padding: '2px 7px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border-default)',
+                cursor: 'pointer',
+                background: trigger === t ? 'var(--color-primary-500)' : 'transparent',
+                color: trigger === t ? '#fff' : 'var(--color-text-secondary)',
+                fontFamily: 'var(--font-family-sans)',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+            >
+              {t === 'on_enter' ? 'On Enter' : 'On Exit'}
+            </button>
+          ))}
+        </div>
+      )}
 
       {children}
 
@@ -271,6 +314,37 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
               <button
                 onClick={() => {
                   onChangeParam('value', inputValue);
+                  handleClosePopover();
+                }}
+                style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'message' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '240px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Post message text:</p>
+            <div style={{ display: 'flex', gap: '0.25rem' }}>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                autoFocus
+                placeholder="Message to inject next page..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onChangeParam('message', inputValue);
+                    handleClosePopover();
+                  }
+                }}
+                style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '3px' }}
+              />
+              <button
+                onClick={() => {
+                  onChangeParam('message', inputValue);
                   handleClosePopover();
                 }}
                 style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}

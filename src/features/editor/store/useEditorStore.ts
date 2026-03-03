@@ -52,11 +52,24 @@ const processSaveQueue = async () => {
   }
 };
 
+// Debounce timer for saves — prevents flooding IndexedDB during node drags
+let saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
 useEditorStore.subscribe((state) => {
-  // Only save if we are successfully hydrated and actually inside a valid story with an ID
-  if (state._hasHydrated && state.storyId) {
+  // Only save if hydrated and inside a valid story
+  if (!state._hasHydrated || !state.storyId) return;
+
+  if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+
+  saveDebounceTimer = setTimeout(() => {
+    // Capture synthetic node positions so they survive reload
+    const nodePositions: Record<string, { x: number; y: number }> = {};
+    state.nodes.forEach((n) => {
+      nodePositions[n.id] = n.position;
+    });
+
     const snapshot = {
-      version: 3, // Editor storage version
+      version: 3,
       state: {
         nodes: state.nodes,
         edges: state.edges,
@@ -65,9 +78,9 @@ useEditorStore.subscribe((state) => {
         storyTitle: state.storyTitle,
         storyDescription: state.storyDescription,
         startPageId: state.startPageId,
-      }
+      },
     };
     pendingSave = { name: `story-${state.storyId}`, value: snapshot };
     processSaveQueue();
-  }
+  }, 300);
 });

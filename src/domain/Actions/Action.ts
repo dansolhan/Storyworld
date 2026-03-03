@@ -1,8 +1,16 @@
 import type { Conditional } from '../Conditionals/Conditional';
 
+/**
+ * Controls when an action fires relative to page display.
+ * - 'on_enter': fires immediately when the page/choice is triggered, before content is shown
+ * - 'on_exit': fires after the page content has been shown, as the player transitions away
+ */
+export type ActionTrigger = 'on_enter' | 'on_exit';
+
 export interface ActionContext<TVariables = Record<string, unknown>> {
   variables: TVariables;
   setVariable: (key: string, value: unknown) => void;
+  postMessage: (message: string) => void;
   // Extensible for future mutations (e.g. giveItem, addReputation)
 }
 
@@ -10,6 +18,7 @@ export interface Action<TParams = Record<string, unknown>> {
   id: string;
   blueprintId: string;
   params: TParams;
+  trigger?: ActionTrigger; // defaults to 'on_enter' if omitted
   conditionals?: Conditional[]; // Actions can have conditions to execute
 }
 

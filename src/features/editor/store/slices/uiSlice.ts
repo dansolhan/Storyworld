@@ -5,12 +5,13 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen'>
+  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen'>
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
 
   selectedPageId: null,
+  sidebarTab: 'page' as string,
   isEditorSidebarExpanded: false,
   connectingChoice: null,
   isSelectingStartNode: false,
@@ -21,6 +22,7 @@ export const createUISlice: StateCreator<
     set((state) => ({
       ...state,
       selectedPageId: pageId,
+      sidebarTab: 'page', // reset to Page tab whenever a new page is selected
       ...(pageId !== null && {
         isStorySettingsOpen: false,
         isVariableManagerOpen: false,
@@ -30,6 +32,8 @@ export const createUISlice: StateCreator<
       })
     }));
   },
+
+  setSidebarTab: (tab) => set({ sidebarTab: tab }),
 
   setIsEditorSidebarExpanded: (expanded) => {
     set({ isEditorSidebarExpanded: expanded });

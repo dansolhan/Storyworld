@@ -34,14 +34,30 @@ export const goToSubplotBlueprint: ActionBlueprint<GoToSubplotParams> = {
   },
   execute: (params) => {
     // Engine execution logic: Navigate to the target page ID
-    // E.g., context.navigate(params.targetPageId) (depends on how player works)
     console.log(`Navigating to subplot ${params.subplotId}, page ${params.targetPageId}`);
   },
 };
 
+export interface PostMessageParams {
+  message: string;
+}
+
+export const postMessageBlueprint: ActionBlueprint<PostMessageParams> = {
+  id: 'post_message',
+  name: 'Post Message',
+  template: 'Post message: "{{message}}"',
+  defaultParams: {
+    message: '',
+  },
+  execute: (params, context) => {
+    if (!params.message) return;
+    context.postMessage(params.message);
+  },
+};
 
 // Expose a central registry of blueprints for easy selection
 export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [setVariableBlueprint.id]: setVariableBlueprint as unknown as ActionBlueprint<unknown>,
   [goToSubplotBlueprint.id]: goToSubplotBlueprint as unknown as ActionBlueprint<unknown>,
+  [postMessageBlueprint.id]: postMessageBlueprint as unknown as ActionBlueprint<unknown>,
 };

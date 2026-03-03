@@ -1,20 +1,38 @@
 import type { StoryData } from '../domain/Story/StoryData';
 
-export const mockStory: StoryData = {
-  version: 3,
+/**
+ * Example story for development and testing.
+ * Version 4 showcases all new features:
+ *  - Action triggers (on_enter / on_exit)
+ *  - Action-only choices (no targetPageId, only actions)
+ *  - Post Message action
+ *  - go_to_subplot on choices (not on pages)
+ */
+export const exampleStory: StoryData = {
+  version: 4,
+  title: "The Awakening",
+  description: "A short demo story showcasing subplots, action triggers, and action-only choices.",
+  startPageId: "page-1",
   variables: {
     playerName: "Arthur",
     heroClass: "Knight",
-    weapon: "Rusty Longsword"
+    weapon: "Rusty Longsword",
+    hasGoldenKey: "false",
+    hasFoundTome: "false",
   },
   subplots: [
     {
       id: "subplot-cellar",
       name: "The Hidden Cellar",
-      description: "A dark forgotten place below."
+      description: "A dark forgotten place below the room."
     }
   ],
   pages: [
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MAIN PLOT
+    // ─────────────────────────────────────────────────────────────────────────
+
     {
       id: "page-1",
       title: "The Awakening",
@@ -27,16 +45,50 @@ export const mockStory: StoryData = {
         { id: "c1-1", text: "Inspect the door", targetPageId: "page-2" },
         { id: "c1-2", text: "Look out the window", targetPageId: "page-3" },
         { id: "c1-3", text: "Search your pockets", targetPageId: "page-5" },
-        { id: "c1-4", text: "Lift the loose floorboard", targetPageId: "page-cellar-1" }
+        // Action-only choice: no targetPageId, just actions
+        {
+          id: "c1-pray",
+          text: "Kneel and pray for guidance",
+          actions: [
+            {
+              id: "act-pray-msg",
+              blueprintId: "post_message",
+              trigger: "on_enter",
+              params: { message: "A faint warmth washes over you. Perhaps the gods are listening." }
+            },
+            {
+              id: "act-pray-var",
+              blueprintId: "set_variable",
+              trigger: "on_enter",
+              params: { variableKey: "heroClass", value: "Blessed Knight" }
+            }
+          ]
+        },
+        // Subplot entry via choice action
+        {
+          id: "c1-4",
+          text: "Lift the loose floorboard",
+          actions: [
+            {
+              id: "act-go-cellar-choice",
+              blueprintId: "go_to_subplot",
+              trigger: "on_enter",
+              params: { subplotId: "subplot-cellar", targetPageId: "page-cellar-1" }
+            }
+          ]
+        }
       ],
+      // on_exit action: fires when the player leaves this page
       actions: [
         {
-          id: "act-go-cellar",
-          blueprintId: "go_to_subplot",
-          params: { subplotId: "subplot-cellar", targetPageId: "page-cellar-1" }
+          id: "act-leave-awakening",
+          blueprintId: "set_variable",
+          trigger: "on_exit",
+          params: { variableKey: "hasVisitedStart", value: "true" }
         }
       ]
     },
+
     {
       id: "page-2",
       title: "The Locked Door",
@@ -48,6 +100,7 @@ export const mockStory: StoryData = {
         { id: "c2-1", text: "Go back to the center of the room", targetPageId: "page-1" }
       ]
     },
+
     {
       id: "page-3",
       title: "A Glimpse Outside",
@@ -57,9 +110,23 @@ export const mockStory: StoryData = {
       ],
       choices: [
         { id: "c3-1", text: "Watch the glow closely", targetPageId: "page-4" },
-        { id: "c3-2", text: "Step away from the window", targetPageId: "page-1" }
+        { id: "c3-2", text: "Step away from the window", targetPageId: "page-1" },
+        // Action-only: post a flavour message, no navigation
+        {
+          id: "c3-signal",
+          text: "Wave at the floating light",
+          actions: [
+            {
+              id: "act-wave-msg",
+              blueprintId: "post_message",
+              trigger: "on_enter",
+              params: { message: "The light pulses twice — as if acknowledging you." }
+            }
+          ]
+        }
       ]
     },
+
     {
       id: "page-4",
       title: "The Approaching Light",
@@ -72,6 +139,7 @@ export const mockStory: StoryData = {
         { id: "c4-2", text: "Ignore the figure and turn back", targetPageId: "page-1" }
       ]
     },
+
     {
       id: "page-5",
       title: "Checking Pockets",
@@ -82,8 +150,24 @@ export const mockStory: StoryData = {
       choices: [
         { id: "c5-1", text: "Take the key to the door", targetPageId: "page-6" },
         { id: "c5-2", text: "Keep looking around", targetPageId: "page-1" }
+      ],
+      // on_enter: immediately mark the key as found + inject a message
+      actions: [
+        {
+          id: "act-find-key",
+          blueprintId: "set_variable",
+          trigger: "on_enter",
+          params: { variableKey: "hasGoldenKey", value: "true" }
+        },
+        {
+          id: "act-find-key-msg",
+          blueprintId: "post_message",
+          trigger: "on_enter",
+          params: { message: "You now carry the strange golden key." }
+        }
       ]
     },
+
     {
       id: "page-6",
       title: "The Hidden Lock",
@@ -95,6 +179,7 @@ export const mockStory: StoryData = {
         { id: "c6-1", text: "Step into the corridor", targetPageId: "page-end" }
       ]
     },
+
     {
       id: "page-end",
       title: "To Be Continued...",
@@ -104,6 +189,11 @@ export const mockStory: StoryData = {
       ],
       choices: []
     },
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // SUBPLOT: The Hidden Cellar
+    // ─────────────────────────────────────────────────────────────────────────
+
     {
       id: "page-cellar-1",
       subplotId: "subplot-cellar",
@@ -113,17 +203,23 @@ export const mockStory: StoryData = {
         { id: "p-cell1-2", text: "<p>In the corner, you see a small chest glimmering faintly in the dark.</p>" }
       ],
       choices: [
-        { id: "c-cell1-1", text: "Climb back up", targetPageId: "page-1" },
-        { id: "c-cell1-2", text: "Open the chest", targetPageId: "page-cellar-2" }
-      ],
-      actions: [
+        // Action-only: exit subplot via choice
         {
-          id: "act-leave-cellar",
-          blueprintId: "go_to_subplot",
-          params: { subplotId: null, targetPageId: "page-1" }
-        }
+          id: "c-cell1-back",
+          text: "Climb back up",
+          actions: [
+            {
+              id: "act-leave-cellar",
+              blueprintId: "go_to_subplot",
+              trigger: "on_enter",
+              params: { subplotId: null, targetPageId: "page-1" }
+            }
+          ]
+        },
+        { id: "c-cell1-2", text: "Open the chest", targetPageId: "page-cellar-2" }
       ]
     },
+
     {
       id: "page-cellar-2",
       subplotId: "subplot-cellar",
@@ -132,15 +228,40 @@ export const mockStory: StoryData = {
         { id: "p-cell2-1", text: "<p>The chest is unlocked! Inside, you find a handful of gold coins and an old, dusty tome.</p>" }
       ],
       choices: [
-        { id: "c-cell2-1", text: "Return to the room above", targetPageId: "page-1" }
-      ],
-      actions: [
+        // Action-only: take the tome
         {
-          id: "act-leave-cellar-treasure",
-          blueprintId: "go_to_subplot",
-          params: { subplotId: null, targetPageId: "page-1" }
+          id: "c-cell2-take",
+          text: "Take the tome",
+          actions: [
+            {
+              id: "act-take-tome",
+              blueprintId: "set_variable",
+              trigger: "on_enter",
+              params: { variableKey: "hasFoundTome", value: "true" }
+            },
+            {
+              id: "act-take-tome-msg",
+              blueprintId: "post_message",
+              trigger: "on_enter",
+              params: { message: "You carefully slip the dusty tome into your pack. The writing inside is in an unknown script." }
+            }
+          ]
+        },
+        // Action-only: exit subplot via choice
+        {
+          id: "c-cell2-back",
+          text: "Return to the room above",
+          actions: [
+            {
+              id: "act-leave-cellar-2",
+              blueprintId: "go_to_subplot",
+              trigger: "on_enter",
+              params: { subplotId: null, targetPageId: "page-1" }
+            }
+          ]
         }
       ]
     }
+
   ]
 };

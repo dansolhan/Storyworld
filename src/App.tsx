@@ -11,7 +11,7 @@ import type { StoryData } from './domain/Story/StoryData';
 import { MenuBar, type MenuConfig } from './components/ui/MenuBar/MenuBar';
 
 import { Dashboard } from './features/dashboard/Dashboard';
-import { advancedStory } from './data/advancedStory';
+import { exampleStory } from './data/exampleStory';
 
 function App() {
   const [mode, setMode] = useState<'dashboard' | 'editor' | 'player'>('dashboard');
@@ -60,7 +60,7 @@ function App() {
         { label: 'Open File...', onClick: handleImportClick },
         {
           label: 'Load Advanced Demo', onClick: () => {
-            const { nodes, edges } = parseStoryToGraph(advancedStory);
+            const { nodes, edges } = parseStoryToGraph(exampleStory);
             const store = useEditorStore.getState();
             store.setHasHydrated(false); // Pause saves briefly
 
@@ -69,13 +69,13 @@ function App() {
             store.loadStory(
               nodes,
               edges,
-              advancedStory.variables || {},
+              exampleStory.variables || {},
               {
-                title: advancedStory.title,
-                description: advancedStory.description,
-                startPageId: advancedStory.startPageId
+                title: exampleStory.title,
+                description: exampleStory.description,
+                startPageId: exampleStory.startPageId
               },
-              advancedStory.subplots || []
+              exampleStory.subplots || []
             );
 
             store.setHasHydrated(true); // Re-enable saves

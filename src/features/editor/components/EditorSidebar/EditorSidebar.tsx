@@ -27,6 +27,8 @@ export const EditorSidebar: React.FC = () => {
     setSelectedPage,
     isEditorSidebarExpanded,
     setIsEditorSidebarExpanded,
+    sidebarTab,
+    setSidebarTab,
     nodes,
     updatePageTitle,
     updatePageType,
@@ -39,8 +41,8 @@ export const EditorSidebar: React.FC = () => {
     createPageFromChoice
   } = useEditorStore();
 
-  const [activeTab, setActiveTab] = useState('page');
   const [previewStory, setPreviewStory] = useState(false);
+
 
   const selectedNode = useMemo(
     () => nodes.find((n) => n.id === selectedPageId),
@@ -110,15 +112,15 @@ export const EditorSidebar: React.FC = () => {
           <Tabs
             tabs={[
               { id: 'page', label: 'Page' },
-              { id: 'actions', label: 'Actions' },
-              { id: 'choices', label: 'Choices' }
+              { id: 'actions', label: `Actions (${(selectedNode.data.actions || []).length})` },
+              { id: 'choices', label: `Choices (${(selectedNode.data.choices || []).length})` }
             ]}
-            activeTab={activeTab}
-            onChange={setActiveTab}
+            activeTab={sidebarTab}
+            onChange={setSidebarTab}
           />
         </div>
 
-        {activeTab === 'page' && (
+        {sidebarTab === 'page' && (
           <>
             <section className={styles.section}>
               <label className={styles.label}>Page Title</label>
@@ -173,7 +175,7 @@ export const EditorSidebar: React.FC = () => {
           </>
         )}
 
-        {activeTab === 'actions' && (
+        {sidebarTab === 'actions' && (
           <section className={styles.section}>
             <label className={styles.label}>Page Actions</label>
             <ActionsEditor
@@ -185,7 +187,7 @@ export const EditorSidebar: React.FC = () => {
           </section>
         )}
 
-        {activeTab === 'choices' && (
+        {sidebarTab === 'choices' && (
           <>
             <section className={styles.section} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
               <input type="checkbox" id="previewStory" checked={previewStory} onChange={(e) => setPreviewStory(e.target.checked)} />

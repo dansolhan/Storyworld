@@ -1,35 +1,46 @@
 import { type Edge, MarkerType } from '@xyflow/react';
 import type { PageNodeType } from '../features/editor/nodes/PageNode';
-// import type { Page } from '../domain/Page/Page';
+import type { ActionNodeType } from '../features/editor/nodes/ActionNode';
+import type { PortalNodeType } from '../features/editor/nodes/PortalNode';
 import type { Choice } from '../domain/Choice/Choice';
 import type { StoryData } from '../domain/Story/StoryData';
+import type { Subplot } from '../domain/Story/Subplot';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
+
+type AnyNode = PageNodeType | ActionNodeType | PortalNodeType;
+
+const SYNTHETIC_LABEL_STYLE = {
+  fontSize: 10,
+  fill: 'var(--color-text-secondary, #94a3b8)',
+  fontFamily: 'var(--font-family-sans, sans-serif)',
+};
 
 /**
  * Compiles the raw React Flow nodes and edges back into our pure domain Page[] array.
- * This effectively strips out all Editor-specific UI data (like x/y positions)
- * and resolves the graph edges into the targetPageId string properties.
+ * Filters out synthetic ActionNode / PortalNode entries — only pageNode types are saved.
  */
 export const compileGraphToStory = (
-  nodes: PageNodeType[],
+  nodes: AnyNode[],
   edges: Edge[],
   variables: Record<string, string>,
   metadata?: { title: string; description: string; startPageId: string | null }
 ): StoryData => {
-  const pages = nodes.map((node) => {
-    // Reconstruct Choices by finding any React Flow edges where this node is the source.
-    // We map the choice.id to the edge's sourceHandle to figure out where it points.
+  const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
+
+  const pages = pageNodes.map((node) => {
     const compiledChoices: Choice[] = (node.data.choices || []).map((choice) => {
-      // Find an edge that originates from this specific choice handle
       const connectingEdge = edges.find(
         (e) => e.source === node.id && e.sourceHandle === choice.id
       );
 
-      return {
-        ...choice,
-        // If an edge exists, set the targetPageId. Otherwise leave empty.
-        targetPageId: connectingEdge ? connectingEdge.target : '',
-      };
+      const result: Choice = { ...choice };
+      if (connectingEdge && !connectingEdge.id.startsWith('se-')) {
+        // Only use real page-to-page edges (synthetic edges start with 'se-')
+        result.targetPageId = connectingEdge.target;
+      } else {
+        delete result.targetPageId;
+      }
+      return result;
     });
 
     return {
@@ -43,7 +54,7 @@ export const compileGraphToStory = (
   });
 
   const nodePositions: Record<string, { x: number; y: number }> = {};
-  nodes.forEach(node => {
+  pageNodes.forEach(node => {
     nodePositions[node.id] = { x: node.position.x, y: node.position.y };
   });
 
@@ -54,28 +65,124 @@ export const compileGraphToStory = (
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,
-    uiMetadata: {
-      nodePositions,
-    }
+    uiMetadata: { nodePositions },
   };
 };
 
-/**
- * Parses a pure domain Page[] array back into React Flow nodes and edges.
- * Used for importing a saved JSON or .storyworld file back into the Editor.
- */
-export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[], edges: Edge[] } => {
-  const nodes: PageNodeType[] = [];
+// ─── Helpers for synthetic node generation ──────────────────────────────────
+
+function buildSyntheticNodes(
+  pages: StoryData['pages'],
+  subplots: Subplot[],
+  nodePositions: Record<string, { x: number; y: number }>,
+): { nodes: (ActionNodeType | PortalNodeType)[]; edges: Edge[] } {
+  const nodes: (ActionNodeType | PortalNodeType)[] = [];
   const edges: Edge[] = [];
+
+  pages.forEach((page) => {
+    const pagePos = nodePositions[page.id] || { x: 0, y: 0 };
+
+    (page.choices || []).forEach((choice, idx) => {
+      if (choice.targetPageId) return; // wired — handled as a real edge
+      const choiceActions = choice.actions || [];
+      if (choiceActions.length === 0) return;
+
+      const portalAction = choiceActions.find((a) => a.blueprintId === 'go_to_subplot');
+
+      if (portalAction) {
+        const params = portalAction.params as Record<string, string>;
+        const subplotName = subplots.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
+        const targetPageName = pages.find((p) => p.id === params.targetPageId)?.title || params.targetPageId || '?';
+        const nodeId = `portal-node-${choice.id}`;
+        const savedPos = nodePositions[nodeId];
+
+        nodes.push({
+          id: nodeId,
+          type: 'portalNode',
+          position: savedPos ?? { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          width: 44,
+          height: 44,
+          data: {
+            sourcePageId: page.id,
+            subplotId: params.subplotId ?? '',
+            subplotName,
+            targetPageName: String(targetPageName),
+          },
+          selectable: true,
+          draggable: true,
+        } as PortalNodeType);
+
+        edges.push({
+          id: `se-portal-${choice.id}`,
+          source: page.id,
+          target: nodeId,
+          sourceHandle: choice.id,
+          type: 'default',
+          animated: false,
+          label: choice.text,
+          labelStyle: SYNTHETIC_LABEL_STYLE,
+          labelShowBg: false,
+          style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
+        });
+      } else {
+        const nodeId = `action-node-${choice.id}`;
+        const savedPos = nodePositions[nodeId];
+
+        nodes.push({
+          id: nodeId,
+          type: 'actionNode',
+          position: savedPos ?? { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          width: 44,
+          height: 44,
+          data: {
+            sourcePageId: page.id,
+            choiceId: choice.id,
+            choiceText: choice.text || 'Action Choice',
+            actionNames: choiceActions.map((a) => a.blueprintId),
+          },
+          selectable: true,
+          draggable: true,
+        } as ActionNodeType);
+
+        edges.push({
+          id: `se-${choice.id}-action`,
+          source: page.id,
+          target: nodeId,
+          sourceHandle: choice.id,
+          type: 'default',
+          animated: true,
+          label: choice.text,
+          labelStyle: SYNTHETIC_LABEL_STYLE,
+          labelShowBg: false,
+          style: { stroke: 'var(--color-edge-default)' },
+          markerEnd: { type: MarkerType.ArrowClosed, color: 'var(--color-edge-default)' },
+        });
+      }
+    });
+  });
+
+  return { nodes, edges };
+}
+
+/**
+ * Parses a pure domain StoryData back into React Flow nodes and edges.
+ * Generates PageNode, ActionNode, PortalNode entries alongside their edges.
+ */
+export const parseStoryToGraph = (
+  storyData: StoryData,
+): { nodes: AnyNode[]; edges: Edge[] } => {
+  const nodes: AnyNode[] = [];
+  const edges: Edge[] = [];
+  const subplots: Subplot[] = storyData.subplots || [];
+  const nodePositions = storyData.uiMetadata?.nodePositions || {};
 
   const pages = storyData.pages || [];
 
   pages.forEach((page, index) => {
-    // Read the saved x/y coordinate, or fallback to a basic grid layout if it doesn't exist.
-    const savedPosition = storyData.uiMetadata?.nodePositions?.[page.id];
+    const savedPosition = nodePositions[page.id];
     const position = savedPosition || {
       x: (index % 4) * 350,
-      y: Math.floor(index / 4) * 400
+      y: Math.floor(index / 4) * 400,
     };
 
     nodes.push({
@@ -88,10 +195,10 @@ export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[]
         paragraphs: page.paragraphs,
         choices: page.choices,
         actions: page.actions || [],
-      }
-    });
+      },
+    } as PageNodeType);
 
-    // Reconstruct the edges for choices
+    // Real page-to-page edges
     if (page.choices) {
       page.choices.forEach((choice) => {
         if (choice.targetPageId) {
@@ -102,16 +209,26 @@ export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[]
             sourceHandle: choice.id,
             type: 'floating',
             animated: true,
+            label: choice.text,
+            labelStyle: SYNTHETIC_LABEL_STYLE,
+            labelShowBg: false,
             style: { stroke: 'var(--color-edge-default)' },
             markerEnd: {
               type: MarkerType.ArrowClosed,
-              color: 'var(--color-edge-default)'
-            }
+              color: 'var(--color-edge-default)',
+            },
           });
         }
       });
     }
   });
 
-  return { nodes, edges };
+  // Synthetic nodes (ActionNode / PortalNode)
+  const { nodes: synNodes, edges: synEdges } = buildSyntheticNodes(
+    pages,
+    subplots,
+    nodePositions,
+  );
+
+  return { nodes: [...nodes, ...synNodes], edges: [...edges, ...synEdges] };
 };

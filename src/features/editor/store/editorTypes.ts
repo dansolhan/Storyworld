@@ -1,8 +1,10 @@
 import type { Edge, OnNodesChange, OnEdgesChange, OnConnect } from '@xyflow/react';
 import type { PageNodeType } from '../nodes/PageNode';
+import type { ActionNodeType } from '../nodes/ActionNode';
+import type { PortalNodeType } from '../nodes/PortalNode';
 import type { Subplot } from '../../../domain/Story/Subplot';
 
-export type EditorNode = PageNodeType;
+export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
 // The combined state of all our domain slices and graph slices.
 export interface EditorState {
@@ -46,6 +48,13 @@ export interface EditorState {
     subplots?: Subplot[]
   ) => void;
 
+  /** Merges computed synthetic (ActionNode/PortalNode) entries into state.nodes/edges,
+   *  preserving user-adjusted positions and pruning stale entries. */
+  syncSyntheticNodes: (
+    syntheticNodes: (ActionNodeType | PortalNodeType)[],
+    syntheticEdges: Edge[]
+  ) => void;
+
   // Variables
   variables: Record<string, string>;
   setVariables: (variables: Record<string, string>) => void;
@@ -56,6 +65,9 @@ export interface EditorState {
   // UI Handlers
   selectedPageId: string | null;
   setSelectedPage: (pageId: string | null) => void;
+
+  sidebarTab: string;
+  setSidebarTab: (tab: string) => void;
 
   isEditorSidebarExpanded: boolean;
   setIsEditorSidebarExpanded: (expanded: boolean) => void;
@@ -85,8 +97,10 @@ export interface EditorState {
 
   // Domain Handlers - Choice
   addChoice: (pageId: string) => void;
+  addActionOnlyChoice: (pageId: string) => void;
   updateChoiceText: (pageId: string, choiceId: string, newText: string) => void;
-  setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string) => void;
+  setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string | undefined) => void;
+  setChoiceActions: (pageId: string, choiceId: string, actions: import('../../../domain/Actions/Action').Action[]) => void;
   createPageFromChoice: (sourcePageId: string, choiceId: string) => void;
 
   // Domain Handlers - Actions (Unified for Page and Choice)

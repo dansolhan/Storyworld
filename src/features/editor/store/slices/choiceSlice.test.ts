@@ -18,7 +18,9 @@ describe('choiceSlice', () => {
     const rootNode = state.nodes.find(n => n.id === rootPageId);
     expect(rootNode?.data.choices?.length).toBe(1);
     expect(rootNode?.data.choices?.[0].text).toBe('New Choice...');
-    expect(rootNode?.data.choices?.[0].targetPageId).toBe('');
+    // targetPageId is now optional — undefined when unconnected (v4 domain change)
+    expect(rootNode?.data.choices?.[0].targetPageId).toBeUndefined();
+
   });
 
   it('should update the text of a specific choice', () => {
