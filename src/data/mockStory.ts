@@ -1,11 +1,19 @@
 import type { StoryData } from '../domain/Story/StoryData';
 
 export const mockStory: StoryData = {
+  version: 3,
   variables: {
     playerName: "Arthur",
     heroClass: "Knight",
     weapon: "Rusty Longsword"
   },
+  subplots: [
+    {
+      id: "subplot-cellar",
+      name: "The Hidden Cellar",
+      description: "A dark forgotten place below."
+    }
+  ],
   pages: [
     {
       id: "page-1",
@@ -18,7 +26,15 @@ export const mockStory: StoryData = {
       choices: [
         { id: "c1-1", text: "Inspect the door", targetPageId: "page-2" },
         { id: "c1-2", text: "Look out the window", targetPageId: "page-3" },
-        { id: "c1-3", text: "Search your pockets", targetPageId: "page-5" }
+        { id: "c1-3", text: "Search your pockets", targetPageId: "page-5" },
+        { id: "c1-4", text: "Lift the loose floorboard", targetPageId: "page-cellar-1" }
+      ],
+      actions: [
+        {
+          id: "act-go-cellar",
+          blueprintId: "go_to_subplot",
+          params: { subplotId: "subplot-cellar", targetPageId: "page-cellar-1" }
+        }
       ]
     },
     {
@@ -87,6 +103,44 @@ export const mockStory: StoryData = {
         { id: "pend-2", text: "<p>A new adventure awaits you, <em>{{playerName}}</em>.</p>" }
       ],
       choices: []
+    },
+    {
+      id: "page-cellar-1",
+      subplotId: "subplot-cellar",
+      title: "The Dusty Cellar",
+      paragraphs: [
+        { id: "p-cell1-1", text: "<p>You descend a rickety wooden ladder into the darkness. The air smells of mold and old wine.</p>" },
+        { id: "p-cell1-2", text: "<p>In the corner, you see a small chest glimmering faintly in the dark.</p>" }
+      ],
+      choices: [
+        { id: "c-cell1-1", text: "Climb back up", targetPageId: "page-1" },
+        { id: "c-cell1-2", text: "Open the chest", targetPageId: "page-cellar-2" }
+      ],
+      actions: [
+        {
+          id: "act-leave-cellar",
+          blueprintId: "go_to_subplot",
+          params: { subplotId: null, targetPageId: "page-1" }
+        }
+      ]
+    },
+    {
+      id: "page-cellar-2",
+      subplotId: "subplot-cellar",
+      title: "The Cellar Treasure",
+      paragraphs: [
+        { id: "p-cell2-1", text: "<p>The chest is unlocked! Inside, you find a handful of gold coins and an old, dusty tome.</p>" }
+      ],
+      choices: [
+        { id: "c-cell2-1", text: "Return to the room above", targetPageId: "page-1" }
+      ],
+      actions: [
+        {
+          id: "act-leave-cellar-treasure",
+          blueprintId: "go_to_subplot",
+          params: { subplotId: null, targetPageId: "page-1" }
+        }
+      ]
     }
   ]
 };

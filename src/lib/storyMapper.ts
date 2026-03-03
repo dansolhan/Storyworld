@@ -35,8 +35,10 @@ export const compileGraphToStory = (
     return {
       id: node.id,
       title: node.data.title as string || 'Untitled',
+      subplotId: node.data.subplotId as string | undefined,
       paragraphs: Array.isArray(node.data.paragraphs) ? [...node.data.paragraphs] : [],
       choices: compiledChoices,
+      actions: Array.isArray(node.data.actions) ? [...node.data.actions] : [],
     };
   });
 
@@ -82,8 +84,10 @@ export const parseStoryToGraph = (storyData: StoryData): { nodes: PageNodeType[]
       position,
       data: {
         title: page.title,
+        subplotId: page.subplotId,
         paragraphs: page.paragraphs,
         choices: page.choices,
+        actions: page.actions || [],
       }
     });
 

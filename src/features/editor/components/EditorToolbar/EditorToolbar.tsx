@@ -33,6 +33,7 @@ export const EditorToolbar: React.FC = () => {
         <div className={styles.toolbarGroup}>
           <Combobox
             options={plotOptions}
+            value={currentPlotId || 'MAIN'}
             placeholder="Select Plot..."
             onSelect={(val) => setCurrentPlotId(val === 'MAIN' ? null : val)}
           />
