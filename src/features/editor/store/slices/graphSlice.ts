@@ -60,7 +60,19 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
     const existingSynNodes = nodes.filter((n) => n.type !== 'pageNode');
     const existingMap = new Map(existingSynNodes.map((n) => [n.id, n]));
 
+    const existingSynEdges = edges.filter((e) => e.id.startsWith('se-'));
+    const existingEdgesMap = new Map(existingSynEdges.map((e) => [e.id, e]));
+
+    // Check if any edge changed type or properties we care about
+    const edgesChanged =
+      existingSynEdges.length !== newSynEdges.length ||
+      newSynEdges.some((newEdge) => {
+        const existing = existingEdgesMap.get(newEdge.id);
+        return !existing || existing.type !== newEdge.type || existing.label !== newEdge.label || existing.animated !== newEdge.animated;
+      });
+
     const noChange =
+      !edgesChanged &&
       existingSynNodes.length === newSynNodes.length &&
       newSynNodes.every((newNode) => {
         const existing = existingMap.get(newNode.id);

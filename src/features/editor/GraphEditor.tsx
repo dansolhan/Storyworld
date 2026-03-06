@@ -4,6 +4,7 @@ import {
   Background,
   Controls,
   MiniMap,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -148,12 +149,16 @@ export const GraphEditor: React.FC = () => {
             source: node.id,
             target: nodeId,
             sourceHandle: choice.id,
-            type: 'default',
+            type: 'floating',
             animated: false,
             label: choice.text,
             labelStyle: SYNTHETIC_LABEL_STYLE,
             labelShowBg: false,
             style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: 'rgba(147,51,234,0.7)'
+            }
           });
         } else {
           const nodeId = `action-node-${choice.id}`;
@@ -179,12 +184,16 @@ export const GraphEditor: React.FC = () => {
             source: node.id,
             target: nodeId,
             sourceHandle: choice.id,
-            type: 'default',
+            type: 'floating',
             animated: true,
             label: choice.text,
             labelStyle: SYNTHETIC_LABEL_STYLE,
             labelShowBg: false,
             style: { stroke: 'var(--color-edge-default)' },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: 'var(--color-edge-default)'
+            }
           });
         }
       });

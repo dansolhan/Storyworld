@@ -29,7 +29,7 @@ export const PortalNode: React.FC<NodeProps<PortalNodeType>> = ({ data }) => {
 
   return (
     <div className={styles.node} onDoubleClick={handleDoubleClick} title={tooltip}>
-      <Handle type="target" position={Position.Left} className={styles.handle} />
+      <Handle type="target" position={Position.Left} className={styles.handle} style={{ opacity: 0 }} />
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
         <ellipse cx="12" cy="12" rx="10" ry="4" />
         <path d="M12 8v8" />

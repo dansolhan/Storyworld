@@ -6,6 +6,8 @@ export function FloatingEdge({
   id,
   source,
   target,
+  sourceHandleId,
+  targetHandleId,
   label,
   style,
   markerEnd,
@@ -19,7 +21,9 @@ export function FloatingEdge({
 
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
     sourceNode,
-    targetNode
+    targetNode,
+    sourceHandleId,
+    targetHandleId
   );
 
   const [edgePath, labelX, labelY] = getBezierPath({
