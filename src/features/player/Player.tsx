@@ -178,20 +178,23 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
       </header>
 
       <main className={styles.mainContent}>
-        <Card padding="lg" className={styles.storyCard}>
-          <h2 className={styles.pageTitle}>{currentPage.title}</h2>
+        <div className={styles.storyContainer}>
+          <div className={styles.textContent}>
+            <h2 className={styles.pageTitle}>{currentPage.title}</h2>
 
-          <div className={styles.paragraphs}>
-            {visibleParagraphs.map((p) => {
-              const parsedHtml = parseTextTokens(p.text, variables);
-              return (
-                <div
-                  key={p.id}
-                  className={styles.paragraphText}
-                  dangerouslySetInnerHTML={{ __html: parsedHtml }}
-                />
-              );
-            })}
+            <div className={styles.paragraphs}>
+              {visibleParagraphs.map((p) => {
+                const parsedHtml = parseTextTokens(p.text, variables);
+                return (
+                  <div
+                    key={p.id}
+                    className={styles.paragraphText}
+                    dangerouslySetInnerHTML={{ __html: parsedHtml }}
+                  />
+                );
+              })}
+            </div>
+
           </div>
 
           <div className={styles.choicesContainer}>
@@ -219,7 +222,11 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
               </div>
             )}
           </div>
-        </Card>
+        </div>
+
+        <div className={styles.rightFrame}>
+          {/* Empty for now */}
+        </div>
       </main>
 
       <Popover

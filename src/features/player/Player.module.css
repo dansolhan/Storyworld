@@ -29,17 +29,35 @@
 .mainContent {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: var(--space-8) var(--space-4);
-  overflow-y: auto;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
 }
 
-.storyCard {
+.storyContainer {
   width: 100%;
-  max-width: 800px;
+  max-width: calc(50vw + 400px);
   background-color: var(--color-bg-primary);
   animation: fadeIn 0.4s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+  min-height: 0;
+}
+
+.rightFrame {
+  flex: 1;
+  background-color: var(--color-bg-primary);
+  border-left: 1px solid var(--color-border-default);
+}
+
+.textContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-8) var(--space-4);
+  min-height: 0;
 }
 
 @keyframes fadeIn {
@@ -79,9 +97,11 @@
 }
 
 .choicesContainer {
-  margin-top: var(--space-8);
+  margin-top: auto;
   border-top: 1px dashed var(--color-border-default);
-  padding-top: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+  background-color: var(--color-bg-primary);
+  z-index: 2;
 }
 
 .choicesList {
