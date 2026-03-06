@@ -3,8 +3,8 @@ import type { ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'ghost-danger';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
   fullWidth?: boolean;
 }
 

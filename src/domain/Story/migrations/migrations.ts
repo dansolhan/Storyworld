@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = 4;
+export const CURRENT_VERSION = 6;
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -41,12 +41,62 @@ const migrateV3ToV4: MigrationFunction = (v3Story) => {
   };
 };
 
+const migrateV4ToV5: MigrationFunction = (v4Story) => {
+  // Version 5 converts Record<string, string> variables to Record<string, { type: 'string' | 'number' | 'boolean', value: any }>
+  const migratedVariables: Record<string, any> = {};
+
+  if (v4Story.variables) {
+    for (const [key, value] of Object.entries(v4Story.variables)) {
+      if (typeof value === 'object' && value !== null && 'type' in value) {
+        // Already migrated or structurally valid
+        migratedVariables[key] = value;
+      } else {
+        // Old string variable
+        migratedVariables[key] = {
+          type: 'string', // Default to string for old variables
+          value: value
+        };
+      }
+    }
+  }
+
+  return {
+    ...v4Story,
+    variables: migratedVariables
+  };
+};
+
+const migrateV5ToV6: MigrationFunction = (v5Story) => {
+  // Version 6 adds `tags?: string[]` to variables.
+  const migratedVariables: Record<string, any> = {};
+
+  if (v5Story.variables) {
+    for (const [key, value] of Object.entries(v5Story.variables)) {
+      if (typeof value === 'object' && value !== null) {
+        migratedVariables[key] = {
+          ...value,
+          tags: (value as any).tags || []
+        };
+      } else {
+        migratedVariables[key] = value;
+      }
+    }
+  }
+
+  return {
+    ...v5Story,
+    variables: migratedVariables
+  };
+};
+
 // A dictionary mapping the *starting* version to the migration function
 // that upgrades it to starting version + 1.
 const migrationSteps: Record<number, MigrationFunction> = {
   1: migrateV1ToV2,
   2: migrateV2ToV3,
   3: migrateV3ToV4,
+  4: migrateV4ToV5,
+  5: migrateV5ToV6,
 };
 
 export function migrateStory(storyJson: any): StoryData {

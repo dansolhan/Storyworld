@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { SidePanel } from '../../../../components/ui/SidePanel/SidePanel';
+import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
 import styles from './StorySettingsDrawer.module.css';
 
@@ -28,7 +28,13 @@ export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = ({ isOpen
   };
 
   return (
-    <SidePanel isOpen={isOpen} onClose={onClose} title="Story Settings" position="bottom" height="400px">
+    <ExpandableBottomPanel
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Story Settings"
+      defaultHeight="400px"
+      expandedHeight="100%"
+    >
       <div className={styles.container}>
         <section className={styles.section}>
           <label className={styles.label}>Story Title</label>
@@ -71,6 +77,6 @@ export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = ({ isOpen
           </div>
         </section>
       </div>
-    </SidePanel>
+    </ExpandableBottomPanel>
   );
 };

@@ -11,19 +11,19 @@ export const createVariableSlice: StateCreator<
   setVariables: (variables) => {
     set({ variables });
   },
-  addVariable: (key, value) => {
+  addVariable: (key, variable) => {
     set((state) => ({
       variables: {
         ...state.variables,
-        [key]: value,
+        [key]: variable,
       },
     }));
   },
-  updateVariable: (key, newValue) => {
+  updateVariable: (key, variable) => {
     set((state) => ({
       variables: {
         ...state.variables,
-        [key]: newValue,
+        [key]: variable,
       },
     }));
   },

@@ -3,6 +3,7 @@ import type { PageNodeType } from '../nodes/PageNode';
 import type { ActionNodeType } from '../nodes/ActionNode';
 import type { PortalNodeType } from '../nodes/PortalNode';
 import type { Subplot } from '../../../domain/Story/Subplot';
+import type { StoryVariable } from '../../../domain/Story/Variable';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -43,7 +44,7 @@ export interface EditorState {
   loadStory: (
     nodes: EditorNode[],
     edges: Edge[],
-    variables?: Record<string, string>,
+    variables?: Record<string, StoryVariable>,
     metadata?: { title?: string; description?: string; startPageId?: string },
     subplots?: Subplot[]
   ) => void;
@@ -56,10 +57,10 @@ export interface EditorState {
   ) => void;
 
   // Variables
-  variables: Record<string, string>;
-  setVariables: (variables: Record<string, string>) => void;
-  addVariable: (key: string, value: string) => void;
-  updateVariable: (key: string, newValue: string) => void;
+  variables: Record<string, StoryVariable>;
+  setVariables: (variables: Record<string, StoryVariable>) => void;
+  addVariable: (key: string, variable: StoryVariable) => void;
+  updateVariable: (key: string, variable: StoryVariable) => void;
   removeVariable: (key: string) => void;
 
   // UI Handlers

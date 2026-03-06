@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import type { StoryData } from '../../domain/Story/StoryData';
+import type { StoryVariable } from '../../domain/Story/Variable';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
@@ -20,7 +21,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
   const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
-  const [variables, setVariables] = useState<Record<string, string>>(storyData.variables || {});
+  const [variables, setVariables] = useState<Record<string, StoryVariable>>(storyData.variables || {});
 
   // Track visited pages and execute page actions
 
@@ -49,8 +50,11 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         const actionContext = {
           variables: nextVars,
           setVariable: (key: string, value: unknown) => {
-            nextVars[key] = String(value);
-          }
+            const currentVar = nextVars[key];
+            const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+            nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+          },
+          postMessage: () => { }
         };
 
         const evalContext = {
@@ -103,7 +107,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     return currentPage.paragraphs.filter(p => evaluateVisibility(p, context));
   }, [currentPage, variables, visitedPageIds, currentPageId]);
 
-  const handleChoiceClick = (choiceId: string, targetPageId: string) => {
+  const handleChoiceClick = (choiceId: string, targetPageId?: string) => {
     const choice = currentPage?.choices.find(c => c.id === choiceId);
     if (choice && choice.actions) {
       setVariables((currentVars) => {
@@ -111,8 +115,11 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         const actionContext = {
           variables: nextVars,
           setVariable: (key: string, value: unknown) => {
-            nextVars[key] = String(value);
-          }
+            const currentVar = nextVars[key];
+            const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+            nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+          },
+          postMessage: () => { }
         };
         const evalContext = { variables: nextVars, visitedPageIds, currentPageId };
 
@@ -129,7 +136,9 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
       });
     }
 
-    setCurrentPageId(targetPageId);
+    if (targetPageId) {
+      setCurrentPageId(targetPageId);
+    }
   };
 
   const handleRestart = () => {

@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { parseTextTokens } from './textParser';
 
+import type { StoryVariable } from '../domain/Story/Variable';
+
 describe('parseTextTokens', () => {
-  const mockVariables = {
-    playerName: 'Alice',
-    score: '150',
-    currentLocation: 'The Dark Cave'
+  const mockVariables: Record<string, StoryVariable> = {
+    playerName: { type: 'string', value: 'Alice' },
+    score: { type: 'number', value: 150 },
+    currentLocation: { type: 'string', value: 'The Dark Cave' }
   };
 
   it('should return empty string for empty input', () => {
@@ -40,7 +42,7 @@ describe('parseTextTokens', () => {
 
   it('should handle undefined variables gracefully when replacing', () => {
     // Note: Our variables are typed as Record<string, string>, but at runtime one could be missing
-    const missingVars = { playerName: 'Alice' };
+    const missingVars: Record<string, StoryVariable> = { playerName: { type: 'string', value: 'Alice' } };
     expect(parseTextTokens('{{playerName}} has {{gold}} gold.', missingVars)).toBe('Alice has {{gold}} gold.');
   });
 });

@@ -5,6 +5,7 @@ import type { PortalNodeType } from '../features/editor/nodes/PortalNode';
 import type { Choice } from '../domain/Choice/Choice';
 import type { StoryData } from '../domain/Story/StoryData';
 import type { Subplot } from '../domain/Story/Subplot';
+import type { StoryVariable } from '../domain/Story/Variable';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
 
 type AnyNode = PageNodeType | ActionNodeType | PortalNodeType;
@@ -22,7 +23,7 @@ const SYNTHETIC_LABEL_STYLE = {
 export const compileGraphToStory = (
   nodes: AnyNode[],
   edges: Edge[],
-  variables: Record<string, string>,
+  variables: Record<string, StoryVariable>,
   metadata?: { title: string; description: string; startPageId: string | null }
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');

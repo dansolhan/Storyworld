@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { Target, ChevronUp, ChevronDown } from 'lucide-react';
+import { Target } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { SidePanel } from '../../../../components/ui/SidePanel/SidePanel';
+import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
 import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTextEditor';
 import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/BoldFeature';
@@ -45,7 +45,7 @@ export const EditorSidebar: React.FC = () => {
 
 
   const selectedNode = useMemo(
-    () => nodes.find((n) => n.id === selectedPageId),
+    () => nodes.find((n) => n.id === selectedPageId) as any,
     [nodes, selectedPageId]
   );
 
@@ -65,7 +65,16 @@ export const EditorSidebar: React.FC = () => {
   };
 
   if (!selectedPageId || !selectedNode) {
-    return <SidePanel position="bottom" height={isEditorSidebarExpanded ? "100%" : "50vh"} isOpen={false} onClose={() => setSelectedPage(null)}><div /></SidePanel>;
+    return (
+      <ExpandableBottomPanel
+        isOpen={false}
+        onClose={() => setSelectedPage(null)}
+        isExpanded={isEditorSidebarExpanded}
+        onToggleExpand={setIsEditorSidebarExpanded}
+      >
+        <div />
+      </ExpandableBottomPanel>
+    );
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,36 +85,15 @@ export const EditorSidebar: React.FC = () => {
     updatePageType(selectedPageId, e.target.value as 'location' | 'plot');
   };
 
-  const headerChevron = (
-    <button
-      onClick={() => setIsEditorSidebarExpanded(!isEditorSidebarExpanded)}
-      style={{
-        background: 'none',
-        border: 'none',
-        padding: '4px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'var(--color-text-secondary)',
-        borderRadius: 'var(--radius-sm)'
-      }}
-      title={isEditorSidebarExpanded ? "Collapse" : "Expand fully"}
-    >
-      {isEditorSidebarExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
-    </button>
-  );
-
   return (
-    <SidePanel
+    <ExpandableBottomPanel
       isOpen={!connectingChoice}
       onClose={() => {
         if (!connectingChoice) setSelectedPage(null);
       }}
       title="Edit Page"
-      headerActions={headerChevron}
-      position="bottom"
-      height={isEditorSidebarExpanded ? "100%" : "50vh"}
+      isExpanded={isEditorSidebarExpanded}
+      onToggleExpand={setIsEditorSidebarExpanded}
     >
       <div className={styles.sidebarContent}>
         <div className={styles.stickyTabs}>
@@ -155,7 +143,7 @@ export const EditorSidebar: React.FC = () => {
                 {selectedNode.data.paragraphs.length === 0 && (
                   <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
                 )}
-                {selectedNode.data.paragraphs.map((p) => (
+                {selectedNode.data.paragraphs.map((p: any) => (
                   <div key={p.id} className={styles.paragraphBlock}>
                     <RichTextEditor
                       content={p.text}
@@ -200,13 +188,13 @@ export const EditorSidebar: React.FC = () => {
                   {selectedNode.data.paragraphs.length === 0 && (
                     <p className={styles.emptyText}>No content to preview.</p>
                   )}
-                  {selectedNode.data.paragraphs.map(p => (
+                  {selectedNode.data.paragraphs.map((p: any) => (
                     <div key={p.id} className={styles.paragraphBlock} style={{ padding: '0.75rem', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-bg-primary)' }}>
                       <div dangerouslySetInnerHTML={{ __html: p.text }} style={{ fontFamily: 'var(--font-family-serif)', lineHeight: 1.6 }} />
                       {p.conditionals && p.conditionals.length > 0 && (
                         <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--color-border-default)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <small style={{ color: 'var(--color-primary-500)', fontWeight: 600 }}>Enabled when:</small>
-                          {p.conditionals.map(c => (
+                          {p.conditionals.map((c: any) => (
                             <small key={c.id} style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
                               [{c.blueprintId}] {JSON.stringify(c.params)}
                             </small>
@@ -230,7 +218,7 @@ export const EditorSidebar: React.FC = () => {
                 {selectedNode.data.choices.length === 0 && (
                   <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
                 )}
-                {selectedNode.data.choices.map((c, index) => {
+                {selectedNode.data.choices.map((c: any, index: number) => {
                   const isConnecting = connectingChoice?.choiceId === c.id;
 
                   return (
@@ -309,6 +297,6 @@ export const EditorSidebar: React.FC = () => {
           </>
         )}
       </div>
-    </SidePanel>
+    </ExpandableBottomPanel>
   );
 };
