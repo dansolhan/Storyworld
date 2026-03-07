@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { Choice } from '../../../domain/Choice/Choice';
 import { Button } from '../../../components/ui/Button/Button';
+import { useChoiceSound } from '../hooks/useChoiceSound';
 import styles from '../Player.module.css';
 
 export interface PlayerChoicesProps {
@@ -10,26 +11,48 @@ export interface PlayerChoicesProps {
 }
 
 export const PlayerChoices: React.FC<PlayerChoicesProps> = ({ choices, onChoiceClick, onRestart }) => {
+  const { play } = useChoiceSound();
+
+  const handleChoiceSelect = (choice: Choice) => {
+    play();
+    onChoiceClick(choice.id, choice.targetPageId);
+  };
+
+  // Keyboard shortcuts: press 1-9 to select a choice
+  useEffect(() => {
+    if (!choices || choices.length === 0) return;
+
+    const handler = (e: KeyboardEvent) => {
+      const num = parseInt(e.key, 10);
+      if (!isNaN(num) && num >= 1 && num <= choices.length) {
+        handleChoiceSelect(choices[num - 1]);
+      }
+    };
+
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [choices]);
+
   return (
     <div className={styles.choicesContainer}>
       {choices && choices.length > 0 ? (
-        <div className={styles.choicesList}>
-          {choices.map((choice) => (
-            <Button
-              key={choice.id}
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={() => onChoiceClick(choice.id, choice.targetPageId)}
-              className={styles.choiceButton}
-            >
-              {choice.text}
-            </Button>
+        <ol className={styles.choicesList}>
+          {choices.map((choice, idx) => (
+            <li key={choice.id} className={styles.choiceItem}>
+              <button
+                className={styles.choiceButton}
+                onClick={() => handleChoiceSelect(choice)}
+              >
+                <span className={styles.choiceNumber}>[{idx + 1}]</span>
+                <span className={styles.choiceArrow}>▶</span>
+                <span className={styles.choiceText}>{choice.text}</span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ol>
       ) : (
         <div className={styles.endContainer}>
-          <p className={styles.endText}>You have reached the end of this path.</p>
+          <p className={styles.endText}>— The End —</p>
           <Button variant="secondary" size="lg" onClick={onRestart}>
             Restart Story
           </Button>

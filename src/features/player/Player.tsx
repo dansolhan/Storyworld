@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PlayerText } from './components/PlayerText';
 import { PlayerChoices } from './components/PlayerChoices';
 import { PlayerRightFrame } from './components/PlayerRightFrame';
+import './player-theme.css';
 import styles from './Player.module.css';
 
 export interface PlayerProps {
@@ -216,6 +217,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         y={contextualPopover?.y || 0}
         className={styles.popover}
       >
+        <div className={styles.popoverDecorations} />
         <div className={styles.popoverArrow} />
         <p className={styles.popoverText}>{contextualPopover?.text}</p>
       </Popover>

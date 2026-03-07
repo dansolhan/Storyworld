@@ -1,0 +1,23 @@
+/* =============================================================
+   Player Theme
+   Scoped color palette for the Storyworld Player UI.
+   All variables are namespaced with --player- to avoid
+   conflicts with the global design token system.
+   ============================================================= */
+
+:root {
+  /* Backgrounds */
+  --player-bg: #1a1610;
+  --player-bg-lighter: #231f18;
+
+  /* Text */
+  --player-text: #e8dfc8;
+  --player-text-muted: #9e9278;
+
+  /* Borders */
+  --player-border: #3d3628;
+
+  /* Accent (gold) */
+  --player-accent: #c9a84c;
+  --player-accent-hover: #e0bf6e;
+}
