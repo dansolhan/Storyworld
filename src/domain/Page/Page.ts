@@ -9,6 +9,7 @@ export interface Page {
   type?: PageType;
   title: string;
   subplotId?: string;
+  atmosphereId?: string;
   paragraphs: Paragraph[];
   choices: Choice[];
   actions?: Action[];

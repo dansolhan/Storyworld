@@ -21,7 +21,7 @@ export const createChoiceSlice: StateCreator<
   addChoice: (pageId) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...' };
           return {
             ...node,
@@ -39,7 +39,7 @@ export const createChoiceSlice: StateCreator<
   addActionOnlyChoice: (pageId) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           // No targetPageId — this is an action-only choice
           const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', actions: [] };
           return {
@@ -58,7 +58,7 @@ export const createChoiceSlice: StateCreator<
   updateChoiceText: (pageId, choiceId, newText) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.data.choices) {
+        if (node.id === pageId && node.type === 'pageNode' && node.data.choices) {
           return {
             ...node,
             data: {
@@ -77,7 +77,7 @@ export const createChoiceSlice: StateCreator<
   setChoiceActions: (pageId: string, choiceId: string, actions: Action[]) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.data.choices) {
+        if (node.id === pageId && node.type === 'pageNode' && node.data.choices) {
           return {
             ...node,
             data: {
@@ -98,7 +98,7 @@ export const createChoiceSlice: StateCreator<
 
     // 1. Update the choice's targetPageId in the nodes array
     const newNodes = nodes.map((node) => {
-      if (node.id === sourcePageId && node.data.choices) {
+      if (node.id === sourcePageId && node.type === 'pageNode' && node.data.choices) {
         return {
           ...node,
           data: {
@@ -145,8 +145,9 @@ export const createChoiceSlice: StateCreator<
       // Offset the new page to the right
       const x = sourceNode.position.x + 400;
       const y = sourceNode.position.y;
+      const atmosphereId = sourceNode.type === 'pageNode' ? sourceNode.data.atmosphereId : undefined;
 
-      const newPageId = addPage(x, y);
+      const newPageId = addPage(x, y, atmosphereId);
       setChoiceDestination(sourcePageId, choiceId, newPageId);
     }
   }

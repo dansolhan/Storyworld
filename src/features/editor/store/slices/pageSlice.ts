@@ -2,7 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { EditorState, EditorNode } from '../editorTypes';
 
 export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
-  addPage: (x, y) => {
+  addPage: (x, y, atmosphereId) => {
     const newId = `page-${crypto.randomUUID()}`;
     const currentPlotId = get().currentPlotId; // Fetch the active plot id
 
@@ -15,7 +15,8 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
         title: 'New Page',
         paragraphs: [],
         choices: [],
-        ...(currentPlotId ? { subplotId: currentPlotId } : {})
+        ...(currentPlotId ? { subplotId: currentPlotId } : {}),
+        ...(atmosphereId ? { atmosphereId } : {})
       }
     };
 
@@ -26,7 +27,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
   updatePageTitle: (pageId, newTitle) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           return { ...node, data: { ...node.data, title: newTitle } };
         }
         return node;
@@ -37,7 +38,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
   updatePageType: (pageId, newType) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           return { ...node, data: { ...node.data, type: newType } };
         }
         return node;

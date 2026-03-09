@@ -69,7 +69,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
     setHasHydrated(false); // Make sure hydration blocker is on
 
     // We call loadStory with empty arrays to clear it, but also initialize basic data
-    loadStory([], [], {}, { title: 'Untitled Story', description: '' });
+    loadStory([], [], {}, { title: 'Untitled Story', description: '' }, [], {}, {});
 
     setStoryId(newId);
     setHasHydrated(true); // Hydrated!
@@ -91,7 +91,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
             title: data.state.storyTitle,
             description: data.state.storyDescription,
             startPageId: data.state.startPageId
-          }
+          },
+          data.state.subplots || [],
+          data.state.audio || {},
+          data.state.atmospheres || {}
         );
 
         setHasHydrated(true);

@@ -37,6 +37,13 @@ export interface EditorState {
   deleteAudio: (id: string) => void;
 
 
+  // Atmospheres
+  atmospheres: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
+  setAtmospheres: (atmospheres: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>) => void;
+  addAtmosphere: (id: string, atmosphere: import('../../../domain/Atmosphere/Atmosphere').Atmosphere) => void;
+  updateAtmosphere: (id: string, updates: Partial<import('../../../domain/Atmosphere/Atmosphere').Atmosphere>) => void;
+  removeAtmosphere: (id: string) => void;
+
   // Subplots
   subplots: Subplot[];
   currentPlotId: string | null;
@@ -56,7 +63,9 @@ export interface EditorState {
     edges: Edge[],
     variables?: Record<string, StoryVariable>,
     metadata?: { title?: string; description?: string; startPageId?: string },
-    subplots?: Subplot[]
+    subplots?: Subplot[],
+    audio?: Record<string, AudioItem>,
+    atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>
   ) => void;
 
   /** Merges computed synthetic (ActionNode/PortalNode) entries into state.nodes/edges,
@@ -89,6 +98,9 @@ export interface EditorState {
   isVariableManagerOpen: boolean;
   setIsVariableManagerOpen: (isOpen: boolean) => void;
 
+  isAtmosphereManagerOpen: boolean;
+  setIsAtmosphereManagerOpen: (isOpen: boolean) => void;
+
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;
   setConnectingChoice: (choice: { sourcePageId: string; choiceId: string } | null) => void;
@@ -98,7 +110,7 @@ export interface EditorState {
   setIsSelectingStartNode: (isSelecting: boolean) => void;
 
   // Domain Handlers - Page
-  addPage: (x: number, y: number) => string;
+  addPage: (x: number, y: number, atmosphereId?: string) => string;
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updatePageType: (pageId: string, newType: 'location' | 'plot') => void;
 

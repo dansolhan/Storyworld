@@ -26,7 +26,8 @@ export const compileGraphToStory = (
   edges: Edge[],
   variables: Record<string, StoryVariable>,
   metadata?: { title: string; description: string; startPageId: string | null },
-  audio?: Record<string, AudioItem>
+  audio?: Record<string, AudioItem>,
+  atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
@@ -50,6 +51,7 @@ export const compileGraphToStory = (
       id: node.id,
       title: node.data.title as string || 'Untitled',
       subplotId: node.data.subplotId as string | undefined,
+      atmosphereId: node.data.atmosphereId as string | undefined,
       paragraphs: Array.isArray(node.data.paragraphs) ? [...node.data.paragraphs] : [],
       choices: compiledChoices,
       actions: Array.isArray(node.data.actions) ? [...node.data.actions] : [],
@@ -66,6 +68,7 @@ export const compileGraphToStory = (
     pages,
     variables,
     audio,
+    atmospheres,
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,
@@ -196,6 +199,7 @@ export const parseStoryToGraph = (
       data: {
         title: page.title,
         subplotId: page.subplotId,
+        atmosphereId: page.atmosphereId,
         paragraphs: page.paragraphs,
         choices: page.choices,
         actions: page.actions || [],

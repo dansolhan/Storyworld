@@ -11,6 +11,7 @@ export interface StoryData {
   pages: Page[];
   variables: Record<string, StoryVariable>;
   subplots?: Subplot[];
+  atmospheres?: Record<string, import('../Atmosphere/Atmosphere').Atmosphere>;
   audio?: Record<string, AudioItem>;
   uiMetadata?: {
     nodePositions?: Record<string, { x: number; y: number }>;

@@ -11,6 +11,7 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   variables: TVariables;
   setVariable: (key: string, value: unknown) => void;
   postMessage: (message: string) => void;
+  goToPage?: (pageId: string) => void;
   // Extensible for future mutations (e.g. giveItem, addReputation)
 }
 

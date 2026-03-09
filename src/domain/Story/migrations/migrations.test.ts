@@ -24,10 +24,11 @@ describe('Story Migrations', () => {
     };
 
     const migrated = migrateStory(v2Story);
-    // Migration now runs through v3 (subplots) and v4 (optional targetPageId), landing at CURRENT_VERSION
+    // Migration now runs through v3, lands at CURRENT_VERSION (7)
     expect(migrated.version).toBe(CURRENT_VERSION);
     expect(migrated.subplots).toEqual([]);
-
+    expect(migrated.audio).toEqual({});
+    expect(migrated.atmospheres).toEqual({});
   });
 
   // Adding a mock or ensuring that undefined/null throws properly

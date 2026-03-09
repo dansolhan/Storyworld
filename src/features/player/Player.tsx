@@ -9,6 +9,8 @@ import { useChoiceSound } from './hooks/useChoiceSound';
 import { evaluateVisibility } from './conditionals/evaluator';
 import { actionBlueprints } from '../../domain/Actions/registry';
 import { motion, AnimatePresence } from 'motion/react';
+import { audioManager } from '../../lib/audioManager';
+import { useAtmosphere } from './hooks/useAtmosphere';
 import { PlayerText } from './components/PlayerText';
 import { PlayerChoices } from './components/PlayerChoices';
 import { PlayerRightFrame } from './components/PlayerRightFrame';
@@ -29,6 +31,13 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
   const [variables, setVariables] = useState<Record<string, StoryVariable>>(storyData.variables || {});
 
+  // Cleanup top-level audio on exit
+  useEffect(() => {
+    return () => {
+      audioManager.stopAll();
+    };
+  }, []);
+
   // Track visited pages and execute page actions
 
   useEffect(() => {
@@ -48,45 +57,56 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     return storyData.pages.find((p) => p.id === currentPageId);
   }, [storyData, currentPageId]);
 
+  // Handle atmosphere audio
+  useAtmosphere(storyData, currentPage);
+
   // Execute actions on page load
   useEffect(() => {
     if (currentPage && currentPage.actions) {
-      setVariables((currentVars) => {
-        let nextVars = { ...currentVars };
+      let nextVars = { ...variables };
+      let navigateToPage: string | null = null;
 
-        const actionContext = {
-          variables: nextVars,
-          setVariable: (key: string, value: unknown) => {
-            const currentVar = nextVars[key];
-            const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-            nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-          },
-          postMessage: () => { }
-        };
+      const actionContext = {
+        variables: nextVars,
+        setVariable: (key: string, value: unknown) => {
+          const currentVar = nextVars[key];
+          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+          nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+        },
+        postMessage: () => { },
+        goToPage: (pageId: string) => { navigateToPage = pageId; }
+      };
 
-        const evalContext = {
-          variables: nextVars,
-          visitedPageIds,
-          currentPageId,
-        };
+      const evalContext = {
+        variables: nextVars,
+        visitedPageIds,
+        currentPageId,
+      };
 
-        currentPage.actions!.forEach(action => {
-          if (action.conditionals && action.conditionals.length > 0) {
-            // @ts-ignore - duck typing for evaluator which expects { conditionals: ... }
-            if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) {
-              return;
-            }
+      let varChanges = false;
+      currentPage.actions!.forEach(action => {
+        if (action.conditionals && action.conditionals.length > 0) {
+          // @ts-ignore
+          if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) {
+            return;
           }
-          const blueprint = actionBlueprints[action.blueprintId];
-          if (blueprint) {
-            blueprint.execute(action.params, actionContext);
-          }
-        });
-
-        return nextVars;
+        }
+        const blueprint = actionBlueprints[action.blueprintId];
+        if (blueprint) {
+          blueprint.execute(action.params, actionContext);
+          varChanges = true; // simplifying, assume it might change
+        }
       });
+
+      if (varChanges) {
+        setVariables(nextVars);
+      }
+      if (navigateToPage) {
+        setCurrentPageId(navigateToPage);
+      }
     }
-  }, [currentPage]); // Only run when currentPage object changes (i.e. we navigated)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPageId]); // Ignore variables in deps so it only runs once per page entry
 
   // Derive evaluated visible choices
   const visibleChoices = useMemo(() => {
@@ -116,35 +136,38 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
 
   const handleChoiceClick = (choiceId: string, targetPageId?: string) => {
     const choice = currentPage?.choices.find(c => c.id === choiceId);
+    let nextTargetId = targetPageId;
+
     if (choice && choice.actions) {
-      setVariables((currentVars) => {
-        let nextVars = { ...currentVars };
-        const actionContext = {
-          variables: nextVars,
-          setVariable: (key: string, value: unknown) => {
-            const currentVar = nextVars[key];
-            const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-            nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-          },
-          postMessage: () => { }
-        };
-        const evalContext = { variables: nextVars, visitedPageIds, currentPageId };
+      let nextVars = { ...variables };
+      const actionContext = {
+        variables: nextVars,
+        setVariable: (key: string, value: unknown) => {
+          const currentVar = nextVars[key];
+          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+          nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+        },
+        postMessage: () => { },
+        goToPage: (pageId: string) => {
+          nextTargetId = pageId;
+        }
+      };
+      const evalContext = { variables: nextVars, visitedPageIds, currentPageId };
 
-        choice.actions!.forEach(action => {
-          if (action.conditionals && action.conditionals.length > 0) {
-            // @ts-ignore
-            if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) return;
-          }
-          const blueprint = actionBlueprints[action.blueprintId];
-          if (blueprint) blueprint.execute(action.params, actionContext);
-        });
-
-        return nextVars;
+      choice.actions!.forEach(action => {
+        if (action.conditionals && action.conditionals.length > 0) {
+          // @ts-ignore
+          if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) return;
+        }
+        const blueprint = actionBlueprints[action.blueprintId];
+        if (blueprint) blueprint.execute(action.params, actionContext);
       });
+
+      setVariables(nextVars);
     }
 
-    if (targetPageId) {
-      setCurrentPageId(targetPageId);
+    if (nextTargetId) {
+      setCurrentPageId(nextTargetId);
     }
   };
 

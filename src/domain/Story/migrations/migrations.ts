@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = 6;
+export const CURRENT_VERSION = 7;
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -89,6 +89,15 @@ const migrateV5ToV6: MigrationFunction = (v5Story) => {
   };
 };
 
+const migrateV6ToV7: MigrationFunction = (v6Story) => {
+  // Version 7 adds audio and atmospheres to the story root.
+  return {
+    ...v6Story,
+    audio: v6Story.audio || {},
+    atmospheres: v6Story.atmospheres || {}
+  };
+};
+
 // A dictionary mapping the *starting* version to the migration function
 // that upgrades it to starting version + 1.
 const migrationSteps: Record<number, MigrationFunction> = {
@@ -97,6 +106,7 @@ const migrationSteps: Record<number, MigrationFunction> = {
   3: migrateV3ToV4,
   4: migrateV4ToV5,
   5: migrateV5ToV6,
+  6: migrateV6ToV7,
 };
 
 export function migrateStory(storyJson: any): StoryData {

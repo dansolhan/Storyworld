@@ -21,33 +21,33 @@ function App() {
   const handlePlay = () => {
     // We get the state non-reactively so App.tsx doesn't re-render 
     // every single time a node is dragged on the canvas!
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId } = useEditorStore.getState();
+    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
     const compiledStory = compileGraphToStory(nodes, edges, variables, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    });
+    }, audio, atmospheres);
     setPlayingStory(compiledStory);
     setMode('player');
   };
 
   const handleExportJson = () => {
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId } = useEditorStore.getState();
+    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, variables, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    });
+    }, audio, atmospheres);
     exportToJson(storyData);
   };
 
   const handleExportStoryworld = () => {
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId } = useEditorStore.getState();
+    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, variables, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    });
+    }, audio, atmospheres);
     exportToStoryworld(storyData);
   };
 
@@ -75,7 +75,9 @@ function App() {
                 description: exampleStory.description,
                 startPageId: exampleStory.startPageId
               },
-              exampleStory.subplots || []
+              exampleStory.subplots || [],
+              exampleStory.audio || {},
+              exampleStory.atmospheres || {}
             );
 
             store.setHasHydrated(true); // Re-enable saves
@@ -97,7 +99,8 @@ function App() {
       label: 'Data',
       items: [
         { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
-        { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) }
+        { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) },
+        { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) }
       ]
     },
     {

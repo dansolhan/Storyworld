@@ -38,7 +38,8 @@ export const EditorSidebar: React.FC = () => {
     updateChoiceText,
     connectingChoice,
     setConnectingChoice,
-    createPageFromChoice
+    createPageFromChoice,
+    atmospheres
   } = useEditorStore();
 
   const [previewStory, setPreviewStory] = useState(false);
@@ -85,6 +86,18 @@ export const EditorSidebar: React.FC = () => {
     updatePageType(selectedPageId, e.target.value as 'location' | 'plot');
   };
 
+  const handleAtmosphereChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // We don't have updatePageAtmosphere yet, but we can reuse nodes.map
+    useEditorStore.setState((state) => ({
+      nodes: state.nodes.map((node) => {
+        if (node.id === selectedPageId && node.type === 'pageNode') {
+          return { ...node, data: { ...node.data, atmosphereId: e.target.value || undefined } } as any;
+        }
+        return node;
+      }),
+    }));
+  };
+
   return (
     <ExpandableBottomPanel
       isOpen={!connectingChoice}
@@ -126,9 +139,22 @@ export const EditorSidebar: React.FC = () => {
                 className={styles.input}
                 value={selectedNode.data.type || 'location'}
                 onChange={handleTypeChange}
+                style={{ marginBottom: '0.5rem' }}
               >
                 <option value="location">Location</option>
                 <option value="plot">Plot / Action</option>
+              </select>
+
+              <label className={styles.label}>Atmosphere</label>
+              <select
+                className={styles.input}
+                value={selectedNode.data.atmosphereId || ''}
+                onChange={handleAtmosphereChange}
+              >
+                <option value="">None (Default)</option>
+                {Object.entries(atmospheres).map(([id, atm]) => (
+                  <option key={id} value={id}>{atm.title}</option>
+                ))}
               </select>
             </section>
 

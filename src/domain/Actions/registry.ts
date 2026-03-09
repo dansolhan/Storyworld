@@ -32,9 +32,10 @@ export const goToSubplotBlueprint: ActionBlueprint<GoToSubplotParams> = {
     subplotId: null,
     targetPageId: null,
   },
-  execute: (params) => {
-    // Engine execution logic: Navigate to the target page ID
-    console.log(`Navigating to subplot ${params.subplotId}, page ${params.targetPageId}`);
+  execute: (params, context) => {
+    if (params.targetPageId && context.goToPage) {
+      context.goToPage(params.targetPageId);
+    }
   },
 };
 
