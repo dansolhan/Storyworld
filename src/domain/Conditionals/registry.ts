@@ -20,6 +20,32 @@ export const visitedPageBlueprint: ConditionalBlueprint<VisitedPageParams> = {
   },
 };
 
+export interface VariableEqualsParams {
+  variableKey: string | null;
+  value: string;
+}
+
+export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams> = {
+  id: 'variable_equals',
+  name: 'Variable equals',
+  template: 'Variable {{variable}} equals {{value}}',
+  defaultParams: {
+    variableKey: null,
+    value: '',
+  },
+  evaluate: (params, context) => {
+    if (!params.variableKey) return true;
+    const variables = context.variables as Record<string, any>;
+    const variable = variables[params.variableKey];
+    if (!variable) return false;
+
+    const actualValue = String(variable.value);
+    const targetValue = String(params.value);
+
+    return actualValue === targetValue;
+  },
+};
+
 export const andGroupBlueprint: ConditionalBlueprint<{}> = {
   id: 'and_group',
   name: 'AND Group',
@@ -49,6 +75,7 @@ export const orGroupBlueprint: ConditionalBlueprint<{}> = {
 // Expose a central registry of blueprints for easy selection
 export const conditionalBlueprints: Record<string, ConditionalBlueprint<unknown>> = {
   [visitedPageBlueprint.id]: visitedPageBlueprint as unknown as ConditionalBlueprint<unknown>,
+  [variableEqualsBlueprint.id]: variableEqualsBlueprint as unknown as ConditionalBlueprint<unknown>,
   [andGroupBlueprint.id]: andGroupBlueprint as unknown as ConditionalBlueprint<unknown>,
   [orGroupBlueprint.id]: orGroupBlueprint as unknown as ConditionalBlueprint<unknown>,
 };
