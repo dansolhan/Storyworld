@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import type { StoryData } from '../../../domain/Story/StoryData';
-import type { Page } from '../../../domain/Page/Page';
 import { audioManager } from '../../../lib/audioManager';
+import { usePlayerStore } from '../store/usePlayerStore';
+import { useCurrentPage } from './useStoryState';
 
-export function useAtmosphere(storyData: StoryData, currentPage?: Page) {
+export function useAtmosphere() {
+  const storyData = usePlayerStore((s) => s.storyData);
+  const currentPage = useCurrentPage();
   const [playingMusicId, setPlayingMusicId] = useState<string | null>(null);
   const prevAtmoRef = useRef<string | undefined>(undefined);
 
@@ -11,7 +13,7 @@ export function useAtmosphere(storyData: StoryData, currentPage?: Page) {
     let isActive = true;
 
     const runTransition = async () => {
-      if (!currentPage) return;
+      if (!currentPage || !storyData) return;
 
       const atmosphereId = currentPage.atmosphereId;
       if (atmosphereId !== prevAtmoRef.current) {
@@ -52,7 +54,7 @@ export function useAtmosphere(storyData: StoryData, currentPage?: Page) {
     return () => {
       isActive = false;
     };
-  }, [currentPage, playingMusicId, storyData.audio, storyData.atmospheres]);
+  }, [currentPage, playingMusicId, storyData]);
 
   return { playingMusicId };
 }

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { usePlayerStore } from '../store/usePlayerStore';
 
 export const useContextualPopover = () => {
-  const [contextualPopover, setContextualPopover] = useState<{ text: string; x: number; y: number } | null>(null);
+  const setContextualPopover = usePlayerStore((s) => s.setContextualPopover);
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
@@ -9,7 +10,7 @@ export const useContextualPopover = () => {
       if (target && target.classList.contains('contextual-text-mark')) {
         const text = target.getAttribute('data-context');
         if (text) {
-          // Calculate a rough position right below the clicked word
+          // Calculate a position right below the clicked word
           const rect = target.getBoundingClientRect();
           setContextualPopover({
             text,
@@ -24,10 +25,5 @@ export const useContextualPopover = () => {
     };
     document.addEventListener('click', handleDocumentClick);
     return () => document.removeEventListener('click', handleDocumentClick);
-  }, []);
-
-  return {
-    contextualPopover,
-    setContextualPopover,
-  };
+  }, [setContextualPopover]);
 };

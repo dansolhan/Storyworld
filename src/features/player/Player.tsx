@@ -1,19 +1,20 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import type { StoryData } from '../../domain/Story/StoryData';
-import type { StoryVariable } from '../../domain/Story/Variable';
+import React, { useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { useContextualPopover } from './hooks/useContextualPopover';
 import { useChoiceSound } from './hooks/useChoiceSound';
-import { evaluateVisibility } from './conditionals/evaluator';
-import { actionBlueprints } from '../../domain/Actions/registry';
-import { motion, AnimatePresence } from 'motion/react';
-import { audioManager } from '../../lib/audioManager';
 import { useAtmosphere } from './hooks/useAtmosphere';
 import { PlayerText } from './components/PlayerText';
 import { PlayerChoices } from './components/PlayerChoices';
 import { PlayerRightFrame } from './components/PlayerRightFrame';
+import { usePlayerStore } from './store/usePlayerStore';
+import { useCurrentPage } from './hooks/useStoryState';
+import { usePageEnterActions } from './hooks/usePageEnterActions';
+import { audioManager } from '../../lib/audioManager';
+import type { StoryData } from '../../domain/Story/StoryData';
+import { PageProvider } from './context/PageContext';
 import './player-theme.css';
 import styles from './Player.module.css';
 
@@ -24,14 +25,24 @@ export interface PlayerProps {
 }
 
 export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
-  const { contextualPopover, setContextualPopover } = useContextualPopover();
+  const {
+    currentPageId,
+    initialize,
+    addVisitedPageId,
+    restart,
+    contextualPopover,
+    setContextualPopover
+  } = usePlayerStore();
+
+  const currentPage = useCurrentPage();
   const { play } = useChoiceSound();
-  const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
-  const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
-  const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
-  const [variables, setVariables] = useState<Record<string, StoryVariable>>(storyData.variables || {});
-  const [messages, setMessages] = useState<{ id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[]>([]);
-  const [shownMessageActionIds, setShownMessageActionIds] = useState<Set<string>>(new Set());
+
+  // Initialization: Wipe the store and load fresh data
+  useEffect(() => {
+    if (storyData) {
+      initialize(storyData, startPageId);
+    }
+  }, [storyData, startPageId, initialize]);
 
   // Cleanup top-level audio on exit
   useEffect(() => {
@@ -40,190 +51,22 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     };
   }, []);
 
-  // Track visited pages and execute page actions
-
+  // Track visited pages and play entry sound
   useEffect(() => {
     if (currentPageId) {
       play();
-      setVisitedPageIds(prev => {
-        if (!prev.includes(currentPageId)) {
-          return [...prev, currentPageId];
-        }
-        return prev;
-      });
+      addVisitedPageId(currentPageId);
     }
-  }, [currentPageId, play]);
-
-  // Derive the current page from the state
-  const currentPage = useMemo(() => {
-    return storyData.pages.find((p) => p.id === currentPageId);
-  }, [storyData, currentPageId]);
+  }, [currentPageId, play, addVisitedPageId]);
 
   // Handle atmosphere audio
-  useAtmosphere(storyData, currentPage);
+  useAtmosphere();
 
-  // Execute actions on page load
-  useEffect(() => {
-    if (currentPage && currentPage.actions) {
-      let nextVars = { ...variables };
-      let newMessages: { id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[] = [];
-      let navigateToPage: string | null = null;
-      let newlyShownActions = new Set<string>();
+  // Attach global click listener for contextual popovers
+  useContextualPopover();
 
-      const evalContext = {
-        variables: nextVars,
-        visitedPageIds,
-        currentPageId,
-      };
-
-      let varChanges = false;
-      currentPage.actions!.forEach(action => {
-        if (action.conditionals && action.conditionals.length > 0) {
-          // @ts-ignore
-          if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) {
-            return;
-          }
-        }
-        const blueprint = actionBlueprints[action.blueprintId];
-        if (blueprint) {
-          const actionContext = {
-            variables: nextVars,
-            setVariable: (key: string, value: unknown) => {
-              const currentVar = nextVars[key];
-              const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-              nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-            },
-            postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => {
-              if (!shownMessageActionIds.has(action.id) && !newlyShownActions.has(action.id)) {
-                newMessages.push({ id: crypto.randomUUID(), text: message, displayStyle: displayStyle || 'styled' });
-                newlyShownActions.add(action.id);
-              }
-            },
-            goToPage: (pageId: string) => { navigateToPage = pageId; }
-          };
-          blueprint.execute(action.params, actionContext);
-          varChanges = true; // simplifying, assume it might change
-        }
-      });
-
-      if (varChanges) {
-        setVariables(nextVars);
-      }
-      if (newlyShownActions.size > 0) {
-        setShownMessageActionIds(prev => {
-          const next = new Set(prev);
-          newlyShownActions.forEach(id => next.add(id));
-          return next;
-        });
-      }
-      if (newMessages.length > 0) {
-        setMessages(prev => [...prev, ...newMessages]);
-      }
-      if (navigateToPage) {
-        setCurrentPageId(navigateToPage);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPageId]); // Ignore variables in deps so it only runs once per page entry
-
-  // Derive evaluated visible choices
-  const visibleChoices = useMemo(() => {
-    if (!currentPage || !currentPage.choices) return [];
-
-    const context = {
-      variables,
-      visitedPageIds,
-      currentPageId
-    };
-
-    return currentPage.choices.filter(choice => evaluateVisibility(choice, context));
-  }, [currentPage, variables, visitedPageIds, currentPageId]);
-
-  // Derive evaluated visible paragraphs
-  const visibleParagraphs = useMemo(() => {
-    if (!currentPage || !currentPage.paragraphs) return [];
-
-    const context = {
-      variables,
-      visitedPageIds,
-      currentPageId
-    };
-
-    return currentPage.paragraphs.filter(p => evaluateVisibility(p, context));
-  }, [currentPage, variables, visitedPageIds, currentPageId]);
-
-  const handleChoiceClick = (choiceId: string, targetPageId?: string) => {
-    const choice = currentPage?.choices.find(c => c.id === choiceId);
-    let nextTargetId = targetPageId;
-
-    if (choice && choice.actions) {
-      let nextVars = { ...variables };
-      let newMessages: { id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[] = [];
-      let newlyShownActions = new Set<string>();
-
-      const evalContext = { variables: nextVars, visitedPageIds, currentPageId };
-
-      choice.actions!.forEach(action => {
-        if (action.conditionals && action.conditionals.length > 0) {
-          // @ts-ignore
-          if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) return;
-        }
-        const blueprint = actionBlueprints[action.blueprintId];
-        if (blueprint) {
-          const actionContext = {
-            variables: nextVars,
-            setVariable: (key: string, value: unknown) => {
-              const currentVar = nextVars[key];
-              const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-              nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-            },
-            postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => {
-              if (!shownMessageActionIds.has(action.id) && !newlyShownActions.has(action.id)) {
-                newMessages.push({ id: crypto.randomUUID(), text: message, displayStyle: displayStyle || 'styled' });
-                newlyShownActions.add(action.id);
-              }
-            },
-            goToPage: (pageId: string) => {
-              nextTargetId = pageId;
-            }
-          };
-          blueprint.execute(action.params, actionContext);
-        }
-      });
-
-      setVariables(nextVars);
-
-      if (newlyShownActions.size > 0) {
-        setShownMessageActionIds(prev => {
-          const next = new Set(prev);
-          newlyShownActions.forEach(id => next.add(id));
-          return next;
-        });
-      }
-
-      if (nextTargetId) {
-        setMessages(newMessages); // clean slate + transition messages when navigating
-      } else {
-        setMessages(prev => [...prev, ...newMessages]); // append logically if repeating page
-      }
-    } else if (nextTargetId) {
-      setMessages([]); // clean slate unconditionally if navigating
-    }
-
-    if (nextTargetId) {
-      setCurrentPageId(nextTargetId);
-    }
-  };
-
-  const handleRestart = () => {
-    setVisitedPageIds([]);
-    setCurrentPageId(defaultStartId);
-    setVariables(storyData.variables || {});
-    setMessages([]);
-    setShownMessageActionIds(new Set());
-  };
-
-
+  // Execute actions on page entry
+  usePageEnterActions();
 
   if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (
@@ -236,14 +79,17 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   }
 
   if (!currentPage) {
-    return (
-      <div className={styles.container}>
-        <Card padding="lg" className={styles.errorCard}>
-          <p>Could not find page with ID: {currentPageId}</p>
-          <Button onClick={handleRestart} className={styles.restartButton}>Restart Story</Button>
-        </Card>
-      </div>
-    );
+    if (currentPageId) {
+      return (
+        <div className={styles.container}>
+          <Card padding="lg" className={styles.errorCard}>
+            <p>Could not find page with ID: {currentPageId}</p>
+            <Button onClick={restart} className={styles.restartButton}>Restart Story</Button>
+          </Card>
+        </div>
+      );
+    }
+    return null;
   }
 
   return (
@@ -264,18 +110,10 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
               transition={{ duration: 0.2 }}
               style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
             >
-              <PlayerText
-                title={currentPage.title}
-                paragraphs={visibleParagraphs}
-                variables={variables}
-                messages={messages}
-              />
-
-              <PlayerChoices
-                choices={visibleChoices}
-                onChoiceClick={handleChoiceClick}
-                onRestart={handleRestart}
-              />
+              <PageProvider pageId={currentPageId}>
+                <PlayerText />
+                <PlayerChoices />
+              </PageProvider>
             </motion.div>
           </AnimatePresence>
         </div>

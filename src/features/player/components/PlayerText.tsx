@@ -1,20 +1,25 @@
 import React from 'react';
-import type { Paragraph } from '../../../domain/Paragraph/Paragraph';
-import type { StoryVariable } from '../../../domain/Story/Variable';
 import { parseTextTokens } from '../../../utils/textParser';
+import { usePlayerStore } from '../store/usePlayerStore';
+import { useCurrentPage, useVisibleParagraphs } from '../hooks/useStoryState';
+import { usePageId } from '../context/PageContext';
 import styles from '../Player.module.css';
 
-export interface PlayerTextProps {
-  title: string;
-  paragraphs: Paragraph[];
-  variables: Record<string, StoryVariable>;
-  messages?: { id: string, text: string }[];
-}
+export const PlayerText: React.FC = () => {
+  const currentPage = useCurrentPage();
+  const paragraphs = useVisibleParagraphs();
+  const variables = usePlayerStore((s) => s.variables);
+  const allMessages = usePlayerStore((s) => s.messages);
+  const contextPageId = usePageId();
 
-export const PlayerText: React.FC<PlayerTextProps> = ({ title, paragraphs, variables, messages = [] }) => {
+  if (!currentPage) return null;
+
+  // Only show messages associated with the current page context
+  const filteredMessages = allMessages.filter(m => !m.pageId || m.pageId === contextPageId);
+
   return (
     <div className={styles.textContent}>
-      <h2 className={styles.pageTitle}>{title}</h2>
+      <h2 className={styles.pageTitle}>{currentPage.title}</h2>
 
       <div className={styles.paragraphs}>
         {paragraphs.map((p) => {
@@ -27,12 +32,14 @@ export const PlayerText: React.FC<PlayerTextProps> = ({ title, paragraphs, varia
             />
           );
         })}
-        {messages.map((m) => {
+        {filteredMessages.map((m) => {
           const parsedHtml = parseTextTokens(m.text, variables);
+          const isStyled = m.displayStyle !== 'paragraph';
+
           return (
             <div
               key={m.id}
-              className={`${styles.paragraphText} ${styles.messageText}`}
+              className={`${styles.paragraphText} ${isStyled ? styles.messageText : ''}`}
               dangerouslySetInnerHTML={{ __html: parsedHtml }}
             />
           );

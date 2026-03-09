@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import type { Choice } from '../../../domain/Choice/Choice';
 import { Button } from '../../../components/ui/Button/Button';
+import { usePlayerStore } from '../store/usePlayerStore';
+import { useVisibleChoices } from '../hooks/useStoryState';
+import { useChoiceClick } from '../hooks/useChoiceClick';
 import styles from '../Player.module.css';
 
-export interface PlayerChoicesProps {
-  choices: Choice[];
-  onChoiceClick: (choiceId: string, targetPageId?: string) => void;
-  onRestart: () => void;
-}
+export const PlayerChoices: React.FC = () => {
+  const choices = useVisibleChoices();
+  const restart = usePlayerStore((s) => s.restart);
+  const { handleChoiceClick } = useChoiceClick();
 
-export const PlayerChoices: React.FC<PlayerChoicesProps> = ({ choices, onChoiceClick, onRestart }) => {
   const handleChoiceSelect = (choice: Choice) => {
-    onChoiceClick(choice.id, choice.targetPageId);
+    handleChoiceClick(choice.id, choice.targetPageId);
   };
 
   // Keyboard shortcuts: press 1-9 to select a choice
@@ -49,7 +50,7 @@ export const PlayerChoices: React.FC<PlayerChoicesProps> = ({ choices, onChoiceC
       ) : (
         <div className={styles.endContainer}>
           <p className={styles.endText}>— The End —</p>
-          <Button variant="secondary" size="lg" onClick={onRestart}>
+          <Button variant="secondary" size="lg" onClick={restart}>
             Restart Story
           </Button>
         </div>
