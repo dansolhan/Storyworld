@@ -6,6 +6,7 @@ import type { Choice } from '../domain/Choice/Choice';
 import type { StoryData } from '../domain/Story/StoryData';
 import type { Subplot } from '../domain/Story/Subplot';
 import type { StoryVariable } from '../domain/Story/Variable';
+import type { AudioItem } from '../domain/Story/Audio';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
 
 type AnyNode = PageNodeType | ActionNodeType | PortalNodeType;
@@ -24,7 +25,8 @@ export const compileGraphToStory = (
   nodes: AnyNode[],
   edges: Edge[],
   variables: Record<string, StoryVariable>,
-  metadata?: { title: string; description: string; startPageId: string | null }
+  metadata?: { title: string; description: string; startPageId: string | null },
+  audio?: Record<string, AudioItem>
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
@@ -63,6 +65,7 @@ export const compileGraphToStory = (
     version: CURRENT_VERSION,
     pages,
     variables,
+    audio,
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,

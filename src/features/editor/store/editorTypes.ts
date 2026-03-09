@@ -4,6 +4,7 @@ import type { ActionNodeType } from '../nodes/ActionNode';
 import type { PortalNodeType } from '../nodes/PortalNode';
 import type { Subplot } from '../../../domain/Story/Subplot';
 import type { StoryVariable } from '../../../domain/Story/Variable';
+import type { AudioItem } from '../../../domain/Story/Audio';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -26,6 +27,15 @@ export interface EditorState {
   setStoryTitle: (title: string) => void;
   setStoryDescription: (description: string) => void;
   setStartPageId: (pageId: string | null) => void;
+
+  // Audio
+  audio: Record<string, AudioItem>;
+  isAudioManagerOpen: boolean;
+  setIsAudioManagerOpen: (isOpen: boolean) => void;
+  addAudio: (audio: AudioItem) => void;
+  updateAudio: (id: string, updates: Partial<AudioItem>) => void;
+  deleteAudio: (id: string) => void;
+
 
   // Subplots
   subplots: Subplot[];

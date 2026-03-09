@@ -96,7 +96,8 @@ function App() {
     {
       label: 'Data',
       items: [
-        { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) }
+        { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
+        { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) }
       ]
     },
     {

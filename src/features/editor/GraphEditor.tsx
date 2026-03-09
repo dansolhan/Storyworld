@@ -17,6 +17,7 @@ import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
 import { VariableManager } from './components/VariableManager/VariableManager';
 import { StorySettingsDrawer } from './components/StorySettings/StorySettingsDrawer';
+import { AudioManagerModal } from './components/Audio/AudioManagerModal';
 import { Button } from '../../components/ui/Button/Button';
 import { useInteractionStrategy } from './interactions/useInteractionStrategy';
 import type { ActionNodeType } from './nodes/ActionNode';
@@ -308,6 +309,7 @@ export const GraphEditor: React.FC = () => {
       <EditorSidebar />
       <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={() => setIsStorySettingsOpen(false)} />
       <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
+      <AudioManagerModal />
     </div>
   );
 };

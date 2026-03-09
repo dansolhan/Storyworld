@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import type { Choice } from '../../../domain/Choice/Choice';
 import { Button } from '../../../components/ui/Button/Button';
-import { useChoiceSound } from '../hooks/useChoiceSound';
 import styles from '../Player.module.css';
 
 export interface PlayerChoicesProps {
@@ -11,10 +10,7 @@ export interface PlayerChoicesProps {
 }
 
 export const PlayerChoices: React.FC<PlayerChoicesProps> = ({ choices, onChoiceClick, onRestart }) => {
-  const { play } = useChoiceSound();
-
   const handleChoiceSelect = (choice: Choice) => {
-    play();
     onChoiceClick(choice.id, choice.targetPageId);
   };
 

@@ -5,7 +5,7 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen'>
+  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen'>
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -17,6 +17,7 @@ export const createUISlice: StateCreator<
   isSelectingStartNode: false,
   isStorySettingsOpen: false,
   isVariableManagerOpen: false,
+  isAudioManagerOpen: false,
 
   setSelectedPage: (pageId) => {
     set((state) => ({
@@ -26,6 +27,7 @@ export const createUISlice: StateCreator<
       ...(pageId !== null && {
         isStorySettingsOpen: false,
         isVariableManagerOpen: false,
+        isAudioManagerOpen: false,
       }),
       ...(pageId === null && {
         isEditorSidebarExpanded: false,
@@ -54,6 +56,7 @@ export const createUISlice: StateCreator<
       ...(isOpen && {
         selectedPageId: null,
         isVariableManagerOpen: false,
+        isAudioManagerOpen: false,
       }),
     }));
   },
@@ -65,6 +68,19 @@ export const createUISlice: StateCreator<
       ...(isOpen && {
         selectedPageId: null,
         isStorySettingsOpen: false,
+        isAudioManagerOpen: false,
+      }),
+    }));
+  },
+
+  setIsAudioManagerOpen: (isOpen) => {
+    set((state) => ({
+      ...state,
+      isAudioManagerOpen: isOpen,
+      ...(isOpen && {
+        selectedPageId: null,
+        isStorySettingsOpen: false,
+        isVariableManagerOpen: false,
       }),
     }));
   }

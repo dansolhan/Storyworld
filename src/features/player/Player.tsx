@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { useContextualPopover } from './hooks/useContextualPopover';
+import { useChoiceSound } from './hooks/useChoiceSound';
 import { evaluateVisibility } from './conditionals/evaluator';
 import { actionBlueprints } from '../../domain/Actions/registry';
 import { motion, AnimatePresence } from 'motion/react';
@@ -22,6 +23,7 @@ export interface PlayerProps {
 
 export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
   const { contextualPopover, setContextualPopover } = useContextualPopover();
+  const { play } = useChoiceSound();
   const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
   const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
@@ -31,6 +33,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
 
   useEffect(() => {
     if (currentPageId) {
+      play();
       setVisitedPageIds(prev => {
         if (!prev.includes(currentPageId)) {
           return [...prev, currentPageId];
@@ -38,7 +41,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         return prev;
       });
     }
-  }, [currentPageId]);
+  }, [currentPageId, play]);
 
   // Derive the current page from the state
   const currentPage = useMemo(() => {
