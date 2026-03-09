@@ -12,23 +12,20 @@ export interface PlayerTextProps {
 
 export const PlayerText: React.FC<PlayerTextProps> = ({ title, paragraphs, variables }) => {
   return (
-    <div className={styles.textContentWrapper}>
-      <div className={styles.vignetteOverlay} />
-      <div className={styles.textContent}>
-        <h2 className={styles.pageTitle}>{title}</h2>
+    <div className={styles.textContent}>
+      <h2 className={styles.pageTitle}>{title}</h2>
 
-        <div className={styles.paragraphs}>
-          {paragraphs.map((p) => {
-            const parsedHtml = parseTextTokens(p.text, variables);
-            return (
-              <div
-                key={p.id}
-                className={styles.paragraphText}
-                dangerouslySetInnerHTML={{ __html: parsedHtml }}
-              />
-            );
-          })}
-        </div>
+      <div className={styles.paragraphs}>
+        {paragraphs.map((p) => {
+          const parsedHtml = parseTextTokens(p.text, variables);
+          return (
+            <div
+              key={p.id}
+              className={styles.paragraphText}
+              dangerouslySetInnerHTML={{ __html: parsedHtml }}
+            />
+          );
+        })}
       </div>
     </div>
   );
