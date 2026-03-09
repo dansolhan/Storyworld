@@ -30,6 +30,8 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(defaultStartId);
   const [visitedPageIds, setVisitedPageIds] = useState<string[]>([]);
   const [variables, setVariables] = useState<Record<string, StoryVariable>>(storyData.variables || {});
+  const [messages, setMessages] = useState<{ id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[]>([]);
+  const [shownMessageActionIds, setShownMessageActionIds] = useState<Set<string>>(new Set());
 
   // Cleanup top-level audio on exit
   useEffect(() => {
@@ -64,18 +66,9 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   useEffect(() => {
     if (currentPage && currentPage.actions) {
       let nextVars = { ...variables };
+      let newMessages: { id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[] = [];
       let navigateToPage: string | null = null;
-
-      const actionContext = {
-        variables: nextVars,
-        setVariable: (key: string, value: unknown) => {
-          const currentVar = nextVars[key];
-          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-          nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-        },
-        postMessage: () => { },
-        goToPage: (pageId: string) => { navigateToPage = pageId; }
-      };
+      let newlyShownActions = new Set<string>();
 
       const evalContext = {
         variables: nextVars,
@@ -93,6 +86,21 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         }
         const blueprint = actionBlueprints[action.blueprintId];
         if (blueprint) {
+          const actionContext = {
+            variables: nextVars,
+            setVariable: (key: string, value: unknown) => {
+              const currentVar = nextVars[key];
+              const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+              nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+            },
+            postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => {
+              if (!shownMessageActionIds.has(action.id) && !newlyShownActions.has(action.id)) {
+                newMessages.push({ id: crypto.randomUUID(), text: message, displayStyle: displayStyle || 'styled' });
+                newlyShownActions.add(action.id);
+              }
+            },
+            goToPage: (pageId: string) => { navigateToPage = pageId; }
+          };
           blueprint.execute(action.params, actionContext);
           varChanges = true; // simplifying, assume it might change
         }
@@ -100,6 +108,16 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
 
       if (varChanges) {
         setVariables(nextVars);
+      }
+      if (newlyShownActions.size > 0) {
+        setShownMessageActionIds(prev => {
+          const next = new Set(prev);
+          newlyShownActions.forEach(id => next.add(id));
+          return next;
+        });
+      }
+      if (newMessages.length > 0) {
+        setMessages(prev => [...prev, ...newMessages]);
       }
       if (navigateToPage) {
         setCurrentPageId(navigateToPage);
@@ -140,18 +158,9 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
 
     if (choice && choice.actions) {
       let nextVars = { ...variables };
-      const actionContext = {
-        variables: nextVars,
-        setVariable: (key: string, value: unknown) => {
-          const currentVar = nextVars[key];
-          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-          nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-        },
-        postMessage: () => { },
-        goToPage: (pageId: string) => {
-          nextTargetId = pageId;
-        }
-      };
+      let newMessages: { id: string, text: string, displayStyle?: 'styled' | 'paragraph' }[] = [];
+      let newlyShownActions = new Set<string>();
+
       const evalContext = { variables: nextVars, visitedPageIds, currentPageId };
 
       choice.actions!.forEach(action => {
@@ -160,10 +169,45 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
           if (!evaluateVisibility({ conditionals: action.conditionals }, evalContext)) return;
         }
         const blueprint = actionBlueprints[action.blueprintId];
-        if (blueprint) blueprint.execute(action.params, actionContext);
+        if (blueprint) {
+          const actionContext = {
+            variables: nextVars,
+            setVariable: (key: string, value: unknown) => {
+              const currentVar = nextVars[key];
+              const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+              nextVars[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
+            },
+            postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => {
+              if (!shownMessageActionIds.has(action.id) && !newlyShownActions.has(action.id)) {
+                newMessages.push({ id: crypto.randomUUID(), text: message, displayStyle: displayStyle || 'styled' });
+                newlyShownActions.add(action.id);
+              }
+            },
+            goToPage: (pageId: string) => {
+              nextTargetId = pageId;
+            }
+          };
+          blueprint.execute(action.params, actionContext);
+        }
       });
 
       setVariables(nextVars);
+
+      if (newlyShownActions.size > 0) {
+        setShownMessageActionIds(prev => {
+          const next = new Set(prev);
+          newlyShownActions.forEach(id => next.add(id));
+          return next;
+        });
+      }
+
+      if (nextTargetId) {
+        setMessages(newMessages); // clean slate + transition messages when navigating
+      } else {
+        setMessages(prev => [...prev, ...newMessages]); // append logically if repeating page
+      }
+    } else if (nextTargetId) {
+      setMessages([]); // clean slate unconditionally if navigating
     }
 
     if (nextTargetId) {
@@ -175,6 +219,8 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     setVisitedPageIds([]);
     setCurrentPageId(defaultStartId);
     setVariables(storyData.variables || {});
+    setMessages([]);
+    setShownMessageActionIds(new Set());
   };
 
 
@@ -222,6 +268,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
                 title={currentPage.title}
                 paragraphs={visibleParagraphs}
                 variables={variables}
+                messages={messages}
               />
 
               <PlayerChoices

@@ -3,6 +3,11 @@ import { get, keys, del } from 'idb-keyval';
 import { Button } from '../../components/ui/Button/Button';
 import { Card } from '../../components/ui/Card/Card';
 import { useEditorStore } from '../editor/store/useEditorStore';
+import { parseStoryToGraph } from '../../lib/storyMapper';
+import exampleStoryRaw from '../../data/exampleStory.json';
+import type { StoryData } from '../../domain/Story/StoryData';
+
+const exampleStory = exampleStoryRaw as StoryData;
 
 interface StoryIndexItem {
   id: string;
@@ -76,6 +81,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
     onOpenStory();
   };
 
+  const handleLoadDemo = () => {
+    const { nodes, edges } = parseStoryToGraph(exampleStory);
+    const newId = crypto.randomUUID();
+
+    setHasHydrated(false); // Pause saves briefly
+
+    // Give it a fresh UUID to not conflict with existing state
+    setStoryId(newId);
+    loadStory(
+      nodes,
+      edges,
+      exampleStory.variables || {},
+      {
+        title: exampleStory.title,
+        description: exampleStory.description,
+        startPageId: exampleStory.startPageId
+      },
+      exampleStory.subplots || [],
+      exampleStory.audio || {},
+      exampleStory.atmospheres || {}
+    );
+
+    setHasHydrated(true); // Re-enable saves
+    onOpenStory(); // Jump straight into the editor view
+  };
+
   const handleOpenExisting = async (id: string) => {
     try {
       const data = await get(`story-${id}`);
@@ -117,6 +148,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0 }}>Storyworld AI</h1>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Button variant="secondary" onClick={handleLoadDemo}>Load Demo</Button>
           <Button variant="secondary" onClick={onImportClick}>Import Save File</Button>
           <Button variant="primary" onClick={handleCreateNew}>+ Create New Story</Button>
         </div>

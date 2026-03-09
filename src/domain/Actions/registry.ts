@@ -41,18 +41,20 @@ export const goToSubplotBlueprint: ActionBlueprint<GoToSubplotParams> = {
 
 export interface PostMessageParams {
   message: string;
+  displayStyle?: 'styled' | 'paragraph';
 }
 
 export const postMessageBlueprint: ActionBlueprint<PostMessageParams> = {
   id: 'post_message',
   name: 'Post Message',
-  template: 'Post message: "{{message}}"',
+  template: 'Post message: "{{message}}" as {{displayStyle}}',
   defaultParams: {
     message: '',
+    displayStyle: 'styled',
   },
   execute: (params, context) => {
     if (!params.message) return;
-    context.postMessage(params.message);
+    context.postMessage(params.message, params.displayStyle);
   },
 };
 

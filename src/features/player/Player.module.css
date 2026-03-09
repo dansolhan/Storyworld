@@ -116,6 +116,18 @@
   color: var(--player-text);
 }
 
+.messageText {
+  color: var(--player-accent);
+  font-style: italic;
+  font-size: var(--text-base);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background-color: rgba(201, 168, 76, 0.05);
+  /* very light gold */
+  border-left: 3px solid var(--player-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
 .choicesContainer {
   flex: 0 1 auto;
   min-height: 0;

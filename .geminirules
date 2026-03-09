@@ -13,6 +13,7 @@ This file contains the core conventions and strict rules for the Storyworld AI p
 - **Component Driven**: Build everything as functional React components.
 - **Client-Only Architecture**: The engine is designed as a 100% client-side React App using Vite.
 - **[CRITICAL] Strict Logical Separation**: Always organize code (including types, constants, and utilities) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files" like `models.ts` or `types.ts`.
+- **Example Data**: The example story data is strictly maintained in `src/data/exampleStory.json`. Do not use or recreate a TypeScript version (`exampleStory.ts`) for this, to avoid managing duplicate states. Import the JSON directly.
 - **Feature-Sliced Design**: Organize code by domains/features rather than strictly by technical type. 
   ```text
   src/

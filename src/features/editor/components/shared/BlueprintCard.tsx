@@ -80,7 +80,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         if (key === 'page' || key === 'pageId') {
           const selectedPageId = params[key] as string | null;
           const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
-          const label = selectedNode ? selectedNode.data.title || `Page ${selectedNode.id}` : 'Select a page...';
+          const label = selectedNode ? (selectedNode.data.title as string) || `Page ${selectedNode.id}` : 'Select a page...';
 
           return (
             <span
@@ -96,7 +96,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         if (key === 'targetPageId') {
           const selectedPageId = params['targetPageId'] as string | null;
           const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
-          const label = selectedNode ? selectedNode.data.title || `Page ${selectedNode.id}` : 'Select a page...';
+          const label = selectedNode ? (selectedNode.data.title as string) || `Page ${selectedNode.id}` : 'Select a page...';
 
           return (
             <span
@@ -165,17 +165,32 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
           );
         }
 
+        if (key === 'displayStyle') {
+          const style = params.displayStyle as string;
+          // default to styled if undefined
+          const label = style === 'paragraph' ? 'a paragraph' : 'a styled notification';
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'displayStyle')}
+            >
+              {label}
+            </span>
+          );
+        }
+
         return <span key={index}>{part}</span>;
       }
       return <span key={index}>{part}</span>;
     });
   };
 
-  const pageOptions = nodes.map((n: EditorNode) => ({ label: n.data.title || `Page ${n.id}`, value: n.id }));
+  const pageOptions = nodes.map((n: EditorNode) => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }));
   // When selecting a target page for a subplot, we might want to filter, but for now we'll show all pages or filter by the selected subplot
   const currentSelectedSubplotId = params['subplotId'] as string | null;
   const targetPageOptions = currentSelectedSubplotId
-    ? nodes.filter(n => n.data.subplotId === currentSelectedSubplotId).map(n => ({ label: n.data.title || `Page ${n.id}`, value: n.id }))
+    ? nodes.filter(n => n.data.subplotId === currentSelectedSubplotId).map(n => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }))
     : pageOptions;
 
   const variableOptions = Object.keys(variables).map((k) => ({ label: k, value: k }));
@@ -352,6 +367,23 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                 Save
               </button>
             </div>
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'displayStyle' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Message format:</p>
+            <Combobox
+              options={[
+                { label: 'Styled Notification', value: 'styled' },
+                { label: 'Regular Paragraph', value: 'paragraph' }
+              ]}
+              autoFocus
+              onSelect={(val) => {
+                onChangeParam('displayStyle', val);
+                handleClosePopover();
+              }}
+            />
           </div>
         )}
       </Popover>

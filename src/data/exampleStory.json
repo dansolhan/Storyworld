@@ -23,6 +23,14 @@
     "hasFoundTome": {
       "type": "boolean",
       "value": false
+    },
+    "hasRiverCoin": {
+      "type": "boolean",
+      "value": false
+    },
+    "readShrineInscription": {
+      "type": "boolean",
+      "value": false
     }
   },
   "audio": {
@@ -110,6 +118,54 @@
       "page-woods-2": {
         "x": 1700,
         "y": 100
+      },
+      "page-woods-3": {
+        "x": 2100,
+        "y": 100
+      },
+      "page-woods-4": {
+        "x": 2500,
+        "y": -100
+      },
+      "page-woods-5": {
+        "x": 2500,
+        "y": 300
+      },
+      "page-woods-8": {
+        "x": 2900,
+        "y": 100
+      },
+      "page-woods-10": {
+        "x": 2900,
+        "y": 500
+      },
+      "page-woods-11": {
+        "x": 3300,
+        "y": 100
+      },
+      "page-woods-12": {
+        "x": 3700,
+        "y": 100
+      },
+      "page-woods-14": {
+        "x": 3700,
+        "y": -300
+      },
+      "page-woods-15": {
+        "x": 4100,
+        "y": 100
+      },
+      "page-woods-16": {
+        "x": 4500,
+        "y": 100
+      },
+      "page-woods-18": {
+        "x": 4900,
+        "y": -100
+      },
+      "page-woods-19": {
+        "x": 4900,
+        "y": 300
       }
     }
   },
@@ -502,6 +558,443 @@
         {
           "id": "pw2-1",
           "text": "<p>Following the faint orange light, you arrive at an ancient stone shrine heavily covered by moss. The figure is nowhere to be seen.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw2-1",
+          "text": "Examine the shrine closely",
+          "targetPageId": "page-woods-3"
+        },
+        {
+          "id": "cw2-2",
+          "text": "Ignore it and walk towards the sound of rushing water",
+          "targetPageId": "page-woods-8"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-3",
+      "title": "Examining the Shrine",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw3-1",
+          "text": "<p>The shrine is beautifully carved from a single piece of dark stone. At the center is a depression that looks exactly the shape of a tome.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw3-tome",
+          "text": "Place the dusty tome in the depression",
+          "targetPageId": "page-woods-4",
+          "conditionals": [
+            {
+              "id": "cond-tome",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "hasFoundTome",
+                "value": "true"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw3-read",
+          "text": "Read the inscription on the side",
+          "targetPageId": "page-woods-5"
+        },
+        {
+          "id": "cw3-leave",
+          "text": "Walk away towards the river",
+          "targetPageId": "page-woods-8"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-4",
+      "title": "The Inner Sanctum",
+      "atmosphereId": "atmo-cellar",
+      "paragraphs": [
+        {
+          "id": "pw4-1",
+          "text": "<p>As the tome settles into the stone, a hidden door grinds open, revealing the Inner Sanctum. You step inside, feeling an intense magical pressure.</p>"
+        },
+        {
+          "id": "pw4-2",
+          "text": "<p>On a pedestal sits an ancient relic. You recognize it from your teachings as a {{heroClass}}.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw4-1",
+          "text": "Take the ancient relic",
+          "actions": [
+            {
+              "id": "act-relic",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You claim the ancient relic! You feel a surge of power."
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw4-2",
+          "text": "Leave the sanctum and head to the river",
+          "targetPageId": "page-woods-8"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-5",
+      "title": "The Inscription",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw5-1",
+          "text": "<p>You brush the moss aside. The inscription reads: <em>\"Only those who seek knowledge in the dirt shall open the way.\"</em></p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw5-1",
+          "text": "Ponder the meaning and walk to the river",
+          "targetPageId": "page-woods-8",
+          "actions": [
+            {
+              "id": "act-read-ins",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "readShrineInscription",
+                "value": "true"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-woods-8",
+      "title": "The River Bank",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw8-1",
+          "text": "<p>You reach the banks of a wide, dark river. An old wooden ferry is moored here, manned by a <span class=\"contextual-text-mark\" data-context=\"The ferryman is skeletal, his eyes glowing like embers.\">silent ferryman</span>.</p>"
+        },
+        {
+          "id": "pw8-2",
+          "text": "<p>He holds out a bony hand, expecting payment for the crossing.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw8-pay",
+          "text": "Give him a river coin",
+          "targetPageId": "page-woods-11",
+          "conditionals": [
+            {
+              "id": "cond-coin",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "hasRiverCoin",
+                "value": "true"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw8-blessed",
+          "text": "Show him your holy aura (Blessed Knight)",
+          "targetPageId": "page-woods-11",
+          "conditionals": [
+            {
+              "id": "cond-blessed",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "heroClass",
+                "value": "Blessed Knight"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-blessed",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "The ferryman bows respectfully to a champion of the light."
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw8-search",
+          "text": "Search the muddy banks for something of value",
+          "targetPageId": "page-woods-10"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-10",
+      "title": "Muddy Banks",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw10-1",
+          "text": "<p>You trudge through the mud along the river. After some digging, your hand strikes a hard, cold object—a tarnished silver coin!</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw10-1",
+          "text": "Take the coin and return to the ferryman",
+          "targetPageId": "page-woods-8",
+          "actions": [
+            {
+              "id": "act-get-coin",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "hasRiverCoin",
+                "value": "true"
+              }
+            },
+            {
+              "id": "act-get-coin-msg",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You found a River Coin."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-woods-11",
+      "title": "Crossing the River",
+      "atmosphereId": "atmo-cellar",
+      "paragraphs": [
+        {
+          "id": "pw11-1",
+          "text": "<p>The ferryman accepts your passage. The boat glides silently across the water, the fog thickening around you.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw11-1",
+          "text": "Step off the boat on the other side",
+          "targetPageId": "page-woods-12"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-12",
+      "title": "The Abandoned Camp",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw12-1",
+          "text": "<p>You step onto the far shore and find the ruins of an old campfire. The ashes are cold.</p>"
+        },
+        {
+          "id": "pw12-2",
+          "text": "<p>Nearby, half-buried under leaves, is an ornate wooden chest with a golden lock.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw12-unlock",
+          "text": "Use the strange golden key",
+          "targetPageId": "page-woods-14",
+          "conditionals": [
+            {
+              "id": "cond-goldkey",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "hasGoldenKey",
+                "value": "true"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw12-rest",
+          "text": "Sit by the fire pit and rest",
+          "targetPageId": "page-woods-15"
+        },
+        {
+          "id": "cw12-leave",
+          "text": "Continue into the dark forest",
+          "targetPageId": "page-woods-16"
+        }
+      ]
+    },
+    {
+      "id": "page-woods-14",
+      "title": "Inside the Chest",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw14-1",
+          "text": "<p>The golden key slides perfectly into the lock. Inside the old chest lies a magnificent, glowing blade: the <strong>Radiant Sword</strong>!</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw14-1",
+          "text": "Equip it and rest by the fire",
+          "targetPageId": "page-woods-15",
+          "actions": [
+            {
+              "id": "act-equip",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "weapon",
+                "value": "Radiant Sword"
+              }
+            },
+            {
+              "id": "act-equip-msg",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You equipped the Radiant Sword! Your attack power is immense."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-woods-15",
+      "title": "A Moment of Peace",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw15-1",
+          "text": "<p>You strike a flint against some dry tinder and coax a small flame from the cold fire pit.</p>"
+        },
+        {
+          "id": "pw15-2",
+          "text": "<p>You inspect your {{weapon}} and steady your breathing. The night is far from over.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw15-1",
+          "text": "Stand up and continue ahead",
+          "targetPageId": "page-woods-16",
+          "actions": [
+            {
+              "id": "act-heal",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You feel fully rested."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-woods-16",
+      "title": "An Ambush!",
+      "atmosphereId": "atmo-cellar",
+      "paragraphs": [
+        {
+          "id": "pw16-1",
+          "text": "<p>Without warning, a massive Shadow Beast leaps from the treeline! Its claws tear through the foliage as it snarls at you.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cw16-fight-radiant",
+          "text": "Strike it down with the Radiant Sword!",
+          "targetPageId": "page-woods-18",
+          "conditionals": [
+            {
+              "id": "cond-radiant",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "weapon",
+                "value": "Radiant Sword"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-radiant",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "The Radiant Sword hums and instantly vaporizes the shadows!"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cw16-fight-rusty",
+          "text": "Try to fight it with your Rusty Longsword",
+          "targetPageId": "page-woods-19",
+          "conditionals": [
+            {
+              "id": "cond-rusty",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "weapon",
+                "value": "Rusty Longsword"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-rusty",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "Your rusty blade simply bounces off its thick spectral hide..."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-woods-18",
+      "title": "Victory at Last",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pw18-1",
+          "text": "<p>The beast dissolves into a cloud of harmless dark smoke. The forest falls quiet once more.</p>"
+        },
+        {
+          "id": "pw18-2",
+          "text": "<p>You have survived the night, {{playerName}}. This concludes the Storyworld AI demo!</p>"
+        }
+      ],
+      "choices": []
+    },
+    {
+      "id": "page-woods-19",
+      "title": "A Tragic End",
+      "atmosphereId": "atmo-cellar",
+      "paragraphs": [
+        {
+          "id": "pw19-1",
+          "text": "<p>Your blade fails you. The beast overtakes you in a flurry of shadows.</p>"
+        },
+        {
+          "id": "pw19-2",
+          "text": "<p>If only you had found a better weapon to fight the darkness... Restart the demo to try again.</p>"
         }
       ],
       "choices": []

@@ -4,14 +4,13 @@ import { GraphEditor } from './features/editor/GraphEditor';
 import { Player } from './features/player/Player';
 import { Button } from './components/ui/Button/Button';
 import { useEditorStore } from './features/editor/store/useEditorStore';
-import { compileGraphToStory, parseStoryToGraph } from './lib/storyMapper';
+import { compileGraphToStory } from './lib/storyMapper';
 import { exportToJson, exportToStoryworld } from './utils/exportUtils';
 import { useStoryImport } from './features/editor/hooks/useStoryImport';
 import type { StoryData } from './domain/Story/StoryData';
 import { MenuBar, type MenuConfig } from './components/ui/MenuBar/MenuBar';
 
 import { Dashboard } from './features/dashboard/Dashboard';
-import { exampleStory } from './data/exampleStory';
 
 function App() {
   const [mode, setMode] = useState<'dashboard' | 'editor' | 'player'>('dashboard');
@@ -58,32 +57,6 @@ function App() {
         { label: '< Back to Dashboard', onClick: () => setMode('dashboard') },
         { divider: true },
         { label: 'Open File...', onClick: handleImportClick },
-        {
-          label: 'Load Advanced Demo', onClick: () => {
-            const { nodes, edges } = parseStoryToGraph(exampleStory);
-            const store = useEditorStore.getState();
-            store.setHasHydrated(false); // Pause saves briefly
-
-            // Give it a fresh UUID to not conflict with existing state
-            store.setStoryId(crypto.randomUUID());
-            store.loadStory(
-              nodes,
-              edges,
-              exampleStory.variables || {},
-              {
-                title: exampleStory.title,
-                description: exampleStory.description,
-                startPageId: exampleStory.startPageId
-              },
-              exampleStory.subplots || [],
-              exampleStory.audio || {},
-              exampleStory.atmospheres || {}
-            );
-
-            store.setHasHydrated(true); // Re-enable saves
-            setMode('editor'); // Jump straight into the editor view
-          }
-        },
         { divider: true },
         { label: 'Save / Export to JSON', onClick: handleExportJson },
         { label: 'Export as .storyworld', onClick: handleExportStoryworld },

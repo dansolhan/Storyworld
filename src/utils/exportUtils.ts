@@ -35,7 +35,8 @@ export const exportToJson = (data: StoryData, filename = 'game_data.json') => {
  */
 export const exportToStoryworld = (data: StoryData, filename = 'game_data.storyworld') => {
   // We strip away uiMetadata (editor positions) inside the player game bundle
-  const { uiMetadata, ...gameData } = data;
+  const gameData = { ...data };
+  delete (gameData as any).uiMetadata;
   const jsonString = JSON.stringify(gameData);
   // btoa encodes to Base64
   const base64String = btoa(unescape(encodeURIComponent(jsonString)));
