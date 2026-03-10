@@ -12,7 +12,9 @@ export const useChoiceClick = () => {
     setVariables,
     setMessages,
     markActionsShown,
-    setCurrentPageId
+    setCurrentPageId,
+    inventory,
+    modifyInventory
   } = usePlayerStore();
 
   const handleChoiceClick = (choiceId: string, targetPageId?: string) => {
@@ -28,7 +30,8 @@ export const useChoiceClick = () => {
       const evalContext = {
         variables: nextVars,
         visitedPageIds,
-        currentPageId
+        currentPageId,
+        inventory
       };
 
       choice.actions.forEach(action => {
@@ -40,6 +43,7 @@ export const useChoiceClick = () => {
         if (blueprint) {
           const actionContext = {
             variables: nextVars,
+            modifyInventory,
             setVariable: (key: string, value: unknown) => {
               const currentVar = nextVars[key];
               const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');

@@ -12,7 +12,7 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   setVariable: (key: string, value: unknown) => void;
   postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => void;
   goToPage?: (pageId: string) => void;
-  // Extensible for future mutations (e.g. giveItem, addReputation)
+  modifyInventory?: (itemId: string, amount: number) => void;
 }
 
 export interface Action<TParams = Record<string, unknown>> {

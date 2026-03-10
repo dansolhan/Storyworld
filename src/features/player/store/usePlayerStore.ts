@@ -17,6 +17,7 @@ interface PlayerState {
   messages: PlayerMessage[];
   shownMessageActionIds: Set<string>;
   contextualPopover: { text: string; x: number; y: number } | null;
+  inventory: Record<string, number>;
 
   // Actions
   initialize: (storyData: StoryData, startPageId?: string) => void;
@@ -28,6 +29,7 @@ interface PlayerState {
   addMessages: (messages: PlayerMessage[]) => void;
   markActionsShown: (ids: string[]) => void;
   setContextualPopover: (popover: { text: string; x: number; y: number } | null) => void;
+  modifyInventory: (itemId: string, amount: number) => void;
   restart: () => void;
 }
 
@@ -39,6 +41,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   messages: [],
   shownMessageActionIds: new Set(),
   contextualPopover: null,
+  inventory: {},
 
   initialize: (storyData: StoryData, startPageId?: string) => {
     const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
@@ -50,6 +53,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
       messages: [],
       shownMessageActionIds: new Set(),
       contextualPopover: null,
+      inventory: {},
     });
   },
 
@@ -89,6 +93,20 @@ export const usePlayerStore = create<PlayerState>((set) => ({
 
   setContextualPopover: (contextualPopover) => set({ contextualPopover }),
 
+  modifyInventory: (itemId: string, amount: number) => set((state) => {
+    const nextInventory = { ...state.inventory };
+    const current = nextInventory[itemId] || 0;
+    const nextAmount = current + amount;
+
+    if (nextAmount <= 0) {
+      delete nextInventory[itemId];
+    } else {
+      nextInventory[itemId] = nextAmount;
+    }
+
+    return { inventory: nextInventory };
+  }),
+
   restart: () => set((state) => {
     if (!state.storyData) return state;
     const defaultStartId = state.storyData.startPageId || state.storyData.pages?.[0]?.id;
@@ -99,6 +117,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
       messages: [],
       shownMessageActionIds: new Set(),
       contextualPopover: null,
+      inventory: {},
     };
   }),
 }));

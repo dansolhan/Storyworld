@@ -46,6 +46,47 @@ export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams>
   },
 };
 
+export interface HasItemParams {
+  itemId: string | null;
+}
+
+export const hasItemBlueprint: ConditionalBlueprint<HasItemParams> = {
+  id: 'has_item',
+  name: 'Has Item',
+  template: 'Has {{itemId}}',
+  defaultParams: {
+    itemId: null,
+  },
+  evaluate: (params, context) => {
+    if (!params.itemId) return true;
+    return !!(context.inventory && (context.inventory[params.itemId] || 0) > 0);
+  },
+};
+
+export interface HasItemCountParams {
+  itemId: string | null;
+  comparison: 'more than' | 'less than' | 'exactly';
+  count: number;
+}
+
+export const hasItemCountBlueprint: ConditionalBlueprint<HasItemCountParams> = {
+  id: 'has_item_count',
+  name: 'Has Item Count',
+  template: 'Has {{comparison}} {{count}} {{itemId}}',
+  defaultParams: {
+    itemId: null,
+    comparison: 'exactly',
+    count: 1,
+  },
+  evaluate: (params, context) => {
+    if (!params.itemId) return true;
+    const current = context.inventory?.[params.itemId] || 0;
+    if (params.comparison === 'more than') return current > params.count;
+    if (params.comparison === 'less than') return current < params.count;
+    return current === params.count;
+  },
+};
+
 export const andGroupBlueprint: ConditionalBlueprint<{}> = {
   id: 'and_group',
   name: 'AND Group',
@@ -76,6 +117,8 @@ export const orGroupBlueprint: ConditionalBlueprint<{}> = {
 export const conditionalBlueprints: Record<string, ConditionalBlueprint<unknown>> = {
   [visitedPageBlueprint.id]: visitedPageBlueprint as unknown as ConditionalBlueprint<unknown>,
   [variableEqualsBlueprint.id]: variableEqualsBlueprint as unknown as ConditionalBlueprint<unknown>,
+  [hasItemBlueprint.id]: hasItemBlueprint as unknown as ConditionalBlueprint<unknown>,
+  [hasItemCountBlueprint.id]: hasItemCountBlueprint as unknown as ConditionalBlueprint<unknown>,
   [andGroupBlueprint.id]: andGroupBlueprint as unknown as ConditionalBlueprint<unknown>,
   [orGroupBlueprint.id]: orGroupBlueprint as unknown as ConditionalBlueprint<unknown>,
 };

@@ -2,6 +2,7 @@ export interface EvaluationContext<TVariables = Record<string, unknown>> {
   variables: TVariables;
   visitedPageIds: string[];
   currentPageId?: string;
+  inventory?: Record<string, number>;
 }
 
 export interface Conditional<TParams = Record<string, unknown>> {

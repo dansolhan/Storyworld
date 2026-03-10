@@ -26,7 +26,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   onRemove,
   children
 }) => {
-  const { nodes, variables, subplots } = useEditorStore();
+  const { nodes, variables, subplots, items } = useEditorStore();
   const [popoverState, setPopoverState] = useState<{ isOpen: boolean; x: number; y: number; tokenTarget: string }>({
     isOpen: false,
     x: 0,
@@ -180,6 +180,52 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
           );
         }
 
+        if (key === 'itemId') {
+          const selectedItemId = params.itemId as string | null;
+          const selectedItem = selectedItemId ? items[selectedItemId] : null;
+          const label = selectedItem ? selectedItem.name : 'Select item...';
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'itemId')}
+            >
+              {label}
+            </span>
+          );
+        }
+
+        if (key === 'count') {
+          const selectedItemId = params.itemId as string | null;
+          const selectedItem = selectedItemId ? items[selectedItemId] : null;
+          if (selectedItem && !selectedItem.multiple) {
+            return null;
+          }
+          const val = params.count as number;
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'count', String(val || 1))}
+            >
+              {val || 1}
+            </span>
+          );
+        }
+
+        if (key === 'comparison') {
+          const val = params.comparison as string;
+          return (
+            <span
+              key={index}
+              className={styles.interactiveToken}
+              onClick={(e) => handleOpenPopover(e, 'comparison')}
+            >
+              {val || 'exactly'}
+            </span>
+          );
+        }
+
         return <span key={index}>{part}</span>;
       }
       return <span key={index}>{part}</span>;
@@ -195,6 +241,17 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
   const variableOptions = Object.keys(variables).map((k) => ({ label: k, value: k }));
   const subplotOptions = (subplots || []).map(s => ({ label: s.name, value: s.id }));
+  const itemOptions = Object.entries(items || {}).map(([key, item]) => ({ label: item.name, value: key }));
+
+  let warningText = null;
+  if (params.itemId) {
+    const itemDef = items[params.itemId as string];
+    if (itemDef && !itemDef.multiple) {
+      if (params.count && Number(params.count) > 1) {
+        warningText = `Warning: "${itemDef.name}" is not a multiple item, so count > 1 will never be met or is invalid.`;
+      }
+    }
+  }
 
   return (
     <div className={styles.card} style={isGroup ? { flexDirection: 'column', alignItems: 'stretch' } : {}}>
@@ -234,6 +291,12 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
               {t === 'on_enter' ? 'On Enter' : 'On Exit'}
             </button>
           ))}
+        </div>
+      )}
+
+      {warningText && (
+        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#b91c1c', background: '#fef2f2', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #f87171' }}>
+          {warningText}
         </div>
       )}
 
@@ -384,6 +447,73 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                 handleClosePopover();
               }}
             />
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'count' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set count:</p>
+            <div style={{ display: 'flex', gap: '0.25rem' }}>
+              <input
+                type="number"
+                min="1"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onChangeParam('count', parseInt(inputValue, 10) || 1);
+                    handleClosePopover();
+                  }
+                }}
+                style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '3px' }}
+              />
+              <button
+                onClick={() => {
+                  onChangeParam('count', parseInt(inputValue, 10) || 1);
+                  handleClosePopover();
+                }}
+                style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'comparison' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set comparison:</p>
+            <Combobox
+              options={[
+                { label: 'exactly', value: 'exactly' },
+                { label: 'more than', value: 'more than' },
+                { label: 'less than', value: 'less than' }
+              ]}
+              autoFocus
+              onSelect={(val) => {
+                onChangeParam('comparison', val);
+                handleClosePopover();
+              }}
+            />
+          </div>
+        )}
+
+        {popoverState.tokenTarget === 'itemId' && (
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select an item:</p>
+            {itemOptions.length > 0 ? (
+              <Combobox
+                options={itemOptions}
+                autoFocus
+                onSelect={(val) => {
+                  onChangeParam('itemId', val);
+                  handleClosePopover();
+                }}
+              />
+            ) : (
+              <p style={{ margin: 0, fontSize: '0.75rem', color: '#666' }}>No items defined yet.</p>
+            )}
           </div>
         )}
       </Popover>

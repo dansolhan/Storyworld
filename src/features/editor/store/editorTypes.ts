@@ -4,6 +4,7 @@ import type { ActionNodeType } from '../nodes/ActionNode';
 import type { PortalNodeType } from '../nodes/PortalNode';
 import type { Subplot } from '../../../domain/Story/Subplot';
 import type { StoryVariable } from '../../../domain/Story/Variable';
+import type { Item } from '../../../domain/Item/Item';
 import type { AudioItem } from '../../../domain/Story/Audio';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
@@ -62,6 +63,7 @@ export interface EditorState {
     nodes: EditorNode[],
     edges: Edge[],
     variables?: Record<string, StoryVariable>,
+    items?: Record<string, Item>,
     metadata?: { title?: string; description?: string; startPageId?: string },
     subplots?: Subplot[],
     audio?: Record<string, AudioItem>,
@@ -82,6 +84,13 @@ export interface EditorState {
   updateVariable: (key: string, variable: StoryVariable) => void;
   removeVariable: (key: string) => void;
 
+  // Items
+  items: Record<string, Item>;
+  setItems: (items: Record<string, Item>) => void;
+  addItem: (key: string, item: Item) => void;
+  updateItem: (key: string, item: Item) => void;
+  removeItem: (key: string) => void;
+
   // UI Handlers
   selectedPageId: string | null;
   setSelectedPage: (pageId: string | null) => void;
@@ -100,6 +109,9 @@ export interface EditorState {
 
   isAtmosphereManagerOpen: boolean;
   setIsAtmosphereManagerOpen: (isOpen: boolean) => void;
+
+  isItemManagerOpen: boolean;
+  setIsItemManagerOpen: (isOpen: boolean) => void;
 
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;

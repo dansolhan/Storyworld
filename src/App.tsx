@@ -71,6 +71,7 @@ function App() {
     {
       label: 'Data',
       items: [
+        { label: 'Items', onClick: () => useEditorStore.getState().setIsItemManagerOpen(true) },
         { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
         { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) },
         { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) }

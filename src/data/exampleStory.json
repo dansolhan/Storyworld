@@ -12,25 +12,56 @@
       "type": "string",
       "value": "Knight"
     },
-    "weapon": {
-      "type": "string",
-      "value": "Rusty Longsword"
-    },
-    "hasGoldenKey": {
-      "type": "boolean",
-      "value": false
-    },
-    "hasFoundTome": {
-      "type": "boolean",
-      "value": false
-    },
-    "hasRiverCoin": {
-      "type": "boolean",
-      "value": false
-    },
     "readShrineInscription": {
       "type": "boolean",
       "value": false
+    }
+  },
+  "items": {
+    "golden_key": {
+      "id": "golden_key",
+      "name": "Strange Golden Key",
+      "description": "The key has no teeth, just a complex series of grooves carved into strange, iridescent metal.",
+      "multiple": false,
+      "tags": [
+        "quest"
+      ]
+    },
+    "tome": {
+      "id": "tome",
+      "name": "Dusty Tome",
+      "description": "An old, dusty tome. The writing inside is in an unknown script.",
+      "multiple": false,
+      "tags": [
+        "quest"
+      ]
+    },
+    "river_coin": {
+      "id": "river_coin",
+      "name": "River Coin",
+      "description": "A tarnished silver coin found in the mud.",
+      "multiple": true,
+      "tags": [
+        "currency"
+      ]
+    },
+    "ancient_relic": {
+      "id": "ancient_relic",
+      "name": "Ancient Relic",
+      "description": "An artifact of immense power.",
+      "multiple": false,
+      "tags": [
+        "quest"
+      ]
+    },
+    "radiant_sword": {
+      "id": "radiant_sword",
+      "name": "Radiant Sword",
+      "description": "A magnificent, glowing blade that hums with power.",
+      "multiple": false,
+      "tags": [
+        "weapon"
+      ]
     }
   },
   "audio": {
@@ -359,7 +390,7 @@
       "paragraphs": [
         {
           "id": "p5-1",
-          "text": "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>{{weapon}}</strong> hanging at your side.</p>"
+          "text": "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>Rusty Longsword</strong> hanging at your side.</p>"
         },
         {
           "id": "p5-2",
@@ -381,12 +412,23 @@
       "actions": [
         {
           "id": "act-find-key",
-          "blueprintId": "set_variable",
+          "blueprintId": "give_item",
           "trigger": "on_enter",
           "params": {
-            "variableKey": "hasGoldenKey",
-            "value": "true"
-          }
+            "itemId": "golden_key",
+            "count": 1
+          },
+          "conditionals": [
+            {
+              "id": "cond-no-key",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "golden_key",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ]
         },
         {
           "id": "act-find-key-msg",
@@ -394,7 +436,18 @@
           "trigger": "on_enter",
           "params": {
             "message": "You now carry the strange golden key."
-          }
+          },
+          "conditionals": [
+            {
+              "id": "cond-no-key-msg",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "golden_key",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ]
         }
       ]
     },
@@ -495,14 +548,25 @@
         {
           "id": "c-cell2-take",
           "text": "Take the tome",
+          "conditionals": [
+            {
+              "id": "cond-no-tome",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "tome",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ],
           "actions": [
             {
               "id": "act-take-tome",
-              "blueprintId": "set_variable",
+              "blueprintId": "give_item",
               "trigger": "on_enter",
               "params": {
-                "variableKey": "hasFoundTome",
-                "value": true
+                "itemId": "tome",
+                "count": 1
               }
             },
             {
@@ -591,10 +655,20 @@
           "conditionals": [
             {
               "id": "cond-tome",
-              "blueprintId": "variable_equals",
+              "blueprintId": "has_item",
               "params": {
-                "variableKey": "hasFoundTome",
-                "value": "true"
+                "itemId": "tome"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-place-tome",
+              "blueprintId": "remove_item",
+              "trigger": "on_enter",
+              "params": {
+                "itemId": "tome",
+                "count": 1
               }
             }
           ]
@@ -629,7 +703,27 @@
         {
           "id": "cw4-1",
           "text": "Take the ancient relic",
+          "conditionals": [
+            {
+              "id": "cond-no-relic",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "ancient_relic",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ],
           "actions": [
+            {
+              "id": "act-relic-give",
+              "blueprintId": "give_item",
+              "trigger": "on_enter",
+              "params": {
+                "itemId": "ancient_relic",
+                "count": 1
+              }
+            },
             {
               "id": "act-relic",
               "blueprintId": "post_message",
@@ -698,10 +792,20 @@
           "conditionals": [
             {
               "id": "cond-coin",
-              "blueprintId": "variable_equals",
+              "blueprintId": "has_item",
               "params": {
-                "variableKey": "hasRiverCoin",
-                "value": "true"
+                "itemId": "river_coin"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-pay-coin",
+              "blueprintId": "remove_item",
+              "trigger": "on_enter",
+              "params": {
+                "itemId": "river_coin",
+                "count": 1
               }
             }
           ]
@@ -753,14 +857,25 @@
           "id": "cw10-1",
           "text": "Take the coin and return to the ferryman",
           "targetPageId": "page-woods-8",
+          "conditionals": [
+            {
+              "id": "cond-no-coin",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "river_coin",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ],
           "actions": [
             {
               "id": "act-get-coin",
-              "blueprintId": "set_variable",
+              "blueprintId": "give_item",
               "trigger": "on_enter",
               "params": {
-                "variableKey": "hasRiverCoin",
-                "value": "true"
+                "itemId": "river_coin",
+                "count": 1
               }
             },
             {
@@ -815,10 +930,9 @@
           "conditionals": [
             {
               "id": "cond-goldkey",
-              "blueprintId": "variable_equals",
+              "blueprintId": "has_item",
               "params": {
-                "variableKey": "hasGoldenKey",
-                "value": "true"
+                "itemId": "golden_key"
               }
             }
           ]
@@ -850,14 +964,25 @@
           "id": "cw14-1",
           "text": "Equip it and rest by the fire",
           "targetPageId": "page-woods-15",
+          "conditionals": [
+            {
+              "id": "cond-no-radiant",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "radiant_sword",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ],
           "actions": [
             {
               "id": "act-equip",
-              "blueprintId": "set_variable",
+              "blueprintId": "give_item",
               "trigger": "on_enter",
               "params": {
-                "variableKey": "weapon",
-                "value": "Radiant Sword"
+                "itemId": "radiant_sword",
+                "count": 1
               }
             },
             {
@@ -883,7 +1008,7 @@
         },
         {
           "id": "pw15-2",
-          "text": "<p>You inspect your {{weapon}} and steady your breathing. The night is far from over.</p>"
+          "text": "<p>You inspect your weapon and steady your breathing. The night is far from over.</p>"
         }
       ],
       "choices": [
@@ -922,10 +1047,9 @@
           "conditionals": [
             {
               "id": "cond-radiant",
-              "blueprintId": "variable_equals",
+              "blueprintId": "has_item",
               "params": {
-                "variableKey": "weapon",
-                "value": "Radiant Sword"
+                "itemId": "radiant_sword"
               }
             }
           ],
@@ -947,10 +1071,11 @@
           "conditionals": [
             {
               "id": "cond-rusty",
-              "blueprintId": "variable_equals",
+              "blueprintId": "has_item_count",
               "params": {
-                "variableKey": "weapon",
-                "value": "Rusty Longsword"
+                "itemId": "radiant_sword",
+                "comparison": "less than",
+                "count": 1
               }
             }
           ],

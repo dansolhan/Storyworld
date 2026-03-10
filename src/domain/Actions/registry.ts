@@ -58,9 +58,55 @@ export const postMessageBlueprint: ActionBlueprint<PostMessageParams> = {
   },
 };
 
+export interface GiveItemParams {
+  itemId: string | null;
+  count: number;
+}
+
+export const giveItemBlueprint: ActionBlueprint<GiveItemParams> = {
+  id: 'give_item',
+  name: 'Give Item',
+  template: 'Give {{count}} {{itemId}}',
+  defaultParams: {
+    itemId: null,
+    count: 1,
+  },
+  execute: (params, context) => {
+    if (!params.itemId || !context.modifyInventory) return;
+    context.modifyInventory(params.itemId, params.count || 1);
+  },
+};
+
+export interface RemoveItemParams {
+  itemId: string | null;
+  count: number;
+  all: boolean;
+}
+
+export const removeItemBlueprint: ActionBlueprint<RemoveItemParams> = {
+  id: 'remove_item',
+  name: 'Remove Item',
+  template: 'Remove {{count}} {{itemId}}',
+  defaultParams: {
+    itemId: null,
+    count: 1,
+    all: false,
+  },
+  execute: (params, context) => {
+    if (!params.itemId || !context.modifyInventory) return;
+    if (params.all) {
+      context.modifyInventory(params.itemId, -9999999);
+    } else {
+      context.modifyInventory(params.itemId, -(params.count || 1));
+    }
+  },
+};
+
 // Expose a central registry of blueprints for easy selection
 export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [setVariableBlueprint.id]: setVariableBlueprint as unknown as ActionBlueprint<unknown>,
   [goToSubplotBlueprint.id]: goToSubplotBlueprint as unknown as ActionBlueprint<unknown>,
   [postMessageBlueprint.id]: postMessageBlueprint as unknown as ActionBlueprint<unknown>,
+  [giveItemBlueprint.id]: giveItemBlueprint as unknown as ActionBlueprint<unknown>,
+  [removeItemBlueprint.id]: removeItemBlueprint as unknown as ActionBlueprint<unknown>,
 };

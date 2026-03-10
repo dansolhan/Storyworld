@@ -10,6 +10,7 @@ export interface StoryData {
   startPageId?: string;
   pages: Page[];
   variables: Record<string, StoryVariable>;
+  items?: Record<string, import('../Item/Item').Item>;
   subplots?: Subplot[];
   atmospheres?: Record<string, import('../Atmosphere/Atmosphere').Atmosphere>;
   audio?: Record<string, AudioItem>;

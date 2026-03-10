@@ -12,6 +12,7 @@ import { createMetadataSlice } from './slices/metadataSlice';
 import { createActionSlice } from './slices/actionSlice';
 import { createAudioSlice } from './slices/audioSlice';
 import { createAtmosphereSlice } from './slices/atmosphereSlice';
+import { createItemSlice } from './slices/itemSlice';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our
@@ -29,6 +30,7 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createActionSlice(...a),
   ...createAudioSlice(...a),
   ...createAtmosphereSlice(...a),
+  ...createItemSlice(...a),
 }));
 
 // Queue mechanism to prevent IndexedDB race conditions when dragging nodes rapidly
@@ -78,6 +80,7 @@ useEditorStore.subscribe((state) => {
         nodes: state.nodes,
         edges: state.edges,
         variables: state.variables,
+        items: state.items || {},
         audio: state.audio || {},
         atmospheres: state.atmospheres || {},
         subplots: state.subplots || [],

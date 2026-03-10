@@ -5,7 +5,7 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen'>
+  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen'>
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -19,6 +19,7 @@ export const createUISlice: StateCreator<
   isVariableManagerOpen: false,
   isAudioManagerOpen: false,
   isAtmosphereManagerOpen: false,
+  isItemManagerOpen: false,
 
   setSelectedPage: (pageId) => {
     set((state) => ({
@@ -30,6 +31,7 @@ export const createUISlice: StateCreator<
         isVariableManagerOpen: false,
         isAudioManagerOpen: false,
         isAtmosphereManagerOpen: false,
+        isItemManagerOpen: false,
       }),
       ...(pageId === null && {
         isEditorSidebarExpanded: false,
@@ -60,6 +62,7 @@ export const createUISlice: StateCreator<
         isVariableManagerOpen: false,
         isAudioManagerOpen: false,
         isAtmosphereManagerOpen: false,
+        isItemManagerOpen: false,
       }),
     }));
   },
@@ -73,6 +76,7 @@ export const createUISlice: StateCreator<
         isStorySettingsOpen: false,
         isAudioManagerOpen: false,
         isAtmosphereManagerOpen: false,
+        isItemManagerOpen: false,
       }),
     }));
   },
@@ -86,6 +90,7 @@ export const createUISlice: StateCreator<
         isStorySettingsOpen: false,
         isVariableManagerOpen: false,
         isAtmosphereManagerOpen: false,
+        isItemManagerOpen: false,
       }),
     }));
   },
@@ -99,6 +104,21 @@ export const createUISlice: StateCreator<
         isStorySettingsOpen: false,
         isVariableManagerOpen: false,
         isAudioManagerOpen: false,
+        isItemManagerOpen: false,
+      }),
+    }));
+  },
+
+  setIsItemManagerOpen: (isOpen) => {
+    set((state) => ({
+      ...state,
+      isItemManagerOpen: isOpen,
+      ...(isOpen && {
+        selectedPageId: null,
+        isStorySettingsOpen: false,
+        isVariableManagerOpen: false,
+        isAudioManagerOpen: false,
+        isAtmosphereManagerOpen: false,
       }),
     }));
   }
