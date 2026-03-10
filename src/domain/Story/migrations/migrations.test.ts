@@ -29,6 +29,7 @@ describe('Story Migrations', () => {
     expect(migrated.subplots).toEqual([]);
     expect(migrated.audio).toEqual({});
     expect(migrated.atmospheres).toEqual({});
+    expect(migrated.items).toEqual({});
   });
 
   // Adding a mock or ensuring that undefined/null throws properly

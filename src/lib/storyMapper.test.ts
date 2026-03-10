@@ -106,6 +106,7 @@ describe('storyMapper', () => {
         mockNodes as any,
         mockEdges as any,
         mockVariables as any,
+        {},
         { title: 'Test Story', description: 'A story for testing mapping', startPageId: 'page-1' }
       );
 
@@ -129,13 +130,13 @@ describe('storyMapper', () => {
     });
 
     it('should filter out synthetic nodes when compiling back to domain story', () => {
-      const result = compileGraphToStory(mockNodes as any, mockEdges as any, {});
+      const result = compileGraphToStory(mockNodes as any, mockEdges as any, {}, {});
       expect(result.pages.length).toBe(2);
       expect(result.pages.find(p => p.id === 'action-node-c2')).toBeUndefined();
     });
 
     it('should handle choices with missing edges gracefully', () => {
-      const result = compileGraphToStory(mockNodes as any, [], {});
+      const result = compileGraphToStory(mockNodes as any, [], {}, {});
       expect(result.pages[0].choices![0].targetPageId).toBeUndefined();
     });
   });

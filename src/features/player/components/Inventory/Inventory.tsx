@@ -7,7 +7,6 @@ import styles from './Inventory.module.css';
 export const Inventory: React.FC = () => {
   const inventory = usePlayerStore((s) => s.inventory);
   const storyData = usePlayerStore((s) => s.storyData);
-  const setContextualPopover = usePlayerStore((s) => s.setContextualPopover);
 
   const variables = usePlayerStore((s) => s.variables);
   const visitedPageIds = usePlayerStore((s) => s.visitedPageIds);
@@ -63,11 +62,15 @@ export const Inventory: React.FC = () => {
     setContextMenu(null);
     if (!contextMenu) return;
 
-    setContextualPopover({
-      text: itemDef.description || 'It looks ordinary.',
-      x: contextMenu.x,
-      y: contextMenu.y
-    });
+    setMessages(prev => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        text: itemDef.description || 'It looks ordinary.',
+        displayStyle: 'paragraph',
+        pageId: currentPageId
+      }
+    ]);
   };
 
   const handleContextChoiceClick = (choice: any) => {
@@ -176,7 +179,9 @@ export const Inventory: React.FC = () => {
         >
           <button
             className={styles.contextMenuItem}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
               const itemDef = storyData?.items?.[contextMenu.itemId];
               if (itemDef) handleExamine(itemDef);
             }}
@@ -199,7 +204,11 @@ export const Inventory: React.FC = () => {
                 <button
                   key={choice.id}
                   className={styles.contextMenuItem}
-                  onClick={() => handleContextChoiceClick(choice)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    handleContextChoiceClick(choice);
+                  }}
                 >
                   {choice.text}
                 </button>

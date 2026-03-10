@@ -19,8 +19,10 @@ export const useContextualPopover = () => {
           });
         }
       } else {
-        // Close popover if clicking anywhere else
-        setContextualPopover(null);
+        // Only close popover if clicking outside context menus or popovers
+        if (!target.closest('[class*="contextMenu"]') && !target.closest('[class*="popover"]')) {
+          setContextualPopover(null);
+        }
       }
     };
     document.addEventListener('click', handleDocumentClick);

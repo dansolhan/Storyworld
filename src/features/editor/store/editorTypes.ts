@@ -59,16 +59,16 @@ export interface EditorState {
   onConnect: OnConnect;
   setNodes: (nodes: EditorNode[]) => void;
   setEdges: (edges: Edge[]) => void;
-  loadStory: (
-    nodes: EditorNode[],
-    edges: Edge[],
-    variables?: Record<string, StoryVariable>,
-    items?: Record<string, Item>,
-    metadata?: { title?: string; description?: string; startPageId?: string },
-    subplots?: Subplot[],
-    audio?: Record<string, AudioItem>,
-    atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>
-  ) => void;
+  loadStory: (params: {
+    nodes: EditorNode[];
+    edges: Edge[];
+    variables?: Record<string, StoryVariable>;
+    items?: Record<string, Item>;
+    metadata?: { title?: string; description?: string; startPageId?: string };
+    subplots?: Subplot[];
+    audio?: Record<string, AudioItem>;
+    atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
+  }) => void;
 
   /** Merges computed synthetic (ActionNode/PortalNode) entries into state.nodes/edges,
    *  preserving user-adjusted positions and pruning stale entries. */

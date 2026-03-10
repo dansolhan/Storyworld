@@ -40,7 +40,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
-  loadStory: (nodes, edges, variables, items, metadata, subplots, audio, atmospheres) => set(() => ({
+  loadStory: ({ nodes, edges, variables, items, metadata, subplots, audio, atmospheres }) => set(() => ({
     nodes,
     edges,
     ...(variables ? { variables } : {}),

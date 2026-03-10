@@ -4,8 +4,20 @@ import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
 import { TagInput } from '../../../../components/ui/TagInput/TagInput';
+import { RichTextEditor } from '../../../../components/ui/RichTextEditor/RichTextEditor';
+import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/BoldFeature';
+import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
+import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
+import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import type { Item } from '../../../../domain/Item/Item';
 import styles from './ItemManager.module.css';
+
+const ITEM_DESC_FEATURES = [
+  new BoldFeature(),
+  new ItalicFeature(),
+  new ContextualTextFeature(),
+  new InsertVariableFeature(),
+];
 
 interface ItemRowProps {
   itemKey: string;
@@ -35,9 +47,10 @@ const ItemRow: React.FC<ItemRowProps> = ({ itemKey, item, updateItem, removeItem
               ))}
             </div>
           </div>
-          <div style={{ flex: 1, color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
-            {item.description}
-          </div>
+          <div
+            style={{ flex: 1, color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}
+            dangerouslySetInnerHTML={{ __html: item.description || '' }}
+          />
           <div style={{ display: 'flex', gap: '4px' }}>
             <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} aria-label="Edit">
               <Pencil size={16} />
@@ -98,14 +111,13 @@ const ItemRow: React.FC<ItemRowProps> = ({ itemKey, item, updateItem, removeItem
             Multiple?
           </label>
         </div>
-        <textarea
-          className={styles.input}
-          value={item.description}
-          onChange={(e) => updateItem(itemKey, { ...item, description: e.target.value })}
-          placeholder="Item Description (Shown when Examing)"
-          rows={2}
-          style={{ resize: 'vertical' }}
-        />
+        <div style={{ flex: 1, minHeight: '100px', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)' }}>
+          <RichTextEditor
+            content={item.description}
+            features={ITEM_DESC_FEATURES}
+            onChange={(html) => updateItem(itemKey, { ...item, description: html })}
+          />
+        </div>
         <TagInput
           tags={item.tags || []}
           onChange={handleEditTags}
@@ -225,14 +237,13 @@ export const ItemManager: React.FC<ItemManagerProps> = ({ isOpen, onClose }) => 
             />
           </div>
           <div className={styles.inputRow} style={{ marginTop: '8px', alignItems: 'center' }}>
-            <input
-              type="text"
-              className={styles.input}
-              placeholder="Description..."
-              value={newDesc}
-              onChange={(e) => setNewDesc(e.target.value)}
-              style={{ flex: 2 }}
-            />
+            <div style={{ flex: 2, minHeight: '80px', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+              <RichTextEditor
+                content={newDesc}
+                features={ITEM_DESC_FEATURES}
+                onChange={(html) => setNewDesc(html)}
+              />
+            </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem' }}>
               <input
                 type="checkbox"

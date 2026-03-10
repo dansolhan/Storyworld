@@ -25,16 +25,20 @@ export const useStoryImport = () => {
         // Simplistic validation to ensure it's our graph format
         if (parsedData && Array.isArray(parsedData.pages) && (parsedData.pages.length === 0 || 'id' in parsedData.pages[0])) {
           const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
-          loadStory(
-            parsedNodes,
-            parsedEdges,
-            parsedData.variables || {},
-            {
+          loadStory({
+            nodes: parsedNodes,
+            edges: parsedEdges,
+            variables: parsedData.variables || {},
+            items: parsedData.items || {},
+            metadata: {
               title: parsedData.title,
               description: parsedData.description,
               startPageId: parsedData.startPageId
-            }
-          );
+            },
+            subplots: parsedData.subplots || [],
+            audio: parsedData.audio || {},
+            atmospheres: parsedData.atmospheres || {}
+          });
         } else {
           alert("Invalid story format.");
         }

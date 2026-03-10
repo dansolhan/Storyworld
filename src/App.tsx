@@ -20,8 +20,8 @@ function App() {
   const handlePlay = () => {
     // We get the state non-reactively so App.tsx doesn't re-render 
     // every single time a node is dragged on the canvas!
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
-    const compiledStory = compileGraphToStory(nodes, edges, variables, {
+    const { nodes, edges, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const compiledStory = compileGraphToStory(nodes, edges, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
@@ -31,8 +31,8 @@ function App() {
   };
 
   const handleExportJson = () => {
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
-    const storyData = compileGraphToStory(nodes, edges, variables, {
+    const { nodes, edges, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const storyData = compileGraphToStory(nodes, edges, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
@@ -41,8 +41,8 @@ function App() {
   };
 
   const handleExportStoryworld = () => {
-    const { nodes, edges, variables, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
-    const storyData = compileGraphToStory(nodes, edges, variables, {
+    const { nodes, edges, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const storyData = compileGraphToStory(nodes, edges, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId

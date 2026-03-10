@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": "0.8.0",
   "title": "The Awakening",
   "description": "A short demo story showcasing subplots, action triggers, and action-only choices.",
   "startPageId": "page-1",
@@ -13,6 +13,10 @@
       "value": "Knight"
     },
     "readShrineInscription": {
+      "type": "boolean",
+      "value": false
+    },
+    "hasWavedAtLight": {
       "type": "boolean",
       "value": false
     }
@@ -240,11 +244,32 @@
         {
           "id": "c1-3",
           "text": "Search your pockets",
-          "targetPageId": "page-5"
+          "targetPageId": "page-5",
+          "conditionals": [
+            {
+              "id": "cond-no-key",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "golden_key",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ]
         },
         {
           "id": "c1-pray",
           "text": "Kneel and pray for guidance",
+          "conditionals": [
+            {
+              "id": "cond-knight",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "heroClass",
+                "value": "Knight"
+              }
+            }
+          ],
           "actions": [
             {
               "id": "act-pray-msg",
@@ -312,6 +337,20 @@
           "id": "c2-1",
           "text": "Go back to the center of the room",
           "targetPageId": "page-1"
+        },
+        {
+          "id": "c2-unlock",
+          "text": "Use the strange golden key on the door",
+          "targetPageId": "page-6",
+          "conditionals": [
+            {
+              "id": "cond-has-key",
+              "blueprintId": "has_item",
+              "params": {
+                "itemId": "golden_key"
+              }
+            }
+          ]
         }
       ]
     },
@@ -343,6 +382,16 @@
         {
           "id": "c3-signal",
           "text": "Wave at the floating light",
+          "conditionals": [
+            {
+              "id": "cond-not-waved",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "hasWavedAtLight",
+                "value": "false"
+              }
+            }
+          ],
           "actions": [
             {
               "id": "act-wave-msg",
@@ -350,6 +399,15 @@
               "trigger": "on_enter",
               "params": {
                 "message": "The light pulses twice — as if acknowledging you."
+              }
+            },
+            {
+              "id": "act-wave-var",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "hasWavedAtLight",
+                "value": "true"
               }
             }
           ]
@@ -398,11 +456,6 @@
         }
       ],
       "choices": [
-        {
-          "id": "c5-1",
-          "text": "Take the key to the door",
-          "targetPageId": "page-6"
-        },
         {
           "id": "c5-2",
           "text": "Keep looking around",
@@ -676,7 +729,17 @@
         {
           "id": "cw3-read",
           "text": "Read the inscription on the side",
-          "targetPageId": "page-woods-5"
+          "targetPageId": "page-woods-5",
+          "conditionals": [
+            {
+              "id": "cond-not-read-ins",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "readShrineInscription",
+                "value": "false"
+              }
+            }
+          ]
         },
         {
           "id": "cw3-leave",
@@ -838,7 +901,18 @@
         {
           "id": "cw8-search",
           "text": "Search the muddy banks for something of value",
-          "targetPageId": "page-woods-10"
+          "targetPageId": "page-woods-10",
+          "conditionals": [
+            {
+              "id": "cond-no-coin-bank",
+              "blueprintId": "has_item_count",
+              "params": {
+                "itemId": "river_coin",
+                "comparison": "less than",
+                "count": 1
+              }
+            }
+          ]
         }
       ]
     },

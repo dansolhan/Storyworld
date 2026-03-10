@@ -7,6 +7,7 @@ import type { StoryData } from '../domain/Story/StoryData';
 import type { Subplot } from '../domain/Story/Subplot';
 import type { StoryVariable } from '../domain/Story/Variable';
 import type { AudioItem } from '../domain/Story/Audio';
+import type { Item } from '../domain/Item/Item';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
 
 type AnyNode = PageNodeType | ActionNodeType | PortalNodeType;
@@ -25,6 +26,7 @@ export const compileGraphToStory = (
   nodes: AnyNode[],
   edges: Edge[],
   variables: Record<string, StoryVariable>,
+  items?: Record<string, Item>,
   metadata?: { title: string; description: string; startPageId: string | null },
   audio?: Record<string, AudioItem>,
   atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>
@@ -67,6 +69,7 @@ export const compileGraphToStory = (
     version: CURRENT_VERSION,
     pages,
     variables,
+    items,
     audio,
     atmospheres,
     title: metadata?.title || 'Untitled Story',

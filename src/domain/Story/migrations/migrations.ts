@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = 7;
+export const CURRENT_VERSION = '0.8.0';
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -98,16 +98,30 @@ const migrateV6ToV7: MigrationFunction = (v6Story) => {
   };
 };
 
-// A dictionary mapping the *starting* version to the migration function
-// that upgrades it to starting version + 1.
-const migrationSteps: Record<number, MigrationFunction> = {
-  1: migrateV1ToV2,
-  2: migrateV2ToV3,
-  3: migrateV3ToV4,
-  4: migrateV4ToV5,
-  5: migrateV5ToV6,
-  6: migrateV6ToV7,
+const migrateV7ToV8: MigrationFunction = (v7Story) => {
+  // Version 8 adds items to the story root.
+  return {
+    ...v7Story,
+    items: v7Story.items || {}
+  };
 };
+
+interface MigrationStep {
+  from: string | number;
+  to: string | number;
+  migrate: MigrationFunction;
+}
+
+const migrationSteps: MigrationStep[] = [
+  { from: 1, to: 2, migrate: migrateV1ToV2 },
+  { from: 2, to: 3, migrate: migrateV2ToV3 },
+  { from: 3, to: 4, migrate: migrateV3ToV4 },
+  { from: 4, to: 5, migrate: migrateV4ToV5 },
+  { from: 5, to: 6, migrate: migrateV5ToV6 },
+  { from: 6, to: 7, migrate: migrateV6ToV7 },
+  { from: 7, to: 8, migrate: migrateV7ToV8 },
+  { from: 8, to: '0.8.0', migrate: (story) => ({ ...story }) },
+];
 
 export function migrateStory(storyJson: any): StoryData {
   if (!storyJson) throw new Error('Cannot migrate undefined or null story structure.');
@@ -117,16 +131,18 @@ export function migrateStory(storyJson: any): StoryData {
       ? structuredClone(storyJson)
       : JSON.parse(JSON.stringify(storyJson));
 
-  // If the story doesn't have a version at all, assume it predates versioning (version 1).
-  const startingVersion = migratedStory.version || 1;
+  let currentVersion = migratedStory.version || 1;
 
-  for (let v = startingVersion; v < CURRENT_VERSION; v++) {
-    const migrationFunc = migrationSteps[v];
-    if (migrationFunc) {
-      migratedStory = migrationFunc(migratedStory);
-    } else {
-      throw new Error(`Missing migration script to step from version ${v} to ${v + 1}`);
-    }
+  let step = migrationSteps.find((s) => s.from === currentVersion);
+
+  while (step && currentVersion !== CURRENT_VERSION) {
+    migratedStory = step.migrate(migratedStory);
+    currentVersion = step.to;
+    step = migrationSteps.find((s) => s.from === currentVersion);
+  }
+
+  if (currentVersion !== CURRENT_VERSION) {
+    throw new Error(`Missing migration script to step from version ${currentVersion} to ${CURRENT_VERSION}`);
   }
 
   migratedStory.version = CURRENT_VERSION;

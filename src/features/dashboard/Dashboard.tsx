@@ -74,7 +74,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
     setHasHydrated(false); // Make sure hydration blocker is on
 
     // We call loadStory with empty arrays to clear it, but also initialize basic data
-    loadStory([], [], {}, { title: 'Untitled Story', description: '' }, [], {}, {});
+    loadStory({
+      nodes: [],
+      edges: [],
+      metadata: { title: 'Untitled Story', description: '' }
+    });
 
     setStoryId(newId);
     setHasHydrated(true); // Hydrated!
@@ -89,19 +93,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
 
     // Give it a fresh UUID to not conflict with existing state
     setStoryId(newId);
-    loadStory(
+    loadStory({
       nodes,
       edges,
-      exampleStory.variables || {},
-      {
+      variables: exampleStory.variables || {},
+      items: exampleStory.items || {},
+      metadata: {
         title: exampleStory.title,
         description: exampleStory.description,
         startPageId: exampleStory.startPageId
       },
-      exampleStory.subplots || [],
-      exampleStory.audio || {},
-      exampleStory.atmospheres || {}
-    );
+      subplots: exampleStory.subplots || [],
+      audio: exampleStory.audio || {},
+      atmospheres: exampleStory.atmospheres || {}
+    });
 
     setHasHydrated(true); // Re-enable saves
     onOpenStory(); // Jump straight into the editor view
@@ -114,19 +119,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
         setHasHydrated(false);
         setStoryId(id);
 
-        loadStory(
-          data.state.nodes || [],
-          data.state.edges || [],
-          data.state.variables || {},
-          {
+        loadStory({
+          nodes: data.state.nodes || [],
+          edges: data.state.edges || [],
+          variables: data.state.variables || {},
+          items: data.state.items || {},
+          metadata: {
             title: data.state.storyTitle,
             description: data.state.storyDescription,
             startPageId: data.state.startPageId
           },
-          data.state.subplots || [],
-          data.state.audio || {},
-          data.state.atmospheres || {}
-        );
+          subplots: data.state.subplots || [],
+          audio: data.state.audio || {},
+          atmospheres: data.state.atmospheres || {}
+        });
 
         setHasHydrated(true);
         onOpenStory();

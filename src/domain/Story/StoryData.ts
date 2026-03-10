@@ -4,7 +4,7 @@ import type { StoryVariable } from './Variable';
 import type { AudioItem } from './Audio';
 
 export interface StoryData {
-  version: number;
+  version: string | number;
   title?: string;
   description?: string;
   startPageId?: string;
