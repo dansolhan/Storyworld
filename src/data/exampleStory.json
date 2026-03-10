@@ -219,7 +219,16 @@
       "paragraphs": [
         {
           "id": "p1-1",
-          "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>"
+          "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>",
+          "conditionals": [
+            {
+              "id": "cond-p1-1-first",
+              "blueprintId": "first_visit",
+              "params": {
+                "not": false
+              }
+            }
+          ]
         },
         {
           "id": "p1-2",
@@ -227,7 +236,16 @@
         },
         {
           "id": "p1-3",
-          "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>"
+          "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>",
+          "conditionals": [
+            {
+              "id": "cond-p1-3-first",
+              "blueprintId": "first_visit",
+              "params": {
+                "not": false
+              }
+            }
+          ]
         }
       ],
       "choices": [
@@ -361,7 +379,16 @@
       "paragraphs": [
         {
           "id": "p3-1",
-          "text": "<p>You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky.</p>"
+          "text": "<p>You press your face against the soot-stained glass. Outside, the night is pitch black. You can barely make out the silhouettes of gnarled trees, their branches twisting like arthritic fingers into the sky.</p>",
+          "conditionals": [
+            {
+              "id": "cond-p3-1-first",
+              "blueprintId": "first_visit",
+              "params": {
+                "not": false
+              }
+            }
+          ]
         },
         {
           "id": "p3-2",
@@ -556,7 +583,16 @@
       "paragraphs": [
         {
           "id": "p-cell1-1",
-          "text": "<p>You descend a rickety wooden ladder into the darkness. The air smells of mold and old wine.</p>"
+          "text": "<p>You descend a rickety wooden ladder into the darkness. The air smells of mold and old wine.</p>",
+          "conditionals": [
+            {
+              "id": "cond-pcell1-1-first",
+              "blueprintId": "first_visit",
+              "params": {
+                "not": false
+              }
+            }
+          ]
         },
         {
           "id": "p-cell1-2",
@@ -840,7 +876,16 @@
       "paragraphs": [
         {
           "id": "pw8-1",
-          "text": "<p>You reach the banks of a wide, dark river. An old wooden ferry is moored here, manned by a <span class=\"contextual-text-mark\" data-context=\"The ferryman is skeletal, his eyes glowing like embers.\">silent ferryman</span>.</p>"
+          "text": "<p>You reach the banks of a wide, dark river. An old wooden ferry is moored here, manned by a <span class=\"contextual-text-mark\" data-context=\"The ferryman is skeletal, his eyes glowing like embers.\">silent ferryman</span>.</p>",
+          "conditionals": [
+            {
+              "id": "cond-pw8-1-first",
+              "blueprintId": "first_visit",
+              "params": {
+                "not": false
+              }
+            }
+          ]
         },
         {
           "id": "pw8-2",

@@ -20,6 +20,36 @@ export const visitedPageBlueprint: ConditionalBlueprint<VisitedPageParams> = {
   },
 };
 
+export interface FirstVisitParams {
+  not: boolean;
+}
+
+export const firstVisitBlueprint: ConditionalBlueprint<FirstVisitParams> = {
+  id: 'first_visit',
+  name: 'First visit',
+  template: '{{not}} first visit of current page',
+  defaultParams: {
+    not: false,
+  },
+  evaluate: (params, context) => {
+    if (!context.currentPageId) return true;
+
+    // Filter visited pages for the current page
+    const visits = context.visitedPageIds.filter((id) => id === context.currentPageId);
+
+    // Because evaluate might be called before the useEffect in Player.tsx appends the current 
+    // page to visitedPageIds, we check if the LAST item in visitedPageIds is the current page.
+    // If it is, the effect has already run once for this visit. 
+    // If it isn't, this is a fresh evaluation for a new visit that hasn't been logged yet.
+    const isAlreadyLogged = context.visitedPageIds.length > 0 && context.visitedPageIds[context.visitedPageIds.length - 1] === context.currentPageId;
+
+    const visitCount = isAlreadyLogged ? visits.length : visits.length + 1;
+    const isFirstVisit = visitCount === 1;
+
+    return params.not ? !isFirstVisit : isFirstVisit;
+  },
+};
+
 export interface VariableEqualsParams {
   variableKey: string | null;
   value: string;
@@ -116,6 +146,7 @@ export const orGroupBlueprint: ConditionalBlueprint<{}> = {
 // Expose a central registry of blueprints for easy selection
 export const conditionalBlueprints: Record<string, ConditionalBlueprint<unknown>> = {
   [visitedPageBlueprint.id]: visitedPageBlueprint as unknown as ConditionalBlueprint<unknown>,
+  [firstVisitBlueprint.id]: firstVisitBlueprint as unknown as ConditionalBlueprint<unknown>,
   [variableEqualsBlueprint.id]: variableEqualsBlueprint as unknown as ConditionalBlueprint<unknown>,
   [hasItemBlueprint.id]: hasItemBlueprint as unknown as ConditionalBlueprint<unknown>,
   [hasItemCountBlueprint.id]: hasItemCountBlueprint as unknown as ConditionalBlueprint<unknown>,
