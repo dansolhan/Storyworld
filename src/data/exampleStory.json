@@ -29,7 +29,8 @@
       "multiple": false,
       "tags": [
         "quest"
-      ]
+      ],
+      "contextChoices": []
     },
     "tome": {
       "id": "tome",
@@ -38,7 +39,8 @@
       "multiple": false,
       "tags": [
         "quest"
-      ]
+      ],
+      "contextChoices": []
     },
     "river_coin": {
       "id": "river_coin",
@@ -47,7 +49,8 @@
       "multiple": true,
       "tags": [
         "currency"
-      ]
+      ],
+      "contextChoices": []
     },
     "ancient_relic": {
       "id": "ancient_relic",
@@ -56,7 +59,8 @@
       "multiple": false,
       "tags": [
         "quest"
-      ]
+      ],
+      "contextChoices": []
     },
     "radiant_sword": {
       "id": "radiant_sword",
@@ -65,7 +69,8 @@
       "multiple": false,
       "tags": [
         "weapon"
-      ]
+      ],
+      "contextChoices": []
     }
   },
   "audio": {
@@ -95,17 +100,20 @@
     "atmo-main": {
       "id": "atmo-main",
       "title": "Main Room Vibes",
-      "music": "audio-mystery"
+      "music": "audio-mystery",
+      "color": "#3b82f6"
     },
     "atmo-cellar": {
       "id": "atmo-cellar",
       "title": "Spooky Cellar Vibes",
-      "music": "audio-spooky"
+      "music": "audio-spooky",
+      "color": "#8b5cf6"
     },
     "atmo-house": {
       "id": "atmo-house",
       "title": "House Interior",
-      "music": "audio-house"
+      "music": "audio-house",
+      "color": "#14b8a6"
     }
   },
   "uiMetadata": {

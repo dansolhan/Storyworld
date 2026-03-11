@@ -6,7 +6,7 @@ export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<Editor
   addParagraph: (pageId) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           const newParagraph = { id: `p-${Date.now()}`, text: 'New content here...' };
           return {
             ...node,
@@ -24,7 +24,7 @@ export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<Editor
   updateParagraph: (pageId, paragraphId, newText) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.data.paragraphs) {
+        if (node.id === pageId && node.type === 'pageNode' && node.data.paragraphs) {
           return {
             ...node,
             data: {

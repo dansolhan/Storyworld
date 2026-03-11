@@ -70,6 +70,8 @@ export const GraphEditor: React.FC = () => {
     setCurrentPlotId,
     setIsEditorSidebarExpanded,
     syncSyntheticNodes,
+    pageColorMode,
+    atmospheres,
   } = useEditorStore();
 
   const interactionStrategy = useInteractionStrategy();
@@ -220,16 +222,21 @@ export const GraphEditor: React.FC = () => {
   const handleAddChoice = useCallback((id: string) => addChoice(id), [addChoice]);
 
   const nodesWithHandlers = useMemo(() =>
-    visiblePageNodes.map((node) => ({
-      ...node,
-      data: {
-        ...node.data,
-        isStartNode: node.id === startPageId,
-        onAddParagraph: handleAddParagraph,
-        onAddChoice: handleAddChoice,
-      },
-    })),
-    [visiblePageNodes, startPageId, handleAddParagraph, handleAddChoice]
+    visiblePageNodes.map((node) => {
+      const atmosphereColor = node.data.atmosphereId ? atmospheres[node.data.atmosphereId as string]?.color : undefined;
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          isStartNode: node.id === startPageId,
+          onAddParagraph: handleAddParagraph,
+          onAddChoice: handleAddChoice,
+          pageColorMode,
+          atmosphereColor,
+        },
+      };
+    }),
+    [visiblePageNodes, startPageId, handleAddParagraph, handleAddChoice, pageColorMode, atmospheres]
   );
 
   const allVisibleNodes = useMemo(

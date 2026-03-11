@@ -101,6 +101,9 @@ export interface EditorState {
   isEditorSidebarExpanded: boolean;
   setIsEditorSidebarExpanded: (expanded: boolean) => void;
 
+  pageColorMode: 'type' | 'atmosphere';
+  setPageColorMode: (mode: 'type' | 'atmosphere') => void;
+
   isStorySettingsOpen: boolean;
   setIsStorySettingsOpen: (isOpen: boolean) => void;
 

@@ -33,7 +33,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
       const loadedStories: StoryIndexItem[] = [];
 
       for (const key of storyKeys) {
-        const data = await get(key as string);
+        const data = await get(key);
         if (data && data.state) {
           loadedStories.push({
             id: (key as string).replace('story-', ''),

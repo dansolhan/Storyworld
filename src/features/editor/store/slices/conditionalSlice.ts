@@ -23,7 +23,7 @@ export const createConditionalSlice: StateCreator<
 
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           const newConditional = {
             id: `cond-${Date.now()}`,
             blueprintId,
@@ -88,7 +88,7 @@ export const createConditionalSlice: StateCreator<
   updateConditional: (targetType, pageId, targetId, conditionalId, params) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           if (targetType === 'choice' && node.data.choices) {
             return {
               ...node,
@@ -147,7 +147,7 @@ export const createConditionalSlice: StateCreator<
   removeConditional: (targetType, pageId, targetId, conditionalId) => {
     set({
       nodes: get().nodes.map((node) => {
-        if (node.id === pageId) {
+        if (node.id === pageId && node.type === 'pageNode') {
           if (targetType === 'choice' && node.data.choices) {
             return {
               ...node,

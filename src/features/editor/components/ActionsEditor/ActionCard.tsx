@@ -26,7 +26,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({ targetType, pageId, targ
     // Directly patch the trigger field on the matching action in the node data
     const nodes = useEditorStore.getState().nodes;
     const patchedNodes = nodes.map((node) => {
-      if (node.id !== pageId) return node;
+      if (node.id !== pageId || node.type !== 'pageNode') return node;
       if (targetType === 'page') {
         return {
           ...node,

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useEditorStore } from '../useEditorStore';
+import type { PageNodeType } from '../../nodes/PageNode';
 
 describe('choiceSlice', () => {
   const initialState = useEditorStore.getState();
@@ -15,7 +16,7 @@ describe('choiceSlice', () => {
     useEditorStore.getState().addChoice(rootPageId);
     const state = useEditorStore.getState();
 
-    const rootNode = state.nodes.find(n => n.id === rootPageId);
+    const rootNode = state.nodes.find(n => n.id === rootPageId) as PageNodeType;
     expect(rootNode?.data.choices?.length).toBe(1);
     expect(rootNode?.data.choices?.[0].text).toBe('New Choice...');
     // targetPageId is now optional — undefined when unconnected (v4 domain change)
@@ -25,11 +26,11 @@ describe('choiceSlice', () => {
 
   it('should update the text of a specific choice', () => {
     useEditorStore.getState().addChoice(rootPageId);
-    const choiceId = useEditorStore.getState().nodes[0].data.choices![0].id;
+    const choiceId = (useEditorStore.getState().nodes[0] as PageNodeType).data.choices![0].id;
 
     useEditorStore.getState().updateChoiceText(rootPageId, choiceId, 'Open the door');
 
-    const rootNode = useEditorStore.getState().nodes.find(n => n.id === rootPageId);
+    const rootNode = useEditorStore.getState().nodes.find(n => n.id === rootPageId) as PageNodeType;
     expect(rootNode?.data.choices?.[0].text).toBe('Open the door');
   });
 
@@ -37,12 +38,12 @@ describe('choiceSlice', () => {
     useEditorStore.getState().addChoice(rootPageId);
     const targetPageId = useEditorStore.getState().addPage(200, 0);
 
-    const choiceId = useEditorStore.getState().nodes[0].data.choices![0].id;
+    const choiceId = (useEditorStore.getState().nodes[0] as PageNodeType).data.choices![0].id;
 
     useEditorStore.getState().setChoiceDestination(rootPageId, choiceId, targetPageId);
 
     const state = useEditorStore.getState();
-    const rootNode = state.nodes.find(n => n.id === rootPageId);
+    const rootNode = state.nodes.find(n => n.id === rootPageId) as PageNodeType;
 
     // 1. Data correctly recorded the target ID
     expect(rootNode?.data.choices?.[0].targetPageId).toBe(targetPageId);
@@ -56,7 +57,7 @@ describe('choiceSlice', () => {
 
   it('should automatically create a completely new page connected to a choice', () => {
     useEditorStore.getState().addChoice(rootPageId);
-    const choiceId = useEditorStore.getState().nodes[0].data.choices![0].id;
+    const choiceId = (useEditorStore.getState().nodes[0] as PageNodeType).data.choices![0].id;
 
     useEditorStore.getState().createPageFromChoice(rootPageId, choiceId);
 
@@ -67,7 +68,7 @@ describe('choiceSlice', () => {
     const targetNode = state.nodes[1];
 
     // Expect root choice to point to the new node
-    const rootNode = state.nodes[0];
+    const rootNode = state.nodes[0] as PageNodeType;
     expect(rootNode.data.choices![0].targetPageId).toBe(targetNode.id);
 
     // Layout check: the new node should be offset to the right by 400px

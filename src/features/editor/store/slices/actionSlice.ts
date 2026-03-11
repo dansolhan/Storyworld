@@ -1,7 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
 import { actionBlueprints } from '../../../../domain/Actions/registry';
-
+import type { Action } from '../../../../domain/Actions/Action';
 
 export const createActionSlice: StateCreator<
   EditorState,
@@ -23,7 +23,7 @@ export const createActionSlice: StateCreator<
 
       return {
         nodes: state.nodes.map((node) => {
-          if (node.id !== pageId) return node;
+          if (node.id !== pageId || node.type !== 'pageNode') return node;
 
           if (targetType === 'page') {
             return {
@@ -38,7 +38,7 @@ export const createActionSlice: StateCreator<
               ...node,
               data: {
                 ...node.data,
-                choices: node.data.choices.map((c) =>
+                choices: node.data.choices.map((c: any) =>
                   c.id === targetId
                     ? { ...c, actions: [...(c.actions || []), newAction] }
                     : c
@@ -54,7 +54,7 @@ export const createActionSlice: StateCreator<
   updateAction: (targetType, pageId, targetId, actionId, params) =>
     set((state) => ({
       nodes: state.nodes.map((node) => {
-        if (node.id !== pageId) return node;
+        if (node.id !== pageId || node.type !== 'pageNode') return node;
 
         if (targetType === 'page') {
           return {
@@ -71,11 +71,11 @@ export const createActionSlice: StateCreator<
             ...node,
             data: {
               ...node.data,
-              choices: node.data.choices.map((c) =>
+              choices: node.data.choices.map((c: any) =>
                 c.id === targetId
                   ? {
                     ...c,
-                    actions: c.actions?.map((act) =>
+                    actions: (c.actions as Action[] | undefined)?.map((act: Action) =>
                       act.id === actionId ? { ...act, params } : act
                     ) || [],
                   }
@@ -91,7 +91,7 @@ export const createActionSlice: StateCreator<
   removeAction: (targetType, pageId, targetId, actionId) =>
     set((state) => ({
       nodes: state.nodes.map((node) => {
-        if (node.id !== pageId) return node;
+        if (node.id !== pageId || node.type !== 'pageNode') return node;
 
         if (targetType === 'page') {
           return {
@@ -106,11 +106,11 @@ export const createActionSlice: StateCreator<
             ...node,
             data: {
               ...node.data,
-              choices: node.data.choices.map((c) =>
+              choices: node.data.choices.map((c: any) =>
                 c.id === targetId
                   ? {
                     ...c,
-                    actions: c.actions?.filter((a) => a.id !== actionId) || [],
+                    actions: (c.actions as Action[] | undefined)?.filter((a: Action) => a.id !== actionId) || [],
                   }
                   : c
               ),

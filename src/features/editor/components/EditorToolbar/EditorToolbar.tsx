@@ -5,7 +5,7 @@ import { useEditorStore } from '../../store/useEditorStore';
 import styles from './EditorToolbar.module.css';
 
 export const EditorToolbar: React.FC = () => {
-  const { addPage, subplots, currentPlotId, setCurrentPlotId, addSubplot } = useEditorStore();
+  const { addPage, subplots, currentPlotId, setCurrentPlotId, addSubplot, pageColorMode, setPageColorMode } = useEditorStore();
 
   const handleAddNewPage = () => {
     const x = Math.random() * 400;
@@ -27,6 +27,11 @@ export const EditorToolbar: React.FC = () => {
     ];
   }, [subplots]);
 
+  const colorModeOptions = useMemo(() => [
+    { label: 'Color on Type', value: 'type' },
+    { label: 'Color on Atmosphere', value: 'atmosphere' },
+  ], []);
+
   return (
     <>
       <div className={styles.toolbar}>
@@ -42,6 +47,13 @@ export const EditorToolbar: React.FC = () => {
             + Add Subplot
           </Button>
           <div style={{ width: '24px' }} /> {/* Spacer */}
+          <Combobox
+            options={colorModeOptions}
+            value={pageColorMode}
+            placeholder="Color Mode"
+            onSelect={(val) => setPageColorMode(val as 'type' | 'atmosphere')}
+          />
+          <div style={{ width: '12px' }} /> {/* Spacer */}
           <Button variant="primary" size="sm" onClick={handleAddNewPage}>
             + Add Page Node
           </Button>

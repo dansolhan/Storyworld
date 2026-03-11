@@ -39,6 +39,15 @@ const AtmosphereRow: React.FC<AtmosphereRowProps> = ({ atmosphereId, atmosphere,
         ))}
       </select>
 
+      <input
+        type="color"
+        className={styles.input}
+        value={atmosphere.color || '#4b5563'} /* default gray-600 */
+        onChange={(e) => updateAtmosphere(atmosphereId, { color: e.target.value })}
+        style={{ width: '40px', padding: '2px', cursor: 'pointer', height: '36px' }}
+        title="Atmosphere Node Color"
+      />
+
       <div style={{ display: 'flex', gap: '4px' }}>
         <Button variant="ghost-danger" size="icon" onClick={() => removeAtmosphere(atmosphereId)} aria-label="Delete">
           <Trash2 size={16} />
