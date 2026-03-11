@@ -20,6 +20,12 @@ export const PageNode = React.memo(({ data, id }: NodeProps<PageNodeType>) => {
   const targetConnections = useNodeConnections({ handleType: 'target' });
   const hasIncoming = targetConnections.length > 0;
 
+  // ── Native Store Subscriptions ──
+  const pageTitle = useEditorStore(state => state.pages?.[id]?.title);
+  const pageChoices = useEditorStore(state => state.pages?.[id]?.choices);
+  const title = pageTitle || data.title || 'Untitled Page';
+  const choices = pageChoices || data.choices || [];
+
   // Use atomic selectors to prevent unnecessary re-renders when other state changes
   const isStartNode = useEditorStore(state => state.startPageId === id) || data.isStartNode;
   const pageColorMode = useEditorStore(state => state.pageColorMode) || data.pageColorMode;
@@ -29,7 +35,7 @@ export const PageNode = React.memo(({ data, id }: NodeProps<PageNodeType>) => {
 
   useEffect(() => {
     updateNodeInternals(id);
-  }, [data.choices?.length, id, updateNodeInternals]);
+  }, [choices.length, id, updateNodeInternals]);
 
   const isAtmosphereMode = pageColorMode === 'atmosphere';
   const typeClass = isAtmosphereMode ? '' : (data.type === 'plot' ? styles.typePlot : styles.typeLocation);
@@ -71,12 +77,12 @@ export const PageNode = React.memo(({ data, id }: NodeProps<PageNodeType>) => {
           ) : (
             <Globe size={32} style={{ opacity: 0.8 }} />
           )}
-          <h3 className={styles.title}>{data.title || 'Untitled Page'}</h3>
+          <h3 className={styles.title}>{title}</h3>
         </div>
 
         {/* Output Handles for Choices (with Hover Tooltip via title attribute) */}
         <div className={styles.choicesContainer}>
-          {data.choices?.map((choice, index) => (
+          {choices.map((choice, index) => (
             <div key={choice.id} className={styles.choiceWrapper} title={choice.text || 'Empty Choice'}>
               <Handle
                 type="source"
@@ -84,7 +90,7 @@ export const PageNode = React.memo(({ data, id }: NodeProps<PageNodeType>) => {
                 id={choice.id}
                 className={styles.sourceHandle}
                 style={{
-                  top: `${(index + 1) * (100 / (data.choices.length + 1))}%`,
+                  top: `${(index + 1) * (100 / (choices.length + 1))}%`,
                   // Show handle if choice has a target page OR if it's action-only (synth node will appear)
                   opacity: (choice.targetPageId || (choice.actions && choice.actions.length > 0)) ? 1 : 0
                 }}

@@ -24,10 +24,11 @@ export const useStoryImport = () => {
 
         // Simplistic validation to ensure it's our graph format
         if (parsedData && Array.isArray(parsedData.pages) && (parsedData.pages.length === 0 || 'id' in parsedData.pages[0])) {
-          const { nodes: parsedNodes, edges: parsedEdges } = parseStoryToGraph(parsedData);
+          const { nodes: parsedNodes, edges: parsedEdges, pages: parsedPages } = parseStoryToGraph(parsedData);
           loadStory({
             nodes: parsedNodes,
             edges: parsedEdges,
+            pages: parsedPages,
             variables: parsedData.variables || {},
             items: parsedData.items || {},
             metadata: {

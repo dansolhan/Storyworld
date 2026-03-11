@@ -1,7 +1,10 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState, EditorNode } from '../editorTypes';
+import type { Page } from '../../../../domain/Page/Page';
 
-export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
+export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
+  pages: {},
+  setPages: (pages) => set({ pages }),
   addPage: (x, y, atmosphereId) => {
     const newId = `page-${crypto.randomUUID()}`;
     const currentPlotId = get().currentPlotId; // Fetch the active plot id
@@ -20,29 +23,50 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
       }
     };
 
-    set({ nodes: [...get().nodes, newNode] });
+    const newPage: Page = {
+      id: newId,
+      title: 'New Page',
+      paragraphs: [],
+      choices: [],
+      actions: [],
+      ...(currentPlotId ? { subplotId: currentPlotId } : {}),
+      ...(atmosphereId ? { atmosphereId } : {})
+    };
+
+    set({
+      nodes: [...get().nodes, newNode],
+      pages: { ...get().pages, [newId]: newPage }
+    });
     return newId;
   },
 
   updatePageTitle: (pageId, newTitle) => {
-    set({
-      nodes: get().nodes.map((node) => {
+    set((state) => ({
+      pages: {
+        ...state.pages,
+        [pageId]: { ...state.pages[pageId], title: newTitle }
+      },
+      nodes: state.nodes.map((node) => {
         if (node.id === pageId && node.type === 'pageNode') {
           return { ...node, data: { ...node.data, title: newTitle } };
         }
         return node;
       }),
-    });
+    }));
   },
 
   updatePageType: (pageId, newType) => {
-    set({
-      nodes: get().nodes.map((node) => {
+    set((state) => ({
+      pages: {
+        ...state.pages,
+        [pageId]: { ...state.pages[pageId], type: newType }
+      },
+      nodes: state.nodes.map((node) => {
         if (node.id === pageId && node.type === 'pageNode') {
           return { ...node, data: { ...node.data, type: newType } };
         }
         return node;
       }),
-    });
+    }));
   },
 });

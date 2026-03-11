@@ -12,6 +12,26 @@ describe('storyMapper', () => {
     keyOpen: { type: 'boolean' as const, value: false, tags: [] }
   };
 
+  const mockPages = {
+    'page-1': {
+      id: 'page-1',
+      title: 'Start Page',
+      paragraphs: [{ id: 'p1', text: 'Hello' }],
+      choices: [
+        { id: 'c1', text: 'Go north' },
+        { id: 'c2', text: 'Open chest', actions: [{ id: 'a1', blueprintId: 'set_variable', params: { var: 'keyOpen', val: 'true' } }] }
+      ],
+      actions: [{ id: 'pa1', blueprintId: 'log', params: { msg: 'start' } }]
+    },
+    'page-2': {
+      id: 'page-2',
+      title: 'North Page',
+      subplotId: 'subplot-1',
+      paragraphs: [],
+      choices: []
+    }
+  };
+
   const mockNodes: (PageNodeType | ActionNodeType | PortalNodeType)[] = [
     {
       id: 'page-1',
@@ -103,6 +123,7 @@ describe('storyMapper', () => {
       const result = compileGraphToStory(
         mockNodes as any,
         mockEdges as any,
+        mockPages as any,
         mockVariables as any,
         {},
         { title: 'Test Story', description: 'A story for testing mapping', startPageId: 'page-1' }
@@ -128,13 +149,13 @@ describe('storyMapper', () => {
     });
 
     it('should filter out synthetic nodes when compiling back to domain story', () => {
-      const result = compileGraphToStory(mockNodes as any, mockEdges as any, {}, {});
+      const result = compileGraphToStory(mockNodes as any, mockEdges as any, mockPages as any, {}, {});
       expect(result.pages.length).toBe(2);
       expect(result.pages.find(p => p.id === 'action-node-c2')).toBeUndefined();
     });
 
     it('should handle choices with missing edges gracefully', () => {
-      const result = compileGraphToStory(mockNodes as any, [], {}, {});
+      const result = compileGraphToStory(mockNodes as any, [], mockPages as any, {}, {});
       expect(result.pages[0].choices![0].targetPageId).toBeUndefined();
     });
   });

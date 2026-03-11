@@ -77,6 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
     loadStory({
       nodes: [],
       edges: [],
+      pages: {},
       metadata: { title: 'Untitled Story', description: '' }
     });
 
@@ -86,7 +87,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
   };
 
   const handleLoadDemo = () => {
-    const { nodes, edges } = parseStoryToGraph(exampleStory);
+    const { nodes, edges, pages } = parseStoryToGraph(exampleStory);
     const newId = crypto.randomUUID();
 
     setHasHydrated(false); // Pause saves briefly
@@ -96,6 +97,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
     loadStory({
       nodes,
       edges,
+      pages,
       variables: exampleStory.variables || {},
       items: exampleStory.items || {},
       metadata: {
@@ -119,9 +121,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
         setHasHydrated(false);
         setStoryId(id);
 
+        let loadedPages = data.state.pages;
+        if (!loadedPages) {
+          loadedPages = {};
+          (data.state.nodes || []).filter((n: any) => n.type === 'pageNode').forEach((node: any) => {
+            loadedPages[node.id] = {
+              id: node.id,
+              title: node.data.title || 'Untitled',
+              subplotId: node.data.subplotId,
+              atmosphereId: node.data.atmosphereId,
+              paragraphs: node.data.paragraphs || [],
+              choices: node.data.choices || [],
+              actions: node.data.actions || []
+            };
+          });
+        }
+
         loadStory({
           nodes: data.state.nodes || [],
           edges: data.state.edges || [],
+          pages: loadedPages,
           variables: data.state.variables || {},
           items: data.state.items || {},
           metadata: {

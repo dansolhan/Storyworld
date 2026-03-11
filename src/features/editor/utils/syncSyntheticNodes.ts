@@ -4,6 +4,7 @@ import type { Subplot } from '../../../domain/Story/Subplot';
 import type { ActionNodeType } from '../nodes/ActionNode';
 import type { PortalNodeType } from '../nodes/PortalNode';
 import type { PageNodeType } from '../nodes/PageNode';
+import type { Page } from '../../../domain/Page/Page';
 import { updateGraphVisibility } from './visibility';
 
 const SYNTHETIC_LABEL_STYLE = {
@@ -15,6 +16,7 @@ const SYNTHETIC_LABEL_STYLE = {
 export function syncSyntheticNodes(
   allNodes: EditorNode[],
   allEdges: Edge[],
+  pages: Record<string, Page>,
   subplots: Subplot[],
   currentPlotId: string | null
 ): { nodes: EditorNode[]; edges: Edge[] } {
@@ -32,8 +34,10 @@ export function syncSyntheticNodes(
 
   pageNodes.forEach((page) => {
     const pagePos = page.position;
+    const pageDomain = pages[page.id];
+    if (!pageDomain) return;
 
-    (page.data.choices || []).forEach((choice: any, idx) => {
+    (pageDomain.choices || []).forEach((choice: any, idx) => {
       if (choice.targetPageId) return; // connected to a real page
 
       const choiceActions = Array.isArray(choice.actions) ? choice.actions : [];
@@ -45,8 +49,8 @@ export function syncSyntheticNodes(
         const params = portalAction.params as Record<string, string>;
         const subplotName = subplots.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
 
-        const targetPage = pageNodes.find((n) => n.id === params.targetPageId);
-        const targetPageName = targetPage?.data?.title || params.targetPageId || '?';
+        const targetPage = pages[params.targetPageId];
+        const targetPageName = targetPage?.title || params.targetPageId || '?';
         const nodeId = `portal-node-${choice.id}`;
 
         synNodes.push({

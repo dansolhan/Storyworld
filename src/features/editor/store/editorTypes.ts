@@ -6,6 +6,7 @@ import type { Subplot } from '../../../domain/Story/Subplot';
 import type { StoryVariable } from '../../../domain/Story/Variable';
 import type { Item } from '../../../domain/Item/Item';
 import type { AudioItem } from '../../../domain/Story/Audio';
+import type { Page } from '../../../domain/Page/Page';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -14,6 +15,10 @@ export interface EditorState {
   // Graph State
   nodes: EditorNode[];
   edges: Edge[];
+
+  // Game Data State
+  pages: Record<string, Page>;
+  setPages: (pages: Record<string, Page>) => void;
 
   // System State
   _hasHydrated: boolean;
@@ -62,6 +67,7 @@ export interface EditorState {
   loadStory: (params: {
     nodes: EditorNode[];
     edges: Edge[];
+    pages: Record<string, Page>;
     variables?: Record<string, StoryVariable>;
     items?: Record<string, Item>;
     metadata?: { title?: string; description?: string; startPageId?: string };

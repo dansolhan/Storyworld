@@ -7,6 +7,7 @@ import type { StoryData } from '../domain/Story/StoryData';
 import type { StoryVariable } from '../domain/Story/Variable';
 import type { AudioItem } from '../domain/Story/Audio';
 import type { Item } from '../domain/Item/Item';
+import type { Page } from '../domain/Page/Page';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
 import { syncSyntheticNodes } from '../features/editor/utils/syncSyntheticNodes';
 
@@ -25,6 +26,7 @@ const SYNTHETIC_LABEL_STYLE = {
 export const compileGraphToStory = (
   nodes: AnyNode[],
   edges: Edge[],
+  editorPages: Record<string, Page>,
   variables: Record<string, StoryVariable>,
   items?: Record<string, Item>,
   metadata?: { title: string; description: string; startPageId: string | null },
@@ -34,7 +36,10 @@ export const compileGraphToStory = (
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
   const pages = pageNodes.map((node) => {
-    const compiledChoices: Choice[] = (node.data.choices || []).map((choice) => {
+    const page = editorPages[node.id];
+    if (!page) throw new Error(`Missing page data for node ${node.id}`);
+
+    const compiledChoices: Choice[] = (page.choices || []).map((choice) => {
       const connectingEdge = edges.find(
         (e) => e.source === node.id && e.sourceHandle === choice.id
       );
@@ -50,13 +55,12 @@ export const compileGraphToStory = (
     });
 
     return {
-      id: node.id,
-      title: node.data.title as string || 'Untitled',
+      ...page,
+      // Ensure visual/graph data overrides any stale properties if nodes drifted
+      title: node.data.title as string || page.title,
       subplotId: node.data.subplotId as string | undefined,
       atmosphereId: node.data.atmosphereId as string | undefined,
-      paragraphs: Array.isArray(node.data.paragraphs) ? [...node.data.paragraphs] : [],
       choices: compiledChoices,
-      actions: Array.isArray(node.data.actions) ? [...node.data.actions] : [],
     };
   });
 
@@ -81,12 +85,16 @@ export const compileGraphToStory = (
  */
 export const parseStoryToGraph = (
   storyData: StoryData,
-): { nodes: AnyNode[]; edges: Edge[] } => {
+): { nodes: AnyNode[]; edges: Edge[]; pages: Record<string, Page> } => {
+
+  const pagesRecord: Record<string, Page> = {};
+  (storyData.pages || []).forEach(p => { pagesRecord[p.id] = p; });
 
   if (storyData.uiMetadata?.nodes && storyData.uiMetadata?.edges) {
     return {
       nodes: storyData.uiMetadata.nodes,
-      edges: storyData.uiMetadata.edges
+      edges: storyData.uiMetadata.edges,
+      pages: pagesRecord
     };
   }
 
@@ -139,6 +147,6 @@ export const parseStoryToGraph = (
     }
   });
 
-  const synced = syncSyntheticNodes(nodes, edges, storyData.subplots || [], null);
-  return { nodes: synced.nodes as AnyNode[], edges: synced.edges };
+  const synced = syncSyntheticNodes(nodes, edges, pagesRecord, storyData.subplots || [], null);
+  return { nodes: synced.nodes as AnyNode[], edges: synced.edges, pages: pagesRecord };
 };

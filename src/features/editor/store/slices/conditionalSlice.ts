@@ -16,174 +16,83 @@ export const createConditionalSlice: StateCreator<
     | 'updateConditional'
     | 'removeConditional'
   >
-> = (set, get) => ({
+> = (set) => ({
   addConditional: (targetType, pageId, targetId, blueprintId, parentId) => {
     const blueprint = conditionalBlueprints[blueprintId];
     if (!blueprint) return;
 
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          const newConditional = {
-            id: `cond-${Date.now()}`,
-            blueprintId,
-            params: JSON.parse(JSON.stringify(blueprint.defaultParams)), // deep copy defaults
-          };
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
 
-          if (targetType === 'choice' && node.data.choices) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                choices: node.data.choices.map((c: Choice) => {
-                  if (c.id === targetId) {
-                    return {
-                      ...c,
-                      conditionals: addConditionalToTree(c.conditionals, parentId || null, newConditional),
-                    };
-                  }
-                  return c;
-                }),
-              },
-            };
-          } else if (targetType === 'paragraph' && node.data.paragraphs) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                paragraphs: node.data.paragraphs.map((p: Paragraph) => {
-                  if (p.id === targetId) {
-                    return {
-                      ...p,
-                      conditionals: addConditionalToTree(p.conditionals, parentId || null, newConditional),
-                    };
-                  }
-                  return p;
-                }),
-              },
-            };
-          } else if (targetType === 'action' && node.data.actions) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                actions: node.data.actions.map((a: Action) => {
-                  if (a.id === targetId) {
-                    return {
-                      ...a,
-                      conditionals: addConditionalToTree(a.conditionals, parentId || null, newConditional),
-                    };
-                  }
-                  return a;
-                }),
-              },
-            };
-          }
-        }
-        return node;
-      })
+      const newConditional = {
+        id: `cond-${Date.now()}`,
+        blueprintId,
+        params: JSON.parse(JSON.stringify(blueprint.defaultParams)), // deep copy defaults
+      };
+
+      const updatedPage = { ...page };
+      if (targetType === 'choice') {
+        updatedPage.choices = (page.choices || []).map((c: Choice) =>
+          c.id === targetId ? { ...c, conditionals: addConditionalToTree(c.conditionals, parentId || null, newConditional) } : c
+        );
+      } else if (targetType === 'paragraph') {
+        updatedPage.paragraphs = (page.paragraphs || []).map((p: Paragraph) =>
+          p.id === targetId ? { ...p, conditionals: addConditionalToTree(p.conditionals, parentId || null, newConditional) } : p
+        );
+      } else if (targetType === 'action') {
+        updatedPage.actions = (page.actions || []).map((a: Action) =>
+          a.id === targetId ? { ...a, conditionals: addConditionalToTree(a.conditionals, parentId || null, newConditional) } : a
+        );
+      }
+
+      return { pages: { ...state.pages, [pageId]: updatedPage } };
     });
   },
 
   updateConditional: (targetType, pageId, targetId, conditionalId, params) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          if (targetType === 'choice' && node.data.choices) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                choices: node.data.choices.map((c: Choice) => {
-                  if (c.id === targetId && c.conditionals) {
-                    return {
-                      ...c,
-                      conditionals: updateConditionalInTree(c.conditionals, conditionalId, params),
-                    };
-                  }
-                  return c;
-                }),
-              },
-            };
-          } else if (targetType === 'paragraph' && node.data.paragraphs) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                paragraphs: node.data.paragraphs.map((p: Paragraph) => {
-                  if (p.id === targetId && p.conditionals) {
-                    return {
-                      ...p,
-                      conditionals: updateConditionalInTree(p.conditionals, conditionalId, params),
-                    };
-                  }
-                  return p;
-                }),
-              },
-            };
-          } else if (targetType === 'action' && node.data.actions) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                actions: node.data.actions.map((a: Action) => {
-                  if (a.id === targetId && a.conditionals) {
-                    return {
-                      ...a,
-                      conditionals: updateConditionalInTree(a.conditionals, conditionalId, params),
-                    };
-                  }
-                  return a;
-                }),
-              },
-            };
-          }
-        }
-        return node;
-      })
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const updatedPage = { ...page };
+      if (targetType === 'choice') {
+        updatedPage.choices = (page.choices || []).map((c: Choice) =>
+          c.id === targetId && c.conditionals ? { ...c, conditionals: updateConditionalInTree(c.conditionals, conditionalId, params) } : c
+        );
+      } else if (targetType === 'paragraph') {
+        updatedPage.paragraphs = (page.paragraphs || []).map((p: Paragraph) =>
+          p.id === targetId && p.conditionals ? { ...p, conditionals: updateConditionalInTree(p.conditionals, conditionalId, params) } : p
+        );
+      } else if (targetType === 'action') {
+        updatedPage.actions = (page.actions || []).map((a: Action) =>
+          a.id === targetId && a.conditionals ? { ...a, conditionals: updateConditionalInTree(a.conditionals, conditionalId, params) } : a
+        );
+      }
+      return { pages: { ...state.pages, [pageId]: updatedPage } };
     });
   },
 
   removeConditional: (targetType, pageId, targetId, conditionalId) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          if (targetType === 'choice' && node.data.choices) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                choices: node.data.choices.map((c: Choice) => {
-                  if (c.id === targetId && c.conditionals) {
-                    return {
-                      ...c,
-                      conditionals: removeConditionalFromTree(c.conditionals, conditionalId),
-                    };
-                  }
-                  return c;
-                }),
-              },
-            };
-          } else if (targetType === 'paragraph' && node.data.paragraphs) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                paragraphs: node.data.paragraphs.map((p: Paragraph) => {
-                  if (p.id === targetId && p.conditionals) {
-                    return {
-                      ...p,
-                      conditionals: removeConditionalFromTree(p.conditionals, conditionalId),
-                    };
-                  }
-                  return p;
-                }),
-              },
-            };
-          }
-        }
-        return node;
-      })
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const updatedPage = { ...page };
+      if (targetType === 'choice') {
+        updatedPage.choices = (page.choices || []).map((c: Choice) =>
+          c.id === targetId && c.conditionals ? { ...c, conditionals: removeConditionalFromTree(c.conditionals, conditionalId) } : c
+        );
+      } else if (targetType === 'paragraph') {
+        updatedPage.paragraphs = (page.paragraphs || []).map((p: Paragraph) =>
+          p.id === targetId && p.conditionals ? { ...p, conditionals: removeConditionalFromTree(p.conditionals, conditionalId) } : p
+        );
+      } else if (targetType === 'action') {
+        updatedPage.actions = (page.actions || []).map((a: Action) =>
+          a.id === targetId && a.conditionals ? { ...a, conditionals: removeConditionalFromTree(a.conditionals, conditionalId) } : a
+        );
+      }
+      return { pages: { ...state.pages, [pageId]: updatedPage } };
     });
-  }
+  },
 });

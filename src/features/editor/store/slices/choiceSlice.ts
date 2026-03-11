@@ -21,104 +21,98 @@ export const createChoiceSlice: StateCreator<
 > = (set, get) => ({
   addChoice: (pageId) => {
     set((state) => {
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...' };
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              choices: [...(node.data.choices || []), newChoice],
-            },
-          };
-        }
-        return node;
-      });
-      const synced = syncSyntheticNodes(newNodes, state.edges, state.subplots || [], state.currentPlotId);
-      return { nodes: synced.nodes, edges: synced.edges };
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', conditionals: [] };
+      const nextPages = {
+        ...state.pages,
+        [pageId]: {
+          ...page,
+          choices: [...(page.choices || []), newChoice],
+        },
+      };
+
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
   },
 
   addActionOnlyChoice: (pageId) => {
     set((state) => {
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          // No targetPageId — this is an action-only choice
-          const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', actions: [] };
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              choices: [...(node.data.choices || []), newChoice],
-            },
-          };
-        }
-        return node;
-      });
-      const synced = syncSyntheticNodes(newNodes, state.edges, state.subplots || [], state.currentPlotId);
-      return { nodes: synced.nodes, edges: synced.edges };
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', conditionals: [], actions: [] };
+      const nextPages = {
+        ...state.pages,
+        [pageId]: {
+          ...page,
+          choices: [...(page.choices || []), newChoice],
+        },
+      };
+
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
   },
 
   updateChoiceText: (pageId, choiceId, newText) => {
     set((state) => {
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode' && node.data.choices) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              choices: node.data.choices.map((c: Choice) =>
-                c.id === choiceId ? { ...c, text: newText } : c
-              ),
-            },
-          };
-        }
-        return node;
-      });
-      const synced = syncSyntheticNodes(newNodes, state.edges, state.subplots || [], state.currentPlotId);
-      return { nodes: synced.nodes, edges: synced.edges };
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const nextPages = {
+        ...state.pages,
+        [pageId]: {
+          ...page,
+          choices: (page.choices || []).map((c: Choice) =>
+            c.id === choiceId ? { ...c, text: newText } : c
+          ),
+        },
+      };
+
+      // In case choice text is used for synthetic labels, sync it
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
   },
 
   setChoiceActions: (pageId: string, choiceId: string, actions: Action[]) => {
     set((state) => {
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode' && node.data.choices) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              choices: node.data.choices.map((c: Choice) =>
-                c.id === choiceId ? { ...c, actions } : c
-              ),
-            },
-          };
-        }
-        return node;
-      });
-      const synced = syncSyntheticNodes(newNodes, state.edges, state.subplots || [], state.currentPlotId);
-      return { nodes: synced.nodes, edges: synced.edges };
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const nextPages = {
+        ...state.pages,
+        [pageId]: {
+          ...page,
+          choices: (page.choices || []).map((c: Choice) =>
+            c.id === choiceId ? { ...c, actions } : c
+          ),
+        },
+      };
+
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
   },
 
   setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string | undefined) => {
     set((state) => {
-      // 1. Update the choice's targetPageId in the nodes array
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === sourcePageId && node.type === 'pageNode' && node.data.choices) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              choices: node.data.choices.map((c: Choice) =>
-                c.id === choiceId ? { ...c, targetPageId: targetPageId || undefined } : c
-              ),
-            },
-          };
-        }
-        return node;
-      });
+      const page = state.pages[sourcePageId];
+      if (!page) return state;
+
+      // 1. Update the choice's targetPageId in the pages dict
+      const nextPages = {
+        ...state.pages,
+        [sourcePageId]: {
+          ...page,
+          choices: (page.choices || []).map((c: Choice) =>
+            c.id === choiceId ? { ...c, targetPageId: targetPageId || undefined } : c
+          ),
+        },
+      };
 
       // 2. Synchronize the edges: remove any old edge from this choice, and add the new one
       const filteredEdges = state.edges.filter(
@@ -143,8 +137,8 @@ export const createChoiceSlice: StateCreator<
       ] : filteredEdges;
 
       // 3. Since choice destination changes might toggle synthetic action nodes, rebuild them
-      const synced = syncSyntheticNodes(newNodes, newEdges, state.subplots || [], state.currentPlotId);
-      return { nodes: synced.nodes, edges: synced.edges };
+      const synced = syncSyntheticNodes(state.nodes, newEdges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
   },
 
@@ -158,7 +152,7 @@ export const createChoiceSlice: StateCreator<
       const y = sourceNode.position.y;
       const atmosphereId = sourceNode.type === 'pageNode' ? sourceNode.data.atmosphereId : undefined;
 
-      const newPageId = addPage(x, y, atmosphereId);
+      const newPageId = addPage(x, y, atmosphereId as string | undefined);
       setChoiceDestination(sourcePageId, choiceId, newPageId);
     }
   }

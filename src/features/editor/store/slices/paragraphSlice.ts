@@ -2,41 +2,41 @@ import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
 import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
 
-export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addParagraph' | 'updateParagraph'>> = (set, get) => ({
+export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'addParagraph' | 'updateParagraph'>> = (set) => ({
   addParagraph: (pageId) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          const newParagraph = { id: `p-${Date.now()}`, text: 'New content here...' };
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              paragraphs: [...(node.data.paragraphs || []), newParagraph],
-            },
-          };
-        }
-        return node;
-      }),
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      const newParagraph: Paragraph = { id: `p-${Date.now()}`, text: 'New content here...', conditionals: [] };
+      return {
+        pages: {
+          ...state.pages,
+          [pageId]: {
+            ...page,
+            paragraphs: [...(page.paragraphs || []), newParagraph],
+          },
+        },
+      };
     });
   },
 
   updateParagraph: (pageId, paragraphId, newText) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode' && node.data.paragraphs) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              paragraphs: node.data.paragraphs.map((p: Paragraph) =>
-                p.id === paragraphId ? { ...p, text: newText } : p
-              ),
-            },
-          };
-        }
-        return node;
-      }),
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      return {
+        pages: {
+          ...state.pages,
+          [pageId]: {
+            ...page,
+            paragraphs: (page.paragraphs || []).map((p: Paragraph) =>
+              p.id === paragraphId ? { ...p, text: newText } : p
+            ),
+          },
+        },
+      };
     });
   },
 });

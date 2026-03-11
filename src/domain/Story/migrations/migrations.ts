@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = '0.8.0';
+export const CURRENT_VERSION = '0.9.0';
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -121,6 +121,7 @@ const migrationSteps: MigrationStep[] = [
   { from: 6, to: 7, migrate: migrateV6ToV7 },
   { from: 7, to: 8, migrate: migrateV7ToV8 },
   { from: 8, to: '0.8.0', migrate: (story) => ({ ...story }) },
+  { from: '0.8.0', to: '0.9.0', migrate: (story) => ({ ...story }) },
 ];
 
 export function migrateStory(storyJson: any): StoryData {
