@@ -112,7 +112,7 @@ export function syncSyntheticNodes(
           target: nodeId,
           sourceHandle: choice.id,
           type: 'floating',
-          animated: true,
+          animated: false,
           label: choice.text,
           labelStyle: SYNTHETIC_LABEL_STYLE,
           labelShowBg: false,

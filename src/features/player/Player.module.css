@@ -59,6 +59,11 @@
   background-color: var(--player-bg);
   background-image: var(--paper-texture);
   border-left: 1px solid var(--player-border);
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .textContent {

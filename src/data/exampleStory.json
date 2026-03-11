@@ -19,6 +19,22 @@
     "hasWavedAtLight": {
       "type": "boolean",
       "value": false
+    },
+    "gold": {
+      "type": "number",
+      "value": 15
+    },
+    "hp": {
+      "type": "number",
+      "value": 30
+    },
+    "maxHp": {
+      "type": "number",
+      "value": 30
+    },
+    "isPoisoned": {
+      "type": "boolean",
+      "value": false
     }
   },
   "items": {
@@ -116,6 +132,38 @@
       "color": "#14b8a6"
     }
   },
+  "statusData": [
+    {
+      "id": "sd-hp",
+      "title": "HP",
+      "priority": 20,
+      "value": "{{hp}} / {{maxHp}}"
+    },
+    {
+      "id": "sd-gold",
+      "title": "Gold",
+      "priority": 10,
+      "value": "{{gold}}",
+      "color": "#c9a84c"
+    },
+    {
+      "id": "sd-poisoned",
+      "title": "",
+      "priority": 5,
+      "value": "☠ Poisoned",
+      "color": "#7ecf5a",
+      "conditionals": [
+        {
+          "id": "cond-sd-poisoned",
+          "blueprintId": "variable_equals",
+          "params": {
+            "variableKey": "isPoisoned",
+            "value": "true"
+          }
+        }
+      ]
+    }
+  ],
   "uiMetadata": {
     "nodePositions": {
       "page-1": {
@@ -201,6 +249,10 @@
       "page-woods-16": {
         "x": 4500,
         "y": 100
+      },
+      "page-merchant": {
+        "x": 4500,
+        "y": 400
       },
       "page-woods-18": {
         "x": 4900,
@@ -1216,6 +1268,171 @@
               }
             }
           ]
+        },
+        {
+          "id": "cw16-merchant",
+          "text": "Slip away — you notice a hooded merchant nearby",
+          "targetPageId": "page-merchant"
+        }
+      ]
+    },
+    {
+      "id": "page-merchant",
+      "title": "The Wandering Merchant",
+      "atmosphereId": "atmo-main",
+      "paragraphs": [
+        {
+          "id": "pm-1",
+          "text": "<p>A cloaked merchant grins at you from behind a rickety stall. \"Ah, a weary traveller! I have just the thing.\"</p>"
+        },
+        {
+          "id": "pm-2",
+          "text": "<p>You currently have <strong>{{gold}} gold</strong> and <strong>{{hp}} / {{maxHp}} HP</strong>.</p>"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cm-1",
+          "text": "Buy a healing potion (5 gold → restore HP to full)",
+          "conditionals": [
+            {
+              "id": "cond-cm-1-gold",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "gold",
+                "comparison": "greater or equal",
+                "value": "5"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-cm-1-gold",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "gold",
+                "value": "10"
+              }
+            },
+            {
+              "id": "act-cm-1-hp",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "hp",
+                "value": "30"
+              }
+            },
+            {
+              "id": "act-cm-1-msg",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You hand over 5 gold and drink the potion. HP restored to full!"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cm-2",
+          "text": "Buy a 'Lucky Mushroom' (3 gold — the merchant seems suspicious)",
+          "conditionals": [
+            {
+              "id": "cond-cm-2-gold",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "gold",
+                "comparison": "greater or equal",
+                "value": "3"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-cm-2-gold",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "gold",
+                "value": "12"
+              }
+            },
+            {
+              "id": "act-cm-2-poison",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "isPoisoned",
+                "value": "true"
+              }
+            },
+            {
+              "id": "act-cm-2-msg",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You eat the mushroom. It tastes bitter... you feel queasy."
+              }
+            }
+          ]
+        },
+        {
+          "id": "cm-antidote",
+          "text": "Buy an antidote (5 gold — cure the poison)",
+          "conditionals": [
+            {
+              "id": "cond-cm-ant-gold",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "gold",
+                "comparison": "greater or equal",
+                "value": "5"
+              }
+            },
+            {
+              "id": "cond-cm-ant-poison",
+              "blueprintId": "variable_equals",
+              "params": {
+                "variableKey": "isPoisoned",
+                "comparison": "equal",
+                "value": "true"
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act-cm-ant-gold",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "gold",
+                "value": "10"
+              }
+            },
+            {
+              "id": "act-cm-ant-poison",
+              "blueprintId": "set_variable",
+              "trigger": "on_enter",
+              "params": {
+                "variableKey": "isPoisoned",
+                "value": "false"
+              }
+            },
+            {
+              "id": "act-cm-ant-msg",
+              "blueprintId": "post_message",
+              "trigger": "on_enter",
+              "params": {
+                "message": "You feel the poison leave your body. Much better!"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cm-back",
+          "text": "Leave and face the beast",
+          "targetPageId": "page-woods-16"
         }
       ]
     },

@@ -41,7 +41,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
-  loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres }) => set(() => {
+  loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres, statusData }) => set(() => {
     const visibleGraph = updateGraphVisibility(nodes, edges, null);
     return {
       nodes: visibleGraph.nodes,
@@ -56,6 +56,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
       ...(subplots !== undefined ? { subplots } : {}),
       ...(audio !== undefined ? { audio } : {}),
       ...(atmospheres !== undefined ? { atmospheres } : {}),
+      ...(statusData !== undefined ? { statusData } : {}),
     };
   }),
 });

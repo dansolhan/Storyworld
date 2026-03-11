@@ -1,0 +1,51 @@
+.statusContainer {
+  padding: 12px 0 8px;
+}
+
+.statusTitle {
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--player-text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.statusList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statusEntry {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-family-serif);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--player-text);
+}
+
+.statusLabel {
+  font-weight: 600;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.statusValue {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--player-border);
+  opacity: 0.4;
+  margin: 10px 0 0;
+}

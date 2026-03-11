@@ -31,7 +31,8 @@ export const compileGraphToStory = (
   items?: Record<string, Item>,
   metadata?: { title: string; description: string; startPageId: string | null },
   audio?: Record<string, AudioItem>,
-  atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>
+  atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>,
+  statusData?: import('../domain/Story/StatusData').StatusData[]
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
@@ -71,6 +72,7 @@ export const compileGraphToStory = (
     items,
     audio,
     atmospheres,
+    statusData,
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,
@@ -132,7 +134,7 @@ export const parseStoryToGraph = (
             target: choice.targetPageId,
             sourceHandle: choice.id,
             type: 'floating',
-            animated: true,
+            animated: false,
             label: choice.text,
             labelStyle: SYNTHETIC_LABEL_STYLE,
             labelShowBg: false,

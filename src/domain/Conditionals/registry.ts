@@ -52,15 +52,17 @@ export const firstVisitBlueprint: ConditionalBlueprint<FirstVisitParams> = {
 
 export interface VariableEqualsParams {
   variableKey: string | null;
+  comparison: 'equal' | 'greater than' | 'greater or equal' | 'less or equal' | 'less than';
   value: string;
 }
 
 export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams> = {
   id: 'variable_equals',
-  name: 'Variable equals',
-  template: 'Variable {{variable}} equals {{value}}',
+  name: 'Check Variable Value',
+  template: 'Variable {{variable}} {{comparison}} {{value}}',
   defaultParams: {
     variableKey: null,
+    comparison: 'equal',
     value: '',
   },
   evaluate: (params, context) => {
@@ -69,10 +71,21 @@ export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams>
     const variable = variables[params.variableKey];
     if (!variable) return false;
 
-    const actualValue = String(variable.value);
-    const targetValue = String(params.value);
+    const comparison = params.comparison ?? 'equal';
 
-    return actualValue === targetValue;
+    // For numeric comparisons that aren't 'equal', parse both as numbers
+    if (comparison !== 'equal') {
+      const actual = parseFloat(String(variable.value));
+      const target = parseFloat(String(params.value));
+      if (isNaN(actual) || isNaN(target)) return false;
+      if (comparison === 'greater than') return actual > target;
+      if (comparison === 'greater or equal') return actual >= target;
+      if (comparison === 'less or equal') return actual <= target;
+      if (comparison === 'less than') return actual < target;
+    }
+
+    // Equal: string comparison (works for strings, booleans, and numbers)
+    return String(variable.value) === String(params.value);
   },
 };
 
@@ -95,7 +108,7 @@ export const hasItemBlueprint: ConditionalBlueprint<HasItemParams> = {
 
 export interface HasItemCountParams {
   itemId: string | null;
-  comparison: 'more than' | 'less than' | 'exactly';
+  comparison: 'more than' | 'less than' | 'exactly' | 'greater or equal' | 'less or equal';
   count: number;
 }
 
@@ -112,7 +125,9 @@ export const hasItemCountBlueprint: ConditionalBlueprint<HasItemCountParams> = {
     if (!params.itemId) return true;
     const current = context.inventory?.[params.itemId] || 0;
     if (params.comparison === 'more than') return current > params.count;
+    if (params.comparison === 'greater or equal') return current >= params.count;
     if (params.comparison === 'less than') return current < params.count;
+    if (params.comparison === 'less or equal') return current <= params.count;
     return current === params.count;
   },
 };

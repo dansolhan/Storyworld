@@ -20,33 +20,33 @@ function App() {
   const handlePlay = () => {
     // We get the state non-reactively so App.tsx doesn't re-render 
     // every single time a node is dragged on the canvas!
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
     const compiledStory = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres);
+    }, audio, atmospheres, statusData);
     setPlayingStory(compiledStory);
     setMode('player');
   };
 
   const handleExportJson = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres);
+    }, audio, atmospheres, statusData);
     exportToJson(storyData);
   };
 
   const handleExportStoryworld = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres);
+    }, audio, atmospheres, statusData);
     exportToStoryworld(storyData);
   };
 
@@ -74,7 +74,8 @@ function App() {
         { label: 'Items', onClick: () => useEditorStore.getState().setIsItemManagerOpen(true) },
         { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
         { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) },
-        { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) }
+        { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) },
+        { label: 'Status Data', onClick: () => useEditorStore.getState().setIsStatusDataManagerOpen(true) }
       ]
     },
     {

@@ -127,7 +127,7 @@ export const createChoiceSlice: StateCreator<
           target: targetPageId,
           sourceHandle: choiceId,
           type: 'floating',
-          animated: true,
+          animated: false,
           style: { stroke: 'var(--color-edge-default)' },
           markerEnd: {
             type: MarkerType.ArrowClosed,

@@ -19,6 +19,7 @@ import { StorySettingsDrawer } from './components/StorySettings/StorySettingsDra
 import { AudioManagerModal } from './components/Audio/AudioManagerModal';
 import { AtmosphereManager } from './components/AtmosphereManager/AtmosphereManager';
 import { ItemManager } from './components/ItemManager/ItemManager';
+import { StatusDataManager } from './components/StatusDataManager/StatusDataManager';
 import { Button } from '../../components/ui/Button/Button';
 import { useInteractionStrategy } from './interactions/useInteractionStrategy';
 import { useShallow } from 'zustand/react/shallow';
@@ -52,6 +53,8 @@ export const GraphEditor: React.FC = () => {
     setIsAtmosphereManagerOpen,
     isItemManagerOpen,
     setIsItemManagerOpen,
+    isStatusDataManagerOpen,
+    setIsStatusDataManagerOpen,
     _hasHydrated,
     setSelectedPage,
     setSidebarTab,
@@ -73,6 +76,8 @@ export const GraphEditor: React.FC = () => {
       setIsAtmosphereManagerOpen: state.setIsAtmosphereManagerOpen,
       isItemManagerOpen: state.isItemManagerOpen,
       setIsItemManagerOpen: state.setIsItemManagerOpen,
+      isStatusDataManagerOpen: state.isStatusDataManagerOpen,
+      setIsStatusDataManagerOpen: state.setIsStatusDataManagerOpen,
       _hasHydrated: state._hasHydrated,
       setSelectedPage: state.setSelectedPage,
       setSidebarTab: state.setSidebarTab,
@@ -170,6 +175,7 @@ export const GraphEditor: React.FC = () => {
       <EditorSidebar />
       <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={() => setIsStorySettingsOpen(false)} />
       <ItemManager isOpen={isItemManagerOpen} onClose={() => setIsItemManagerOpen(false)} />
+      <StatusDataManager isOpen={isStatusDataManagerOpen} onClose={() => setIsStatusDataManagerOpen(false)} />
       <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
       <AtmosphereManager isOpen={isAtmosphereManagerOpen} onClose={() => setIsAtmosphereManagerOpen(false)} />
       <AudioManagerModal />

@@ -214,14 +214,14 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         }
 
         if (key === 'comparison') {
-          const val = params.comparison as string;
+          const val = (params.comparison as string) || 'equal';
           return (
             <span
               key={index}
               className={styles.interactiveToken}
               onClick={(e) => handleOpenPopover(e, 'comparison')}
             >
-              {val || 'exactly'}
+              {val}
             </span>
           );
         }
@@ -482,13 +482,17 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'comparison' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '160px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set comparison:</p>
             <Combobox
               options={[
+                { label: 'equal', value: 'equal' },
+                { label: 'greater than', value: 'greater than' },
+                { label: 'greater or equal', value: 'greater or equal' },
+                { label: 'less or equal', value: 'less or equal' },
+                { label: 'less than', value: 'less than' },
                 { label: 'exactly', value: 'exactly' },
                 { label: 'more than', value: 'more than' },
-                { label: 'less than', value: 'less than' }
               ]}
               autoFocus
               onSelect={(val) => {

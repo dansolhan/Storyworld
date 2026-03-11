@@ -7,6 +7,7 @@ import type { StoryVariable } from '../../../domain/Story/Variable';
 import type { Item } from '../../../domain/Item/Item';
 import type { AudioItem } from '../../../domain/Story/Audio';
 import type { Page } from '../../../domain/Page/Page';
+import type { StatusData } from '../../../domain/Story/StatusData';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -74,6 +75,7 @@ export interface EditorState {
     subplots?: Subplot[];
     audio?: Record<string, AudioItem>;
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
+    statusData?: StatusData[];
   }) => void;
 
   // Variables
@@ -89,6 +91,13 @@ export interface EditorState {
   addItem: (key: string, item: Item) => void;
   updateItem: (key: string, item: Item) => void;
   removeItem: (key: string) => void;
+
+  // Status Data
+  statusData: StatusData[];
+  setStatusData: (statusData: StatusData[]) => void;
+  addStatusData: (entry: StatusData) => void;
+  updateStatusData: (id: string, updates: Partial<StatusData>) => void;
+  removeStatusData: (id: string) => void;
 
   // UI Handlers
   selectedPageId: string | null;
@@ -114,6 +123,9 @@ export interface EditorState {
 
   isItemManagerOpen: boolean;
   setIsItemManagerOpen: (isOpen: boolean) => void;
+
+  isStatusDataManagerOpen: boolean;
+  setIsStatusDataManagerOpen: (isOpen: boolean) => void;
 
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;
