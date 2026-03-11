@@ -3,31 +3,37 @@ import { Handle, Position, useUpdateNodeInternals, useNodeConnections, type Node
 import { Globe, AlertCircle } from 'lucide-react';
 import { Card } from '../../../components/ui/Card/Card';
 import type { Page } from '../../../domain/Page/Page';
+import { useEditorStore } from '../store/useEditorStore';
 import styles from './PageNode.module.css';
 
 export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
+  // Optional legacy props; no longer passed from GraphEditor to avoid re-renders
   isStartNode?: boolean;
-  onAddParagraph?: (pageId: string) => void;
-  onAddChoice?: (pageId: string) => void;
-  onChoiceConnect?: (sourceId: string, choiceId: string, targetId: string) => void;
   pageColorMode?: 'type' | 'atmosphere';
   atmosphereColor?: string;
 };
 
 export type PageNodeType = Node<PageNodeData, 'pageNode'>;
 
-export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
+export const PageNode = React.memo(({ data, id }: NodeProps<PageNodeType>) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const targetConnections = useNodeConnections({ handleType: 'target' });
   const hasIncoming = targetConnections.length > 0;
+
+  // Use atomic selectors to prevent unnecessary re-renders when other state changes
+  const isStartNode = useEditorStore(state => state.startPageId === id) || data.isStartNode;
+  const pageColorMode = useEditorStore(state => state.pageColorMode) || data.pageColorMode;
+  const atmosphereColor = useEditorStore(state =>
+    data.atmosphereId ? state.atmospheres[data.atmosphereId as string]?.color : undefined
+  ) || data.atmosphereColor;
 
   useEffect(() => {
     updateNodeInternals(id);
   }, [data.choices?.length, id, updateNodeInternals]);
 
-  const isAtmosphereMode = data.pageColorMode === 'atmosphere';
+  const isAtmosphereMode = pageColorMode === 'atmosphere';
   const typeClass = isAtmosphereMode ? '' : (data.type === 'plot' ? styles.typePlot : styles.typeLocation);
-  const customBg = isAtmosphereMode ? (data.atmosphereColor || 'var(--color-bg-tertiary)') : undefined;
+  const customBg = isAtmosphereMode ? (atmosphereColor || 'var(--color-bg-tertiary)') : undefined;
 
   return (
     <div className={`${styles.nodeWrapper} ${typeClass}`}>
@@ -47,7 +53,7 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
           ...(isAtmosphereMode ? { backgroundColor: customBg, borderColor: customBg } : {})
         }}
       >
-        {data.isStartNode && (
+        {isStartNode && (
           <div className={styles.startNodeBadge}>Start Node</div>
         )}
         <div
@@ -89,5 +95,5 @@ export const PageNode: React.FC<NodeProps<PageNodeType>> = ({ data, id }) => {
       </Card>
     </div>
   );
-};
+});
 

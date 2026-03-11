@@ -1,10 +1,9 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
-  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -22,9 +21,7 @@ import { AtmosphereManager } from './components/AtmosphereManager/AtmosphereMana
 import { ItemManager } from './components/ItemManager/ItemManager';
 import { Button } from '../../components/ui/Button/Button';
 import { useInteractionStrategy } from './interactions/useInteractionStrategy';
-import type { ActionNodeType } from './nodes/ActionNode';
-import type { PortalNodeType } from './nodes/PortalNode';
-import type { Edge } from '@xyflow/react';
+import { useShallow } from 'zustand/react/shallow';
 
 import styles from './GraphEditor.module.css';
 
@@ -39,12 +36,6 @@ const edgeTypes = {
   floating: FloatingEdge,
 };
 
-const SYNTHETIC_LABEL_STYLE = {
-  fontSize: 10,
-  fill: 'var(--color-text-secondary, #94a3b8)',
-  fontFamily: 'var(--font-family-sans, sans-serif)',
-};
-
 export const GraphEditor: React.FC = () => {
   const {
     nodes,
@@ -53,9 +44,6 @@ export const GraphEditor: React.FC = () => {
     onEdgesChange,
     onConnect,
     addPage,
-    addParagraph,
-    addChoice,
-    startPageId,
     isStorySettingsOpen,
     setIsStorySettingsOpen,
     isVariableManagerOpen,
@@ -69,10 +57,29 @@ export const GraphEditor: React.FC = () => {
     setSidebarTab,
     setCurrentPlotId,
     setIsEditorSidebarExpanded,
-    syncSyntheticNodes,
-    pageColorMode,
-    atmospheres,
-  } = useEditorStore();
+  } = useEditorStore(
+    useShallow((state) => ({
+      nodes: state.nodes,
+      edges: state.edges,
+      onNodesChange: state.onNodesChange,
+      onEdgesChange: state.onEdgesChange,
+      onConnect: state.onConnect,
+      addPage: state.addPage,
+      isStorySettingsOpen: state.isStorySettingsOpen,
+      setIsStorySettingsOpen: state.setIsStorySettingsOpen,
+      isVariableManagerOpen: state.isVariableManagerOpen,
+      setIsVariableManagerOpen: state.setIsVariableManagerOpen,
+      isAtmosphereManagerOpen: state.isAtmosphereManagerOpen,
+      setIsAtmosphereManagerOpen: state.setIsAtmosphereManagerOpen,
+      isItemManagerOpen: state.isItemManagerOpen,
+      setIsItemManagerOpen: state.setIsItemManagerOpen,
+      _hasHydrated: state._hasHydrated,
+      setSelectedPage: state.setSelectedPage,
+      setSidebarTab: state.setSidebarTab,
+      setCurrentPlotId: state.setCurrentPlotId,
+      setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
+    }))
+  );
 
   const interactionStrategy = useInteractionStrategy();
 
@@ -83,166 +90,7 @@ export const GraphEditor: React.FC = () => {
     }
   }, [nodes.length, addPage, _hasHydrated]);
 
-  // ── Subplot filtering ───────────────────────────────────────────────────────
-  const currentPlotId = useEditorStore((state) => state.currentPlotId);
-  const subplots = useEditorStore((state) => state.subplots);
-
-  // Split into page nodes and synthetic nodes for independent tracking
-  const visiblePageNodes = useMemo(() => {
-    return nodes.filter((n) =>
-      n.type === 'pageNode' &&
-      (currentPlotId ? n.data.subplotId === currentPlotId : !n.data.subplotId)
-    );
-  }, [nodes, currentPlotId]);
-
-  const visibleSyntheticNodes = useMemo(() => {
-    return nodes.filter((n) =>
-      (n.type === 'actionNode' || n.type === 'portalNode') &&
-      (currentPlotId
-        ? (n.data as any).sourceSubplotId === currentPlotId
-        : !(n.data as any).sourceSubplotId)
-    );
-  }, [nodes, currentPlotId]);
-
-  const visibleNodeIds = useMemo(
-    () => new Set([...visiblePageNodes, ...visibleSyntheticNodes].map((n) => n.id)),
-    [visiblePageNodes, visibleSyntheticNodes]
-  );
-
-  const visibleEdges = useMemo(
-    () => edges.filter((e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)),
-    [edges, visibleNodeIds]
-  );
-
-  // ── Computed synthetic nodes from current page choice data ─────────────────
-  // Depends ONLY on visiblePageNodes — breaks circular dependency.
-  const { computedSynNodes, computedSynEdges } = useMemo(() => {
-    const synNodes: (ActionNodeType | PortalNodeType)[] = [];
-    const synEdges: Edge[] = [];
-
-    visiblePageNodes.forEach((node) => {
-      const choices: any[] = (node.data.choices as any[]) || [];
-
-      choices.forEach((choice, idx) => {
-        if (choice.targetPageId) return;
-        const choiceActions: any[] = Array.isArray(choice.actions) ? choice.actions : [];
-        if (choiceActions.length === 0) return;
-
-        const portalAction = choiceActions.find((a: any) => a.blueprintId === 'go_to_subplot');
-
-        if (portalAction) {
-          const params = portalAction.params as Record<string, string>;
-          const subplotName = subplots?.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
-          const targetPage = nodes.find((n) => n.id === params.targetPageId);
-          const targetPageName = (targetPage?.data as any)?.title || params.targetPageId || '?';
-          const nodeId = `portal-node-${choice.id}`;
-
-          synNodes.push({
-            id: nodeId,
-            type: 'portalNode',
-            position: { x: node.position.x + 280, y: node.position.y + idx * 110 },
-            width: 44,
-            height: 44,
-            data: {
-              sourcePageId: node.id,
-              subplotId: params.subplotId ?? '',
-              subplotName,
-              targetPageName: String(targetPageName),
-            },
-            selectable: true,
-            draggable: true,
-          } as PortalNodeType);
-
-          synEdges.push({
-            id: `se-portal-${choice.id}`,
-            source: node.id,
-            target: nodeId,
-            sourceHandle: choice.id,
-            type: 'floating',
-            animated: false,
-            label: choice.text,
-            labelStyle: SYNTHETIC_LABEL_STYLE,
-            labelShowBg: false,
-            style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: 'rgba(147,51,234,0.7)'
-            }
-          });
-        } else {
-          const nodeId = `action-node-${choice.id}`;
-
-          synNodes.push({
-            id: nodeId,
-            type: 'actionNode',
-            position: { x: node.position.x + 280, y: node.position.y + idx * 110 },
-            width: 44,
-            height: 44,
-            data: {
-              sourcePageId: node.id,
-              choiceId: choice.id,
-              choiceText: choice.text || 'Action Choice',
-              actionNames: choiceActions.map((a: any) => a.blueprintId),
-            },
-            selectable: true,
-            draggable: true,
-          } as ActionNodeType);
-
-          synEdges.push({
-            id: `se-${choice.id}-action`,
-            source: node.id,
-            target: nodeId,
-            sourceHandle: choice.id,
-            type: 'floating',
-            animated: true,
-            label: choice.text,
-            labelStyle: SYNTHETIC_LABEL_STYLE,
-            labelShowBg: false,
-            style: { stroke: 'var(--color-edge-default)' },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: 'var(--color-edge-default)'
-            }
-          });
-        }
-      });
-    });
-
-    return { computedSynNodes: synNodes, computedSynEdges: synEdges };
-  }, [visiblePageNodes, subplots, nodes]);
-
-  // ── Sync computed synthetic nodes into the store ───────────────────────────
-  // useEffect so positions in the store are preserved (syncSyntheticNodes merges, not replaces)
-  useEffect(() => {
-    syncSyntheticNodes(computedSynNodes, computedSynEdges);
-  }, [computedSynNodes, computedSynEdges, syncSyntheticNodes]);
-
-  // ── Node handlers ──────────────────────────────────────────────────────────
-  const handleAddParagraph = useCallback((id: string) => addParagraph(id), [addParagraph]);
-  const handleAddChoice = useCallback((id: string) => addChoice(id), [addChoice]);
-
-  const nodesWithHandlers = useMemo(() =>
-    visiblePageNodes.map((node) => {
-      const atmosphereColor = node.data.atmosphereId ? atmospheres[node.data.atmosphereId as string]?.color : undefined;
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          isStartNode: node.id === startPageId,
-          onAddParagraph: handleAddParagraph,
-          onAddChoice: handleAddChoice,
-          pageColorMode,
-          atmosphereColor,
-        },
-      };
-    }),
-    [visiblePageNodes, startPageId, handleAddParagraph, handleAddChoice, pageColorMode, atmospheres]
-  );
-
-  const allVisibleNodes = useMemo(
-    () => [...nodesWithHandlers, ...visibleSyntheticNodes],
-    [nodesWithHandlers, visibleSyntheticNodes]
-  );
+  // ── Subplot filtering is now handled purely via .hidden flags natively in React Flow ──
 
   // ── Graph event handlers ───────────────────────────────────────────────────
   const handleNodeClick = useCallback((_: React.MouseEvent, node: { id: string }) => {
@@ -299,8 +147,8 @@ export const GraphEditor: React.FC = () => {
         )}
 
         <ReactFlow
-          nodes={allVisibleNodes}
-          edges={visibleEdges}
+          nodes={nodes}
+          edges={edges}
           onNodesChange={onNodesChange as any}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}

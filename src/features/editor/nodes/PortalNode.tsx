@@ -12,7 +12,7 @@ export interface PortalNodeData extends Record<string, unknown> {
 
 export type PortalNodeType = Node<PortalNodeData, 'portalNode'>;
 
-export const PortalNode: React.FC<NodeProps<PortalNodeType>> = ({ data }) => {
+export const PortalNode = React.memo(({ data }: NodeProps<PortalNodeType>) => {
   const setCurrentPlotId = useEditorStore((state) => state.setCurrentPlotId);
 
   const handleDoubleClick = () => {
@@ -37,4 +37,4 @@ export const PortalNode: React.FC<NodeProps<PortalNodeType>> = ({ data }) => {
       </svg>
     </div>
   );
-};
+});

@@ -12,8 +12,9 @@ export interface ActionNodeData extends Record<string, unknown> {
 
 export type ActionNodeType = Node<ActionNodeData, 'actionNode'>;
 
-export const ActionNode: React.FC<NodeProps<ActionNodeType>> = ({ data }) => {
-  const { setSelectedPage, setSidebarTab } = useEditorStore();
+export const ActionNode = React.memo(({ data }: NodeProps<ActionNodeType>) => {
+  const setSelectedPage = useEditorStore(state => state.setSelectedPage);
+  const setSidebarTab = useEditorStore(state => state.setSidebarTab);
 
   const handleDoubleClick = () => {
     setSelectedPage(data.sourcePageId);
@@ -35,4 +36,4 @@ export const ActionNode: React.FC<NodeProps<ActionNodeType>> = ({ data }) => {
       </svg>
     </div>
   );
-};
+});

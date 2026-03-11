@@ -1,8 +1,9 @@
 import type { StateCreator } from 'zustand';
 import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import type { EditorState } from '../editorTypes';
+import { updateGraphVisibility } from '../../utils/visibility';
 
-export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'nodes' | 'edges' | 'onNodesChange' | 'onEdgesChange' | 'onConnect' | 'setNodes' | 'setEdges' | 'loadStory' | 'syncSyntheticNodes'>> = (set, get) => ({
+export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'nodes' | 'edges' | 'onNodesChange' | 'onEdgesChange' | 'onConnect' | 'setNodes' | 'setEdges' | 'loadStory'>> = (set, get) => ({
   nodes: [],
   edges: [],
 
@@ -40,71 +41,20 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
-  loadStory: ({ nodes, edges, variables, items, metadata, subplots, audio, atmospheres }) => set(() => ({
-    nodes,
-    edges,
-    ...(variables ? { variables } : {}),
-    ...(items ? { items } : {}),
-    ...(metadata?.title ? { storyTitle: metadata.title } : {}),
-    ...(metadata?.description !== undefined ? { storyDescription: metadata.description } : {}),
-    ...(metadata?.startPageId !== undefined ? { startPageId: metadata.startPageId } : {}),
-    ...(subplots !== undefined ? { subplots } : {}),
-    ...(audio !== undefined ? { audio } : {}),
-    ...(atmospheres !== undefined ? { atmospheres } : {}),
-  })),
-
-  syncSyntheticNodes: (newSynNodes, newSynEdges) => {
-    const { nodes, edges } = get();
-
-    // ── Early-return guard ────────────────────────────────────────────────────
-    // If the set of synthetic node IDs and their data hasn't changed, skip
-    // calling set() entirely. Without this guard, the useEffect that calls this
-    // action would trigger a re-render on every cycle → infinite loop.
-    const existingSynNodes = nodes.filter((n) => n.type !== 'pageNode');
-    const existingMap = new Map(existingSynNodes.map((n) => [n.id, n]));
-
-    const existingSynEdges = edges.filter((e) => e.id.startsWith('se-'));
-    const existingEdgesMap = new Map(existingSynEdges.map((e) => [e.id, e]));
-
-    // Check if any edge changed type or properties we care about
-    const edgesChanged =
-      existingSynEdges.length !== newSynEdges.length ||
-      newSynEdges.some((newEdge) => {
-        const existing = existingEdgesMap.get(newEdge.id);
-        return !existing || existing.type !== newEdge.type || existing.label !== newEdge.label || existing.animated !== newEdge.animated;
-      });
-
-    const noChange =
-      !edgesChanged &&
-      existingSynNodes.length === newSynNodes.length &&
-      newSynNodes.every((newNode) => {
-        const existing = existingMap.get(newNode.id);
-        return existing && JSON.stringify(newNode.data) === JSON.stringify(existing.data);
-      });
-
-    if (noChange) return;
-
-    // ── Merge ─────────────────────────────────────────────────────────────────
-    const newEdgeIds = new Set(newSynEdges.map((e) => e.id));
-    const realNodes = nodes.filter((n) => n.type === 'pageNode');
-
-    // Preserve positions the user has already dragged the nodes to
-    const existingPositions: Record<string, { x: number; y: number }> = {};
-    existingSynNodes.forEach((n) => {
-      existingPositions[n.id] = n.position;
-    });
-
-    const mergedSynNodes = newSynNodes.map((n) => ({
-      ...n,
-      position: existingPositions[n.id] ?? n.position,
-    }));
-
-    const realEdges = edges.filter((e) => !e.id.startsWith('se-'));
-    const mergedEdges = [
-      ...realEdges.filter((e) => !newEdgeIds.has(e.id)),
-      ...newSynEdges,
-    ];
-
-    set({ nodes: [...realNodes, ...mergedSynNodes], edges: mergedEdges });
-  },
+  loadStory: ({ nodes, edges, variables, items, metadata, subplots, audio, atmospheres }) => set(() => {
+    const visibleGraph = updateGraphVisibility(nodes, edges, null);
+    return {
+      nodes: visibleGraph.nodes,
+      edges: visibleGraph.edges,
+      currentPlotId: null, // Reset to root safely
+      ...(variables ? { variables } : {}),
+      ...(items ? { items } : {}),
+      ...(metadata?.title ? { storyTitle: metadata.title } : {}),
+      ...(metadata?.description !== undefined ? { storyDescription: metadata.description } : {}),
+      ...(metadata?.startPageId !== undefined ? { startPageId: metadata.startPageId } : {}),
+      ...(subplots !== undefined ? { subplots } : {}),
+      ...(audio !== undefined ? { audio } : {}),
+      ...(atmospheres !== undefined ? { atmospheres } : {}),
+    };
+  }),
 });

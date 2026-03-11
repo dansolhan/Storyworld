@@ -1,0 +1,129 @@
+import { MarkerType, type Edge } from '@xyflow/react';
+import type { EditorNode } from '../store/editorTypes';
+import type { Subplot } from '../../../domain/Story/Subplot';
+import type { ActionNodeType } from '../nodes/ActionNode';
+import type { PortalNodeType } from '../nodes/PortalNode';
+import type { PageNodeType } from '../nodes/PageNode';
+import { updateGraphVisibility } from './visibility';
+
+const SYNTHETIC_LABEL_STYLE = {
+  fontSize: 10,
+  fill: 'var(--color-text-secondary, #94a3b8)',
+  fontFamily: 'var(--font-family-sans, sans-serif)',
+};
+
+export function syncSyntheticNodes(
+  allNodes: EditorNode[],
+  allEdges: Edge[],
+  subplots: Subplot[],
+  currentPlotId: string | null
+): { nodes: EditorNode[]; edges: Edge[] } {
+  const pageNodes = allNodes.filter((n): n is PageNodeType => n.type === 'pageNode');
+  const existingSynNodes = allNodes.filter((n) => n.type === 'actionNode' || n.type === 'portalNode');
+  const realEdges = allEdges.filter((e) => !e.id.startsWith('se-'));
+
+  const existingPositions: Record<string, { x: number; y: number }> = {};
+  existingSynNodes.forEach((n) => {
+    existingPositions[n.id] = n.position;
+  });
+
+  const synNodes: (ActionNodeType | PortalNodeType)[] = [];
+  const synEdges: Edge[] = [];
+
+  pageNodes.forEach((page) => {
+    const pagePos = page.position;
+
+    (page.data.choices || []).forEach((choice: any, idx) => {
+      if (choice.targetPageId) return; // connected to a real page
+
+      const choiceActions = Array.isArray(choice.actions) ? choice.actions : [];
+      if (choiceActions.length === 0) return;
+
+      const portalAction = choiceActions.find((a: any) => a.blueprintId === 'go_to_subplot');
+
+      if (portalAction) {
+        const params = portalAction.params as Record<string, string>;
+        const subplotName = subplots.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
+
+        const targetPage = pageNodes.find((n) => n.id === params.targetPageId);
+        const targetPageName = targetPage?.data?.title || params.targetPageId || '?';
+        const nodeId = `portal-node-${choice.id}`;
+
+        synNodes.push({
+          id: nodeId,
+          type: 'portalNode',
+          position: existingPositions[nodeId] || { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          width: 44,
+          height: 44,
+          data: {
+            sourcePageId: page.id,
+            sourceSubplotId: page.data.subplotId,
+            subplotId: params.subplotId ?? '',
+            subplotName,
+            targetPageName: String(targetPageName),
+          },
+          selectable: true,
+          draggable: true,
+        } as PortalNodeType);
+
+        synEdges.push({
+          id: `se-portal-${choice.id}`,
+          source: page.id,
+          target: nodeId,
+          sourceHandle: choice.id,
+          type: 'floating',
+          animated: false,
+          label: choice.text,
+          labelStyle: SYNTHETIC_LABEL_STYLE,
+          labelShowBg: false,
+          style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: 'rgba(147,51,234,0.7)'
+          }
+        });
+      } else {
+        const nodeId = `action-node-${choice.id}`;
+
+        synNodes.push({
+          id: nodeId,
+          type: 'actionNode',
+          position: existingPositions[nodeId] || { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          width: 44,
+          height: 44,
+          data: {
+            sourcePageId: page.id,
+            sourceSubplotId: page.data.subplotId,
+            choiceId: choice.id,
+            choiceText: choice.text || 'Action Choice',
+            actionNames: choiceActions.map((a: any) => a.blueprintId),
+          },
+          selectable: true,
+          draggable: true,
+        } as ActionNodeType);
+
+        synEdges.push({
+          id: `se-${choice.id}-action`,
+          source: page.id,
+          target: nodeId,
+          sourceHandle: choice.id,
+          type: 'floating',
+          animated: true,
+          label: choice.text,
+          labelStyle: SYNTHETIC_LABEL_STYLE,
+          labelShowBg: false,
+          style: { stroke: 'var(--color-edge-default)' },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: 'var(--color-edge-default)'
+          }
+        });
+      }
+    });
+  });
+
+  const combinedNodes = [...pageNodes, ...synNodes];
+  const combinedEdges = [...realEdges, ...synEdges];
+
+  return updateGraphVisibility(combinedNodes, combinedEdges, currentPlotId);
+}

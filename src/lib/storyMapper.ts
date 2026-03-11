@@ -4,11 +4,11 @@ import type { ActionNodeType } from '../features/editor/nodes/ActionNode';
 import type { PortalNodeType } from '../features/editor/nodes/PortalNode';
 import type { Choice } from '../domain/Choice/Choice';
 import type { StoryData } from '../domain/Story/StoryData';
-import type { Subplot } from '../domain/Story/Subplot';
 import type { StoryVariable } from '../domain/Story/Variable';
 import type { AudioItem } from '../domain/Story/Audio';
 import type { Item } from '../domain/Item/Item';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
+import { syncSyntheticNodes } from '../features/editor/utils/syncSyntheticNodes';
 
 type AnyNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -60,11 +60,6 @@ export const compileGraphToStory = (
     };
   });
 
-  const nodePositions: Record<string, { x: number; y: number }> = {};
-  pageNodes.forEach(node => {
-    nodePositions[node.id] = { x: node.position.x, y: node.position.y };
-  });
-
   return {
     version: CURRENT_VERSION,
     pages,
@@ -75,122 +70,33 @@ export const compileGraphToStory = (
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,
-    uiMetadata: { nodePositions },
+    uiMetadata: { nodes, edges }, // Save the entire raw graph
   };
 };
 
-// ─── Helpers for synthetic node generation ──────────────────────────────────
-
-function buildSyntheticNodes(
-  pages: StoryData['pages'],
-  subplots: Subplot[],
-  nodePositions: Record<string, { x: number; y: number }>,
-): { nodes: (ActionNodeType | PortalNodeType)[]; edges: Edge[] } {
-  const nodes: (ActionNodeType | PortalNodeType)[] = [];
-  const edges: Edge[] = [];
-
-  pages.forEach((page) => {
-    const pagePos = nodePositions[page.id] || { x: 0, y: 0 };
-
-    (page.choices || []).forEach((choice, idx) => {
-      if (choice.targetPageId) return; // wired — handled as a real edge
-      const choiceActions = choice.actions || [];
-      if (choiceActions.length === 0) return;
-
-      const portalAction = choiceActions.find((a) => a.blueprintId === 'go_to_subplot');
-
-      if (portalAction) {
-        const params = portalAction.params as Record<string, string>;
-        const subplotName = subplots.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
-        const targetPageName = pages.find((p) => p.id === params.targetPageId)?.title || params.targetPageId || '?';
-        const nodeId = `portal-node-${choice.id}`;
-        const savedPos = nodePositions[nodeId];
-
-        nodes.push({
-          id: nodeId,
-          type: 'portalNode',
-          position: savedPos ?? { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
-          width: 44,
-          height: 44,
-          data: {
-            sourcePageId: page.id,
-            subplotId: params.subplotId ?? '',
-            subplotName,
-            targetPageName: String(targetPageName),
-          },
-          selectable: true,
-          draggable: true,
-        } as PortalNodeType);
-
-        edges.push({
-          id: `se-portal-${choice.id}`,
-          source: page.id,
-          target: nodeId,
-          sourceHandle: choice.id,
-          type: 'default',
-          animated: false,
-          label: choice.text,
-          labelStyle: SYNTHETIC_LABEL_STYLE,
-          labelShowBg: false,
-          style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
-        });
-      } else {
-        const nodeId = `action-node-${choice.id}`;
-        const savedPos = nodePositions[nodeId];
-
-        nodes.push({
-          id: nodeId,
-          type: 'actionNode',
-          position: savedPos ?? { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
-          width: 44,
-          height: 44,
-          data: {
-            sourcePageId: page.id,
-            choiceId: choice.id,
-            choiceText: choice.text || 'Action Choice',
-            actionNames: choiceActions.map((a) => a.blueprintId),
-          },
-          selectable: true,
-          draggable: true,
-        } as ActionNodeType);
-
-        edges.push({
-          id: `se-${choice.id}-action`,
-          source: page.id,
-          target: nodeId,
-          sourceHandle: choice.id,
-          type: 'default',
-          animated: true,
-          label: choice.text,
-          labelStyle: SYNTHETIC_LABEL_STYLE,
-          labelShowBg: false,
-          style: { stroke: 'var(--color-edge-default)' },
-          markerEnd: { type: MarkerType.ArrowClosed, color: 'var(--color-edge-default)' },
-        });
-      }
-    });
-  });
-
-  return { nodes, edges };
-}
-
 /**
  * Parses a pure domain StoryData back into React Flow nodes and edges.
- * Generates PageNode, ActionNode, PortalNode entries alongside their edges.
+ * If nodes and edges exist in uiMetadata, it loads them directly.
+ * Otherwise, it falls back to generating a grid of pageNodes.
  */
 export const parseStoryToGraph = (
   storyData: StoryData,
 ): { nodes: AnyNode[]; edges: Edge[] } => {
+
+  if (storyData.uiMetadata?.nodes && storyData.uiMetadata?.edges) {
+    return {
+      nodes: storyData.uiMetadata.nodes,
+      edges: storyData.uiMetadata.edges
+    };
+  }
+
+  // Fallback for older save files without uiMetadata.nodes
   const nodes: AnyNode[] = [];
   const edges: Edge[] = [];
-  const subplots: Subplot[] = storyData.subplots || [];
-  const nodePositions = storyData.uiMetadata?.nodePositions || {};
-
   const pages = storyData.pages || [];
 
   pages.forEach((page, index) => {
-    const savedPosition = nodePositions[page.id];
-    const position = savedPosition || {
+    const position = {
       x: (index % 4) * 350,
       y: Math.floor(index / 4) * 400,
     };
@@ -209,7 +115,6 @@ export const parseStoryToGraph = (
       },
     } as PageNodeType);
 
-    // Real page-to-page edges
     if (page.choices) {
       page.choices.forEach((choice) => {
         if (choice.targetPageId) {
@@ -234,12 +139,6 @@ export const parseStoryToGraph = (
     }
   });
 
-  // Synthetic nodes (ActionNode / PortalNode)
-  const { nodes: synNodes, edges: synEdges } = buildSyntheticNodes(
-    pages,
-    subplots,
-    nodePositions,
-  );
-
-  return { nodes: [...nodes, ...synNodes], edges: [...edges, ...synEdges] };
+  const synced = syncSyntheticNodes(nodes, edges, storyData.subplots || [], null);
+  return { nodes: synced.nodes as AnyNode[], edges: synced.edges };
 };

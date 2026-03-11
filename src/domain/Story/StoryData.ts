@@ -15,6 +15,7 @@ export interface StoryData {
   atmospheres?: Record<string, import('../Atmosphere/Atmosphere').Atmosphere>;
   audio?: Record<string, AudioItem>;
   uiMetadata?: {
-    nodePositions?: Record<string, { x: number; y: number }>;
+    nodes?: any[];
+    edges?: any[];
   };
 }

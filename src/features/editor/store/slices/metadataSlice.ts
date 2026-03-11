@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
+import { updateGraphVisibility } from '../../utils/visibility';
 
 export const createMetadataSlice: StateCreator<
   EditorState,
@@ -29,7 +30,10 @@ export const createMetadataSlice: StateCreator<
   },
 
   setCurrentPlotId: (plotId) => {
-    set({ currentPlotId: plotId });
+    set((state) => {
+      const { nodes, edges } = updateGraphVisibility(state.nodes, state.edges, plotId);
+      return { currentPlotId: plotId, nodes, edges } as Partial<EditorState>;
+    });
   },
 
   addSubplot: (name, description) => {

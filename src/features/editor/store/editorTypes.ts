@@ -70,13 +70,6 @@ export interface EditorState {
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
   }) => void;
 
-  /** Merges computed synthetic (ActionNode/PortalNode) entries into state.nodes/edges,
-   *  preserving user-adjusted positions and pruning stale entries. */
-  syncSyntheticNodes: (
-    syntheticNodes: (ActionNodeType | PortalNodeType)[],
-    syntheticEdges: Edge[]
-  ) => void;
-
   // Variables
   variables: Record<string, StoryVariable>;
   setVariables: (variables: Record<string, StoryVariable>) => void;
