@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Trash2 } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
@@ -62,8 +63,16 @@ interface AtmosphereManagerProps {
   onClose: () => void;
 }
 
-export const AtmosphereManager: React.FC<AtmosphereManagerProps> = ({ isOpen, onClose }) => {
-  const { atmospheres, addAtmosphere, updateAtmosphere, removeAtmosphere, audio } = useEditorStore();
+export const AtmosphereManager: React.FC<AtmosphereManagerProps> = React.memo(({ isOpen, onClose }) => {
+  const { atmospheres, addAtmosphere, updateAtmosphere, removeAtmosphere, audio } = useEditorStore(
+    useShallow((state) => ({
+      atmospheres: state.atmospheres,
+      addAtmosphere: state.addAtmosphere,
+      updateAtmosphere: state.updateAtmosphere,
+      removeAtmosphere: state.removeAtmosphere,
+      audio: state.audio,
+    }))
+  );
 
   const [newTitle, setNewTitle] = useState('');
 
@@ -122,4 +131,4 @@ export const AtmosphereManager: React.FC<AtmosphereManagerProps> = ({ isOpen, on
       </div>
     </ExpandableBottomPanel>
   );
-};
+});

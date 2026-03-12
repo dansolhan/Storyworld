@@ -82,6 +82,12 @@
   box-shadow: 0 0 0 4px var(--color-primary-100);
 }
 
+/* Disable transitions during interactions to prevent jitter/ghosting */
+:global(.react-flow__node.selected) .card,
+:global(.react-flow__node.dragging) .card {
+  transition: none !important;
+}
+
 .header {
   padding: var(--space-3) var(--space-4);
   background-color: var(--color-bg-secondary);

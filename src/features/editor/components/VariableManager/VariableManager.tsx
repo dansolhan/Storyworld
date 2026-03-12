@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
@@ -127,8 +128,15 @@ interface VariableManagerProps {
   onClose: () => void;
 }
 
-export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClose }) => {
-  const { variables, addVariable, updateVariable, removeVariable } = useEditorStore();
+export const VariableManager: React.FC<VariableManagerProps> = React.memo(({ isOpen, onClose }) => {
+  const { variables, addVariable, updateVariable, removeVariable } = useEditorStore(
+    useShallow((state) => ({
+      variables: state.variables,
+      addVariable: state.addVariable,
+      updateVariable: state.updateVariable,
+      removeVariable: state.removeVariable,
+    }))
+  );
 
   const [filterText, setFilterText] = useState('');
 
@@ -274,5 +282,4 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClos
       </div>
     </ExpandableBottomPanel>
   );
-};
-
+});

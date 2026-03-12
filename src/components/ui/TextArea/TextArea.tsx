@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { startTransition } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
 import styles from './TextArea.module.css';
 
@@ -14,6 +14,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   fullWidth = false,
   className = '',
   id,
+  onChange,
   ...props
 }) => {
   const generatedId = id || Math.random().toString(36).substring(7);
@@ -29,6 +30,14 @@ export const TextArea: React.FC<TextAreaProps> = ({
     error ? styles.errorTextarea : '',
   ].filter(Boolean).join(' ');
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onChange) {
+      startTransition(() => {
+        onChange(e);
+      });
+    }
+  };
+
   return (
     <div className={containerClasses}>
       {label && <label htmlFor={generatedId} className={styles.label}>{label}</label>}
@@ -36,6 +45,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         id={generatedId}
         className={textareaClasses}
         rows={props.rows || 4}
+        onChange={handleChange}
         {...props}
       />
       {error && <span className={styles.errorText}>{error}</span>}

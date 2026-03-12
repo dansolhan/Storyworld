@@ -1,8 +1,9 @@
+import { memo, useMemo } from 'react';
 import { BaseEdge, getBezierPath, type EdgeProps, useInternalNode } from '@xyflow/react';
 import { getEdgeParams } from './utils';
 import styles from './FloatingEdge.module.css';
 
-export function FloatingEdge({
+export const FloatingEdge = memo(({
   id,
   source,
   target,
@@ -11,7 +12,7 @@ export function FloatingEdge({
   label,
   style,
   markerEnd,
-}: EdgeProps) {
+}: EdgeProps) => {
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
@@ -19,19 +20,35 @@ export function FloatingEdge({
     return null;
   }
 
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
-    sourceNode,
-    targetNode,
+  // Memoize calculation and snap to 0.5px to reduce micro-recalcs
+  const edgeParams = useMemo(() => {
+    return getEdgeParams(
+      sourceNode,
+      targetNode,
+      sourceHandleId,
+      targetHandleId
+    );
+  }, [
+    sourceNode.internals.positionAbsolute.x,
+    sourceNode.internals.positionAbsolute.y,
+    sourceNode.measured.width,
+    sourceNode.measured.height,
+    targetNode.internals.positionAbsolute.x,
+    targetNode.internals.positionAbsolute.y,
+    targetNode.measured.width,
+    targetNode.measured.height,
     sourceHandleId,
     targetHandleId
-  );
+  ]);
+
+  const { sx, sy, tx, ty, sourcePos, targetPos } = edgeParams;
 
   const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX: sx,
-    sourceY: sy,
+    sourceX: Math.round(sx * 2) / 2,
+    sourceY: Math.round(sy * 2) / 2,
     sourcePosition: sourcePos,
-    targetX: tx,
-    targetY: ty,
+    targetX: Math.round(tx * 2) / 2,
+    targetY: Math.round(ty * 2) / 2,
     targetPosition: targetPos,
   });
 
@@ -64,4 +81,4 @@ export function FloatingEdge({
       )}
     </g>
   );
-}
+});

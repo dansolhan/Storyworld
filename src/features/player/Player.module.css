@@ -50,12 +50,12 @@
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   min-height: 0;
-  flex: 1 1 auto;
-  max-width: calc(50vw + 400px);
+  flex: 1; /* Take up all available space */
 }
 
 .rightFrame {
-  flex: 1;
+  width: 350px; /* Fixed width for the sidebar */
+  flex-shrink: 0;
   background-color: var(--player-bg);
   background-image: var(--paper-texture);
   border-left: 1px solid var(--player-border);

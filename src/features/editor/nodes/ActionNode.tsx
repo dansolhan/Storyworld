@@ -1,5 +1,6 @@
 import React from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore } from '../store/useEditorStore';
 import styles from './ActionNode.module.css';
 
@@ -13,8 +14,12 @@ export interface ActionNodeData extends Record<string, unknown> {
 export type ActionNodeType = Node<ActionNodeData, 'actionNode'>;
 
 export const ActionNode = React.memo(({ data }: NodeProps<ActionNodeType>) => {
-  const setSelectedPage = useEditorStore(state => state.setSelectedPage);
-  const setSidebarTab = useEditorStore(state => state.setSidebarTab);
+  const { setSelectedPage, setSidebarTab } = useEditorStore(
+    useShallow((state) => ({
+      setSelectedPage: state.setSelectedPage,
+      setSidebarTab: state.setSidebarTab,
+    }))
+  );
 
   const handleDoubleClick = () => {
     setSelectedPage(data.sourcePageId);

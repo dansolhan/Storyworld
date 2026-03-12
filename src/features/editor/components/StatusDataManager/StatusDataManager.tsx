@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Pencil, Trash2, ChevronUp, ChevronDown, Plus } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
@@ -139,10 +140,11 @@ const EntryRow: React.FC<EntryRowProps> = ({ entry, variables, onUpdate, onRemov
   const handleInsertVariable = (varName: string) => {
     const input = valueInputRef.current;
     if (!input) return;
-    const start = input.selectionStart ?? entry.value.length;
-    const end = input.selectionEnd ?? entry.value.length;
-    const before = entry.value.slice(0, start);
-    const after = entry.value.slice(end);
+    const val = entry.value ?? '';
+    const start = input.selectionStart ?? val.length;
+    const end = input.selectionEnd ?? val.length;
+    const before = val.slice(0, start);
+    const after = val.slice(end);
     const inserted = `{{${varName}}}`;
     onUpdate(entry.id, { value: before + inserted + after });
     // Restore cursor after next render tick
@@ -260,8 +262,17 @@ interface StatusDataManagerProps {
   onClose: () => void;
 }
 
-export const StatusDataManager: React.FC<StatusDataManagerProps> = ({ isOpen, onClose }) => {
-  const { statusData, addStatusData, updateStatusData, removeStatusData, setStatusData, variables } = useEditorStore();
+export const StatusDataManager: React.FC<StatusDataManagerProps> = React.memo(({ isOpen, onClose }) => {
+  const { statusData, addStatusData, updateStatusData, removeStatusData, setStatusData, variables } = useEditorStore(
+    useShallow((state) => ({
+      statusData: state.statusData,
+      addStatusData: state.addStatusData,
+      updateStatusData: state.updateStatusData,
+      removeStatusData: state.removeStatusData,
+      setStatusData: state.setStatusData,
+      variables: state.variables,
+    }))
+  );
 
   const [newTitle, setNewTitle] = useState('');
   const [newValue, setNewValue] = useState('');
@@ -399,4 +410,4 @@ export const StatusDataManager: React.FC<StatusDataManagerProps> = ({ isOpen, on
       </div>
     </ExpandableBottomPanel>
   );
-};
+});

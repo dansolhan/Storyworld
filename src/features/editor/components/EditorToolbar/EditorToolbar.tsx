@@ -1,11 +1,28 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Combobox } from '../../../../components/ui/Combobox/Combobox';
 import { useEditorStore } from '../../store/useEditorStore';
 import styles from './EditorToolbar.module.css';
 
-export const EditorToolbar: React.FC = () => {
-  const { addPage, subplots, currentPlotId, setCurrentPlotId, addSubplot, pageColorMode, setPageColorMode } = useEditorStore();
+export const EditorToolbar: React.FC = memo(() => {
+  const { 
+    addPage, 
+    subplots, 
+    currentPlotId, 
+    setCurrentPlotId, 
+    addSubplot, 
+    pageColorMode, 
+    setPageColorMode 
+  } = useEditorStore(useShallow(state => ({
+    addPage: state.addPage,
+    subplots: state.subplots,
+    currentPlotId: state.currentPlotId,
+    setCurrentPlotId: state.setCurrentPlotId,
+    addSubplot: state.addSubplot,
+    pageColorMode: state.pageColorMode,
+    setPageColorMode: state.setPageColorMode
+  })));
 
   const handleAddNewPage = () => {
     const x = Math.random() * 400;
@@ -61,4 +78,4 @@ export const EditorToolbar: React.FC = () => {
       </div>
     </>
   );
-};
+});

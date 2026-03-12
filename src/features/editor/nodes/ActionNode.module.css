@@ -21,6 +21,12 @@
   box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
 }
 
+/* Disable transitions during interactions to prevent jitter/ghosting */
+:global(.react-flow__node.selected) .node,
+:global(.react-flow__node.dragging) .node {
+  transition: none !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .node {
     background-color: rgba(217, 119, 6, 0.15);

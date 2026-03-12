@@ -35,6 +35,14 @@
     "isPoisoned": {
       "type": "boolean",
       "value": false
+    },
+    "mana": {
+      "type": "number",
+      "value": 50
+    },
+    "maxMana": {
+      "type": "number",
+      "value": 100
     }
   },
   "items": {
@@ -145,6 +153,13 @@
       "priority": 10,
       "value": "{{gold}}",
       "color": "#c9a84c"
+    },
+    {
+      "id": "sd-mana",
+      "title": "Mana",
+      "priority": 15,
+      "value": "{{mana}} / {{maxMana}}",
+      "color": "#4facfe"
     },
     {
       "id": "sd-poisoned",

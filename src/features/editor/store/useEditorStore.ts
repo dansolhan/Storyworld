@@ -50,6 +50,7 @@ const processSaveQueue = async () => {
   try {
     const { set } = await import('idb-keyval');
     await set(name, value);
+    console.log(`[Storage] Saved game data for story: ${name}`);
   } catch (error) {
     console.error('Failed to save state to IndexedDB', error);
   } finally {
@@ -64,18 +65,22 @@ const processSaveQueue = async () => {
 let saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 useEditorStore.subscribe((state) => {
-  // Only save if hydrated and inside a valid story
-  if (!state._hasHydrated || !state.storyId) return;
+  // Only save if hydrated and inside a valid story.
+  // CRITICAL: Bypass auto-save during active dragging to prevent jitter.
+  if (!state._hasHydrated || !state.storyId || state.isDragging) {
+    if (state.isDragging && saveDebounceTimer) {
+      clearTimeout(saveDebounceTimer);
+    }
+    return;
+  }
 
   if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
 
   saveDebounceTimer = setTimeout(() => {
-    // Capture synthetic node positions so they survive reload
-    const nodePositions: Record<string, { x: number; y: number }> = {};
-    state.nodes.forEach((n) => {
-      nodePositions[n.id] = n.position;
-    });
+    // We get the LATEST state from the store itself at the time of execution
+    const state = useEditorStore.getState();
 
+    // Essential state snapshot for persistence — performed only after debouncing
     const snapshot = {
       version: 3,
       state: {

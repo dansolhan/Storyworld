@@ -41,10 +41,12 @@ export const StatusDataDisplay: React.FC = () => {
 
   return (
     <div className={styles.statusContainer}>
-      <div className={styles.statusTitle}>Status</div>
+      <h2 className={styles.statusTitle}>Status</h2>
       <div className={styles.statusList}>
         {visibleEntries.map((entry) => {
-          const resolvedValue = interpolate(entry.value, variables);
+          const hasValue = entry.value !== undefined && entry.value.trim() !== '';
+          const resolvedValue = hasValue ? interpolate(entry.value!, variables) : '';
+
           return (
             <div
               key={entry.id}
@@ -52,14 +54,17 @@ export const StatusDataDisplay: React.FC = () => {
               style={entry.color ? { color: entry.color } : undefined}
             >
               {entry.title && (
-                <span className={styles.statusLabel}>{entry.title}:</span>
+                <span className={styles.statusLabel}>
+                  {entry.title}{hasValue ? ':' : ''}
+                </span>
               )}
-              <span className={styles.statusValue}>{resolvedValue}</span>
+              {hasValue && (
+                <span className={styles.statusValue}>{resolvedValue}</span>
+              )}
             </div>
           );
         })}
       </div>
-      <hr className={styles.divider} />
     </div>
   );
 };

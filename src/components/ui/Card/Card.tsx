@@ -8,7 +8,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   interactive?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card: React.FC<CardProps> = React.memo(({
   children,
   padding = 'md',
   interactive = false,
@@ -27,4 +27,4 @@ export const Card: React.FC<CardProps> = ({
       {children}
     </div>
   );
-};
+});

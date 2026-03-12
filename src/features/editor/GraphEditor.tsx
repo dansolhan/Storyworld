@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import {
   ReactFlow,
   Background,
@@ -37,14 +37,124 @@ const edgeTypes = {
   floating: FloatingEdge,
 };
 
-export const GraphEditor: React.FC = () => {
+// ─── FlowView Component (Isolated Graph Rendering) ──────────────────────────
+const FlowView: React.FC = React.memo(() => {
   const {
     nodes,
     edges,
     onNodesChange,
     onEdgesChange,
     onConnect,
-    addPage,
+    setSelectedPage,
+    setSidebarTab,
+    setCurrentPlotId,
+    setIsEditorSidebarExpanded,
+    setIsDragging,
+    isDragging
+  } = useEditorStore(
+    useShallow((state) => ({
+      nodes: state.nodes,
+      edges: state.edges,
+      onNodesChange: state.onNodesChange,
+      onEdgesChange: state.onEdgesChange,
+      onConnect: state.onConnect,
+      setSelectedPage: state.setSelectedPage,
+      setSidebarTab: state.setSidebarTab,
+      setCurrentPlotId: state.setCurrentPlotId,
+      setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
+      setIsDragging: state.setIsDragging,
+      isDragging: state.isDragging
+    }))
+  );
+
+  const interactionStrategy = useInteractionStrategy();
+
+  // ── Stable style objects ───────────────────────────────────────────────────
+  const flowStyle = useMemo(() => ({ width: '100%', height: '100%', cursor: interactionStrategy.cursor }), [interactionStrategy.cursor]);
+
+  // ── Graph event handlers ───────────────────────────────────────────────────
+  const onNodeDragStart = useCallback(() => setIsDragging(true), [setIsDragging]);
+  const onNodeDragStop = useCallback(() => setIsDragging(false), [setIsDragging]);
+
+  const handleNodeClick = useCallback((_: React.MouseEvent, node: any) => {
+    if (node.id.startsWith('action-node-')) {
+      setSelectedPage(node.data.sourcePageId);
+      return;
+    }
+    if (node.id.startsWith('portal-node-')) return; 
+    interactionStrategy.onNodeClick(node.id);
+  }, [setSelectedPage, interactionStrategy]);
+
+  const handleNodeDoubleClick = useCallback((_: React.MouseEvent, node: any) => {
+    if (node.id.startsWith('action-node-')) {
+      setSelectedPage(node.data.sourcePageId);
+      setSidebarTab('actions');
+      setIsEditorSidebarExpanded(true);
+      return;
+    }
+    if (node.id.startsWith('portal-node-')) {
+      const subplotId = node.data.subplotId;
+      if (subplotId) setCurrentPlotId(subplotId);
+      return;
+    }
+    interactionStrategy.onNodeDoubleClick(node.id);
+  }, [setSelectedPage, setSidebarTab, setIsEditorSidebarExpanded, setCurrentPlotId, interactionStrategy]);
+
+  const handlePaneClick = useCallback(() => {
+    interactionStrategy.onPaneClick();
+  }, [interactionStrategy]);
+
+  return (
+    <div className={styles.flowWrapper}>
+      {interactionStrategy.overlayMessage && (
+        <div className={styles.selectionOverlay}>
+          <p className={styles.selectionOverlayText}>
+            {interactionStrategy.overlayMessage}
+          </p>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => interactionStrategy.onCancel()}
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
+
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange as any}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={handleNodeClick}
+        onNodeDoubleClick={handleNodeDoubleClick}
+        onPaneClick={handlePaneClick}
+        onNodeDragStart={onNodeDragStart}
+        onNodeDragStop={onNodeDragStop}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        nodesConnectable={false}
+        onlyRenderVisibleElements={true}
+        nodeDragThreshold={3}
+        snapToGrid={true}
+        snapGrid={[20, 20]}
+        minZoom={0.2}
+        maxZoom={4}
+        fitView
+        style={flowStyle}
+      >
+        <Background gap={16} color="var(--color-border-default)" />
+        <Controls />
+        {!isDragging && <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />}
+      </ReactFlow>
+    </div>
+  );
+});
+
+// ─── Main GraphEditor (Stable Outer Shell) ──────────────────────────────────
+export const GraphEditor: React.FC = () => {
+  const {
     isStorySettingsOpen,
     setIsStorySettingsOpen,
     isVariableManagerOpen,
@@ -56,18 +166,10 @@ export const GraphEditor: React.FC = () => {
     isStatusDataManagerOpen,
     setIsStatusDataManagerOpen,
     _hasHydrated,
-    setSelectedPage,
-    setSidebarTab,
-    setCurrentPlotId,
-    setIsEditorSidebarExpanded,
+    nodesCount,
+    addPage
   } = useEditorStore(
     useShallow((state) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-      onNodesChange: state.onNodesChange,
-      onEdgesChange: state.onEdgesChange,
-      onConnect: state.onConnect,
-      addPage: state.addPage,
       isStorySettingsOpen: state.isStorySettingsOpen,
       setIsStorySettingsOpen: state.setIsStorySettingsOpen,
       isVariableManagerOpen: state.isVariableManagerOpen,
@@ -79,105 +181,34 @@ export const GraphEditor: React.FC = () => {
       isStatusDataManagerOpen: state.isStatusDataManagerOpen,
       setIsStatusDataManagerOpen: state.setIsStatusDataManagerOpen,
       _hasHydrated: state._hasHydrated,
-      setSelectedPage: state.setSelectedPage,
-      setSidebarTab: state.setSidebarTab,
-      setCurrentPlotId: state.setCurrentPlotId,
-      setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
+      nodesCount: state.nodes.length,
+      addPage: state.addPage,
     }))
   );
 
-  const interactionStrategy = useInteractionStrategy();
-
   // Initialization: add one starting node if canvas is empty
   useEffect(() => {
-    if (_hasHydrated && nodes.length === 0) {
+    if (_hasHydrated && nodesCount === 0) {
       addPage(100, 100);
     }
-  }, [nodes.length, addPage, _hasHydrated]);
+  }, [nodesCount, addPage, _hasHydrated]);
 
-  // ── Subplot filtering is now handled purely via .hidden flags natively in React Flow ──
-
-  // ── Graph event handlers ───────────────────────────────────────────────────
-  const handleNodeClick = useCallback((_: React.MouseEvent, node: { id: string }) => {
-    if (node.id.startsWith('action-node-')) {
-      const sn = nodes.find((n) => n.id === node.id);
-      if (sn) setSelectedPage((sn.data as any).sourcePageId);
-      return;
-    }
-    if (node.id.startsWith('portal-node-')) return; // double-click navigates
-    interactionStrategy.onNodeClick(node.id);
-  }, [nodes, setSelectedPage, interactionStrategy]);
-
-  const handleNodeDoubleClick = useCallback((_: React.MouseEvent, node: { id: string }) => {
-    if (node.id.startsWith('action-node-')) {
-      const sn = nodes.find((n) => n.id === node.id);
-      if (sn) {
-        setSelectedPage((sn.data as any).sourcePageId);
-        setSidebarTab('actions');
-        setIsEditorSidebarExpanded(true);
-      }
-      return;
-    }
-    if (node.id.startsWith('portal-node-')) {
-      const sn = nodes.find((n) => n.id === node.id);
-      const subplotId = (sn?.data as any)?.subplotId;
-      if (subplotId) setCurrentPlotId(subplotId);
-      return;
-    }
-    interactionStrategy.onNodeDoubleClick(node.id);
-  }, [nodes, setSelectedPage, setSidebarTab, setIsEditorSidebarExpanded, setCurrentPlotId, interactionStrategy]);
-
-  const handlePaneClick = useCallback(() => {
-    interactionStrategy.onPaneClick();
-  }, [interactionStrategy]);
+  const closeStorySettings = useCallback(() => setIsStorySettingsOpen(false), [setIsStorySettingsOpen]);
+  const closeItemManager = useCallback(() => setIsItemManagerOpen(false), [setIsItemManagerOpen]);
+  const closeStatusDataManager = useCallback(() => setIsStatusDataManagerOpen(false), [setIsStatusDataManagerOpen]);
+  const closeVariableManager = useCallback(() => setIsVariableManagerOpen(false), [setIsVariableManagerOpen]);
+  const closeAtmosphereManager = useCallback(() => setIsAtmosphereManagerOpen(false), [setIsAtmosphereManagerOpen]);
 
   return (
     <div className={styles.container}>
       <EditorToolbar />
-
-      <div className={styles.flowWrapper}>
-        {interactionStrategy.overlayMessage && (
-          <div className={styles.selectionOverlay}>
-            <p className={styles.selectionOverlayText}>
-              {interactionStrategy.overlayMessage}
-            </p>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => interactionStrategy.onCancel()}
-            >
-              Cancel
-            </Button>
-          </div>
-        )}
-
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange as any}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={handleNodeClick}
-          onNodeDoubleClick={handleNodeDoubleClick}
-          onPaneClick={handlePaneClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          nodesConnectable={false}
-          fitView
-          style={{ width: '100%', height: '100%', cursor: interactionStrategy.cursor }}
-        >
-          <Background gap={16} color="var(--color-border-default)" />
-          <Controls />
-          <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />
-        </ReactFlow>
-      </div>
-
+      <FlowView />
       <EditorSidebar />
-      <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={() => setIsStorySettingsOpen(false)} />
-      <ItemManager isOpen={isItemManagerOpen} onClose={() => setIsItemManagerOpen(false)} />
-      <StatusDataManager isOpen={isStatusDataManagerOpen} onClose={() => setIsStatusDataManagerOpen(false)} />
-      <VariableManager isOpen={isVariableManagerOpen} onClose={() => setIsVariableManagerOpen(false)} />
-      <AtmosphereManager isOpen={isAtmosphereManagerOpen} onClose={() => setIsAtmosphereManagerOpen(false)} />
+      <StorySettingsDrawer isOpen={isStorySettingsOpen} onClose={closeStorySettings} />
+      <ItemManager isOpen={isItemManagerOpen} onClose={closeItemManager} />
+      <StatusDataManager isOpen={isStatusDataManagerOpen} onClose={closeStatusDataManager} />
+      <VariableManager isOpen={isVariableManagerOpen} onClose={closeVariableManager} />
+      <AtmosphereManager isOpen={isAtmosphereManagerOpen} onClose={closeAtmosphereManager} />
       <AudioManagerModal />
     </div>
   );

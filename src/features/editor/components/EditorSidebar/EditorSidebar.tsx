@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useReactFlow } from '@xyflow/react';
 import { Target } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
@@ -21,7 +22,7 @@ const PARAGRAPH_FEATURES = [
   new InsertVariableFeature(),
 ];
 
-export const EditorSidebar: React.FC = () => {
+export const EditorSidebar: React.FC = React.memo(() => {
   const {
     selectedPageId,
     setSelectedPage,
@@ -29,7 +30,6 @@ export const EditorSidebar: React.FC = () => {
     setIsEditorSidebarExpanded,
     sidebarTab,
     setSidebarTab,
-    nodes,
     updatePageTitle,
     updatePageType,
     addParagraph,
@@ -40,14 +40,30 @@ export const EditorSidebar: React.FC = () => {
     setConnectingChoice,
     createPageFromChoice,
     atmospheres
-  } = useEditorStore();
+  } = useEditorStore(useShallow((state) => ({
+    selectedPageId: state.selectedPageId,
+    setSelectedPage: state.setSelectedPage,
+    isEditorSidebarExpanded: state.isEditorSidebarExpanded,
+    setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
+    sidebarTab: state.sidebarTab,
+    setSidebarTab: state.setSidebarTab,
+    updatePageTitle: state.updatePageTitle,
+    updatePageType: state.updatePageType,
+    addParagraph: state.addParagraph,
+    updateParagraph: state.updateParagraph,
+    addChoice: state.addChoice,
+    updateChoiceText: state.updateChoiceText,
+    connectingChoice: state.connectingChoice,
+    setConnectingChoice: state.setConnectingChoice,
+    createPageFromChoice: state.createPageFromChoice,
+    atmospheres: state.atmospheres
+  })));
 
   const [previewStory, setPreviewStory] = useState(false);
 
-
-  const selectedNode = useMemo(
-    () => nodes.find((n) => n.id === selectedPageId) as any,
-    [nodes, selectedPageId]
+  // Selector for just the selected node's essential data
+  const selectedNode = useEditorStore(
+    (state) => state.nodes.find((n) => n.id === selectedPageId) as any,
   );
 
   const { fitView, setNodes } = useReactFlow();
@@ -325,4 +341,4 @@ export const EditorSidebar: React.FC = () => {
       </div>
     </ExpandableBottomPanel>
   );
-};
+});

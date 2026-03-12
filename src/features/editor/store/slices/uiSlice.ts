@@ -5,7 +5,7 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'pageColorMode' | 'setPageColorMode' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen' | 'isStatusDataManagerOpen' | 'setIsStatusDataManagerOpen'>
+  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'pageColorMode' | 'setPageColorMode' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isDragging' | 'setIsDragging' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen' | 'isStatusDataManagerOpen' | 'setIsStatusDataManagerOpen'>
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -16,6 +16,7 @@ export const createUISlice: StateCreator<
   pageColorMode: 'type' as const,
   connectingChoice: null,
   isSelectingStartNode: false,
+  isDragging: false,
   isStorySettingsOpen: false,
   isVariableManagerOpen: false,
   isAudioManagerOpen: false,
@@ -53,11 +54,25 @@ export const createUISlice: StateCreator<
   },
 
   setConnectingChoice: (choice) => {
-    set({ connectingChoice: choice });
+    set({
+      connectingChoice: choice,
+      isSelectingStartNode: false,
+      isDragging: false,
+      isStorySettingsOpen: false,
+      isVariableManagerOpen: false,
+      isAudioManagerOpen: false,
+      isAtmosphereManagerOpen: false,
+      isItemManagerOpen: false,
+      isStatusDataManagerOpen: false,
+    });
   },
 
   setIsSelectingStartNode: (isSelecting) => {
     set({ isSelectingStartNode: isSelecting });
+  },
+
+  setIsDragging: (dragging) => {
+    set({ isDragging: dragging });
   },
 
   setIsStorySettingsOpen: (isOpen) => {

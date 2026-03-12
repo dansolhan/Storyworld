@@ -78,6 +78,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
       nodes: [],
       edges: [],
       pages: {},
+      variables: {
+        hp: { type: 'number', value: 100 },
+        maxHp: { type: 'number', value: 100 },
+        gold: { type: 'number', value: 0 },
+      },
+      statusData: [
+        { id: 'sd-hp', title: 'HP', value: '{{hp}} / {{maxHp}}', priority: 100 },
+        { id: 'sd-gold', title: 'Gold', value: '{{gold}}', priority: 90, color: '#c9a84c' },
+      ],
       metadata: { title: 'Untitled Story', description: '' }
     });
 
@@ -107,7 +116,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
       },
       subplots: exampleStory.subplots || [],
       audio: exampleStory.audio || {},
-      atmospheres: exampleStory.atmospheres || {}
+      atmospheres: exampleStory.atmospheres || {},
+      statusData: exampleStory.statusData || []
     });
 
     setHasHydrated(true); // Re-enable saves
@@ -150,7 +160,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
           },
           subplots: data.state.subplots || [],
           audio: data.state.audio || {},
-          atmospheres: data.state.atmospheres || {}
+          atmospheres: data.state.atmospheres || {},
+          statusData: data.state.statusData || []
         });
 
         setHasHydrated(true);
@@ -169,7 +180,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onImportClick
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'var(--font-sans)', color: 'var(--color-text-primary)' }}>
+    <div style={{ padding: '2rem var(--space-8)', width: '100%', maxWidth: '1400px', margin: '0 auto', fontFamily: 'var(--font-sans)', color: 'var(--color-text-primary)' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0 }}>Storyworld AI</h1>
         <div style={{ display: 'flex', gap: '0.5rem' }}>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
@@ -141,8 +142,15 @@ interface ItemManagerProps {
   onClose: () => void;
 }
 
-export const ItemManager: React.FC<ItemManagerProps> = ({ isOpen, onClose }) => {
-  const { items, addItem, updateItem, removeItem } = useEditorStore();
+export const ItemManager: React.FC<ItemManagerProps> = React.memo(({ isOpen, onClose }) => {
+  const { items, addItem, updateItem, removeItem } = useEditorStore(
+    useShallow((state) => ({
+      items: state.items,
+      addItem: state.addItem,
+      updateItem: state.updateItem,
+      removeItem: state.removeItem,
+    }))
+  );
 
   const [filterText, setFilterText] = useState('');
 
@@ -282,4 +290,4 @@ export const ItemManager: React.FC<ItemManagerProps> = ({ isOpen, onClose }) => 
       </div>
     </ExpandableBottomPanel>
   );
-};
+});

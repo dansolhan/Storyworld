@@ -1,4 +1,5 @@
 import React from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
@@ -9,7 +10,7 @@ interface StorySettingsDrawerProps {
   onClose: () => void;
 }
 
-export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = ({ isOpen, onClose }) => {
+export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = React.memo(({ isOpen, onClose }) => {
   const {
     storyTitle,
     setStoryTitle,
@@ -18,7 +19,17 @@ export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = ({ isOpen
     startPageId,
     isSelectingStartNode,
     setIsSelectingStartNode,
-  } = useEditorStore();
+  } = useEditorStore(
+    useShallow((state) => ({
+      storyTitle: state.storyTitle,
+      setStoryTitle: state.setStoryTitle,
+      storyDescription: state.storyDescription,
+      setStoryDescription: state.setStoryDescription,
+      startPageId: state.startPageId,
+      isSelectingStartNode: state.isSelectingStartNode,
+      setIsSelectingStartNode: state.setIsSelectingStartNode,
+    }))
+  );
 
   const handleSelectStartNode = () => {
     setIsSelectingStartNode(!isSelectingStartNode);
@@ -79,4 +90,4 @@ export const StorySettingsDrawer: React.FC<StorySettingsDrawerProps> = ({ isOpen
       </div>
     </ExpandableBottomPanel>
   );
-};
+});

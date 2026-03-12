@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useEditorStore } from '../store/useEditorStore';
 import { SelectionStrategy } from './SelectionStrategy';
 import { ConnectingChoiceStrategy } from './ConnectingChoiceStrategy';
@@ -10,13 +11,15 @@ export const useInteractionStrategy = (): InteractionStrategy => {
   const isSelectingStartNode = useEditorStore((state) => state.isSelectingStartNode);
   const connectingChoice = useEditorStore((state) => state.connectingChoice);
 
-  if (isSelectingStartNode) {
-    return new SelectingStartNodeStrategy();
-  }
+  return useMemo(() => {
+    if (isSelectingStartNode) {
+      return new SelectingStartNodeStrategy();
+    }
 
-  if (connectingChoice) {
-    return new ConnectingChoiceStrategy();
-  }
+    if (connectingChoice) {
+      return new ConnectingChoiceStrategy();
+    }
 
-  return new SelectionStrategy();
+    return new SelectionStrategy();
+  }, [isSelectingStartNode, connectingChoice]);
 };

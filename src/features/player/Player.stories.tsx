@@ -7,6 +7,13 @@ const meta: Meta<typeof Player> = {
   parameters: {
     layout: 'fullscreen',
   },
+  decorators: [
+    (Story) => (
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export default meta;
@@ -19,7 +26,15 @@ export const Default: Story = {
       version: 6,
       variables: {
         playerName: { type: 'string', value: 'Wanderer' },
+        hp: { type: 'number', value: 85 },
+        maxHp: { type: 'number', value: 100 },
+        gold: { type: 'number', value: 42 },
       },
+      statusData: [
+        { id: 'poisoned', title: 'Poisoned' },
+        { id: 'sd-hp', title: 'HP', value: '{{hp}} / {{maxHp}}', priority: 100 },
+        { id: 'sd-gold', title: 'Gold', value: '{{gold}}', priority: 90, color: '#c9a84c' },
+      ],
       pages: [
         {
           id: 'start',
