@@ -66,9 +66,9 @@ let saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 useEditorStore.subscribe((state) => {
   // Only save if hydrated and inside a valid story.
-  // CRITICAL: Bypass auto-save during active dragging to prevent jitter.
-  if (!state._hasHydrated || !state.storyId || state.isDragging) {
-    if (state.isDragging && saveDebounceTimer) {
+  // CRITICAL: Bypass auto-save during active dragging or panning to prevent jitter.
+  if (!state._hasHydrated || !state.storyId || state.isDragging || state.isPanning) {
+    if ((state.isDragging || state.isPanning) && saveDebounceTimer) {
       clearTimeout(saveDebounceTimer);
     }
     return;

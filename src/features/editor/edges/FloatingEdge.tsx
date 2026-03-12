@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useDeferredValue } from 'react';
 import { BaseEdge, getBezierPath, type EdgeProps, useInternalNode } from '@xyflow/react';
 import { getEdgeParams } from './utils';
 import styles from './FloatingEdge.module.css';
@@ -13,8 +13,14 @@ export const FloatingEdge = memo(({
   style,
   markerEnd,
 }: EdgeProps) => {
-  const sourceNode = useInternalNode(source);
-  const targetNode = useInternalNode(target);
+  const rawSourceNode = useInternalNode(source);
+  const rawTargetNode = useInternalNode(target);
+
+  // Use deferred values for node data to low-prioritize edge pathing recalculations.
+  // This ensures the node movement itself (high priority) stays snappy while the 
+  // computationally heavy edge math "trails" slightly.
+  const sourceNode = useDeferredValue(rawSourceNode);
+  const targetNode = useDeferredValue(rawTargetNode);
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -22,6 +28,7 @@ export const FloatingEdge = memo(({
 
   // Memoize calculation and snap to 0.5px to reduce micro-recalcs
   const edgeParams = useMemo(() => {
+    // We already round in the bezier path, but doing it here saves the intersection math
     return getEdgeParams(
       sourceNode,
       targetNode,
@@ -29,12 +36,14 @@ export const FloatingEdge = memo(({
       targetHandleId
     );
   }, [
-    sourceNode.internals.positionAbsolute.x,
-    sourceNode.internals.positionAbsolute.y,
+    // We use rounded coordinates in the dependency array to naturally throttle 
+    // updates for micro-movements (sub-pixel jitter)
+    Math.round(sourceNode.internals.positionAbsolute.x * 2) / 2,
+    Math.round(sourceNode.internals.positionAbsolute.y * 2) / 2,
+    Math.round(targetNode.internals.positionAbsolute.x * 2) / 2,
+    Math.round(targetNode.internals.positionAbsolute.y * 2) / 2,
     sourceNode.measured.width,
     sourceNode.measured.height,
-    targetNode.internals.positionAbsolute.x,
-    targetNode.internals.positionAbsolute.y,
     targetNode.measured.width,
     targetNode.measured.height,
     sourceHandleId,
@@ -51,6 +60,7 @@ export const FloatingEdge = memo(({
     targetY: Math.round(ty * 2) / 2,
     targetPosition: targetPos,
   });
+// ... (rest of the file)
 
   // Estimate label width from character count (min 80, ~8px per char)
   const labelText = label ? String(label) : '';

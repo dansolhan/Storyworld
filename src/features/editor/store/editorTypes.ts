@@ -135,9 +135,11 @@ export interface EditorState {
   isSelectingStartNode: boolean;
   setIsSelectingStartNode: (isSelecting: boolean) => void;
 
-  // Global drag state to coordinate performance optimizations
+  // Global drag/pan state to coordinate performance optimizations
   isDragging: boolean;
   setIsDragging: (isDragging: boolean) => void;
+  isPanning: boolean;
+  setIsPanning: (isPanning: boolean) => void;
 
   // Domain Handlers - Page
   addPage: (x: number, y: number, atmosphereId?: string) => string;

@@ -50,6 +50,7 @@ const FlowView: React.FC = React.memo(() => {
     setCurrentPlotId,
     setIsEditorSidebarExpanded,
     setIsDragging,
+    setIsPanning,
     isDragging
   } = useEditorStore(
     useShallow((state) => ({
@@ -63,6 +64,7 @@ const FlowView: React.FC = React.memo(() => {
       setCurrentPlotId: state.setCurrentPlotId,
       setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
       setIsDragging: state.setIsDragging,
+      setIsPanning: state.setIsPanning,
       isDragging: state.isDragging
     }))
   );
@@ -75,6 +77,8 @@ const FlowView: React.FC = React.memo(() => {
   // ── Graph event handlers ───────────────────────────────────────────────────
   const onNodeDragStart = useCallback(() => setIsDragging(true), [setIsDragging]);
   const onNodeDragStop = useCallback(() => setIsDragging(false), [setIsDragging]);
+  const onMoveStart = useCallback(() => setIsPanning(true), [setIsPanning]);
+  const onMoveEnd = useCallback(() => setIsPanning(false), [setIsPanning]);
 
   const handleNodeClick = useCallback((_: React.MouseEvent, node: any) => {
     if (node.id.startsWith('action-node-')) {
@@ -132,6 +136,8 @@ const FlowView: React.FC = React.memo(() => {
         onPaneClick={handlePaneClick}
         onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
+        onMoveStart={onMoveStart}
+        onMoveEnd={onMoveEnd}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodesConnectable={false}
