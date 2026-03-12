@@ -1,28 +1,17 @@
 import React, { useMemo, memo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Combobox } from '../../../../components/ui/Combobox/Combobox';
-import { useEditorStore } from '../../store/useEditorStore';
+import { useEditorLayoutActions } from '../../hooks/core/useEditorLayoutActions';
+import { useSubplots } from '../../hooks/story/useSubplots';
+import { usePlotActions } from '../../hooks/story/usePlotActions';
+import { usePageAppearanceState } from '../../hooks/view/usePageAppearanceState';
 import styles from './EditorToolbar.module.css';
 
 export const EditorToolbar: React.FC = memo(() => {
-  const { 
-    addPage, 
-    subplots, 
-    currentPlotId, 
-    setCurrentPlotId, 
-    addSubplot, 
-    pageColorMode, 
-    setPageColorMode 
-  } = useEditorStore(useShallow(state => ({
-    addPage: state.addPage,
-    subplots: state.subplots,
-    currentPlotId: state.currentPlotId,
-    setCurrentPlotId: state.setCurrentPlotId,
-    addSubplot: state.addSubplot,
-    pageColorMode: state.pageColorMode,
-    setPageColorMode: state.setPageColorMode
-  })));
+  const { addPage } = useEditorLayoutActions();
+  const subplots = useSubplots();
+  const { currentPlotId, setCurrentPlotId, addSubplot } = usePlotActions();
+  const { pageColorMode, setPageColorMode } = usePageAppearanceState();
 
   const handleAddNewPage = () => {
     const x = Math.random() * 400;
@@ -57,7 +46,7 @@ export const EditorToolbar: React.FC = memo(() => {
             options={plotOptions}
             value={currentPlotId || 'MAIN'}
             placeholder="Select Plot..."
-            onSelect={(val) => setCurrentPlotId(val === 'MAIN' ? null : val)}
+            onSelect={(val) => setCurrentPlotId(val === 'MAIN' ? null : (val as string))}
           />
           <span style={{ color: 'var(--color-text-secondary)', marginLeft: '12px' }}>{currentPlotId ? 'Subplot' : 'Main Plot'}</span>
           <Button variant="secondary" size="sm" onClick={handleAddSubplot} style={{ marginLeft: '12px' }}>

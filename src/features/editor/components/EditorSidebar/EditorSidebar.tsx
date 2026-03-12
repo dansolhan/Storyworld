@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 import { useReactFlow } from '@xyflow/react';
 import { Target } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
@@ -22,42 +21,22 @@ const PARAGRAPH_FEATURES = [
   new InsertVariableFeature(),
 ];
 
+import { useSelectedPageId } from '../../hooks/page/useSelectedPageId';
+import { usePageActions } from '../../hooks/page/usePageActions';
+import { useParagraphActions } from '../../hooks/page/useParagraphActions';
+import { useChoiceActions } from '../../hooks/page/useChoiceActions';
+import { useConnectingChoice } from '../../hooks/page/useConnectingChoice';
+import { useAtmospheres } from '../../hooks/page/useAtmospheres';
+import { useSidebarState } from '../../hooks/view/useSidebarState';
+
 export const EditorSidebar: React.FC = React.memo(() => {
-  const {
-    selectedPageId,
-    setSelectedPage,
-    isEditorSidebarExpanded,
-    setIsEditorSidebarExpanded,
-    sidebarTab,
-    setSidebarTab,
-    updatePageTitle,
-    updatePageType,
-    addParagraph,
-    updateParagraph,
-    addChoice,
-    updateChoiceText,
-    connectingChoice,
-    setConnectingChoice,
-    createPageFromChoice,
-    atmospheres
-  } = useEditorStore(useShallow((state) => ({
-    selectedPageId: state.selectedPageId,
-    setSelectedPage: state.setSelectedPage,
-    isEditorSidebarExpanded: state.isEditorSidebarExpanded,
-    setIsEditorSidebarExpanded: state.setIsEditorSidebarExpanded,
-    sidebarTab: state.sidebarTab,
-    setSidebarTab: state.setSidebarTab,
-    updatePageTitle: state.updatePageTitle,
-    updatePageType: state.updatePageType,
-    addParagraph: state.addParagraph,
-    updateParagraph: state.updateParagraph,
-    addChoice: state.addChoice,
-    updateChoiceText: state.updateChoiceText,
-    connectingChoice: state.connectingChoice,
-    setConnectingChoice: state.setConnectingChoice,
-    createPageFromChoice: state.createPageFromChoice,
-    atmospheres: state.atmospheres
-  })));
+  const selectedPageId = useSelectedPageId();
+  const { setSelectedPage, updatePageTitle, updatePageType } = usePageActions();
+  const { isEditorSidebarExpanded, setIsEditorSidebarExpanded, sidebarTab, setSidebarTab } = useSidebarState();
+  const { addParagraph, updateParagraph } = useParagraphActions();
+  const { addChoice, updateChoiceText, setConnectingChoice, createPageFromChoice } = useChoiceActions();
+  const connectingChoice = useConnectingChoice();
+  const atmospheres = useAtmospheres();
 
   const [previewStory, setPreviewStory] = useState(false);
 

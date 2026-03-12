@@ -12,7 +12,8 @@ This file contains the core conventions and strict rules for the Storyworld AI p
 ## 🏗️ Architecture & Organization
 - **Component Driven**: Build everything as functional React components.
 - **Client-Only Architecture**: The engine is designed as a 100% client-side React App using Vite.
-- **[CRITICAL] Strict Logical Separation**: Always organize code (including types, constants, and utilities) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files" like `models.ts` or `types.ts`.
+- [CRITICAL] Strict Logical Separation: Always organize code (including types, constants, utilities, and hooks) into logically separated folders reflecting their domain entity. **Never** dump multiple discrete entities into generic "god files".
+- [CRITICAL] One Entity Per File: Every custom hook, component, or utility of significant size MUST live in its own dedicated file named exactly after the entity (e.g., `useNodes.ts`).
 - **Example Data**: The example story data is strictly maintained in `src/data/exampleStory.json`. Do not use or recreate a TypeScript version (`exampleStory.ts`) for this, to avoid managing duplicate states. Import the JSON directly.
 - **Feature-Sliced Design**: Organize code by domains/features rather than strictly by technical type. 
   ```text
@@ -52,9 +53,12 @@ This file contains the core conventions and strict rules for the Storyworld AI p
   - Subdivide complex stores into **Slices** organized by domain entities (e.g., `src/features/editor/domain/Page/pageSlice.ts`). 
   - The root store (e.g., `useEditorStore.ts`) should strictly act as a coordinator that combines the slices, and should contain exactly zero business logic itself.
 - **React State**: Prefer standard React state hooks (`useState`, `useMemo`, `useCallback`) for localized, transient component state (e.g., open/closed toggles).
-- **Custom Hooks Organization**: Separate reusable logic into custom hooks. 
-  - **Feature-Specific Logic**: Organize these in a `hooks` folder close to their feature (e.g., `src/features/editor/hooks/useNodeDrag.ts`). This is the preferred pattern as it keeps domain logic encapsulated.
-  - **Global/Shared Logic**: If a hook is truly generic and used across multiple distinct features, place it in `src/hooks/`.
+- **Custom Hooks Organization**: 
+  - **Feature-Specific Logic**: Organize hooks in domain-specific subfolders (e.g., `src/features/editor/hooks/graph/useNodes.ts`).
+  - **[CRITICAL] One Hook Per File**: Every custom hook MUST have its own file. Do NOT group multiple hooks into a single "state" or "hooks" file.
+  - **[CRITICAL] No Barrel Files**: Do NOT use `index.ts` or barrel files to re-export hooks. Code MUST import directly from the source hook file to maintain clear dependency graphs and prevent circularity.
+  - **Focused Selectors**: Hooks should return the smallest possible "slice" of state. Use `useShallow` when returning objects containing multiple properties from a store to prevent unnecessary re-renders.
+  - **Global/Shared Logic**: Generic hooks used across features live in `src/hooks/`.
 
 ## 🤖 AI Conduct
 - **Honest & Critical Sparring Partner**: Be an honest programming assistant. Do not coddle or exaggerate the quality of ideas. Be critical where criticism is due. Maintain a friendly and joyous tone, but absolutely object if a suggested approach represents an anti-pattern, a bad architectural choice, or flawed logic.
