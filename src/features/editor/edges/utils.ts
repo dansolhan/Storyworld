@@ -1,87 +1,76 @@
 import { Position, type InternalNode } from '@xyflow/react';
 
-// returns the position (top,right,bottom or right) passed node compared to
-function getParams(nodeA: InternalNode, nodeB: InternalNode, handleId?: string | null) {
+function getNodeCenter(node: InternalNode) {
+  return {
+    x: node.internals.positionAbsolute.x + (node.measured.width ?? 0) / 2,
+    y: node.internals.positionAbsolute.y + (node.measured.height ?? 0) / 2,
+  };
+}
+
+/**
+ * Get the exit/entry point on a node's border at the given cardinal side.
+ * Shifty by 'offset' perpendicular to the side's axis to allow parallel edges.
+ */
+function getPointOnSide(
+  node: InternalNode,
+  side: Position,
+  offset: number = 0
+): { x: number; y: number } {
+  const w = node.measured.width ?? 0;
+  const h = node.measured.height ?? 0;
+  const abs = node.internals.positionAbsolute;
+
+  switch (side) {
+    case Position.Top:
+      return { x: abs.x + w / 2 + offset, y: abs.y };
+    case Position.Bottom:
+      return { x: abs.x + w / 2 + offset, y: abs.y + h };
+    case Position.Left:
+      return { x: abs.x, y: abs.y + h / 2 + offset };
+    case Position.Right:
+      return { x: abs.x + w, y: abs.y + h / 2 + offset };
+  }
+}
+
+/**
+ * Determine which side of `nodeA` faces `nodeB`, then return the
+ * center-of-side (plus offset) coordinates and the cardinal direction.
+ */
+function getParams(
+  nodeA: InternalNode,
+  nodeB: InternalNode,
+  offset: number = 0
+) {
   const centerA = getNodeCenter(nodeA);
   const centerB = getNodeCenter(nodeB);
 
-  const horizontalDiff = Math.abs(centerA.x - centerB.x);
-  const verticalDiff = Math.abs(centerA.y - centerB.y);
+  const hDiff = Math.abs(centerA.x - centerB.x);
+  const vDiff = Math.abs(centerA.y - centerB.y);
 
-  let position;
+  const position: Position =
+    hDiff > vDiff
+      ? centerA.x > centerB.x ? Position.Left : Position.Right
+      : centerA.y > centerB.y ? Position.Top  : Position.Bottom;
 
-  // when the horizontal difference between the nodes is bigger, we use Left or Right position
-  if (horizontalDiff > verticalDiff) {
-    position = centerA.x > centerB.x ? Position.Left : Position.Right;
-  } else {
-    // here the vertical difference between the nodes is bigger, so we use Top or Bottom position
-    position = centerA.y > centerB.y ? Position.Top : Position.Bottom;
-  }
-
-  const [x, y] = getHandleCoordsByPosition(nodeA, position, handleId);
+  const { x, y } = getPointOnSide(nodeA, position, offset);
   return { x, y, position };
 }
 
-function getHandleCoordsByPosition(node: InternalNode, handlePosition: Position, handleId?: string | null) {
-  // all handles are from type source, that's why we use handleBounds.source here
-  // we filter by position
-  const handleBounds = node.internals.handleBounds;
-  const handles = handleBounds?.source || handleBounds?.target;
+/**
+ * Returns (sx, sy, tx, ty, sourcePos, targetPos) for a floating bezier edge.
+ *
+ * Takes an 'offset' to shift the edge points for bidirectional or parallel edges.
+ */
+export function getEdgeParams(
+  source: InternalNode,
+  target: InternalNode,
+  _sourceHandle?: string | null,
+  _targetHandle?: string | null,
+  offset: number = 0
+) {
+  const { x: sx, y: sy, position: sourcePos } = getParams(source, target, offset);
+  // Note: the target node's offset is inverted so the lines stay parallel
+  const { x: tx, y: ty, position: targetPos } = getParams(target, source, offset);
 
-  // If no handles are found, we default to the node center boundaries
-  let handle = null;
-  if (handleId) {
-    handle = handles?.find((h) => h.id === handleId);
-  }
-  if (!handle) {
-    handle = handles?.find((h) => h.position === handlePosition);
-  }
-
-  let offsetX = handle ? handle.x + handle.width / 2 : node.measured.width! / 2;
-  let offsetY = handle ? handle.y + handle.height / 2 : node.measured.height! / 2;
-
-  // Fallback if handle wasn't found - compute generic borders
-  if (!handle) {
-    switch (handlePosition) {
-      case Position.Top:
-        offsetY = 0;
-        break;
-      case Position.Bottom:
-        offsetY = node.measured.height!;
-        break;
-      case Position.Left:
-        offsetX = 0;
-        break;
-      case Position.Right:
-        offsetX = node.measured.width!;
-        break;
-    }
-  }
-
-  const x = node.internals.positionAbsolute.x + offsetX;
-  const y = node.internals.positionAbsolute.y + offsetY;
-
-  return [x, y];
-}
-
-function getNodeCenter(node: InternalNode) {
-  return {
-    x: node.internals.positionAbsolute.x + node.measured.width! / 2,
-    y: node.internals.positionAbsolute.y + node.measured.height! / 2,
-  };
-}
-
-// Returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) for a node to node edge connection.
-export function getEdgeParams(source: InternalNode, target: InternalNode, sourceHandle?: string | null, targetHandle?: string | null) {
-  const { x: sx, y: sy, position: sourcePos } = getParams(source, target, sourceHandle);
-  const { x: tx, y: ty, position: targetPos } = getParams(target, source, targetHandle);
-
-  return {
-    sx,
-    sy,
-    tx,
-    ty,
-    sourcePos,
-    targetPos,
-  };
+  return { sx, sy, tx, ty, sourcePos, targetPos };
 }

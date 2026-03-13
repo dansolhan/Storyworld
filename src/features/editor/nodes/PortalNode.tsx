@@ -13,6 +13,8 @@ export interface PortalNodeData extends Record<string, unknown> {
 
 export type PortalNodeType = Node<PortalNodeData, 'portalNode'>;
 
+const HIDDEN: React.CSSProperties = { opacity: 0 };
+
 export const PortalNode = React.memo(({ data, id }: NodeProps<PortalNodeType>) => {
   const { setCurrentPlotId, setHoveredPageId } = useEditorStore(
     useShallow((state) => ({
@@ -34,14 +36,19 @@ export const PortalNode = React.memo(({ data, id }: NodeProps<PortalNodeType>) =
   ].join('\n');
 
   return (
-    <div 
-      className={styles.node} 
-      onDoubleClick={handleDoubleClick} 
+    <div
+      className={styles.node}
+      onDoubleClick={handleDoubleClick}
       onMouseEnter={() => setHoveredPageId(id)}
       onMouseLeave={() => setHoveredPageId(null)}
       title={tooltip}
     >
-      <Handle type="target" position={Position.Left} className={styles.handle} style={{ opacity: 0 }} />
+      {/* 4 invisible target handles — one per side */}
+      <Handle type="target" position={Position.Top}    id="t-top"    style={HIDDEN} />
+      <Handle type="target" position={Position.Bottom} id="t-bottom" style={HIDDEN} />
+      <Handle type="target" position={Position.Left}   id="t-left"   style={HIDDEN} />
+      <Handle type="target" position={Position.Right}  id="t-right"  style={HIDDEN} />
+
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
         <ellipse cx="12" cy="12" rx="10" ry="4" />
         <path d="M12 8v8" />

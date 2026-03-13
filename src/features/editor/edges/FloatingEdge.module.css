@@ -1,34 +1,49 @@
-/* The label is hidden until the edge is hovered/selected */
+/* Edge label — rendered via EdgeLabelRenderer (HTML, not SVG) */
 .label {
-  height: 100%;
-  width: 100%;
+  position: absolute;
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.labelInner {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-  padding: 0 12px;
+  gap: 6px;
+  padding: 2px 10px;
   background: var(--color-bg-primary, #fff);
   border: 1px solid var(--color-border-default, #e2e8f0);
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   pointer-events: none;
   user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.entry {
+  background-color: var(--color-edge-entry-bg);
+  border-color: var(--color-edge-entry-stroke);
+}
+
+.entry .labelText {
+  color: var(--color-edge-entry-text);
+}
+
+.entry .iconWrapper {
+  color: var(--color-edge-entry-stroke);
+}
+
+.exit {
+  background-color: var(--color-edge-exit-bg);
+  border-color: var(--color-edge-exit-stroke);
+}
+
+.exit .labelText {
+  color: var(--color-edge-exit-text);
+}
+
+.exit .iconWrapper {
+  color: var(--color-edge-exit-stroke);
 }
 
 .iconWrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   color: var(--color-primary-500);
 }
@@ -38,13 +53,7 @@
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-text-secondary);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-shrink: 1;
-}
-
-.labelForeign {
-  overflow: visible;
-  pointer-events: none;
+  max-width: 200px;
 }

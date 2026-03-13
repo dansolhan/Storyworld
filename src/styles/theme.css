@@ -101,6 +101,15 @@
   --color-edge-default: var(--color-border-strong);
   --color-edge-selected: var(--color-primary-500);
 
+  /* Edge Flow Colors */
+  --color-edge-entry-bg: #ecfdf5; /* Emerald 50 */
+  --color-edge-entry-text: #059669; /* Emerald 600 */
+  --color-edge-entry-stroke: #10b981; /* Emerald 500 */
+  
+  --color-edge-exit-bg: #eef2ff; /* Indigo 50 */
+  --color-edge-exit-text: #4f46e5; /* Indigo 600 */
+  --color-edge-exit-stroke: #6366f1; /* Indigo 500 */
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -138,6 +147,15 @@
 
     --color-node-bg: var(--color-bg-secondary);
     --color-node-border: var(--color-border-default);
+
+    /* Dark Mode Edge Flow Colors */
+    --color-edge-entry-bg: rgba(16, 185, 129, 0.15);
+    --color-edge-entry-text: #34d399;
+    --color-edge-entry-stroke: #10b981;
+
+    --color-edge-exit-bg: rgba(99, 102, 241, 0.15);
+    --color-edge-exit-text: #818cf8;
+    --color-edge-exit-stroke: #6366f1;
 
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);

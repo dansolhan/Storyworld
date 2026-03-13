@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Handle, Position, useUpdateNodeInternals, useNodeConnections, type NodeProps, type Node } from '@xyflow/react';
+import { Handle, Position, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 import { Globe, AlertCircle } from 'lucide-react';
 import { Card } from '../../../components/ui/Card/Card';
@@ -8,7 +8,6 @@ import { useEditorStore } from '../store/useEditorStore';
 import styles from './PageNode.module.css';
 
 export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
-  // Optional legacy props; no longer passed from GraphEditor to avoid re-renders
   isStartNode?: boolean;
   pageColorMode?: 'type' | 'atmosphere';
   atmosphereColor?: string;
@@ -16,11 +15,11 @@ export type PageNodeData = Omit<Page, 'id'> & Record<string, unknown> & {
 
 export type PageNodeType = Node<PageNodeData, 'pageNode'>;
 
+const HIDDEN: React.CSSProperties = { opacity: 0 };
+
 export const PageNode = React.memo(
   ({ data, id }: NodeProps<PageNodeType>) => {
     const updateNodeInternals = useUpdateNodeInternals();
-    const targetConnections = useNodeConnections({ handleType: 'target' });
-    const hasIncoming = targetConnections.length > 0;
 
     // ── Native Store Subscriptions ──
     const pageTitle = useEditorStore(state => state.pages?.[id]?.title);
@@ -28,13 +27,14 @@ export const PageNode = React.memo(
     const title = pageTitle || data.title || 'Untitled Page';
     const choices = pageChoices || data.choices || [];
 
-    // Use atomic selectors to prevent unnecessary re-renders when other state changes
     const isStartNode = useEditorStore(state => state.startPageId === id) || data.isStartNode;
     const pageColorMode = useEditorStore(state => state.pageColorMode) || data.pageColorMode;
-    
-    const atmosphereColor = useEditorStore(useShallow(state => 
+
+    const atmosphereColor = useEditorStore(useShallow(state =>
       data.atmosphereId ? state.atmospheres[data.atmosphereId as string]?.color : undefined
     )) || data.atmosphereColor;
+
+    const setHoveredPageId = useEditorStore(state => state.setHoveredPageId);
 
     useEffect(() => {
       updateNodeInternals(id);
@@ -44,21 +44,17 @@ export const PageNode = React.memo(
     const typeClass = isAtmosphereMode ? '' : (data.type === 'plot' ? styles.typePlot : styles.typeLocation);
     const customBg = isAtmosphereMode ? (atmosphereColor || 'var(--color-bg-tertiary)') : undefined;
 
-    const setHoveredPageId = useEditorStore(state => state.setHoveredPageId);
-
     return (
-      <div 
+      <div
         className={`${styles.nodeWrapper} ${typeClass}`}
         onMouseEnter={() => setHoveredPageId(id)}
         onMouseLeave={() => setHoveredPageId(null)}
       >
-        {/* Target handle - where this page can be connected TO */}
-        <Handle
-          type="target"
-          position={Position.Top}
-          className={styles.targetHandle}
-          style={{ opacity: hasIncoming ? 1 : 0 }}
-        />
+        {/* 4 invisible target handles — one per side for floating edge routing */}
+        <Handle type="target" position={Position.Top}    id="t-top"    style={HIDDEN} />
+        <Handle type="target" position={Position.Bottom} id="t-bottom" style={HIDDEN} />
+        <Handle type="target" position={Position.Left}   id="t-left"   style={HIDDEN} />
+        <Handle type="target" position={Position.Right}  id="t-right"  style={HIDDEN} />
 
         <Card
           padding="md"
@@ -88,33 +84,26 @@ export const PageNode = React.memo(
             )}
             <h3 className={styles.title}>{title}</h3>
           </div>
-
-          {/* Output Handles for Choices (with Hover Tooltip via title attribute) */}
-          <div className={styles.choicesContainer}>
-            {choices.map((choice, index) => (
-              <div key={choice.id} className={styles.choiceWrapper} title={choice.text || 'Empty Choice'}>
-                <Handle
-                  type="source"
-                  position={Position.Right}
-                  id={choice.id}
-                  className={styles.sourceHandle}
-                  style={{
-                    top: `${(index + 1) * (100 / (choices.length + 1))}%`,
-                    // Show handle if choice has a target page OR if it's action-only (synth node will appear)
-                    opacity: (choice.targetPageId || (choice.actions && choice.actions.length > 0)) ? 1 : 0
-                  }}
-                />
-              </div>
-            ))}
-          </div>
         </Card>
+
+        {/* Source handles for choices — direct children of nodeWrapper so React Flow
+            measures their positions correctly for edge routing */}
+        {choices.map((choice, index) => (
+          <Handle
+            key={choice.id}
+            type="source"
+            position={Position.Right}
+            id={choice.id}
+            style={{
+              ...HIDDEN,
+              top: `${(index + 1) * (100 / (choices.length + 1))}%`,
+            }}
+          />
+        ))}
       </div>
     );
   },
   (prevProps, nextProps) => {
-    // Custom comparison to ignore high-frequency props like xPos, yPos, dragging
-    // We only re-render if essential data or ID or selection status changes
-    // React Flow passes selected via props
     return (
       prevProps.id === nextProps.id &&
       prevProps.selected === nextProps.selected &&
@@ -122,4 +111,3 @@ export const PageNode = React.memo(
     );
   }
 );
-

@@ -13,6 +13,8 @@ export interface ActionNodeData extends Record<string, unknown> {
 
 export type ActionNodeType = Node<ActionNodeData, 'actionNode'>;
 
+const HIDDEN: React.CSSProperties = { opacity: 0 };
+
 export const ActionNode = React.memo(({ data, id }: NodeProps<ActionNodeType>) => {
   const { setSelectedPage, setSidebarTab, setHoveredPageId } = useEditorStore(
     useShallow((state) => ({
@@ -34,14 +36,19 @@ export const ActionNode = React.memo(({ data, id }: NodeProps<ActionNodeType>) =
   ].filter(Boolean).join('\n');
 
   return (
-    <div 
-      className={styles.node} 
-      onDoubleClick={handleDoubleClick} 
+    <div
+      className={styles.node}
+      onDoubleClick={handleDoubleClick}
       onMouseEnter={() => setHoveredPageId(id)}
       onMouseLeave={() => setHoveredPageId(null)}
       title={tooltip}
     >
-      <Handle type="target" position={Position.Left} className={styles.handle} style={{ opacity: 0 }} />
+      {/* 4 invisible target handles — one per side */}
+      <Handle type="target" position={Position.Top}    id="t-top"    style={HIDDEN} />
+      <Handle type="target" position={Position.Bottom} id="t-bottom" style={HIDDEN} />
+      <Handle type="target" position={Position.Left}   id="t-left"   style={HIDDEN} />
+      <Handle type="target" position={Position.Right}  id="t-right"  style={HIDDEN} />
+
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
         <circle cx="12" cy="12" r="3" />
         <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
