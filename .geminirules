@@ -40,7 +40,7 @@ This file contains the core conventions and strict rules for the Storyworld AI p
 
 ## 🧱 Component Rules & Extraction
 - **Generic UI Components**: Place all highly reusable, generic UI components (Buttons, Inputs, Cards, Popovers) strictly within `src/components/ui/`.
-- **[CRITICAL] DRY Principle & Extraction**: Actively identify UI elements, hooks, or logic that can be extracted into isolated, generalized code. Do not duplicate code. Always maintain a healthy separation of concerns by creating reusable utility functions or generic UI components wherever appropriate. If you write the same code twice, abstract it.
+- **[CRITICAL] DRY Principle & Extraction**: Actively identify UI elements, hooks, or logic that can be extracted into isolated, generalized code. Do not duplicate code. Always maintain a healthy separation of concerns by creating reusable utility functions or generic UI components wherever appropriate. If you write the same code thrice, abstract it.
 - **Extracting Logic to Hooks**: React components should prioritize rendering UI. If a component contains complex logic, `useEffect` orchestrations, or multiple pieces of tightly coupled state, ALWAYS extract this explicitly into a custom hook (e.g. `useAtmosphere`) to keep the components cognitively simple.
 - **Component Size Limit**: Components must rarely exceed 200 lines of code. If a component grows beyond this threshold, actively extract internal state and logic into custom local hooks (or shared hooks) or imported functions to maintain readability and separation of concerns.
 

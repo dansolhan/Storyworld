@@ -13,11 +13,12 @@ export interface ActionNodeData extends Record<string, unknown> {
 
 export type ActionNodeType = Node<ActionNodeData, 'actionNode'>;
 
-export const ActionNode = React.memo(({ data }: NodeProps<ActionNodeType>) => {
-  const { setSelectedPage, setSidebarTab } = useEditorStore(
+export const ActionNode = React.memo(({ data, id }: NodeProps<ActionNodeType>) => {
+  const { setSelectedPage, setSidebarTab, setHoveredPageId } = useEditorStore(
     useShallow((state) => ({
       setSelectedPage: state.setSelectedPage,
       setSidebarTab: state.setSidebarTab,
+      setHoveredPageId: state.setHoveredPageId,
     }))
   );
 
@@ -33,7 +34,13 @@ export const ActionNode = React.memo(({ data }: NodeProps<ActionNodeType>) => {
   ].filter(Boolean).join('\n');
 
   return (
-    <div className={styles.node} onDoubleClick={handleDoubleClick} title={tooltip}>
+    <div 
+      className={styles.node} 
+      onDoubleClick={handleDoubleClick} 
+      onMouseEnter={() => setHoveredPageId(id)}
+      onMouseLeave={() => setHoveredPageId(null)}
+      title={tooltip}
+    >
       <Handle type="target" position={Position.Left} className={styles.handle} style={{ opacity: 0 }} />
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
         <circle cx="12" cy="12" r="3" />

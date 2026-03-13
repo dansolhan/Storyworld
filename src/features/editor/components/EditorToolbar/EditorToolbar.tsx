@@ -1,10 +1,12 @@
 import React, { useMemo, memo } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Combobox } from '../../../../components/ui/Combobox/Combobox';
 import { useEditorLayoutActions } from '../../hooks/core/useEditorLayoutActions';
 import { useSubplots } from '../../hooks/story/useSubplots';
 import { usePlotActions } from '../../hooks/story/usePlotActions';
 import { usePageAppearanceState } from '../../hooks/view/usePageAppearanceState';
+import { useEdgeVisibilityState } from '../../hooks/view/useEdgeVisibilityState';
 import styles from './EditorToolbar.module.css';
 
 export const EditorToolbar: React.FC = memo(() => {
@@ -12,6 +14,7 @@ export const EditorToolbar: React.FC = memo(() => {
   const subplots = useSubplots();
   const { currentPlotId, setCurrentPlotId, addSubplot } = usePlotActions();
   const { pageColorMode, setPageColorMode } = usePageAppearanceState();
+  const { showAllEdges, setShowAllEdges } = useEdgeVisibilityState();
 
   const handleAddNewPage = () => {
     const x = Math.random() * 400;
@@ -59,6 +62,16 @@ export const EditorToolbar: React.FC = memo(() => {
             placeholder="Color Mode"
             onSelect={(val) => setPageColorMode(val as 'type' | 'atmosphere')}
           />
+          <div style={{ width: '12px' }} /> {/* Spacer */}
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => setShowAllEdges(!showAllEdges)}
+            title={showAllEdges ? "Hide Edges (only show on hover/click)" : "Show All Edges"}
+          >
+            {showAllEdges ? <Eye size={16} /> : <EyeOff size={16} />}
+            <span style={{ marginLeft: '8px' }}>Edges</span>
+          </Button>
           <div style={{ width: '12px' }} /> {/* Spacer */}
           <Button variant="primary" size="sm" onClick={handleAddNewPage}>
             + Add Page Node

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore } from '../store/useEditorStore';
 import styles from './PortalNode.module.css';
 
@@ -12,8 +13,13 @@ export interface PortalNodeData extends Record<string, unknown> {
 
 export type PortalNodeType = Node<PortalNodeData, 'portalNode'>;
 
-export const PortalNode = React.memo(({ data }: NodeProps<PortalNodeType>) => {
-  const setCurrentPlotId = useEditorStore((state) => state.setCurrentPlotId);
+export const PortalNode = React.memo(({ data, id }: NodeProps<PortalNodeType>) => {
+  const { setCurrentPlotId, setHoveredPageId } = useEditorStore(
+    useShallow((state) => ({
+      setCurrentPlotId: state.setCurrentPlotId,
+      setHoveredPageId: state.setHoveredPageId,
+    }))
+  );
 
   const handleDoubleClick = () => {
     if (data.subplotId) {
@@ -28,7 +34,13 @@ export const PortalNode = React.memo(({ data }: NodeProps<PortalNodeType>) => {
   ].join('\n');
 
   return (
-    <div className={styles.node} onDoubleClick={handleDoubleClick} title={tooltip}>
+    <div 
+      className={styles.node} 
+      onDoubleClick={handleDoubleClick} 
+      onMouseEnter={() => setHoveredPageId(id)}
+      onMouseLeave={() => setHoveredPageId(null)}
+      title={tooltip}
+    >
       <Handle type="target" position={Position.Left} className={styles.handle} style={{ opacity: 0 }} />
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
         <ellipse cx="12" cy="12" rx="10" ry="4" />

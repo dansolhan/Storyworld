@@ -141,6 +141,12 @@ export interface EditorState {
   isPanning: boolean;
   setIsPanning: (isPanning: boolean) => void;
 
+  // New UI states for edge visibility
+  showAllEdges: boolean;
+  setShowAllEdges: (show: boolean) => void;
+  hoveredPageId: string | null;
+  setHoveredPageId: (pageId: string | null) => void;
+
   // Domain Handlers - Page
   addPage: (x: number, y: number, atmosphereId?: string) => string;
   updatePageTitle: (pageId: string, newTitle: string) => void;

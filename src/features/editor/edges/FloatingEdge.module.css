@@ -1,31 +1,50 @@
 /* The label is hidden until the edge is hovered/selected */
 .label {
-  display: none;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   width: 100%;
-  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.labelInner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  padding: 0 12px;
   background: var(--color-bg-primary, #fff);
   border: 1px solid var(--color-border-default, #e2e8f0);
-  border-radius: 4px;
-  font-family: var(--font-family-sans);
-  font-size: 0.72rem;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   pointer-events: none;
   user-select: none;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-primary-500);
+}
+
+.labelText {
+  font-family: var(--font-family-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
 }
 
 .labelForeign {
   overflow: visible;
   pointer-events: none;
-}
-
-/* React Flow adds :hover on the <g class="react-flow__edge"> element */
-:global(.react-flow__edge:hover) .label,
-:global(.react-flow__edge.selected) .label {
-  display: flex;
 }

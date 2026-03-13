@@ -44,8 +44,14 @@ export const PageNode = React.memo(
     const typeClass = isAtmosphereMode ? '' : (data.type === 'plot' ? styles.typePlot : styles.typeLocation);
     const customBg = isAtmosphereMode ? (atmosphereColor || 'var(--color-bg-tertiary)') : undefined;
 
+    const setHoveredPageId = useEditorStore(state => state.setHoveredPageId);
+
     return (
-      <div className={`${styles.nodeWrapper} ${typeClass}`}>
+      <div 
+        className={`${styles.nodeWrapper} ${typeClass}`}
+        onMouseEnter={() => setHoveredPageId(id)}
+        onMouseLeave={() => setHoveredPageId(null)}
+      >
         {/* Target handle - where this page can be connected TO */}
         <Handle
           type="target"
