@@ -2,8 +2,9 @@ import type { StateCreator } from 'zustand';
 import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import type { EditorState } from '../editorTypes';
 import { updateGraphVisibility } from '../../utils/visibility';
+import { autoLayoutGraph } from '../../utils/layout';
 
-export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'nodes' | 'edges' | 'onNodesChange' | 'onEdgesChange' | 'onConnect' | 'setNodes' | 'setEdges' | 'loadStory'>> = (set, get) => ({
+export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'nodes' | 'edges' | 'onNodesChange' | 'onEdgesChange' | 'onConnect' | 'setNodes' | 'setEdges' | 'loadStory' | 'organizeGraph'>> = (set, get) => ({
   nodes: [],
   edges: [],
 
@@ -41,6 +42,10 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 
+  organizeGraph: () => set((state) => ({
+    nodes: autoLayoutGraph(state.nodes, state.edges) as any
+  })),
+
   loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres, statusData }) => set(() => {
     const visibleGraph = updateGraphVisibility(nodes, edges, null);
     return {
@@ -57,6 +62,6 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
       audio: audio || {},
       atmospheres: atmospheres || {},
       statusData: statusData || [],
-    };
+    } as any;
   }),
 });

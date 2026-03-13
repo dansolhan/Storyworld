@@ -77,6 +77,7 @@ export interface EditorState {
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
     statusData?: StatusData[];
   }) => void;
+  organizeGraph: () => void;
 
   // Variables
   variables: Record<string, StoryVariable>;

@@ -4,12 +4,15 @@ import {
   Background,
   Controls,
   MiniMap,
+  Panel,
 } from '@xyflow/react';
+import { Wand2 } from 'lucide-react';
 import { useNodes } from '../../hooks/graph/useNodes';
 import { useEdges } from '../../hooks/graph/useEdges';
 import { useGraphHandlers } from '../../hooks/graph/useGraphHandlers';
 import { useInteractionState } from '../../hooks/view/useInteractionState';
 import { useFlowInteraction } from '../../hooks/useFlowInteraction';
+import { useEditorStore } from '../../store/useEditorStore';
 import { PageNode } from '../../nodes/PageNode';
 import { ActionNode } from '../../nodes/ActionNode';
 import { PortalNode } from '../../nodes/PortalNode';
@@ -44,6 +47,8 @@ export const FlowView: React.FC = React.memo(() => {
     handleNodeDoubleClick,
     handlePaneClick,
   } = useFlowInteraction();
+
+  const organizeGraph = useEditorStore(state => state.organizeGraph);
 
   const flowStyle = React.useMemo(() => ({ 
     width: '100%', 
@@ -96,6 +101,18 @@ export const FlowView: React.FC = React.memo(() => {
         <Background gap={16} color="var(--color-border-default)" />
         <Controls />
         {!isDragging && <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />}
+        
+        <Panel position="top-right" className={styles.flowPanel}>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={organizeGraph}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <Wand2 size={16} />
+            Organize Graph
+          </Button>
+        </Panel>
       </ReactFlow>
     </div>
   );

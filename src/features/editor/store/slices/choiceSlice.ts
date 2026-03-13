@@ -4,6 +4,7 @@ import type { EditorState } from '../editorTypes';
 import type { Choice } from '../../../../domain/Choice/Choice';
 import type { Action } from '../../../../domain/Actions/Action';
 import { syncSyntheticNodes } from '../../utils/syncSyntheticNodes';
+import { findSmartNodePosition } from '../../utils/layout';
 
 export const createChoiceSlice: StateCreator<
   EditorState,
@@ -147,9 +148,8 @@ export const createChoiceSlice: StateCreator<
     const sourceNode = nodes.find((n) => n.id === sourcePageId);
 
     if (sourceNode) {
-      // Offset the new page to the right
-      const x = sourceNode.position.x + 400;
-      const y = sourceNode.position.y;
+      // Find a smart position to avoid overlap
+      const { x, y } = findSmartNodePosition(nodes, sourceNode.position.x, sourceNode.position.y);
       const atmosphereId = sourceNode.type === 'pageNode' ? sourceNode.data.atmosphereId : undefined;
 
       const newPageId = addPage(x, y, atmosphereId as string | undefined);

@@ -65,3 +65,9 @@
     opacity: 1;
   }
 }
+
+.flowPanel {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+}

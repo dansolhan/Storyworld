@@ -37,7 +37,7 @@ export function syncSyntheticNodes(
     const pageDomain = pages[page.id];
     if (!pageDomain) return;
 
-    (pageDomain.choices || []).forEach((choice: any, idx) => {
+    (pageDomain.choices || []).forEach((choice: any) => {
       if (choice.targetPageId) return; // connected to a real page
 
       const choiceActions = Array.isArray(choice.actions) ? choice.actions : [];
@@ -53,10 +53,15 @@ export function syncSyntheticNodes(
         const targetPageName = targetPage?.title || params.targetPageId || '?';
         const nodeId = `portal-node-${choice.id}`;
 
+        // Calculate a centered horizontal offset above the node
+        const choiceIdx = (pageDomain.choices || []).indexOf(choice);
+        const totalChoices = (pageDomain.choices || []).filter((c: any) => !c.targetPageId).length;
+        const hOffset = (choiceIdx - (totalChoices - 1) / 2) * 80;
+
         synNodes.push({
           id: nodeId,
           type: 'portalNode',
-          position: existingPositions[nodeId] || { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          position: existingPositions[nodeId] || { x: pagePos.x + hOffset, y: pagePos.y - 120 },
           width: 44,
           height: 44,
           data: {
@@ -89,10 +94,14 @@ export function syncSyntheticNodes(
       } else {
         const nodeId = `action-node-${choice.id}`;
 
+        const choiceIdx = (pageDomain.choices || []).indexOf(choice);
+        const totalChoices = (pageDomain.choices || []).filter((c: any) => !c.targetPageId).length;
+        const hOffset = (choiceIdx - (totalChoices - 1) / 2) * 80;
+
         synNodes.push({
           id: nodeId,
           type: 'actionNode',
-          position: existingPositions[nodeId] || { x: pagePos.x + 280, y: pagePos.y + idx * 110 },
+          position: existingPositions[nodeId] || { x: pagePos.x + hOffset, y: pagePos.y - 120 },
           width: 44,
           height: 44,
           data: {
