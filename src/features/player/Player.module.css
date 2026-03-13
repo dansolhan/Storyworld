@@ -232,11 +232,9 @@
 }
 
 .popover {
-  transform: translateX(-50%);
   max-width: 300px;
   width: max-content;
-  animation: popIn 0.2s ease-out;
-  pointer-events: none;
+  pointer-events: auto;
   /* Override base Popover styles for the game theme */
   background-color: var(--player-bg-lighter) !important;
   border: 1px solid var(--player-accent) !important;
@@ -304,6 +302,24 @@
   border-top: 1px solid var(--player-accent);
 }
 
+.popover[data-placement="top"] .popoverArrow {
+  top: auto;
+  bottom: -6px;
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid #8a6d20;
+  border-bottom: 1px solid #8a6d20;
+}
+
+.popoverTitle {
+  font-family: 'Cinzel', serif;
+  font-size: var(--text-base);
+  color: var(--player-accent);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+  padding-bottom: var(--space-1);
+}
+
 .popoverText {
   font-family: var(--font-family-serif);
   font-size: var(--text-sm);
@@ -313,17 +329,6 @@
   z-index: 1;
 }
 
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
 
 .modalOverlay {
   position: fixed;

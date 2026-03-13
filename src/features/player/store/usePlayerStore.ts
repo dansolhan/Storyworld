@@ -16,7 +16,7 @@ interface PlayerState {
   variables: Record<string, StoryVariable>;
   messages: PlayerMessage[];
   shownMessageActionIds: Set<string>;
-  contextualPopover: { text: string; x: number; y: number } | null;
+  contextualPopover: { text: string; title?: string; x: number; y: number; width: number; height: number } | null;
   inventory: Record<string, number>;
   isTransitioning: boolean;
 
@@ -29,7 +29,7 @@ interface PlayerState {
   setMessages: (messages: PlayerMessage[] | ((prev: PlayerMessage[]) => PlayerMessage[])) => void;
   addMessages: (messages: PlayerMessage[]) => void;
   markActionsShown: (ids: string[]) => void;
-  setContextualPopover: (popover: { text: string; x: number; y: number } | null) => void;
+  setContextualPopover: (popover: { text: string; title?: string; x: number; y: number; width: number; height: number } | null) => void;
   modifyInventory: (itemId: string, amount: number) => void;
   setTransitioning: (val: boolean) => void;
   restart: () => void;

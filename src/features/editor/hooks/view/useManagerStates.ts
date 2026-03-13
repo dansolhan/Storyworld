@@ -14,6 +14,8 @@ export const useManagerStates = () => {
       setIsItemManagerOpen: state.setIsItemManagerOpen,
       isStatusDataManagerOpen: state.isStatusDataManagerOpen,
       setIsStatusDataManagerOpen: state.setIsStatusDataManagerOpen,
+      isContextManagerOpen: state.isContextManagerOpen,
+      setIsContextManagerOpen: state.setIsContextManagerOpen,
     }))
   );
 };

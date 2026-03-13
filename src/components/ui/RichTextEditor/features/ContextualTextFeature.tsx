@@ -5,8 +5,18 @@ import { RTEFeature } from '../RTEFeature';
 import { ContextualText } from '../extensions/ContextualText';
 import { Button } from '../../Button/Button';
 import styles from '../RichTextEditor.module.css';
-import { TextArea } from '../../TextArea/TextArea';
+import { Input } from '../../Input/Input';
 import { Popover } from '../../Popover/Popover';
+import { RichTextEditor } from '../RichTextEditor';
+import { BoldFeature } from './BoldFeature';
+import { ItalicFeature } from './ItalicFeature';
+import { InsertVariableFeature } from './InsertVariableFeature';
+
+const CONTEXT_EDITOR_FEATURES = [
+  new BoldFeature(),
+  new ItalicFeature(),
+  new InsertVariableFeature(),
+];
 
 
 
@@ -77,14 +87,16 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
     x: number;
     y: number;
     text: string;
+    title: string;
     pos: number | null;
-  }>({ visible: false, x: 0, y: 0, text: '', pos: null });
+  }>({ visible: false, x: 0, y: 0, text: '', title: '', pos: null });
 
   const [popoverState, setPopoverState] = useState<{
     visible: boolean;
     x: number;
     y: number;
     text: string;
+    title: string;
     isEdit: boolean;
     pos: number | null;
     range?: { from: number; to: number };
@@ -120,6 +132,7 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
           x: e.clientX,
           y: e.clientY,
           text: target.getAttribute('data-context') || '',
+          title: target.getAttribute('data-title') || '',
           pos: coordsPos ? coordsPos.pos : null,
         });
       } else {
@@ -140,6 +153,7 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
       x: menuState.x,
       y: menuState.y,
       text: menuState.text,
+      title: menuState.title,
       isEdit: true,
       pos: menuState.pos,
     });
@@ -165,13 +179,13 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
           .focus()
           .setTextSelection(popoverState.pos)
           .extendMarkRange('contextualText')
-          .setContextualText({ context: popoverState.text })
+          .setContextualText({ context: popoverState.text, title: popoverState.title })
           .run();
       } else if (!popoverState.isEdit && popoverState.range) {
         editor.chain()
           .focus()
           .setTextSelection({ from: popoverState.range.from, to: popoverState.range.to })
-          .setContextualText({ context: popoverState.text })
+          .setContextualText({ context: popoverState.text, title: popoverState.title })
           .run();
       }
     }
@@ -205,15 +219,24 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
         <h4 className={styles.popoverInputTitle}>
           {popoverState?.isEdit ? 'Edit Context' : 'Add Context'}
         </h4>
-        <TextArea
-          fullWidth
-          placeholder="Type your context text here..."
-          value={popoverState?.text || ''}
-          onChange={(e) =>
-            popoverState && setPopoverState({ ...popoverState, text: e.target.value })
-          }
-          autoFocus
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+          <Input
+            placeholder="Title (optional)"
+            value={popoverState?.title || ''}
+            onChange={(e) =>
+              popoverState && setPopoverState({ ...popoverState, title: e.target.value })
+            }
+          />
+          <div className={styles.contextEditorWrapper}>
+            <RichTextEditor
+              content={popoverState?.text || ''}
+              features={CONTEXT_EDITOR_FEATURES}
+              onChange={(html) =>
+                popoverState && setPopoverState({ ...popoverState, text: html })
+              }
+            />
+          </div>
+        </div>
         <div className={styles.popoverActions}>
           <Button variant="secondary" size="sm" onClick={() => setPopoverState(null)}>
             Cancel

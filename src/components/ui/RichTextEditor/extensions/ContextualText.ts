@@ -7,8 +7,8 @@ export interface ContextualTextOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     contextualText: {
-      setContextualText: (attributes: { context: string }) => ReturnType;
-      toggleContextualText: (attributes: { context: string }) => ReturnType;
+      setContextualText: (attributes: { context: string; title?: string }) => ReturnType;
+      toggleContextualText: (attributes: { context: string; title?: string }) => ReturnType;
       unsetContextualText: () => ReturnType;
     };
   }
@@ -36,6 +36,18 @@ export const ContextualText = Mark.create<ContextualTextOptions>({
           }
           return {
             'data-context': attributes.context,
+          };
+        },
+      },
+      title: {
+        default: null,
+        parseHTML: element => element.getAttribute('data-title'),
+        renderHTML: attributes => {
+          if (!attributes.title) {
+            return {};
+          }
+          return {
+            'data-title': attributes.title,
           };
         },
       },

@@ -128,6 +128,9 @@ export interface EditorState {
   isStatusDataManagerOpen: boolean;
   setIsStatusDataManagerOpen: (isOpen: boolean) => void;
 
+  isContextManagerOpen: boolean;
+  setIsContextManagerOpen: (isOpen: boolean) => void;
+
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;
   setConnectingChoice: (choice: { sourcePageId: string; choiceId: string } | null) => void;

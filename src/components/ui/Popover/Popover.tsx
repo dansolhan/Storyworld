@@ -1,5 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useTransitionStyles,
+} from '@floating-ui/react';
 import styles from './Popover.module.css';
 
 export interface PopoverProps {
@@ -7,9 +15,12 @@ export interface PopoverProps {
   onClose?: () => void;
   x: number;
   y: number;
+  width?: number;
+  height?: number;
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  offset?: number;
 }
 
 export const Popover: React.FC<PopoverProps> = ({
@@ -17,24 +28,88 @@ export const Popover: React.FC<PopoverProps> = ({
   onClose,
   x,
   y,
+  width = 0,
+  height = 0,
   children,
   className = '',
   style = {},
+  offset: offsetValue = 8,
 }) => {
   const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Create a virtual element for Floating UI based on the provided x, y coordinates and dimensions
+  const virtualElement = useMemo(() => ({
+    getBoundingClientRect() {
+      return {
+        width,
+        height,
+        x,
+        y,
+        top: y,
+        left: x,
+        right: x + width,
+        bottom: y + height,
+      };
+    },
+  }), [x, y, width, height]);
+
+  const { refs, floatingStyles, placement, context } = useFloating({
+    open: isOpen,
+    onOpenChange: (open) => {
+      if (!open) onClose?.();
+    },
+    middleware: [
+      offset(offsetValue),
+      flip({ padding: 10 }),
+      shift({ padding: 10 }),
+    ],
+    whileElementsMounted: autoUpdate,
+    placement: 'bottom',
+    strategy: 'fixed',
+  });
+
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+    duration: 200,
+    initial: () => ({
+      opacity: 0,
+    }),
+    open: {
+      opacity: 1,
+    },
+    close: () => ({
+      opacity: 0,
+    }),
+  });
+
+  // Combine refs
+  const setRefs = (node: HTMLDivElement | null) => {
+    refs.setFloating(node);
+    if (popoverRef) {
+      (popoverRef as any).current = node;
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      refs.setPositionReference(virtualElement);
+    }
+  }, [isOpen, virtualElement, refs]);
+
+  const lastChildren = useRef<React.ReactNode>(null);
+  if (isOpen) {
+    lastChildren.current = children;
+  }
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      // Don't close if clicking inside the popover
       if (popoverRef.current && popoverRef.current.contains(e.target as Node)) {
         return;
       }
       onClose?.();
     };
 
-    // Use a slight delay to prevent the initial click that opened the popover from immediately closing it
     const timer = setTimeout(() => {
       document.addEventListener('click', handleClickOutside);
     }, 0);
@@ -45,16 +120,20 @@ export const Popover: React.FC<PopoverProps> = ({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isMounted) return null;
+
+  // We can pass the placement back via data attribute if needed for CSS
+  const currentPlacement = placement.split('-')[0];
 
   return createPortal(
     <div
-      ref={popoverRef}
+      ref={setRefs}
       className={`${styles.popover} ${className}`}
-      style={{ left: x, top: y, ...style }}
-      onClick={(e) => e.stopPropagation()} // Stop propagation to avoid bubbling up to editors/document
+      style={{ ...floatingStyles, ...transitionStyles, ...style }}
+      data-placement={currentPlacement}
+      onClick={(e) => e.stopPropagation()}
     >
-      {children}
+      {isOpen ? children : lastChildren.current}
     </div>,
     document.body
   );

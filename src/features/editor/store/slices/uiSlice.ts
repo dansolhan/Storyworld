@@ -5,7 +5,7 @@ export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'pageColorMode' | 'setPageColorMode' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isDragging' | 'setIsDragging' | 'isPanning' | 'setIsPanning' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen' | 'isStatusDataManagerOpen' | 'setIsStatusDataManagerOpen' | 'showAllEdges' | 'setShowAllEdges' | 'hoveredPageId' | 'setHoveredPageId'>
+    Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'pageColorMode' | 'setPageColorMode' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isDragging' | 'setIsDragging' | 'isPanning' | 'setIsPanning' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen' | 'isStatusDataManagerOpen' | 'setIsStatusDataManagerOpen' | 'isContextManagerOpen' | 'setIsContextManagerOpen' | 'showAllEdges' | 'setShowAllEdges' | 'hoveredPageId' | 'setHoveredPageId'>
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -24,6 +24,7 @@ export const createUISlice: StateCreator<
   isAtmosphereManagerOpen: false,
   isItemManagerOpen: false,
   isStatusDataManagerOpen: false,
+  isContextManagerOpen: false,
   showAllEdges: true,
   hoveredPageId: null,
 
@@ -39,6 +40,7 @@ export const createUISlice: StateCreator<
         isAtmosphereManagerOpen: false,
         isItemManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
       ...(pageId === null && {
         isEditorSidebarExpanded: false,
@@ -67,6 +69,7 @@ export const createUISlice: StateCreator<
       isAtmosphereManagerOpen: false,
       isItemManagerOpen: false,
       isStatusDataManagerOpen: false,
+      isContextManagerOpen: false,
     });
   },
 
@@ -81,6 +84,7 @@ export const createUISlice: StateCreator<
       isAtmosphereManagerOpen: false,
       isItemManagerOpen: false,
       isStatusDataManagerOpen: false,
+      isContextManagerOpen: false,
       connectingChoice: null,
     });
   },
@@ -104,6 +108,7 @@ export const createUISlice: StateCreator<
         isAtmosphereManagerOpen: false,
         isItemManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
     }));
   },
@@ -119,6 +124,7 @@ export const createUISlice: StateCreator<
         isAtmosphereManagerOpen: false,
         isItemManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
     }));
   },
@@ -134,6 +140,7 @@ export const createUISlice: StateCreator<
         isAtmosphereManagerOpen: false,
         isItemManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
     }));
   },
@@ -149,6 +156,7 @@ export const createUISlice: StateCreator<
         isAudioManagerOpen: false,
         isItemManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
     }));
   },
@@ -164,6 +172,7 @@ export const createUISlice: StateCreator<
         isAudioManagerOpen: false,
         isAtmosphereManagerOpen: false,
         isStatusDataManagerOpen: false,
+        isContextManagerOpen: false,
       }),
     }));
   },
@@ -179,6 +188,23 @@ export const createUISlice: StateCreator<
         isAudioManagerOpen: false,
         isAtmosphereManagerOpen: false,
         isItemManagerOpen: false,
+        isContextManagerOpen: false,
+      }),
+    }));
+  },
+
+  setIsContextManagerOpen: (isOpen) => {
+    set((state) => ({
+      ...state,
+      isContextManagerOpen: isOpen,
+      ...(isOpen && {
+        selectedPageId: null,
+        isStorySettingsOpen: false,
+        isVariableManagerOpen: false,
+        isAudioManagerOpen: false,
+        isAtmosphereManagerOpen: false,
+        isItemManagerOpen: false,
+        isStatusDataManagerOpen: false,
       }),
     }));
   },

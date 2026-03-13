@@ -33,7 +33,8 @@ export const getMenuConfig = (
       { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
       { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) },
       { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) },
-      { label: 'Status Data', onClick: () => useEditorStore.getState().setIsStatusDataManagerOpen(true) }
+      { label: 'Status Data', onClick: () => useEditorStore.getState().setIsStatusDataManagerOpen(true) },
+      { label: 'Context', onClick: () => useEditorStore.getState().setIsContextManagerOpen(true) }
     ]
   },
   {

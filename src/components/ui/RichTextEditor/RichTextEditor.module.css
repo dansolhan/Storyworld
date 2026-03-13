@@ -115,3 +115,10 @@
   justify-content: flex-end;
   gap: var(--space-2);
 }
+
+.contextEditorWrapper {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-primary);
+  min-height: 120px;
+}

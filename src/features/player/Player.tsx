@@ -13,6 +13,7 @@ import { usePlayerStore } from './store/usePlayerStore';
 import { useCurrentPage } from './hooks/useStoryState';
 import { usePageEnterActions } from './hooks/usePageEnterActions';
 import { audioManager } from '../../lib/audioManager';
+import { parseTextTokens } from '../../utils/textParser';
 import type { StoryData } from '../../domain/Story/StoryData';
 import { PageProvider } from './context/PageContext';
 import './player-theme.css';
@@ -31,7 +32,8 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     addVisitedPageId,
     restart,
     contextualPopover,
-    setContextualPopover
+    setContextualPopover,
+    variables,
   } = usePlayerStore();
 
   const currentPage = useCurrentPage();
@@ -128,11 +130,25 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
         onClose={() => setContextualPopover(null)}
         x={contextualPopover?.x || 0}
         y={contextualPopover?.y || 0}
+        width={contextualPopover?.width || 0}
+        height={contextualPopover?.height || 0}
         className={styles.popover}
       >
         <div className={styles.popoverDecorations} />
         <div className={styles.popoverArrow} />
-        <p className={styles.popoverText}>{contextualPopover?.text}</p>
+        {contextualPopover?.title && (
+          <h5 className={styles.popoverTitle}>
+            {parseTextTokens(contextualPopover.title, variables)}
+          </h5>
+        )}
+        {contextualPopover && (
+          <div 
+            className={styles.popoverText}
+            dangerouslySetInnerHTML={{ 
+              __html: parseTextTokens(contextualPopover.text, variables) 
+            }}
+          />
+        )}
       </Popover>
     </div>
   );
