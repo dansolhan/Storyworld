@@ -17,6 +17,7 @@ import { PageNode } from '../../nodes/PageNode';
 import { ActionNode } from '../../nodes/ActionNode';
 import { PortalNode } from '../../nodes/PortalNode';
 import { FloatingEdge } from '../../edges/FloatingEdge';
+import { EdgeMarkers } from '../../edges/EdgeMarkers';
 import { Button } from '../../../../components/ui/Button/Button';
 
 import styles from '../../GraphEditor.module.css';
@@ -58,6 +59,7 @@ export const FlowView: React.FC = React.memo(() => {
 
   return (
     <div className={styles.flowWrapper}>
+      <EdgeMarkers />
       {interactionStrategy.overlayMessage && (
         <div className={styles.selectionOverlay}>
           <p className={styles.selectionOverlayText}>

@@ -68,6 +68,8 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   // Execute actions on page entry
   usePageEnterActions();
 
+  const isTransitioning = usePlayerStore((s) => s.isTransitioning);
+
   if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (
       <div className={styles.container}>
@@ -105,7 +107,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
             <motion.div
               key={currentPageId}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: isTransitioning ? 0 : 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}

@@ -40,9 +40,9 @@ export const EditorSidebar: React.FC = React.memo(() => {
 
   const [previewStory, setPreviewStory] = useState(false);
 
-  // Selector for just the selected node's essential data
-  const selectedNode = useEditorStore(
-    (state) => state.nodes.find((n) => n.id === selectedPageId) as any,
+  // Selector for the selected page's domain data
+  const selectedPage = useEditorStore(
+    (state) => state.pages[selectedPageId || '']
   );
 
   const { fitView, setNodes } = useReactFlow();
@@ -60,7 +60,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
     }, 50);
   };
 
-  if (!selectedPageId || !selectedNode) {
+  if (!selectedPageId || !selectedPage) {
     return (
       <ExpandableBottomPanel
         isOpen={false}
@@ -90,6 +90,13 @@ export const EditorSidebar: React.FC = React.memo(() => {
         }
         return node;
       }),
+      pages: {
+        ...state.pages,
+        [selectedPageId]: {
+          ...state.pages[selectedPageId],
+          atmosphereId: e.target.value || undefined,
+        },
+      },
     }));
   };
 
@@ -108,8 +115,8 @@ export const EditorSidebar: React.FC = React.memo(() => {
           <Tabs
             tabs={[
               { id: 'page', label: 'Page' },
-              { id: 'actions', label: `Actions (${(selectedNode.data.actions || []).length})` },
-              { id: 'choices', label: `Choices (${(selectedNode.data.choices || []).length})` }
+              { id: 'actions', label: `Actions (${(selectedPage.actions || []).length})` },
+              { id: 'choices', label: `Choices (${(selectedPage.choices || []).length})` }
             ]}
             activeTab={sidebarTab}
             onChange={setSidebarTab}
@@ -123,7 +130,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
               <input
                 type="text"
                 className={styles.input}
-                value={selectedNode.data.title}
+                value={selectedPage.title}
                 onChange={handleTitleChange}
                 placeholder="e.g. The Dark Forest"
                 style={{ marginBottom: '0.5rem' }}
@@ -132,7 +139,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
               <label className={styles.label}>Page Type</label>
               <select
                 className={styles.input}
-                value={selectedNode.data.type || 'location'}
+                value={selectedPage.type || 'location'}
                 onChange={handleTypeChange}
                 style={{ marginBottom: '0.5rem' }}
               >
@@ -143,7 +150,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
               <label className={styles.label}>Atmosphere</label>
               <select
                 className={styles.input}
-                value={selectedNode.data.atmosphereId || ''}
+                value={selectedPage.atmosphereId || ''}
                 onChange={handleAtmosphereChange}
               >
                 <option value="">None (Default)</option>
@@ -161,10 +168,10 @@ export const EditorSidebar: React.FC = React.memo(() => {
                 </Button>
               </div>
               <div className={styles.itemList}>
-                {selectedNode.data.paragraphs.length === 0 && (
+                {selectedPage.paragraphs.length === 0 && (
                   <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
                 )}
-                {selectedNode.data.paragraphs.map((p: any) => (
+                {selectedPage.paragraphs.map((p: any) => (
                   <div key={p.id} className={styles.paragraphBlock}>
                     <RichTextEditor
                       content={p.text}
@@ -191,7 +198,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
               targetType="page"
               pageId={selectedPageId}
               targetId={selectedPageId}
-              actions={selectedNode.data.actions || []}
+              actions={selectedPage.actions || []}
             />
           </section>
         )}
@@ -206,10 +213,10 @@ export const EditorSidebar: React.FC = React.memo(() => {
             {previewStory && (
               <section className={styles.section} style={{ marginBottom: '2rem' }}>
                 <div className={styles.itemList}>
-                  {selectedNode.data.paragraphs.length === 0 && (
+                  {selectedPage.paragraphs.length === 0 && (
                     <p className={styles.emptyText}>No content to preview.</p>
                   )}
-                  {selectedNode.data.paragraphs.map((p: any) => (
+                  {selectedPage.paragraphs.map((p: any) => (
                     <div key={p.id} className={styles.paragraphBlock} style={{ padding: '0.75rem', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-bg-primary)' }}>
                       <div dangerouslySetInnerHTML={{ __html: p.text }} style={{ fontFamily: 'var(--font-family-serif)', lineHeight: 1.6 }} />
                       {p.conditionals && p.conditionals.length > 0 && (
@@ -236,10 +243,10 @@ export const EditorSidebar: React.FC = React.memo(() => {
                 </Button>
               </div>
               <div className={styles.itemList}>
-                {selectedNode.data.choices.length === 0 && (
+                {selectedPage.choices.length === 0 && (
                   <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
                 )}
-                {selectedNode.data.choices.map((c: any, index: number) => {
+                {selectedPage.choices.map((c: any, index: number) => {
                   const isConnecting = connectingChoice?.choiceId === c.id;
 
                   return (

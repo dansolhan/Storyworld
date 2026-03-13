@@ -41,12 +41,15 @@ export function findSmartNodePosition(nodes: Node[], baseX: number, baseY: numbe
   const maxAttempts = 50;
 
   // Grid search pattern
-  const columns = [0, 300, 600, -300, -600];
-  const rows = [0, 200, -200, 400, -400, 600, -600];
+  const columns = [400, 800, 1200, 0, -400];
+  const rows = [0, 300, -300, 600, -600];
 
   for (const colOffset of columns) {
     for (const rowOffset of rows) {
-      const tx = baseX + colOffset + (colOffset === 0 ? 300 : 0);
+      // Don't return the exact same position
+      if (colOffset === 0 && rowOffset === 0) continue;
+
+      const tx = baseX + colOffset;
       const ty = baseY + rowOffset;
 
       if (!isColliding(tx, ty, nodes)) {
@@ -59,7 +62,7 @@ export function findSmartNodePosition(nodes: Node[], baseX: number, baseY: numbe
   }
 
   // Fallback if no spot found
-  return { x: baseX + 300, y: baseY + (Math.random() * 100) };
+  return { x: baseX + 400, y: baseY + (Math.random() * 100) };
 }
 
 /**

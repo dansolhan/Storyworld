@@ -1,6 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState, EditorNode } from '../editorTypes';
 import type { Page } from '../../../../domain/Page/Page';
+import { syncSyntheticNodes } from '../../utils/syncSyntheticNodes';
 
 export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
   pages: {},
@@ -41,32 +42,24 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
   },
 
   updatePageTitle: (pageId, newTitle) => {
-    set((state) => ({
-      pages: {
+    set((state) => {
+      const nextPages = {
         ...state.pages,
         [pageId]: { ...state.pages[pageId], title: newTitle }
-      },
-      nodes: state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          return { ...node, data: { ...node.data, title: newTitle } };
-        }
-        return node;
-      }),
-    }));
+      };
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
+    });
   },
 
   updatePageType: (pageId, newType) => {
-    set((state) => ({
-      pages: {
+    set((state) => {
+      const nextPages = {
         ...state.pages,
         [pageId]: { ...state.pages[pageId], type: newType }
-      },
-      nodes: state.nodes.map((node) => {
-        if (node.id === pageId && node.type === 'pageNode') {
-          return { ...node, data: { ...node.data, type: newType } };
-        }
-        return node;
-      }),
-    }));
+      };
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
+    });
   },
 });

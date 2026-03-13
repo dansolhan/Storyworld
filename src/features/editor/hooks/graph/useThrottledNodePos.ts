@@ -19,13 +19,12 @@ function extractPos(node: InternalNode): NodePos {
   };
 }
 
+function isSamePos(p1: NodePos, p2: NodePos) {
+  return p1.x === p2.x && p1.y === p2.y && p1.w === p2.w && p1.h === p2.h;
+}
+
 /**
  * Returns throttled node position coordinates.
- *
- * - When `delay` is 0 (or node is not dragging), updates are immediate.
- * - When `delay > 0`, updates are throttled: the first change goes through
- *   immediately, then subsequent ones are batched and applied at most once
- *   per `delay` ms, always capturing the latest value.
  */
 export function useThrottledNodePos(
   node: InternalNode | null | undefined,
@@ -36,10 +35,12 @@ export function useThrottledNodePos(
   const lastRanRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Always sync the latest value into the ref (not state — avoids re-render)
-  if (node) {
-    latestRef.current = extractPos(node);
-  }
+  // Sync ref immediately to have the freshest data available for effects/callbacks
+  useEffect(() => {
+    if (node) {
+      latestRef.current = extractPos(node);
+    }
+  }, [node]);
 
   useEffect(() => {
     if (!node) return;
@@ -47,12 +48,13 @@ export function useThrottledNodePos(
     const current = latestRef.current;
 
     if (delay <= 0) {
-      // Immediate mode — no throttle
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
       }
-      setPos(current);
+      
+      // ONLY set state if values actually changed to prevent render loops
+      setPos(prev => isSamePos(prev, current) ? prev : current);
       return;
     }
 
@@ -60,23 +62,21 @@ export function useThrottledNodePos(
     const remaining = delay - (now - lastRanRef.current);
 
     if (remaining <= 0) {
-      // Enough time has passed — update immediately
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
       }
       lastRanRef.current = now;
-      setPos(current);
+      setPos(prev => isSamePos(prev, current) ? prev : current);
     } else if (!timerRef.current) {
-      // Schedule a trailing update at the end of the throttle window
       timerRef.current = setTimeout(() => {
         timerRef.current = null;
         lastRanRef.current = Date.now();
-        setPos({ ...latestRef.current });
+        const latest = latestRef.current;
+        setPos(prev => isSamePos(prev, latest) ? prev : latest);
       }, remaining);
     }
-    // If a timer is already running, it will fire with the latest latestRef value
-  });
+  }, [node, delay]); // Added proper dependencies
 
   useEffect(() => {
     return () => {

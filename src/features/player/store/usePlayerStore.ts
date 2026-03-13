@@ -18,6 +18,7 @@ interface PlayerState {
   shownMessageActionIds: Set<string>;
   contextualPopover: { text: string; x: number; y: number } | null;
   inventory: Record<string, number>;
+  isTransitioning: boolean;
 
   // Actions
   initialize: (storyData: StoryData, startPageId?: string) => void;
@@ -30,6 +31,7 @@ interface PlayerState {
   markActionsShown: (ids: string[]) => void;
   setContextualPopover: (popover: { text: string; x: number; y: number } | null) => void;
   modifyInventory: (itemId: string, amount: number) => void;
+  setTransitioning: (val: boolean) => void;
   restart: () => void;
 }
 
@@ -42,6 +44,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   shownMessageActionIds: new Set(),
   contextualPopover: null,
   inventory: {},
+  isTransitioning: false,
 
   initialize: (storyData: StoryData, startPageId?: string) => {
     const defaultStartId = startPageId || storyData?.startPageId || storyData?.pages?.[0]?.id;
@@ -54,6 +57,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
       shownMessageActionIds: new Set(),
       contextualPopover: null,
       inventory: {},
+      isTransitioning: false,
     });
   },
 
@@ -107,6 +111,8 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     return { inventory: nextInventory };
   }),
 
+  setTransitioning: (isTransitioning) => set({ isTransitioning }),
+
   restart: () => set((state) => {
     if (!state.storyData) return state;
     const defaultStartId = state.storyData.startPageId || state.storyData.pages?.[0]?.id;
@@ -118,6 +124,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
       shownMessageActionIds: new Set(),
       contextualPopover: null,
       inventory: {},
+      isTransitioning: false,
     };
   }),
 }));

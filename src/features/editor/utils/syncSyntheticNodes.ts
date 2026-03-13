@@ -20,13 +20,37 @@ export function syncSyntheticNodes(
   subplots: Subplot[],
   currentPlotId: string | null
 ): { nodes: EditorNode[]; edges: Edge[] } {
-  const pageNodes = allNodes.filter((n): n is PageNodeType => n.type === 'pageNode');
-  const existingSynNodes = allNodes.filter((n) => n.type === 'actionNode' || n.type === 'portalNode');
   const realEdges = allEdges.filter((e) => !e.id.startsWith('se-'));
 
+  // 1. Filter and Sync Page Nodes
+  const pageNodes = allNodes
+    .filter((n): n is PageNodeType => n.type === 'pageNode')
+    .map((n) => {
+      const pageDomain = pages[n.id];
+      if (!pageDomain) return n;
+
+      // Ensure the node data is fully synced with the domain model
+      return {
+        ...n,
+        data: {
+          ...n.data,
+          title: pageDomain.title,
+          type: pageDomain.type,
+          paragraphs: pageDomain.paragraphs,
+          choices: pageDomain.choices,
+          actions: pageDomain.actions, // Added missing actions sync
+          subplotId: pageDomain.subplotId,
+          atmosphereId: pageDomain.atmosphereId,
+        },
+      };
+    });
+
+  // 2. Track positions of existing synthetic nodes
   const existingPositions: Record<string, { x: number; y: number }> = {};
-  existingSynNodes.forEach((n) => {
-    existingPositions[n.id] = n.position;
+  allNodes.forEach((n) => {
+    if (n.type === 'actionNode' || n.type === 'portalNode') {
+      existingPositions[n.id] = n.position;
+    }
   });
 
   const synNodes: (ActionNodeType | PortalNodeType)[] = [];
