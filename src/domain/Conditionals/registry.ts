@@ -8,7 +8,7 @@ export interface VisitedPageParams {
 export const visitedPageBlueprint: ConditionalBlueprint<VisitedPageParams> = {
   id: 'visited_page',
   name: 'Visited page',
-  template: 'The player has {{not}} visited {{page}}',
+  template: 'The player {{has_not}} visited {{page}}',
   defaultParams: {
     not: false,
     pageId: null,
@@ -27,7 +27,7 @@ export interface FirstVisitParams {
 export const firstVisitBlueprint: ConditionalBlueprint<FirstVisitParams> = {
   id: 'first_visit',
   name: 'First visit',
-  template: '{{not}} first visit of current page',
+  template: 'This {{is_not}} the first visit to the current page',
   defaultParams: {
     not: false,
   },

@@ -3,28 +3,18 @@ import { useEditorStore } from '../../store/useEditorStore';
 import type { EditorNode } from '../../store/editorTypes';
 import { Popover } from '../../../../components/ui/Popover/Popover';
 import { Combobox } from '../../../../components/ui/Combobox/Combobox';
-import styles from './BlueprintCard.module.css';
+import styles from './BlueprintRenderer.module.css';
 
-interface BlueprintCardProps {
+interface BlueprintRendererProps {
   template: string;
-  isGroup?: boolean;
   params: Record<string, unknown>;
-  trigger?: 'on_enter' | 'on_exit';
-  onChangeTrigger?: (trigger: 'on_enter' | 'on_exit') => void;
   onChangeParam: (key: string, value: unknown) => void;
-  onRemove: () => void;
-  children?: React.ReactNode;
 }
 
-export const BlueprintCard: React.FC<BlueprintCardProps> = ({
+export const BlueprintRenderer: React.FC<BlueprintRendererProps> = ({
   template,
-  isGroup,
   params,
-  trigger,
-  onChangeTrigger,
   onChangeParam,
-  onRemove,
-  children
 }) => {
   const { nodes, variables, subplots, items } = useEditorStore();
   const [popoverState, setPopoverState] = useState<{ isOpen: boolean; x: number; y: number; tokenTarget: string }>({
@@ -34,7 +24,6 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
     tokenTarget: '',
   });
 
-  // State for free-text inputs like 'value'
   const [inputValue, setInputValue] = useState('');
 
   const handleToggleBoolean = (key: string) => {
@@ -42,6 +31,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   };
 
   const handleOpenPopover = (e: React.MouseEvent, tokenKey: string, initialValue?: string) => {
+    e.stopPropagation(); // prevent tree node drag or selection
     const rect = e.currentTarget.getBoundingClientRect();
     setPopoverState({
       isOpen: true,
@@ -59,6 +49,9 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   };
 
   const renderTemplate = () => {
+    // If no template is provided, just return empty
+    if (!template) return null;
+    
     const parts = template.split(/({{\w+}})/g);
 
     return parts.map((part, index) => {
@@ -81,7 +74,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
             <span
               key={index}
               className={styles.interactiveToken}
-              onClick={() => handleToggleBoolean('not')}
+              onClick={(e) => { e.stopPropagation(); handleToggleBoolean('not'); }}
             >
               {params.not ? labelTrue : labelFalse}
             </span>
@@ -90,7 +83,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
         if (key === 'page' || key === 'pageId') {
           const selectedPageId = params[key] as string | null;
-          const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
+          const selectedNode = nodes?.find((n: EditorNode) => n.id === selectedPageId);
           const label = selectedNode ? (selectedNode.data.title as string) || `Page ${selectedNode.id}` : 'Select a page...';
 
           return (
@@ -106,7 +99,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
         if (key === 'targetPageId') {
           const selectedPageId = params['targetPageId'] as string | null;
-          const selectedNode = nodes.find((n: EditorNode) => n.id === selectedPageId);
+          const selectedNode = nodes?.find((n: EditorNode) => n.id === selectedPageId);
           const label = selectedNode ? (selectedNode.data.title as string) || `Page ${selectedNode.id}` : 'Select a page...';
 
           return (
@@ -178,7 +171,6 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
         if (key === 'displayStyle') {
           const style = params.displayStyle as string;
-          // default to styled if undefined
           const label = style === 'paragraph' ? 'a paragraph' : 'a styled notification';
           return (
             <span
@@ -193,7 +185,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
         if (key === 'itemId') {
           const selectedItemId = params.itemId as string | null;
-          const selectedItem = selectedItemId ? items[selectedItemId] : null;
+          const selectedItem = selectedItemId && items ? items[selectedItemId] : null;
           const label = selectedItem ? selectedItem.name : 'Select item...';
           return (
             <span
@@ -208,7 +200,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
         if (key === 'count') {
           const selectedItemId = params.itemId as string | null;
-          const selectedItem = selectedItemId ? items[selectedItemId] : null;
+          const selectedItem = selectedItemId && items ? items[selectedItemId] : null;
           if (selectedItem && !selectedItem.multiple) {
             return null;
           }
@@ -243,75 +235,21 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
     });
   };
 
-  const pageOptions = nodes.map((n: EditorNode) => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }));
-  // When selecting a target page for a subplot, we might want to filter, but for now we'll show all pages or filter by the selected subplot
+  const pageOptions = (nodes || []).map((n: EditorNode) => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }));
   const currentSelectedSubplotId = params['subplotId'] as string | null;
   const targetPageOptions = currentSelectedSubplotId
-    ? nodes.filter(n => n.data.subplotId === currentSelectedSubplotId).map(n => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }))
+    ? (nodes || []).filter(n => n.data.subplotId === currentSelectedSubplotId).map(n => ({ label: (n.data.title as string) || `Page ${n.id}`, value: n.id }))
     : pageOptions;
 
-  const variableOptions = Object.keys(variables).map((k) => ({ label: k, value: k }));
+  const variableOptions = Object.keys(variables || {}).map((k) => ({ label: k, value: k }));
   const subplotOptions = (subplots || []).map(s => ({ label: s.name, value: s.id }));
   const itemOptions = Object.entries(items || {}).map(([key, item]) => ({ label: item.name, value: key }));
 
-  let warningText = null;
-  if (params.itemId) {
-    const itemDef = items[params.itemId as string];
-    if (itemDef && !itemDef.multiple) {
-      if (params.count && Number(params.count) > 1) {
-        warningText = `Warning: "${itemDef.name}" is not a multiple item, so count > 1 will never be met or is invalid.`;
-      }
-    }
-  }
-
   return (
-    <div className={styles.card} style={isGroup ? { flexDirection: 'column', alignItems: 'stretch' } : {}}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div className={styles.cardText}>
-          {renderTemplate()}
-        </div>
-        <button
-          className={styles.deleteBtn}
-          onClick={onRemove}
-          title="Remove Item"
-        >
-          &times;
-        </button>
-      </div>
-
-      {/* Trigger toggle — shown only when the parent passes trigger/onChangeTrigger */}
-      {onChangeTrigger && (
-        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.65rem', color: 'var(--color-text-secondary)', marginRight: '0.25rem' }}>Fires:</span>
-          {(['on_enter', 'on_exit'] as const).map((t) => (
-            <button
-              key={t}
-              onClick={() => onChangeTrigger(t)}
-              style={{
-                fontSize: '0.62rem',
-                padding: '2px 7px',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--color-border-default)',
-                cursor: 'pointer',
-                background: trigger === t ? 'var(--color-primary-500)' : 'transparent',
-                color: trigger === t ? '#fff' : 'var(--color-text-secondary)',
-                fontFamily: 'var(--font-family-sans)',
-                transition: 'background 0.15s, color 0.15s',
-              }}
-            >
-              {t === 'on_enter' ? 'On Enter' : 'On Exit'}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {warningText && (
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#b91c1c', background: '#fef2f2', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #f87171' }}>
-          {warningText}
-        </div>
-      )}
-
-      {children}
+    <>
+      <span className={styles.container}>
+        {renderTemplate()}
+      </span>
 
       <Popover
         isOpen={popoverState.isOpen}
@@ -320,8 +258,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         onClose={handleClosePopover}
       >
         {popoverState.tokenTarget === 'pageId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a page:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Select a page:</p>
             <Combobox
               options={pageOptions}
               autoFocus
@@ -334,8 +272,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'targetPageId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a target page:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Select a target page:</p>
             <Combobox
               options={targetPageOptions}
               autoFocus
@@ -348,13 +286,12 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'subplotId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a subplot:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Select a subplot:</p>
             <Combobox
               options={subplotOptions}
               autoFocus
               onSelect={(val) => {
-                // If they change subplot, reset target page to avoid invalid combinations
                 if (params['subplotId'] !== val) {
                   onChangeParam('targetPageId', null);
                 }
@@ -366,8 +303,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'variableKey' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a variable:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Select a variable:</p>
             {variableOptions.length > 0 ? (
               <Combobox
                 options={variableOptions}
@@ -378,15 +315,15 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                 }}
               />
             ) : (
-              <p style={{ margin: 0, fontSize: '0.75rem', color: '#666' }}>No variables defined yet.</p>
+              <p className={styles.popoverEmpty}>No variables defined yet.</p>
             )}
           </div>
         )}
 
         {popoverState.tokenTarget === 'value' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set value:</p>
-            <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Set value:</p>
+            <div className={styles.inputGroup}>
               <input
                 type="text"
                 value={inputValue}
@@ -398,14 +335,14 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                     handleClosePopover();
                   }
                 }}
-                style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverInput}
               />
               <button
                 onClick={() => {
                   onChangeParam('value', inputValue);
                   handleClosePopover();
                 }}
-                style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverButton}
               >
                 Save
               </button>
@@ -414,9 +351,9 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'message' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '240px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Post message text:</p>
-            <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <div className={styles.popoverContent} style={{ minWidth: 240 }}>
+            <p className={styles.popoverTitle}>Post message text:</p>
+            <div className={styles.inputGroup}>
               <input
                 type="text"
                 value={inputValue}
@@ -429,14 +366,14 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                     handleClosePopover();
                   }
                 }}
-                style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverInput}
               />
               <button
                 onClick={() => {
                   onChangeParam('message', inputValue);
                   handleClosePopover();
                 }}
-                style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverButton}
               >
                 Save
               </button>
@@ -445,8 +382,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'displayStyle' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Message format:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Message format:</p>
             <Combobox
               options={[
                 { label: 'Styled Notification', value: 'styled' },
@@ -462,9 +399,9 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'count' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set count:</p>
-            <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Set count:</p>
+            <div className={styles.inputGroup}>
               <input
                 type="number"
                 min="1"
@@ -477,14 +414,14 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                     handleClosePopover();
                   }
                 }}
-                style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverInput}
               />
               <button
                 onClick={() => {
                   onChangeParam('count', parseInt(inputValue, 10) || 1);
                   handleClosePopover();
                 }}
-                style={{ padding: '0.25rem 0.5rem', cursor: 'pointer', background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '3px' }}
+                className={styles.popoverButton}
               >
                 Save
               </button>
@@ -493,8 +430,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'comparison' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '160px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set comparison:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Set comparison:</p>
             <Combobox
               options={[
                 { label: 'equal', value: 'equal' },
@@ -515,8 +452,8 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'itemId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select an item:</p>
+          <div className={styles.popoverContent}>
+            <p className={styles.popoverTitle}>Select an item:</p>
             {itemOptions.length > 0 ? (
               <Combobox
                 options={itemOptions}
@@ -527,11 +464,11 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
                 }}
               />
             ) : (
-              <p style={{ margin: 0, fontSize: '0.75rem', color: '#666' }}>No items defined yet.</p>
+              <p className={styles.popoverEmpty}>No items defined yet.</p>
             )}
           </div>
         )}
       </Popover>
-    </div>
+    </>
   );
 };

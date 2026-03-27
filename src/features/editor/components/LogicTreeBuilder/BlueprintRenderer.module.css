@@ -1,0 +1,78 @@
+.interactiveToken {
+  cursor: pointer;
+  color: var(--color-primary-400, #3b82f6);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+  margin: 0 4px;
+}
+
+.interactiveToken:hover {
+  color: var(--color-primary-300, #60a5fa);
+}
+
+.container {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.popoverContent {
+  padding: 0.75rem;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+}
+
+.popoverTitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.popoverEmpty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.popoverInput {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.popoverInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.popoverButton {
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.popoverButton:hover {
+  background: #e5e7eb;
+}

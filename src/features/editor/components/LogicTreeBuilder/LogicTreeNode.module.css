@@ -1,0 +1,153 @@
+.nodeWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  outline: none;
+}
+
+.nodeContent {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  background: rgba(30, 30, 35, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin-bottom: 4px;
+  gap: 0.5rem;
+  height: 38px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.selected > .nodeContent {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.dragHandle {
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.dragHandle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.branchIndentIndicator {
+  width: 14px;
+}
+
+.toggle {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.typeCondition {
+  border-left: 3px solid #eab308;
+}
+.typeCondition .icon {
+  color: #eab308;
+}
+
+.typeAction {
+  border-left: 3px solid #3b82f6;
+}
+.typeAction .icon {
+  color: #3b82f6;
+}
+
+.typeBranch {
+  background: rgba(20, 20, 25, 0.4);
+  border-color: transparent;
+  padding-left: 1rem;
+}
+.typeBranch .title {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.branchLineIcon {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.deleteButton {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.nodeContent:hover .deleteButton {
+  opacity: 1;
+}
+
+.deleteButton:hover {
+  color: #ef4444; /* red */
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.emptyBranchPlaceholder {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+  margin-bottom: 4px;
+}
+
+.placeholderText {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  width: 100%;
+}
