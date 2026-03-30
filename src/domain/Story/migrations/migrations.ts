@@ -1,6 +1,6 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = '0.9.0';
+export const CURRENT_VERSION = '1.0.0';
 
 type MigrationFunction = (oldStory: any) => any;
 
@@ -106,6 +106,82 @@ const migrateV7ToV8: MigrationFunction = (v7Story) => {
   };
 };
 
+const mapLegacyAction = (a: any) => ({
+  id: a.id || crypto.randomUUID(),
+  type: 'action',
+  name: a.blueprintId || 'Action',
+  blueprintId: a.blueprintId,
+  params: a.params || {}
+});
+
+const mapLegacyConditional = (c: any): any => {
+  const isGroup = c.blueprintId === 'and_group' || c.blueprintId === 'or_group';
+  const node: any = {
+    id: c.id || crypto.randomUUID(),
+    type: 'condition',
+    name: c.blueprintId || 'Condition',
+    blueprintId: c.blueprintId,
+    params: c.params || {},
+  };
+  
+  if (isGroup) {
+    node.children = [
+      {
+        id: crypto.randomUUID(),
+        type: 'branch_conditions',
+        name: 'Conditions',
+        children: (c.children || []).map(mapLegacyConditional)
+      },
+      { id: crypto.randomUUID(), type: 'branch_then', name: 'Then', children: [] },
+      { id: crypto.randomUUID(), type: 'branch_else', name: 'Else', children: [] }
+    ];
+  } else {
+    node.children = [
+      { id: crypto.randomUUID(), type: 'branch_then', name: 'Then', children: [] },
+      { id: crypto.randomUUID(), type: 'branch_else', name: 'Else', children: [] }
+    ];
+  }
+  return node;
+};
+
+const migrateV0_9_0_to_V1_0_0: MigrationFunction = (v0_9_story) => {
+  // Version 1.0.0 replaces actions/conditionals with a unified events array carrying Logic Trees
+  const migrateItem = (item: any) => {
+    const events: any[] = [];
+
+    if (item.conditionals && item.conditionals.length > 0) {
+       events.push({
+         id: crypto.randomUUID(),
+         name: 'onEvaluate',
+         logicTree: item.conditionals.map(mapLegacyConditional)
+       });
+    }
+
+    if (item.actions && item.actions.length > 0) {
+       events.push({
+         id: crypto.randomUUID(),
+         name: 'onEnter',
+         logicTree: item.actions.map(mapLegacyAction)
+       });
+    }
+
+    const { actions, conditionals, ...rest } = item;
+    if (events.length > 0) {
+      rest.events = events;
+    }
+    return rest;
+  };
+
+  const pages = (v0_9_story.pages || []).map((page: any) => {
+    const p = migrateItem(page);
+    p.choices = (p.choices || []).map(migrateItem);
+    p.paragraphs = (p.paragraphs || []).map(migrateItem);
+    return p;
+  });
+
+  return { ...v0_9_story, pages };
+};
+
 interface MigrationStep {
   from: string | number;
   to: string | number;
@@ -122,6 +198,7 @@ const migrationSteps: MigrationStep[] = [
   { from: 7, to: 8, migrate: migrateV7ToV8 },
   { from: 8, to: '0.8.0', migrate: (story) => ({ ...story }) },
   { from: '0.8.0', to: '0.9.0', migrate: (story) => ({ ...story }) },
+  { from: '0.9.0', to: '1.0.0', migrate: migrateV0_9_0_to_V1_0_0 },
 ];
 
 export function migrateStory(storyJson: any): StoryData {

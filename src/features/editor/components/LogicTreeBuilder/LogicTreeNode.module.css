@@ -9,8 +9,8 @@
   display: flex;
   align-items: center;
   padding: 0.4rem 0.5rem;
-  background: rgba(30, 30, 35, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
   border-radius: 6px;
   margin-bottom: 4px;
   gap: 0.5rem;
@@ -20,8 +20,8 @@
 }
 
 .selected > .nodeContent {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-strong);
 }
 
 .dragging {
@@ -30,14 +30,14 @@
 
 .dragHandle {
   cursor: grab;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
   padding: 0 2px;
 }
 
 .dragHandle:hover {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary);
 }
 
 .dragHandle:active {
@@ -50,7 +50,7 @@
 
 .toggle {
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,20 +60,20 @@
 }
 
 .toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 .icon {
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
 }
 
 .title {
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
   flex-grow: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -95,18 +95,18 @@
 }
 
 .typeBranch {
-  background: rgba(20, 20, 25, 0.4);
+  background: var(--color-bg-secondary);
   border-color: transparent;
   padding-left: 1rem;
 }
 .typeBranch .title {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .branchLineIcon {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-muted);
   font-size: 1rem;
   line-height: 1;
 }
@@ -144,9 +144,9 @@
 
 .placeholderText {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-muted);
   font-style: italic;
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: 1px dashed var(--color-border-default);
   border-radius: 4px;
   padding: 0.3rem 0.6rem;
   width: 100%;

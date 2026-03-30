@@ -319,23 +319,18 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
     }
   };
 
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [width, setWidth] = useState(0);
 
-  // Use a ResizeObserver to explicitly sync the container size to Tree
-  // because "100%" width can sometimes fail in virtualization libraries
+  // Use a ResizeObserver to sync the container width to Tree
   useEffect(() => {
     if (!dndRoot) return;
     
-    // Initial size
     const rect = dndRoot.getBoundingClientRect();
-    setSize({ width: rect.width, height: rect.height });
+    setWidth(rect.width);
 
     const observer = new ResizeObserver((entries) => {
       if (entries[0]) {
-        setSize({ 
-          width: entries[0].contentRect.width, 
-          height: entries[0].contentRect.height 
-        });
+        setWidth(entries[0].contentRect.width);
       }
     });
     observer.observe(dndRoot);
@@ -343,27 +338,40 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
     return () => observer.disconnect();
   }, [dndRoot]);
 
+  const countNodes = (nodes: LogicNode[]): number => {
+    let count = nodes.length;
+    nodes.forEach(node => {
+      if (node.children) {
+        count += countNodes(node.children);
+      }
+    });
+    return count;
+  };
+
+  const totalHeight = Math.max(120, countNodes(data) * 46 + 20);
+
   return (
     <div 
       ref={setDndRoot}
       className={styles.treeContainer}
       onDragOverCapture={handleDragOver}
       onDropCapture={handleDrop}
+      style={{ height: totalHeight }}
     >
       {data.length === 0 && (
          <div className={styles.emptyState}>
-            Drag items here from the toolbox to build logic.
+            Drag items here...
          </div>
       )}
-      {dndRoot && size.width > 0 && (
+      {dndRoot && width > 0 && (
         <LogicTreeContext.Provider value={{ updateNodeParams }}>
           <Tree
             ref={treeRef}
             dndRootElement={dndRoot}
             data={data}
             openByDefault={true}
-            width={size.width}
-            height={size.height || 600}
+            width={width}
+            height={totalHeight}
             indent={24}
             rowHeight={46} // 38px + 8px margin roughly
             onMove={handleMove}

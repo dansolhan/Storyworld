@@ -11,7 +11,7 @@ import { PlayerChoices } from './components/PlayerChoices';
 import { PlayerRightFrame } from './components/PlayerRightFrame';
 import { usePlayerStore } from './store/usePlayerStore';
 import { useCurrentPage } from './hooks/useStoryState';
-import { usePageEnterActions } from './hooks/usePageEnterActions';
+import { usePageEnterEvents } from './hooks/usePageEnterEvents';
 import { audioManager } from '../../lib/audioManager';
 import { parseTextTokens } from '../../utils/textParser';
 import type { StoryData } from '../../domain/Story/StoryData';
@@ -68,7 +68,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   useContextualPopover();
 
   // Execute actions on page entry
-  usePageEnterActions();
+  usePageEnterEvents();
 
   const isTransitioning = usePlayerStore((s) => s.isTransitioning);
 

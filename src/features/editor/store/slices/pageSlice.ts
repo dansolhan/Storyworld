@@ -29,7 +29,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
       title: 'New Page',
       paragraphs: [],
       choices: [],
-      actions: [],
+      events: [],
       ...(currentPlotId ? { subplotId: currentPlotId } : {}),
       ...(atmosphereId ? { atmosphereId } : {})
     };

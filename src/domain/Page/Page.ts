@@ -1,6 +1,6 @@
 import type { Paragraph } from '../Paragraph/Paragraph';
 import type { Choice } from '../Choice/Choice';
-import type { Action } from '../Actions/Action';
+import type { StoryEvent } from '../Events/StoryEvent';
 
 export type PageType = 'location' | 'plot';
 
@@ -12,5 +12,5 @@ export interface Page {
   atmosphereId?: string;
   paragraphs: Paragraph[];
   choices: Choice[];
-  actions?: Action[];
+  events?: StoryEvent[];
 }

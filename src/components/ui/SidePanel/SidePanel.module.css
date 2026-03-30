@@ -84,6 +84,9 @@
 
 .content {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
+  min-height: 0;
   padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
 }

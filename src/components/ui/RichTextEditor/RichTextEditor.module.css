@@ -1,9 +1,24 @@
 .editorContainer {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg-primary);
+  transition: all 0.2s;
+}
+
+.editorContainer.hideToolbarUntilHover {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.editorContainer.hideToolbarUntilHover:hover,
+.editorContainer.hideToolbarUntilHover:focus-within,
+:global(.locked) .editorContainer.hideToolbarUntilHover,
+:global(.story-paragraph-block:hover) .editorContainer.hideToolbarUntilHover,
+:global(.story-paragraph-active) .editorContainer.hideToolbarUntilHover {
+  border-color: var(--color-border-default);
   background-color: var(--color-bg-primary);
 }
 
@@ -13,6 +28,23 @@
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--color-border-default);
   background-color: var(--color-bg-secondary);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.hideToolbarUntilHover .toolbar {
+  max-height: 0;
+  padding: 0 var(--space-3);
+  border-bottom-width: 0;
+  opacity: 0;
+}
+.hideToolbarUntilHover:focus-within .toolbar,
+:global(.locked) .toolbar,
+:global(.story-paragraph-active) .hideToolbarUntilHover .toolbar {
+  max-height: 50px;
+  padding: var(--space-2) var(--space-3);
+  border-bottom-width: 1px;
+  opacity: 1;
 }
 
 .toolbarBtn {
@@ -38,11 +70,27 @@
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: var(--text-base);
+  transition: padding 0.2s;
+}
+
+.hideToolbarUntilHover .editorContent {
+  padding: var(--space-2) 4px;
+  min-height: 1.5rem;
+}
+
+.hideToolbarUntilHover:focus-within .editorContent,
+:global(.locked) .hideToolbarUntilHover .editorContent,
+:global(.story-paragraph-active) .hideToolbarUntilHover .editorContent {
+  padding: var(--space-3) var(--space-4);
 }
 
 .editorContent :global(.ProseMirror) {
   outline: none;
   min-height: 80px;
+}
+
+.hideToolbarUntilHover .editorContent :global(.ProseMirror) {
+  min-height: 1.5rem;
 }
 
 .editorContent :global(.ProseMirror p) {

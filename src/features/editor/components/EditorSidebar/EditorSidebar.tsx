@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { Target } from 'lucide-react';
+import { Target, Lock, Unlock } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
@@ -9,8 +9,7 @@ import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/B
 import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
-import { ConditionalsEditor } from '../ConditionalsEditor/ConditionalsEditor';
-import { ActionsEditor } from '../ActionsEditor/ActionsEditor';
+import { EventsEditor } from '../EventsEditor/EventsEditor';
 import { Tabs } from '../../../../components/ui/Tabs/Tabs';
 import styles from './EditorSidebar.module.css';
 
@@ -39,6 +38,28 @@ export const EditorSidebar: React.FC = React.memo(() => {
   const atmospheres = useAtmospheres();
 
   const [previewStory, setPreviewStory] = useState(false);
+  const [lockedParagraphIds, setLockedParagraphIds] = useState<Set<string>>(new Set());
+  const [activeParagraphId, setActiveParagraphId] = useState<string | null>(null);
+  const paragraphListRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (paragraphListRef.current && !paragraphListRef.current.contains(event.target as Node)) {
+        setActiveParagraphId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleLock = (paragraphId: string) => {
+    setLockedParagraphIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(paragraphId)) next.delete(paragraphId);
+      else next.add(paragraphId);
+      return next;
+    });
+  };
 
   // Selector for the selected page's domain data
   const selectedPage = useEditorStore(
@@ -115,7 +136,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
           <Tabs
             tabs={[
               { id: 'page', label: 'Page' },
-              { id: 'actions', label: `Actions (${(selectedPage.actions || []).length})` },
+              { id: 'events', label: `Events (${(selectedPage.events || []).length})` },
               { id: 'choices', label: `Choices (${(selectedPage.choices || []).length})` }
             ]}
             activeTab={sidebarTab}
@@ -124,7 +145,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
         </div>
 
         {sidebarTab === 'page' && (
-          <>
+          <div className={styles.scrollableTab}>
             <section className={styles.section}>
               <label className={styles.label}>Page Title</label>
               <input
@@ -167,44 +188,69 @@ export const EditorSidebar: React.FC = React.memo(() => {
                   + Add
                 </Button>
               </div>
-              <div className={styles.itemList}>
+              <div className={styles.itemList} ref={paragraphListRef}>
                 {selectedPage.paragraphs.length === 0 && (
                   <p className={styles.emptyText}>No content yet. Add a paragraph!</p>
                 )}
-                {selectedPage.paragraphs.map((p: any) => (
-                  <div key={p.id} className={styles.paragraphBlock}>
-                    <RichTextEditor
-                      content={p.text}
-                      features={PARAGRAPH_FEATURES}
-                      onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
-                    />
-                    <ConditionalsEditor
-                      targetType="paragraph"
-                      pageId={selectedPageId}
-                      targetId={p.id}
-                      conditionals={p.conditionals || []}
-                    />
-                  </div>
-                ))}
+                {selectedPage.paragraphs.map((p: any) => {
+                  const isLocked = lockedParagraphIds.has(p.id);
+                  const isActive = activeParagraphId === p.id;
+
+                  return (
+                    <div 
+                      key={p.id} 
+                      onClick={() => setActiveParagraphId(p.id)}
+                      className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.paragraphBlock} ${isLocked ? 'locked' : ''} ${isLocked ? styles.locked : ''} ${isActive ? styles.isActive : ''}`}
+                    >
+                      <div className={styles.paragraphTools}>
+                        <button
+                          type="button"
+                          className={`${styles.lockToggle} ${isLocked ? styles.active : ''}`}
+                          onClick={() => toggleLock(p.id)}
+                          title={isLocked ? "Unlock Paragraph" : "Lock Paragraph"}
+                        >
+                          {isLocked ? <Lock size={12} /> : <Unlock size={12} />}
+                          <span>{isLocked ? "Locked" : "Lock"}</span>
+                        </button>
+                      </div>
+
+                      <RichTextEditor
+                        content={p.text}
+                        features={PARAGRAPH_FEATURES}
+                        hideToolbarUntilHover={true}
+                        onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
+                      />
+                      
+                      <div className={styles.eventsWrapper}>
+                        <EventsEditor
+                          targetType="paragraph"
+                          pageId={selectedPageId}
+                          targetId={p.id}
+                          events={p.events || []}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </section>
-          </>
+          </div>
         )}
 
-        {sidebarTab === 'actions' && (
-          <section className={styles.section}>
-            <label className={styles.label}>Page Actions</label>
-            <ActionsEditor
+        {sidebarTab === 'events' && (
+          <div className={styles.eventsTab}>
+            <label className={styles.label} style={{ marginBottom: '0.5rem', flexShrink: 0 }}>Page Events</label>
+            <EventsEditor
               targetType="page"
               pageId={selectedPageId}
               targetId={selectedPageId}
-              actions={selectedPage.actions || []}
+              events={selectedPage.events || []}
             />
-          </section>
+          </div>
         )}
 
         {sidebarTab === 'choices' && (
-          <>
+          <div className={styles.scrollableTab}>
             <section className={styles.section} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
               <input type="checkbox" id="previewStory" checked={previewStory} onChange={(e) => setPreviewStory(e.target.checked)} />
               <label htmlFor="previewStory" className={styles.label} style={{ margin: 0, cursor: 'pointer', textTransform: 'none' }}>Preview story blocks</label>
@@ -305,24 +351,18 @@ export const EditorSidebar: React.FC = React.memo(() => {
                         </div>
                       </div>
 
-                      <ConditionalsEditor
+                      <EventsEditor
                         targetType="choice"
                         pageId={selectedPageId}
                         targetId={c.id}
-                        conditionals={c.conditionals || []}
-                      />
-                      <ActionsEditor
-                        targetType="choice"
-                        pageId={selectedPageId}
-                        targetId={c.id}
-                        actions={c.actions || []}
+                        events={c.events || []}
                       />
                     </div>
                   );
                 })}
               </div>
             </section>
-          </>
+          </div>
         )}
       </div>
     </ExpandableBottomPanel>

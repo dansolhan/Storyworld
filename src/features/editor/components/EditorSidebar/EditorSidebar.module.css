@@ -1,27 +1,44 @@
 .sidebarContent {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  /* Reduced from 6 */
+  flex: 1;
+  min-height: 0;
 }
 
 .stickyTabs {
-  position: sticky;
-  top: calc(var(--space-6) * -1);
-  /* Offset the padding from SidePanel content */
+  position: relative; /* No longer needs sticky */
+  flex-shrink: 0;
   margin-top: calc(var(--space-6) * -1);
   margin-left: calc(var(--space-6) * -1);
   margin-right: calc(var(--space-6) * -1);
-  padding: var(--space-6) var(--space-6) 0 var(--space-6);
+  padding: var(--space-6) var(--space-6) var(--space-2) var(--space-6);
   background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border-default);
   z-index: 10;
+}
+
+.scrollableTab {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+.eventsTab {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) 0;
 }
 
 .section {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  /* Reduced from 3 */
 }
 
 .sectionHeader {
@@ -92,3 +109,81 @@
   color: var(--color-text-secondary);
   font-family: var(--font-family-sans);
 }
+
+.paragraphBlock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  border: 1.5px dashed var(--color-primary-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  background-color: rgba(99, 102, 241, 0.02);
+  transition: all 0.2s;
+}
+
+.locked {
+  border-style: solid;
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-50);
+}
+
+.paragraphTools {
+  position: absolute;
+  top: 0;
+  right: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 0.2s;
+}
+
+.paragraphBlock:hover .paragraphTools,
+.paragraphBlock:global(.locked) .paragraphTools,
+.paragraphBlock.isActive .paragraphTools {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lockToggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  background-color: var(--color-bg-primary);
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.lockToggle:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+
+.lockToggle.active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-50);
+}
+
+.eventsWrapper {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+
+.paragraphBlock:global(.locked) .eventsWrapper,
+.paragraphBlock.isActive .eventsWrapper {
+  max-height: 2000px;
+  opacity: 1;
+  margin-top: var(--space-2);
+}

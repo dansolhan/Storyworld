@@ -1,15 +1,11 @@
 .toolbox {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  background: rgba(30, 30, 35, 0.6);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 1rem;
+  padding: 0.5rem;
+  background: transparent;
   height: 100%;
-  width: 280px;
   overflow-y: auto;
-  border-radius: 8px;
 }
 
 .submenu {
@@ -37,12 +33,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
 .chevron {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
 }
 
 .categoryList {
@@ -54,21 +50,21 @@
 .toolboxItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
   border-radius: 6px;
   cursor: grab;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
   transition: all 0.2s ease;
   -webkit-user-drag: element;
 }
 
 .toolboxItem:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 

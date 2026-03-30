@@ -1,5 +1,5 @@
 {
-  "version": "0.8.0",
+  "version": "1.0.0",
   "title": "The Awakening",
   "description": "A short demo story showcasing subplots, action triggers, and action-only choices.",
   "startPageId": "page-1",
@@ -295,13 +295,35 @@
         {
           "id": "p1-1",
           "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-p1-1-first",
-              "blueprintId": "first_visit",
-              "params": {
-                "not": false
-              }
+              "id": "5a7c5bfc-3165-4d65-88ad-18dcfc976398",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-p1-1-first",
+                  "type": "condition",
+                  "name": "first_visit",
+                  "blueprintId": "first_visit",
+                  "params": {
+                    "not": false
+                  },
+                  "children": [
+                    {
+                      "id": "2de61ccd-502e-47e3-b6d0-b967a69f95bb",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "e6f4a518-0c9d-42e9-a2c2-31a45011d41a",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -312,13 +334,35 @@
         {
           "id": "p1-3",
           "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-p1-3-first",
-              "blueprintId": "first_visit",
-              "params": {
-                "not": false
-              }
+              "id": "a9da595d-9776-4429-ac03-5e9c0bf6258c",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-p1-3-first",
+                  "type": "condition",
+                  "name": "first_visit",
+                  "blueprintId": "first_visit",
+                  "params": {
+                    "not": false
+                  },
+                  "children": [
+                    {
+                      "id": "27ee1fe5-1a15-4426-9a2e-a7c138da1f82",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "bb955873-1997-404d-84bc-2b54f3f78e80",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -338,76 +382,140 @@
           "id": "c1-3",
           "text": "Search your pockets",
           "targetPageId": "page-5",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-key",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "golden_key",
-                "comparison": "less than",
-                "count": 1
-              }
+              "id": "a3d21b69-740e-4f65-8487-80ba6c57899c",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-key",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "golden_key",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "4e193136-7283-43de-b337-afdf13578487",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "c51440aa-1af7-47c5-ba22-124dbf7096b4",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
         {
           "id": "c1-pray",
           "text": "Kneel and pray for guidance",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-knight",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "heroClass",
-                "value": "Knight"
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-pray-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "A faint warmth washes over you. Perhaps the gods are listening."
-              }
+              "id": "459eea12-72e4-40ef-b320-9815ea833490",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-knight",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "heroClass",
+                    "value": "Knight"
+                  },
+                  "children": [
+                    {
+                      "id": "6db9f552-6851-491c-8f83-54584b0ad5fa",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "433ac5ea-ffb6-4783-a6ef-a6387f922fb4",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-pray-var",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "heroClass",
-                "value": "Blessed Knight"
-              }
+              "id": "31f24f8a-e540-4d4f-8696-9f12f14ce3b0",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-pray-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "A faint warmth washes over you. Perhaps the gods are listening."
+                  }
+                },
+                {
+                  "id": "act-pray-var",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "heroClass",
+                    "value": "Blessed Knight"
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "id": "c1-4",
           "text": "Lift the loose floorboard",
-          "actions": [
+          "events": [
             {
-              "id": "act-go-cellar-choice",
-              "blueprintId": "go_to_subplot",
-              "trigger": "on_enter",
-              "params": {
-                "subplotId": "subplot-cellar",
-                "targetPageId": "page-cellar-1"
-              }
+              "id": "10691715-a08c-4dd0-82d8-83fd7fde21db",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-go-cellar-choice",
+                  "type": "action",
+                  "name": "go_to_subplot",
+                  "blueprintId": "go_to_subplot",
+                  "params": {
+                    "subplotId": "subplot-cellar",
+                    "targetPageId": "page-cellar-1"
+                  }
+                }
+              ]
             }
           ]
         }
       ],
-      "actions": [
+      "events": [
         {
-          "id": "act-leave-awakening",
-          "blueprintId": "set_variable",
-          "trigger": "on_exit",
-          "params": {
-            "variableKey": "hasVisitedStart",
-            "value": "true"
-          }
+          "id": "654fff9e-869b-49fa-8bb3-fb9dee4ca927",
+          "name": "onEnter",
+          "logicTree": [
+            {
+              "id": "act-leave-awakening",
+              "type": "action",
+              "name": "set_variable",
+              "blueprintId": "set_variable",
+              "params": {
+                "variableKey": "hasVisitedStart",
+                "value": "true"
+              }
+            }
+          ]
         }
       ]
     },
@@ -435,13 +543,35 @@
           "id": "c2-unlock",
           "text": "Use the strange golden key on the door",
           "targetPageId": "page-6",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-has-key",
-              "blueprintId": "has_item",
-              "params": {
-                "itemId": "golden_key"
-              }
+              "id": "875b5366-2cb6-483b-90bc-c469567e6a27",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-has-key",
+                  "type": "condition",
+                  "name": "has_item",
+                  "blueprintId": "has_item",
+                  "params": {
+                    "itemId": "golden_key"
+                  },
+                  "children": [
+                    {
+                      "id": "52834b5d-79bc-49c3-b412-393fbbfd07cc",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "e1157de2-f980-4500-9a66-a908f8111e11",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -455,13 +585,35 @@
         {
           "id": "p3-1",
           "text": "<p>You press your face against the soot-stained glass. Outside, the night is pitch black. You can barely make out the silhouettes of gnarled trees, their branches twisting like arthritic fingers into the sky.</p>",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-p3-1-first",
-              "blueprintId": "first_visit",
-              "params": {
-                "not": false
-              }
+              "id": "45fd89a1-a9d0-4eb5-881b-9a39e4c05ecb",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-p3-1-first",
+                  "type": "condition",
+                  "name": "first_visit",
+                  "blueprintId": "first_visit",
+                  "params": {
+                    "not": false
+                  },
+                  "children": [
+                    {
+                      "id": "5c991ebb-18e9-4a11-9139-5a6adbe71128",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "17a66df7-3295-4409-8f1e-5727af157a58",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -484,33 +636,61 @@
         {
           "id": "c3-signal",
           "text": "Wave at the floating light",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-not-waved",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "hasWavedAtLight",
-                "value": "false"
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-wave-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "The light pulses twice — as if acknowledging you."
-              }
+              "id": "7f204478-053b-4d65-b263-11a33a380eed",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-not-waved",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "hasWavedAtLight",
+                    "value": "false"
+                  },
+                  "children": [
+                    {
+                      "id": "ff323d1a-a228-4b12-a5c2-99d4140c1f39",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "5a63feb7-021e-41ba-a0ea-de875a03f1b2",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-wave-var",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "hasWavedAtLight",
-                "value": "true"
-              }
+              "id": "78d030cd-3b5b-4feb-b747-0963268c4f77",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-wave-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "The light pulses twice — as if acknowledging you."
+                  }
+                },
+                {
+                  "id": "act-wave-var",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "hasWavedAtLight",
+                    "value": "true"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -564,42 +744,28 @@
           "targetPageId": "page-1"
         }
       ],
-      "actions": [
+      "events": [
         {
-          "id": "act-find-key",
-          "blueprintId": "give_item",
-          "trigger": "on_enter",
-          "params": {
-            "itemId": "golden_key",
-            "count": 1
-          },
-          "conditionals": [
+          "id": "e0df6305-8934-4f85-8752-3ee7de2854c6",
+          "name": "onEnter",
+          "logicTree": [
             {
-              "id": "cond-no-key",
-              "blueprintId": "has_item_count",
+              "id": "act-find-key",
+              "type": "action",
+              "name": "give_item",
+              "blueprintId": "give_item",
               "params": {
                 "itemId": "golden_key",
-                "comparison": "less than",
                 "count": 1
               }
-            }
-          ]
-        },
-        {
-          "id": "act-find-key-msg",
-          "blueprintId": "post_message",
-          "trigger": "on_enter",
-          "params": {
-            "message": "You now carry the strange golden key."
-          },
-          "conditionals": [
+            },
             {
-              "id": "cond-no-key-msg",
-              "blueprintId": "has_item_count",
+              "id": "act-find-key-msg",
+              "type": "action",
+              "name": "post_message",
+              "blueprintId": "post_message",
               "params": {
-                "itemId": "golden_key",
-                "comparison": "less than",
-                "count": 1
+                "message": "You now carry the strange golden key."
               }
             }
           ]
@@ -659,13 +825,35 @@
         {
           "id": "p-cell1-1",
           "text": "<p>You descend a rickety wooden ladder into the darkness. The air smells of mold and old wine.</p>",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-pcell1-1-first",
-              "blueprintId": "first_visit",
-              "params": {
-                "not": false
-              }
+              "id": "bbfd7ef8-9be6-41f4-9f6c-1a4f4577f2ed",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-pcell1-1-first",
+                  "type": "condition",
+                  "name": "first_visit",
+                  "blueprintId": "first_visit",
+                  "params": {
+                    "not": false
+                  },
+                  "children": [
+                    {
+                      "id": "fbe11e54-036b-40d3-8d0c-9dbf12d51ee0",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "86aa3718-62c8-4286-b96f-574160233952",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -678,15 +866,22 @@
         {
           "id": "c-cell1-back",
           "text": "Climb back up",
-          "actions": [
+          "events": [
             {
-              "id": "act-leave-cellar",
-              "blueprintId": "go_to_subplot",
-              "trigger": "on_enter",
-              "params": {
-                "subplotId": null,
-                "targetPageId": "page-1"
-              }
+              "id": "d24bac28-5866-4dba-b678-7cb88bb991e2",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-leave-cellar",
+                  "type": "action",
+                  "name": "go_to_subplot",
+                  "blueprintId": "go_to_subplot",
+                  "params": {
+                    "subplotId": null,
+                    "targetPageId": "page-1"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -712,49 +907,84 @@
         {
           "id": "c-cell2-take",
           "text": "Take the tome",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-tome",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "tome",
-                "comparison": "less than",
-                "count": 1
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-take-tome",
-              "blueprintId": "give_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "tome",
-                "count": 1
-              }
+              "id": "ea232366-b411-465f-9457-a8af0bc5f9fe",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-tome",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "tome",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "c1a73329-c9a3-45f1-b2df-846ae1166094",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "b87f3b15-6028-4316-b184-10968f57e4b3",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-take-tome-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You carefully slip the dusty tome into your pack. The writing inside is in an unknown script."
-              }
+              "id": "bc96f30c-6e35-44d7-bf2e-aa865294a055",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-take-tome",
+                  "type": "action",
+                  "name": "give_item",
+                  "blueprintId": "give_item",
+                  "params": {
+                    "itemId": "tome",
+                    "count": 1
+                  }
+                },
+                {
+                  "id": "act-take-tome-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You carefully slip the dusty tome into your pack. The writing inside is in an unknown script."
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "id": "c-cell2-back",
           "text": "Return to the room above",
-          "actions": [
+          "events": [
             {
-              "id": "act-leave-cellar-2",
-              "blueprintId": "go_to_subplot",
-              "trigger": "on_enter",
-              "params": {
-                "subplotId": null,
-                "targetPageId": "page-1"
-              }
+              "id": "a63eabd2-0ac5-4123-9a3c-6c4cb12a05e8",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-leave-cellar-2",
+                  "type": "action",
+                  "name": "go_to_subplot",
+                  "blueprintId": "go_to_subplot",
+                  "params": {
+                    "subplotId": null,
+                    "targetPageId": "page-1"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -816,24 +1046,51 @@
           "id": "cw3-tome",
           "text": "Place the dusty tome in the depression",
           "targetPageId": "page-woods-4",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-tome",
-              "blueprintId": "has_item",
-              "params": {
-                "itemId": "tome"
-              }
-            }
-          ],
-          "actions": [
+              "id": "d57e90d6-ba98-43c4-aaed-caf51f866e07",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-tome",
+                  "type": "condition",
+                  "name": "has_item",
+                  "blueprintId": "has_item",
+                  "params": {
+                    "itemId": "tome"
+                  },
+                  "children": [
+                    {
+                      "id": "97777b96-8c2a-4eba-91e0-70763384d19f",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "ccaca10a-71fd-4ce5-94ce-865e8968977e",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
             {
-              "id": "act-place-tome",
-              "blueprintId": "remove_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "tome",
-                "count": 1
-              }
+              "id": "d85c3784-7a8e-46ae-a5bf-110dd62e5782",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-place-tome",
+                  "type": "action",
+                  "name": "remove_item",
+                  "blueprintId": "remove_item",
+                  "params": {
+                    "itemId": "tome",
+                    "count": 1
+                  }
+                }
+              ]
             }
           ]
         },
@@ -841,14 +1098,36 @@
           "id": "cw3-read",
           "text": "Read the inscription on the side",
           "targetPageId": "page-woods-5",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-not-read-ins",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "readShrineInscription",
-                "value": "false"
-              }
+              "id": "1ccf11d4-0d37-40a5-80dd-50dc134ec939",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-not-read-ins",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "readShrineInscription",
+                    "value": "false"
+                  },
+                  "children": [
+                    {
+                      "id": "083a3cf7-0f9e-4c9a-8775-53eec133e2a0",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "5ba8f830-2978-4f09-be45-b83ce37836db",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -877,34 +1156,62 @@
         {
           "id": "cw4-1",
           "text": "Take the ancient relic",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-relic",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "ancient_relic",
-                "comparison": "less than",
-                "count": 1
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-relic-give",
-              "blueprintId": "give_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "ancient_relic",
-                "count": 1
-              }
+              "id": "6b591003-7f1e-4645-8e57-c5dd33a13021",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-relic",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "ancient_relic",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "1d6e0123-482d-4088-82b0-58d618a74deb",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "bd354e7a-71f4-47cf-8284-44c9b2f2110a",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-relic",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You claim the ancient relic! You feel a surge of power."
-              }
+              "id": "99b2093e-e38b-47fe-a9d0-dd363be2e493",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-relic-give",
+                  "type": "action",
+                  "name": "give_item",
+                  "blueprintId": "give_item",
+                  "params": {
+                    "itemId": "ancient_relic",
+                    "count": 1
+                  }
+                },
+                {
+                  "id": "act-relic",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You claim the ancient relic! You feel a surge of power."
+                  }
+                }
+              ]
             }
           ]
         },
@@ -930,15 +1237,22 @@
           "id": "cw5-1",
           "text": "Ponder the meaning and walk to the river",
           "targetPageId": "page-woods-8",
-          "actions": [
+          "events": [
             {
-              "id": "act-read-ins",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "readShrineInscription",
-                "value": "true"
-              }
+              "id": "dbed65a7-949f-4528-9474-99e5b3e70363",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-read-ins",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "readShrineInscription",
+                    "value": "true"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -952,13 +1266,35 @@
         {
           "id": "pw8-1",
           "text": "<p>You reach the banks of a wide, dark river. An old wooden ferry is moored here, manned by a <span class=\"contextual-text-mark\" data-context=\"The ferryman is skeletal, his eyes glowing like embers.\">silent ferryman</span>.</p>",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-pw8-1-first",
-              "blueprintId": "first_visit",
-              "params": {
-                "not": false
-              }
+              "id": "7d379b40-5564-41ab-9edf-ae70feb9b377",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-pw8-1-first",
+                  "type": "condition",
+                  "name": "first_visit",
+                  "blueprintId": "first_visit",
+                  "params": {
+                    "not": false
+                  },
+                  "children": [
+                    {
+                      "id": "51a1c5d5-e8ea-45f1-ab02-16843fc772a0",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "6bd41829-439b-4b5e-a60e-10f40fbece91",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -972,24 +1308,51 @@
           "id": "cw8-pay",
           "text": "Give him a river coin",
           "targetPageId": "page-woods-11",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-coin",
-              "blueprintId": "has_item",
-              "params": {
-                "itemId": "river_coin"
-              }
-            }
-          ],
-          "actions": [
+              "id": "fdd80f8e-e6b5-4383-adbe-4849e679a1ab",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-coin",
+                  "type": "condition",
+                  "name": "has_item",
+                  "blueprintId": "has_item",
+                  "params": {
+                    "itemId": "river_coin"
+                  },
+                  "children": [
+                    {
+                      "id": "eba4e846-bd34-431d-ba8c-7dc8042c090b",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "3fa4dd84-d6cf-41aa-a5ea-eeb005d5cc43",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
             {
-              "id": "act-pay-coin",
-              "blueprintId": "remove_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "river_coin",
-                "count": 1
-              }
+              "id": "1d96b108-a8d1-469d-aaff-7610476b27d8",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-pay-coin",
+                  "type": "action",
+                  "name": "remove_item",
+                  "blueprintId": "remove_item",
+                  "params": {
+                    "itemId": "river_coin",
+                    "count": 1
+                  }
+                }
+              ]
             }
           ]
         },
@@ -997,24 +1360,51 @@
           "id": "cw8-blessed",
           "text": "Show him your holy aura (Blessed Knight)",
           "targetPageId": "page-woods-11",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-blessed",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "heroClass",
-                "value": "Blessed Knight"
-              }
-            }
-          ],
-          "actions": [
+              "id": "25f1a5b6-33c2-4c6a-8c61-6b5882bb3c9b",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-blessed",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "heroClass",
+                    "value": "Blessed Knight"
+                  },
+                  "children": [
+                    {
+                      "id": "72aa5d9a-01ed-4584-8172-d703fcbaa847",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "7ddeba29-2843-45f1-894c-d2dfb5d5f576",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
             {
-              "id": "act-blessed",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "The ferryman bows respectfully to a champion of the light."
-              }
+              "id": "9c27d0c1-2047-4c74-923e-f0bf53fb023a",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-blessed",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "The ferryman bows respectfully to a champion of the light."
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1022,15 +1412,37 @@
           "id": "cw8-search",
           "text": "Search the muddy banks for something of value",
           "targetPageId": "page-woods-10",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-coin-bank",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "river_coin",
-                "comparison": "less than",
-                "count": 1
-              }
+              "id": "3a8e2c5e-4b73-4ed9-bf4b-e24339f5e16d",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-coin-bank",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "river_coin",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "6d1258d4-7f2d-4152-b899-9d89875ea05b",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "6107de14-17b2-4f60-bb13-e5fc3c398781",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -1051,34 +1463,62 @@
           "id": "cw10-1",
           "text": "Take the coin and return to the ferryman",
           "targetPageId": "page-woods-8",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-coin",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "river_coin",
-                "comparison": "less than",
-                "count": 1
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-get-coin",
-              "blueprintId": "give_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "river_coin",
-                "count": 1
-              }
+              "id": "ee525cc6-5b9b-43f5-81e9-6bd8c63efaca",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-coin",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "river_coin",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "a2b1c1ab-cddf-4a90-aa8a-044a6d6919bd",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "eb30ba7a-bc7e-41ee-b1a9-d8808eef491e",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-get-coin-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You found a River Coin."
-              }
+              "id": "f0901734-e219-49ce-845f-ece38ebfa29d",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-get-coin",
+                  "type": "action",
+                  "name": "give_item",
+                  "blueprintId": "give_item",
+                  "params": {
+                    "itemId": "river_coin",
+                    "count": 1
+                  }
+                },
+                {
+                  "id": "act-get-coin-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You found a River Coin."
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1121,13 +1561,35 @@
           "id": "cw12-unlock",
           "text": "Use the strange golden key",
           "targetPageId": "page-woods-14",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-goldkey",
-              "blueprintId": "has_item",
-              "params": {
-                "itemId": "golden_key"
-              }
+              "id": "1ff9829c-0a47-471c-a0c0-619d6252f978",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-goldkey",
+                  "type": "condition",
+                  "name": "has_item",
+                  "blueprintId": "has_item",
+                  "params": {
+                    "itemId": "golden_key"
+                  },
+                  "children": [
+                    {
+                      "id": "63230df2-8033-435b-ac50-a6546dd1eafd",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "56ea0627-6aca-40c7-865b-45655502448d",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -1158,34 +1620,62 @@
           "id": "cw14-1",
           "text": "Equip it and rest by the fire",
           "targetPageId": "page-woods-15",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-no-radiant",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "radiant_sword",
-                "comparison": "less than",
-                "count": 1
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-equip",
-              "blueprintId": "give_item",
-              "trigger": "on_enter",
-              "params": {
-                "itemId": "radiant_sword",
-                "count": 1
-              }
+              "id": "59c5d474-d725-4512-be77-0c1f074716b7",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-no-radiant",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "radiant_sword",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "d9b51abc-b885-4411-a7d1-392811790234",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "d76333ff-7f54-4554-811a-5b5e124eab47",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-equip-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You equipped the Radiant Sword! Your attack power is immense."
-              }
+              "id": "8b25de7d-b725-4d42-8d77-a35e028b07ce",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-equip",
+                  "type": "action",
+                  "name": "give_item",
+                  "blueprintId": "give_item",
+                  "params": {
+                    "itemId": "radiant_sword",
+                    "count": 1
+                  }
+                },
+                {
+                  "id": "act-equip-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You equipped the Radiant Sword! Your attack power is immense."
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1210,14 +1700,21 @@
           "id": "cw15-1",
           "text": "Stand up and continue ahead",
           "targetPageId": "page-woods-16",
-          "actions": [
+          "events": [
             {
-              "id": "act-heal",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You feel fully rested."
-              }
+              "id": "73c991f0-0c81-4e14-80b1-1ac3f9064e21",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-heal",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You feel fully rested."
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1238,23 +1735,50 @@
           "id": "cw16-fight-radiant",
           "text": "Strike it down with the Radiant Sword!",
           "targetPageId": "page-woods-18",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-radiant",
-              "blueprintId": "has_item",
-              "params": {
-                "itemId": "radiant_sword"
-              }
-            }
-          ],
-          "actions": [
+              "id": "718985b6-47ca-47e2-abaa-5beb901f69e9",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-radiant",
+                  "type": "condition",
+                  "name": "has_item",
+                  "blueprintId": "has_item",
+                  "params": {
+                    "itemId": "radiant_sword"
+                  },
+                  "children": [
+                    {
+                      "id": "d0eb706e-5780-445f-acbb-20aaeec2c373",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "7e675351-5437-4b5b-8a2e-30a55172d4ef",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
             {
-              "id": "act-radiant",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "The Radiant Sword hums and instantly vaporizes the shadows!"
-              }
+              "id": "26d7bd62-fa7c-4175-bbc2-d28d804a2d38",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-radiant",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "The Radiant Sword hums and instantly vaporizes the shadows!"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1262,25 +1786,52 @@
           "id": "cw16-fight-rusty",
           "text": "Try to fight it with your Rusty Longsword",
           "targetPageId": "page-woods-19",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-rusty",
-              "blueprintId": "has_item_count",
-              "params": {
-                "itemId": "radiant_sword",
-                "comparison": "less than",
-                "count": 1
-              }
-            }
-          ],
-          "actions": [
+              "id": "4732d52b-eaca-466b-865f-85fc52a7f7f0",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-rusty",
+                  "type": "condition",
+                  "name": "has_item_count",
+                  "blueprintId": "has_item_count",
+                  "params": {
+                    "itemId": "radiant_sword",
+                    "comparison": "less than",
+                    "count": 1
+                  },
+                  "children": [
+                    {
+                      "id": "01d914d4-9d20-4cff-be95-bc18bcfdf8f2",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "12a52aca-0933-4ebe-9e76-68dcaa105b6c",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
             {
-              "id": "act-rusty",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "Your rusty blade simply bounces off its thick spectral hide..."
-              }
+              "id": "533c43ae-4fce-45c0-b057-85e506e0eb33",
+              "name": "onClick",
+              "logicTree": [
+                {
+                  "id": "act-rusty",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "Your rusty blade simply bounces off its thick spectral hide..."
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1309,138 +1860,241 @@
         {
           "id": "cm-1",
           "text": "Buy a healing potion (5 gold → restore HP to full)",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-cm-1-gold",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "gold",
-                "comparison": "greater or equal",
-                "value": "5"
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-cm-1-gold",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "gold",
-                "value": "10"
-              }
+              "id": "f1fa165f-3409-48bc-9ea4-784712695e9a",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-cm-1-gold",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "gold",
+                    "comparison": "greater or equal",
+                    "value": "5"
+                  },
+                  "children": [
+                    {
+                      "id": "27ab20f2-4c64-4dae-a0c0-61c7d36cba55",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "29abeccb-9a26-421f-9e87-14f6a81e16b7",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-cm-1-hp",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "hp",
-                "value": "30"
-              }
-            },
-            {
-              "id": "act-cm-1-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You hand over 5 gold and drink the potion. HP restored to full!"
-              }
+              "id": "8e7c3563-a00c-40fe-9cf2-ea93a5cd8f6c",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-cm-1-gold",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "gold",
+                    "value": "10"
+                  }
+                },
+                {
+                  "id": "act-cm-1-hp",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "hp",
+                    "value": "30"
+                  }
+                },
+                {
+                  "id": "act-cm-1-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You hand over 5 gold and drink the potion. HP restored to full!"
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "id": "cm-2",
           "text": "Buy a 'Lucky Mushroom' (3 gold — the merchant seems suspicious)",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-cm-2-gold",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "gold",
-                "comparison": "greater or equal",
-                "value": "3"
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-cm-2-gold",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "gold",
-                "value": "12"
-              }
+              "id": "bb59bade-8409-485b-8bc5-152ea5a7ff9d",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-cm-2-gold",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "gold",
+                    "comparison": "greater or equal",
+                    "value": "3"
+                  },
+                  "children": [
+                    {
+                      "id": "a377d0e3-ce7c-4375-9138-69d84552deec",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "ea57e156-367b-4529-b0c8-9b8fc33de2b0",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "act-cm-2-poison",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "isPoisoned",
-                "value": "true"
-              }
-            },
-            {
-              "id": "act-cm-2-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You eat the mushroom. It tastes bitter... you feel queasy."
-              }
+              "id": "c41a7ffe-8d9f-4cf6-8889-05bf61e275c7",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-cm-2-gold",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "gold",
+                    "value": "12"
+                  }
+                },
+                {
+                  "id": "act-cm-2-poison",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "isPoisoned",
+                    "value": "true"
+                  }
+                },
+                {
+                  "id": "act-cm-2-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You eat the mushroom. It tastes bitter... you feel queasy."
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "id": "cm-antidote",
           "text": "Buy an antidote (5 gold — cure the poison)",
-          "conditionals": [
+          "events": [
             {
-              "id": "cond-cm-ant-gold",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "gold",
-                "comparison": "greater or equal",
-                "value": "5"
-              }
+              "id": "340dfcba-1464-4511-84f5-bb6696857da1",
+              "name": "onEvaluate",
+              "logicTree": [
+                {
+                  "id": "cond-cm-ant-gold",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "gold",
+                    "comparison": "greater or equal",
+                    "value": "5"
+                  },
+                  "children": [
+                    {
+                      "id": "ed4df5e9-8df6-419d-861f-920a150fb4b9",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "17777af2-f0ed-4121-9652-1060d49dd218",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cond-cm-ant-poison",
+                  "type": "condition",
+                  "name": "variable_equals",
+                  "blueprintId": "variable_equals",
+                  "params": {
+                    "variableKey": "isPoisoned",
+                    "comparison": "equal",
+                    "value": "true"
+                  },
+                  "children": [
+                    {
+                      "id": "d1107e04-399f-4173-815c-b3f817b815ad",
+                      "type": "branch_then",
+                      "name": "Then",
+                      "children": []
+                    },
+                    {
+                      "id": "12050936-6b99-43db-9140-63bff9479da2",
+                      "type": "branch_else",
+                      "name": "Else",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "cond-cm-ant-poison",
-              "blueprintId": "variable_equals",
-              "params": {
-                "variableKey": "isPoisoned",
-                "comparison": "equal",
-                "value": "true"
-              }
-            }
-          ],
-          "actions": [
-            {
-              "id": "act-cm-ant-gold",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "gold",
-                "value": "10"
-              }
-            },
-            {
-              "id": "act-cm-ant-poison",
-              "blueprintId": "set_variable",
-              "trigger": "on_enter",
-              "params": {
-                "variableKey": "isPoisoned",
-                "value": "false"
-              }
-            },
-            {
-              "id": "act-cm-ant-msg",
-              "blueprintId": "post_message",
-              "trigger": "on_enter",
-              "params": {
-                "message": "You feel the poison leave your body. Much better!"
-              }
+              "id": "79bd9546-9800-414a-9ed8-6c9521bed043",
+              "name": "onEnter",
+              "logicTree": [
+                {
+                  "id": "act-cm-ant-gold",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "gold",
+                    "value": "10"
+                  }
+                },
+                {
+                  "id": "act-cm-ant-poison",
+                  "type": "action",
+                  "name": "set_variable",
+                  "blueprintId": "set_variable",
+                  "params": {
+                    "variableKey": "isPoisoned",
+                    "value": "false"
+                  }
+                },
+                {
+                  "id": "act-cm-ant-msg",
+                  "type": "action",
+                  "name": "post_message",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You feel the poison leave your body. Much better!"
+                  }
+                }
+              ]
             }
           ]
         },

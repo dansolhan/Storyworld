@@ -168,13 +168,9 @@ export interface EditorState {
   setChoiceActions: (pageId: string, choiceId: string, actions: import('../../../domain/Actions/Action').Action[]) => void;
   createPageFromChoice: (sourcePageId: string, choiceId: string) => void;
 
-  // Domain Handlers - Actions (Unified for Page and Choice)
-  addAction: (targetType: 'page' | 'choice', pageId: string, targetId: string, blueprintId: string) => void;
-  updateAction: (targetType: 'page' | 'choice', pageId: string, targetId: string, actionId: string, params: Record<string, unknown>) => void;
-  removeAction: (targetType: 'page' | 'choice', pageId: string, targetId: string, actionId: string) => void;
-
-  // Domain Handlers - Conditionals (Unified for Choice, Paragraph, Action)
-  addConditional: (targetType: 'choice' | 'paragraph' | 'action', pageId: string, targetId: string, blueprintId: string, parentId?: string) => void;
-  updateConditional: (targetType: 'choice' | 'paragraph' | 'action', pageId: string, targetId: string, conditionalId: string, params: Record<string, unknown>) => void;
-  removeConditional: (targetType: 'choice' | 'paragraph' | 'action', pageId: string, targetId: string, conditionalId: string) => void;
+  // Domain Handlers - Events (Unified for Page, Choice, Paragraph)
+  addEvent: (targetType: 'page' | 'choice' | 'paragraph', pageId: string, targetId: string, name: string) => void;
+  updateEvent: (targetType: 'page' | 'choice' | 'paragraph', pageId: string, targetId: string, eventId: string, updates: Partial<import('../../../domain/Events/StoryEvent').StoryEvent>) => void;
+  removeEvent: (targetType: 'page' | 'choice' | 'paragraph', pageId: string, targetId: string, eventId: string) => void;
+  updateEventLogicTree: (targetType: 'page' | 'choice' | 'paragraph', pageId: string, targetId: string, eventId: string, logicTree: import('../../../domain/Story/LogicNode').LogicNode[]) => void;
 }

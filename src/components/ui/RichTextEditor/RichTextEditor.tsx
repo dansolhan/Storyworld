@@ -8,9 +8,15 @@ export interface RichTextEditorProps {
   content: string;
   features: RTEFeature[];
   onChange: (html: string) => void;
+  hideToolbarUntilHover?: boolean;
 }
 
-export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, features, onChange }) => {
+export const RichTextEditor: React.FC<RichTextEditorProps> = ({ 
+  content, 
+  features, 
+  onChange,
+  hideToolbarUntilHover = false
+}) => {
   // Extract all extensions dynamically from the provided features array
   const extensions = useMemo(() => {
     const featureExts = features.flatMap((feature) => feature.getExtensions());
@@ -38,7 +44,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, feature
   }
 
   return (
-    <div className={styles.editorContainer}>
+    <div className={`${styles.editorContainer} ${hideToolbarUntilHover ? styles.hideToolbarUntilHover : ''}`}>
       <div className={styles.toolbar}>
         {features.map((feature) => {
           const btn = feature.renderToolbarButton(editor);

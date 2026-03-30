@@ -7,9 +7,8 @@ import { createParagraphSlice } from './slices/paragraphSlice';
 import { createChoiceSlice } from './slices/choiceSlice';
 import { createUISlice } from './slices/uiSlice';
 import { createVariableSlice } from './slices/variableSlice';
-import { createConditionalSlice } from './slices/conditionalSlice';
+import { createEventSlice } from './slices/eventSlice';
 import { createMetadataSlice } from './slices/metadataSlice';
-import { createActionSlice } from './slices/actionSlice';
 import { createAudioSlice } from './slices/audioSlice';
 import { createAtmosphereSlice } from './slices/atmosphereSlice';
 import { createItemSlice } from './slices/itemSlice';
@@ -26,9 +25,8 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createParagraphSlice(...a),
   ...createChoiceSlice(...a),
   ...createVariableSlice(...a),
-  ...createConditionalSlice(...a),
   ...createMetadataSlice(...a),
-  ...createActionSlice(...a),
+  ...createEventSlice(...a),
   ...createAudioSlice(...a),
   ...createAtmosphereSlice(...a),
   ...createItemSlice(...a),
