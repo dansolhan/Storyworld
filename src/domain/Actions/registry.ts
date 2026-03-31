@@ -102,6 +102,54 @@ export const removeItemBlueprint: ActionBlueprint<RemoveItemParams> = {
   },
 };
 
+export interface HideParagraphParams {}
+
+export const hideParagraphBlueprint: ActionBlueprint<HideParagraphParams> = {
+  id: 'hide_paragraph',
+  name: 'Hide Paragraph',
+  template: 'Hide this paragraph',
+  domainContext: ['paragraph'],
+  eventContext: ['calculateVisibility'],
+  defaultParams: {},
+  execute: (_params, context) => {
+    if (context.setVisibility) {
+      context.setVisibility(false);
+    }
+  },
+};
+
+export interface HideChoiceParams {}
+
+export const hideChoiceBlueprint: ActionBlueprint<HideChoiceParams> = {
+  id: 'hide_choice',
+  name: 'Hide Choice',
+  template: 'Hide this choice',
+  domainContext: ['choice'],
+  eventContext: ['calculateVisibility'],
+  defaultParams: {},
+  execute: (_params, context) => {
+    if (context.setVisibility) {
+      context.setVisibility(false);
+    }
+  },
+};
+
+export interface PreventMoveToPageParams {}
+
+export const preventMoveToPageBlueprint: ActionBlueprint<PreventMoveToPageParams> = {
+  id: 'prevent_move_to_page',
+  name: 'Prevent Move to Page',
+  template: 'Prevent moving to the next page',
+  domainContext: ['choice'],
+  eventContext: ['onSelect'],
+  defaultParams: {},
+  execute: (_params, context) => {
+    if (context.preventMove) {
+      context.preventMove();
+    }
+  },
+};
+
 // Expose a central registry of blueprints for easy selection
 export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [setVariableBlueprint.id]: setVariableBlueprint as unknown as ActionBlueprint<unknown>,
@@ -109,4 +157,7 @@ export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [postMessageBlueprint.id]: postMessageBlueprint as unknown as ActionBlueprint<unknown>,
   [giveItemBlueprint.id]: giveItemBlueprint as unknown as ActionBlueprint<unknown>,
   [removeItemBlueprint.id]: removeItemBlueprint as unknown as ActionBlueprint<unknown>,
+  [hideParagraphBlueprint.id]: hideParagraphBlueprint as unknown as ActionBlueprint<unknown>,
+  [hideChoiceBlueprint.id]: hideChoiceBlueprint as unknown as ActionBlueprint<unknown>,
+  [preventMoveToPageBlueprint.id]: preventMoveToPageBlueprint as unknown as ActionBlueprint<unknown>,
 };

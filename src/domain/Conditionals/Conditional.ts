@@ -20,6 +20,8 @@ export interface ConditionalBlueprint<
   name: string;
   template: string;
   isGroup?: boolean;
+  domainContext?: string[]; // e.g. ['page', 'choice', 'paragraph']. If omitted, visible in all domains.
+  eventContext?: string[]; // e.g. ['onEnter', 'onClick']. If omitted, visible in all events.
   defaultParams: TParams;
   evaluate: (
     params: TParams,

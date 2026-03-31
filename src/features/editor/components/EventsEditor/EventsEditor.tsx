@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
-import type { StoryEvent } from '../../../../domain/Events/StoryEvent';
+import { type StoryEvent, AVAILABLE_EVENTS } from '../../../../domain/Events/StoryEvent';
 import { LogicTree } from '../LogicTreeBuilder/LogicTree';
 import { LogicToolbox } from '../LogicTreeBuilder/LogicToolbox';
 import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
@@ -22,6 +22,12 @@ export const EventsEditor: React.FC<EventsEditorProps> = ({
   const { addEvent, updateEvent, removeEvent, updateEventLogicTree } = useEditorStore();
   const [expandedIds, setExpandedIds] = React.useState<Set<string>>(new Set(events.map(e => e.id)));
 
+  const availableEvents = React.useMemo(() => {
+    return AVAILABLE_EVENTS.filter(e => !e.domainContext || e.domainContext.includes(targetType));
+  }, [targetType]);
+
+  const defaultEventName = availableEvents.length > 0 ? availableEvents[0].name : 'onEnter';
+
   const toggleExpand = (id: string) => {
     const next = new Set(expandedIds);
     if (next.has(id)) next.delete(id);
@@ -33,13 +39,15 @@ export const EventsEditor: React.FC<EventsEditorProps> = ({
     <div className={styles.container}>
       <div className={styles.header}>
         <span>Events ({events.length})</span>
-        <button 
-          className={styles.miniAddBtn}
-          onClick={() => addEvent(targetType, pageId, targetId, 'onEnter')}
-          title="Add Event"
-        >
-          <Plus size={14} />
-        </button>
+        {availableEvents.length > 0 && (
+          <button 
+            className={styles.miniAddBtn}
+            onClick={() => addEvent(targetType, pageId, targetId, defaultEventName)}
+            title="Add Event"
+          >
+            <Plus size={14} />
+          </button>
+        )}
       </div>
 
       <div className={styles.eventsList}>
@@ -60,10 +68,9 @@ export const EventsEditor: React.FC<EventsEditorProps> = ({
                   value={evt.name}
                   onChange={(e) => updateEvent(targetType, pageId, targetId, evt.id, { name: e.target.value })}
                 >
-                  <option value="onEnter">onEnter</option>
-                  <option value="onExit">onExit</option>
-                  <option value="onEvaluate">onEvaluate (Conditionals)</option>
-                  <option value="onClick">onClick</option>
+                  {availableEvents.map(e => (
+                    <option key={e.name} value={e.name}>{e.label}</option>
+                  ))}
                 </select>
                 <input
                   type="text"
@@ -84,7 +91,10 @@ export const EventsEditor: React.FC<EventsEditorProps> = ({
               {isExpanded && (
                 <div className={styles.eventBody}>
                   <div className={styles.toolboxSection}>
-                     <LogicToolbox />
+                     <LogicToolbox 
+                       domainContext={targetType}
+                       eventContext={evt.name}
+                     />
                   </div>
                   <div className={styles.logicSection}>
                     <LogicTree

@@ -13,6 +13,8 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   postMessage: (message: string, displayStyle?: 'styled' | 'paragraph') => void;
   goToPage?: (pageId: string) => void;
   modifyInventory?: (itemId: string, amount: number) => void;
+  setVisibility?: (visible: boolean) => void;
+  preventMove?: () => void;
 }
 
 export interface Action<TParams = Record<string, unknown>> {
@@ -30,9 +32,12 @@ export interface ActionBlueprint<
   id: string;
   name: string;
   template: string; // Follows the same "{{token}}" pattern as Conditionals
+  domainContext?: string[]; // e.g. ['page', 'choice', 'paragraph']. If omitted, visible in all domains.
+  eventContext?: string[]; // e.g. ['onEnter', 'onClick']. If omitted, visible in all events.
   defaultParams: TParams;
   execute: (
     params: TParams,
     context: ActionContext<TVariables>
   ) => void;
 }
+

@@ -61,6 +61,21 @@ export const EditorSidebar: React.FC = React.memo(() => {
     });
   };
 
+  const handleParagraphClick = (id: string, element: HTMLDivElement) => {
+    if (activeParagraphId !== id) {
+      setActiveParagraphId(id);
+      
+      // Slight delay ensures the layout has started expanding
+      // before attempting to scroll it into view.
+      setTimeout(() => {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 150);
+    }
+  };
+
   // Selector for the selected page's domain data
   const selectedPage = useEditorStore(
     (state) => state.pages[selectedPageId || '']
@@ -199,7 +214,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
                   return (
                     <div 
                       key={p.id} 
-                      onClick={() => setActiveParagraphId(p.id)}
+                      onClick={(e) => handleParagraphClick(p.id, e.currentTarget)}
                       className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.paragraphBlock} ${isLocked ? 'locked' : ''} ${isLocked ? styles.locked : ''} ${isActive ? styles.isActive : ''}`}
                     >
                       <div className={styles.paragraphTools}>

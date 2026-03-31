@@ -7,11 +7,27 @@ import styles from './LogicToolbox.module.css';
 
 interface LogicToolboxProps {
   onDragStart?: (e: React.DragEvent<HTMLDivElement>, item: DraggedToolboxItem) => void;
+  domainContext?: string;
+  eventContext?: string;
 }
 
-export const LogicToolbox: React.FC<LogicToolboxProps> = ({ onDragStart }) => {
+export const LogicToolbox: React.FC<LogicToolboxProps> = ({ onDragStart, domainContext, eventContext }) => {
   const [conditionsOpen, setConditionsOpen] = useState(true);
   const [actionsOpen, setActionsOpen] = useState(true);
+
+  // Helper to check if a blueprint is visible based on context
+  const isVisible = (bp: { domainContext?: string[], eventContext?: string[] }) => {
+    if (bp.domainContext && bp.domainContext.length > 0) {
+      if (!domainContext || !bp.domainContext.includes(domainContext)) return false;
+    }
+    if (bp.eventContext && bp.eventContext.length > 0) {
+      if (!eventContext || !bp.eventContext.includes(eventContext)) return false;
+    }
+    return true;
+  };
+
+  const filteredConditions = Object.values(conditionalBlueprints).filter(isVisible);
+  const filteredActions = Object.values(actionBlueprints).filter(isVisible);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, type: LogicNodeType, blueprintId: string, name: string) => {
     console.log('Drag Start:', { type, blueprintId, name });
@@ -37,7 +53,7 @@ export const LogicToolbox: React.FC<LogicToolboxProps> = ({ onDragStart }) => {
         
         {conditionsOpen && (
           <div className={styles.categoryList}>
-            {Object.values(conditionalBlueprints).map((bp) => (
+            {filteredConditions.map((bp) => (
               <div
                 key={bp.id}
                 className={`${styles.toolboxItem} ${styles.typeCondition}`}
@@ -63,7 +79,7 @@ export const LogicToolbox: React.FC<LogicToolboxProps> = ({ onDragStart }) => {
         
         {actionsOpen && (
           <div className={styles.categoryList}>
-            {Object.values(actionBlueprints).map((bp) => (
+            {filteredActions.map((bp) => (
               <div
                 key={bp.id}
                 className={`${styles.toolboxItem} ${styles.typeAction}`}

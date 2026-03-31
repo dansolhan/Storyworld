@@ -298,7 +298,7 @@
           "events": [
             {
               "id": "5a7c5bfc-3165-4d65-88ad-18dcfc976398",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-p1-1-first",
@@ -319,7 +319,14 @@
                       "id": "e6f4a518-0c9d-42e9-a2c2-31a45011d41a",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "8b31df19-9839-4c12-8d51-b053259732a6",
+                          "type": "action",
+                          "blueprintId": "hide_paragraph",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -337,7 +344,7 @@
           "events": [
             {
               "id": "a9da595d-9776-4429-ac03-5e9c0bf6258c",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-p1-3-first",
@@ -358,7 +365,14 @@
                       "id": "bb955873-1997-404d-84bc-2b54f3f78e80",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "ce4df3e8-a92d-491f-8c9e-f9ee0e112876",
+                          "type": "action",
+                          "blueprintId": "hide_paragraph",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -374,6 +388,32 @@
           "targetPageId": "page-2"
         },
         {
+          "id": "c1-bang",
+          "text": "Bang on the door",
+          "events": [
+            {
+              "id": "evt-bang",
+              "name": "onSelect",
+              "logicTree": [
+                {
+                  "id": "act-bang-prevent",
+                  "type": "action",
+                  "blueprintId": "prevent_move_to_page",
+                  "params": {}
+                },
+                {
+                  "id": "act-bang-msg",
+                  "type": "action",
+                  "blueprintId": "post_message",
+                  "params": {
+                    "message": "You bang your fist against the heavy oak. It echoes through the quiet room, but no one answers."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "c1-2",
           "text": "Look out the window",
           "targetPageId": "page-3"
@@ -385,7 +425,7 @@
           "events": [
             {
               "id": "a3d21b69-740e-4f65-8487-80ba6c57899c",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-key",
@@ -408,7 +448,14 @@
                       "id": "c51440aa-1af7-47c5-ba22-124dbf7096b4",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "97108df7-67af-481b-b3cb-30c7c77e8169",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -422,7 +469,7 @@
           "events": [
             {
               "id": "459eea12-72e4-40ef-b320-9815ea833490",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-knight",
@@ -444,7 +491,14 @@
                       "id": "433ac5ea-ffb6-4783-a6ef-a6387f922fb4",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "db8007e3-b06d-432f-8a49-4349c8463c9d",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -452,7 +506,7 @@
             },
             {
               "id": "31f24f8a-e540-4d4f-8696-9f12f14ce3b0",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-pray-msg",
@@ -483,7 +537,7 @@
           "events": [
             {
               "id": "10691715-a08c-4dd0-82d8-83fd7fde21db",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-go-cellar-choice",
@@ -546,7 +600,7 @@
           "events": [
             {
               "id": "875b5366-2cb6-483b-90bc-c469567e6a27",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-has-key",
@@ -567,7 +621,14 @@
                       "id": "e1157de2-f980-4500-9a66-a908f8111e11",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "88c0e61e-3bd4-4fea-a80e-73b056ea9784",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -588,7 +649,7 @@
           "events": [
             {
               "id": "45fd89a1-a9d0-4eb5-881b-9a39e4c05ecb",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-p3-1-first",
@@ -609,7 +670,14 @@
                       "id": "17a66df7-3295-4409-8f1e-5727af157a58",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "06ab85bd-8462-4ea9-ae99-a8765983d176",
+                          "type": "action",
+                          "blueprintId": "hide_paragraph",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -639,7 +707,7 @@
           "events": [
             {
               "id": "7f204478-053b-4d65-b263-11a33a380eed",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-not-waved",
@@ -661,7 +729,14 @@
                       "id": "5a63feb7-021e-41ba-a0ea-de875a03f1b2",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "61bbff0e-ed6b-4ffa-ba7e-638552dc8fb9",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -669,7 +744,7 @@
             },
             {
               "id": "78d030cd-3b5b-4feb-b747-0963268c4f77",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-wave-msg",
@@ -828,7 +903,7 @@
           "events": [
             {
               "id": "bbfd7ef8-9be6-41f4-9f6c-1a4f4577f2ed",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-pcell1-1-first",
@@ -849,7 +924,14 @@
                       "id": "86aa3718-62c8-4286-b96f-574160233952",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "327275ea-a463-420b-ba30-6e0e47fae57c",
+                          "type": "action",
+                          "blueprintId": "hide_paragraph",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -869,7 +951,7 @@
           "events": [
             {
               "id": "d24bac28-5866-4dba-b678-7cb88bb991e2",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-leave-cellar",
@@ -910,7 +992,7 @@
           "events": [
             {
               "id": "ea232366-b411-465f-9457-a8af0bc5f9fe",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-tome",
@@ -933,7 +1015,14 @@
                       "id": "b87f3b15-6028-4316-b184-10968f57e4b3",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "ac94a69b-1a33-438c-ae6b-1b8422f71a38",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -941,7 +1030,7 @@
             },
             {
               "id": "bc96f30c-6e35-44d7-bf2e-aa865294a055",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-take-tome",
@@ -972,7 +1061,7 @@
           "events": [
             {
               "id": "a63eabd2-0ac5-4123-9a3c-6c4cb12a05e8",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-leave-cellar-2",
@@ -1049,7 +1138,7 @@
           "events": [
             {
               "id": "d57e90d6-ba98-43c4-aaed-caf51f866e07",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-tome",
@@ -1070,7 +1159,14 @@
                       "id": "ccaca10a-71fd-4ce5-94ce-865e8968977e",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "c7f023c3-01c1-4068-b3a0-f4225500bffd",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1101,7 +1197,7 @@
           "events": [
             {
               "id": "1ccf11d4-0d37-40a5-80dd-50dc134ec939",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-not-read-ins",
@@ -1123,7 +1219,14 @@
                       "id": "5ba8f830-2978-4f09-be45-b83ce37836db",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "3a2a4b8a-cc4a-464d-9490-7f8c1a425b87",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1159,7 +1262,7 @@
           "events": [
             {
               "id": "6b591003-7f1e-4645-8e57-c5dd33a13021",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-relic",
@@ -1182,7 +1285,14 @@
                       "id": "bd354e7a-71f4-47cf-8284-44c9b2f2110a",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "08fe5962-c858-4cde-8f61-7689c4928201",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1190,7 +1300,7 @@
             },
             {
               "id": "99b2093e-e38b-47fe-a9d0-dd363be2e493",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-relic-give",
@@ -1269,7 +1379,7 @@
           "events": [
             {
               "id": "7d379b40-5564-41ab-9edf-ae70feb9b377",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-pw8-1-first",
@@ -1290,7 +1400,14 @@
                       "id": "6bd41829-439b-4b5e-a60e-10f40fbece91",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "796d3504-004d-40dd-8445-f329db3409f4",
+                          "type": "action",
+                          "blueprintId": "hide_paragraph",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1311,7 +1428,7 @@
           "events": [
             {
               "id": "fdd80f8e-e6b5-4383-adbe-4849e679a1ab",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-coin",
@@ -1332,7 +1449,14 @@
                       "id": "3fa4dd84-d6cf-41aa-a5ea-eeb005d5cc43",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "77d0c6e6-eeff-4a89-9b60-558e3ae0a509",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1363,7 +1487,7 @@
           "events": [
             {
               "id": "25f1a5b6-33c2-4c6a-8c61-6b5882bb3c9b",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-blessed",
@@ -1385,7 +1509,14 @@
                       "id": "7ddeba29-2843-45f1-894c-d2dfb5d5f576",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "73358a55-bd0e-49f2-bbc0-00a0a3cfd7c6",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1415,7 +1546,7 @@
           "events": [
             {
               "id": "3a8e2c5e-4b73-4ed9-bf4b-e24339f5e16d",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-coin-bank",
@@ -1438,7 +1569,14 @@
                       "id": "6107de14-17b2-4f60-bb13-e5fc3c398781",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "41e72d85-06bc-48c6-ad80-b07074f08ba2",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1466,7 +1604,7 @@
           "events": [
             {
               "id": "ee525cc6-5b9b-43f5-81e9-6bd8c63efaca",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-coin",
@@ -1489,7 +1627,14 @@
                       "id": "eb30ba7a-bc7e-41ee-b1a9-d8808eef491e",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "dc8c2950-c2ff-41f5-9c55-5700aef43cf5",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1564,7 +1709,7 @@
           "events": [
             {
               "id": "1ff9829c-0a47-471c-a0c0-619d6252f978",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-goldkey",
@@ -1585,7 +1730,14 @@
                       "id": "56ea0627-6aca-40c7-865b-45655502448d",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "7da1b7cb-2282-486b-9cbf-064d0101dfbc",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1623,7 +1775,7 @@
           "events": [
             {
               "id": "59c5d474-d725-4512-be77-0c1f074716b7",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-no-radiant",
@@ -1646,7 +1798,14 @@
                       "id": "d76333ff-7f54-4554-811a-5b5e124eab47",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "f6fff620-723a-49c5-b33a-6725588003dd",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1738,7 +1897,7 @@
           "events": [
             {
               "id": "718985b6-47ca-47e2-abaa-5beb901f69e9",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-radiant",
@@ -1759,7 +1918,14 @@
                       "id": "7e675351-5437-4b5b-8a2e-30a55172d4ef",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "9a4116f9-5785-4b07-b436-158b6d36d8ca",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1789,7 +1955,7 @@
           "events": [
             {
               "id": "4732d52b-eaca-466b-865f-85fc52a7f7f0",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-rusty",
@@ -1812,7 +1978,14 @@
                       "id": "12a52aca-0933-4ebe-9e76-68dcaa105b6c",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "0b7491dc-e910-4c94-85a4-30986fbe8147",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1863,7 +2036,7 @@
           "events": [
             {
               "id": "f1fa165f-3409-48bc-9ea4-784712695e9a",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-cm-1-gold",
@@ -1886,7 +2059,14 @@
                       "id": "29abeccb-9a26-421f-9e87-14f6a81e16b7",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "08d69e28-02e2-447e-ab3b-7535b7fa130a",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1894,7 +2074,7 @@
             },
             {
               "id": "8e7c3563-a00c-40fe-9cf2-ea93a5cd8f6c",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-cm-1-gold",
@@ -1935,7 +2115,7 @@
           "events": [
             {
               "id": "bb59bade-8409-485b-8bc5-152ea5a7ff9d",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-cm-2-gold",
@@ -1958,7 +2138,14 @@
                       "id": "ea57e156-367b-4529-b0c8-9b8fc33de2b0",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "1faaaecc-f48d-4f8d-bc2a-8225ab4b655e",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1966,7 +2153,7 @@
             },
             {
               "id": "c41a7ffe-8d9f-4cf6-8889-05bf61e275c7",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-cm-2-gold",
@@ -2007,7 +2194,7 @@
           "events": [
             {
               "id": "340dfcba-1464-4511-84f5-bb6696857da1",
-              "name": "onEvaluate",
+              "name": "calculateVisibility",
               "logicTree": [
                 {
                   "id": "cond-cm-ant-gold",
@@ -2030,7 +2217,14 @@
                       "id": "17777af2-f0ed-4121-9652-1060d49dd218",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "45af7e25-c595-480e-be49-defcd9447fb6",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 },
@@ -2055,7 +2249,14 @@
                       "id": "12050936-6b99-43db-9140-63bff9479da2",
                       "type": "branch_else",
                       "name": "Else",
-                      "children": []
+                      "children": [
+                        {
+                          "id": "ef130b92-e020-42f9-91cb-73978be86e21",
+                          "type": "action",
+                          "blueprintId": "hide_choice",
+                          "params": {}
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2063,7 +2264,7 @@
             },
             {
               "id": "79bd9546-9800-414a-9ed8-6c9521bed043",
-              "name": "onEnter",
+              "name": "onSelect",
               "logicTree": [
                 {
                   "id": "act-cm-ant-gold",
