@@ -1,8 +1,87 @@
 import type { StoryData } from '../StoryData';
 
-export const CURRENT_VERSION = '1.0.0';
+export const CURRENT_VERSION = '1.1.0';
 
 type MigrationFunction = (oldStory: any) => any;
+
+const migrateV1_0_0_to_V1_1_0: MigrationFunction = (v1Story) => {
+  // Version 1.1.0 renames:
+  // - onEvaluate -> calculateVisibility (for pages, paragraphs, and choices)
+  // - onEnter -> onSelect (for choices only)
+  // - Automates adding "hide" actions to failed calculateVisibility conditions to match legacy behavior
+
+  const upgradeLogicTree = (tree: any[], hideBlueprintId: string) => {
+    if (!tree) return;
+    for (const node of tree) {
+      if (node.type === 'condition') {
+        const children = node.children || [];
+        let branchElse = children.find((c: any) => c.type === 'branch_else');
+        
+        if (!branchElse) {
+          branchElse = {
+            id: crypto.randomUUID(),
+            type: 'branch_else',
+            name: 'Else',
+            children: []
+          };
+          node.children = [...children, branchElse];
+        }
+
+        if (!branchElse.children) branchElse.children = [];
+        
+        const hasHide = branchElse.children.some((c: any) => 
+          c.type === 'action' && (c.blueprintId === 'hide_paragraph' || c.blueprintId === 'hide_choice')
+        );
+
+        if (!hasHide) {
+          branchElse.children.push({
+            id: crypto.randomUUID(),
+            type: 'action',
+            name: hideBlueprintId === 'hide_paragraph' ? 'Hide Paragraph' : 'Hide Choice',
+            blueprintId: hideBlueprintId,
+            params: {}
+          });
+        }
+      }
+    }
+  };
+
+  const pages = (v1Story.pages || []).map((page: any) => {
+    const p = { ...page };
+    
+    const migrateEvents = (item: any, domain: 'page' | 'paragraph' | 'choice') => {
+      if (!item.events) return item;
+      const hideBlueprintId = domain === 'choice' ? 'hide_choice' : 'hide_paragraph';
+
+      return {
+        ...item,
+        events: item.events.map((evt: any) => {
+          let newName = evt.name;
+          if (newName === 'onEvaluate') {
+            newName = 'calculateVisibility';
+          }
+          if (domain === 'choice' && (newName === 'onEnter' || newName === 'onClick')) {
+            newName = 'onSelect';
+          }
+          
+          const newEvt = { ...evt, name: newName };
+          if (newName === 'calculateVisibility') {
+            upgradeLogicTree(newEvt.logicTree, hideBlueprintId);
+          }
+          return newEvt;
+        })
+      };
+    };
+
+    const migratedPage = migrateEvents(p, 'page');
+    migratedPage.paragraphs = (migratedPage.paragraphs || []).map((para: any) => migrateEvents(para, 'paragraph'));
+    migratedPage.choices = (migratedPage.choices || []).map((choice: any) => migrateEvents(choice, 'choice'));
+    
+    return migratedPage;
+  });
+
+  return { ...v1Story, pages };
+};
 
 const migrateV1ToV2: MigrationFunction = (v1Story) => {
   // Version 2 introduces uiMetadata containing nodePositions for Editor layout.
@@ -199,6 +278,7 @@ const migrationSteps: MigrationStep[] = [
   { from: 8, to: '0.8.0', migrate: (story) => ({ ...story }) },
   { from: '0.8.0', to: '0.9.0', migrate: (story) => ({ ...story }) },
   { from: '0.9.0', to: '1.0.0', migrate: migrateV0_9_0_to_V1_0_0 },
+  { from: '1.0.0', to: '1.1.0', migrate: migrateV1_0_0_to_V1_1_0 },
 ];
 
 export function migrateStory(storyJson: any): StoryData {

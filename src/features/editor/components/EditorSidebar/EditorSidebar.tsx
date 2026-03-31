@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { Target, Lock, Unlock } from 'lucide-react';
+import { Target, Lock, Unlock, AlertCircle } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ExpandableBottomPanel } from '../../../../components/ui/ExpandableBottomPanel/ExpandableBottomPanel';
 import { Button } from '../../../../components/ui/Button/Button';
@@ -228,6 +228,17 @@ export const EditorSidebar: React.FC = React.memo(() => {
                           <span>{isLocked ? "Locked" : "Lock"}</span>
                         </button>
                       </div>
+
+                      {(p.events || []).some((e: any) => e.name === 'calculateVisibility') && (
+                        <div className={styles.permanentIndicators}>
+                          <div 
+                            className={styles.visibilityIndicator} 
+                            title="Visibility Logic Attached: This paragraph contains logic that determines if it should be shown to the player."
+                          >
+                            <AlertCircle size={16} />
+                          </div>
+                        </div>
+                      )}
 
                       <RichTextEditor
                         content={p.text}

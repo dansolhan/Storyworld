@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { get, keys, del, set as idbSet } from 'idb-keyval';
 import { useEditorStore } from '../../editor/store/useEditorStore';
 import { parseStoryToGraph } from '../../../lib/storyMapper';
+import { migrateStory } from '../../../domain/Story/migrations/migrations';
 import exampleStoryRaw from '../../../data/exampleStory.json';
 import type { StoryData } from '../../../domain/Story/StoryData';
 
-const exampleStory = exampleStoryRaw as StoryData;
+const exampleStory = migrateStory(exampleStoryRaw);
 
 export interface StoryIndexItem {
   id: string;
@@ -110,37 +111,29 @@ export const useStories = () => {
         setHasHydrated(false);
         setStoryId(id);
         
-        let loadedPages = data.state.pages;
-        if (!loadedPages) {
-          loadedPages = {};
-          (data.state.nodes || []).filter((n: any) => n.type === 'pageNode').forEach((node: any) => {
-            loadedPages[node.id] = {
-              id: node.id,
-              title: node.data.title || 'Untitled',
-              subplotId: node.data.subplotId,
-              atmosphereId: node.data.atmosphereId,
-              paragraphs: node.data.paragraphs || [],
-              choices: node.data.choices || [],
-              actions: node.data.actions || []
-            };
-          });
-        }
+        const parsedData = migrateStory({
+          ...data.state,
+          title: data.state.storyTitle,
+          description: data.state.storyDescription,
+        });
+
+        const { nodes: parsedNodes, edges: parsedEdges, pages: parsedPages } = parseStoryToGraph(parsedData);
 
         loadStory({
-          nodes: data.state.nodes || [],
-          edges: data.state.edges || [],
-          pages: loadedPages,
-          variables: data.state.variables || {},
-          items: data.state.items || {},
+          nodes: parsedNodes,
+          edges: parsedEdges,
+          pages: parsedPages,
+          variables: parsedData.variables || {},
+          items: parsedData.items || {},
           metadata: {
-            title: data.state.storyTitle,
-            description: data.state.storyDescription,
-            startPageId: data.state.startPageId
+            title: parsedData.title,
+            description: parsedData.description,
+            startPageId: parsedData.startPageId
           },
-          subplots: data.state.subplots || [],
-          audio: data.state.audio || {},
-          atmospheres: data.state.atmospheres || {},
-          statusData: data.state.statusData || []
+          subplots: parsedData.subplots || [],
+          audio: parsedData.audio || {},
+          atmospheres: parsedData.atmospheres || {},
+          statusData: parsedData.statusData || []
         });
         setHasHydrated(true);
         onOpen();
