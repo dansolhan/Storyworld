@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { usePlayerStore } from '../store/usePlayerStore';
+import { usePlayerUIStore } from '../adapter/usePlayerUI';
 
 export const useContextualPopover = () => {
-  const setContextualPopover = usePlayerStore((s) => s.setContextualPopover);
+  const setContextualPopover = usePlayerUIStore((s) => s.setContextualPopover);
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
@@ -22,7 +22,6 @@ export const useContextualPopover = () => {
           });
         }
       } else {
-        // Only close popover if clicking outside context menus or popovers
         if (!target.closest('[class*="contextMenu"]') && !target.closest('[class*="popover"]')) {
           setContextualPopover(null);
         }

@@ -1,7 +1,7 @@
 import type { EvaluationContext } from '../../../domain/Conditionals/Conditional';
 import type { StoryEvent } from '../../../domain/Events/StoryEvent';
 import type { ActionContext } from '../../../domain/Actions/Action';
-import { evaluateEventVisibility, executeLogicTree } from '../logic/executeLogicTree';
+import { evaluateEventVisibility, executeLogicTree } from './executeLogicTree';
 
 interface EvaluatableItem {
   events?: StoryEvent[];
@@ -37,10 +37,8 @@ export function evaluateVisibility(item: EvaluatableItem, context: EvaluationCon
         console.warn('Cannot set variables during visibility calculation'); 
       },
       postMessage: () => {},
-      setVisibility: (visible) => {
+      setVisibility: (visible: boolean) => {
         // If an action decides to hide it, it becomes false.
-        // It stays false if hidden, unless another action explicitly reshows it (if we supported that, but we just &= it usually).
-        // For now, let's just use strict reassignment so they can show/hide based on logic branches.
         isVisible = visible; 
       }
     };

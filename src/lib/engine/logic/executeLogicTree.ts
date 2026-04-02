@@ -12,10 +12,10 @@ export const evaluateLogicNode = (node: LogicNode, evalContext: EvaluationContex
   if (!blueprint) return true; // Fail open if no blueprint found
 
   // Map our LogicNode branch_conditions structure into the flat children array legacy blueprints expect.
-  const branchConditions = node.children?.find(c => c.type === 'branch_conditions');
+  const branchConditions = node.children?.find((c: LogicNode) => c.type === 'branch_conditions');
   
   // Create an adapter to mock the Conditional interface for recursive evaluation.
-  const childrenAdapter = (branchConditions?.children || []).map(child => ({
+  const childrenAdapter = (branchConditions?.children || []).map((child: LogicNode) => ({
     id: child.id,
     blueprintId: child.blueprintId || '',
     params: child.params || {},
@@ -26,9 +26,9 @@ export const evaluateLogicNode = (node: LogicNode, evalContext: EvaluationContex
     node.params || {}, 
     evalContext, 
     childrenAdapter as any, 
-    (cond: any) => {
+    (cond: { id: string }) => {
       // Find the actual sub-logic node by ID to evaluate it
-      const actualLogicNode = branchConditions?.children?.find(c => c.id === cond.id);
+      const actualLogicNode = branchConditions?.children?.find((c: LogicNode) => c.id === cond.id);
       if (actualLogicNode) {
         return evaluateLogicNode(actualLogicNode, evalContext);
       }
@@ -70,7 +70,7 @@ export const executeLogicTree = (
       
       // Select the correct branch based on result
       const targetBranchType = result ? 'branch_then' : 'branch_else';
-      const branch = node.children?.find(c => c.type === targetBranchType);
+      const branch = node.children?.find((c: LogicNode) => c.type === targetBranchType);
       
       // Sequentially execute the contents of that branch
       if (branch && branch.children && branch.children.length > 0) {

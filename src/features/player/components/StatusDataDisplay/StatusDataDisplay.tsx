@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { usePlayerStore } from '../../store/usePlayerStore';
-import { evaluateVisibility } from '../../conditionals/evaluator';
+import { useEngineStore } from '../../adapter/EngineContext';
+import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './StatusDataDisplay.module.css';
 
 /**
  * Interpolates {{ varName }} placeholders in a template string using the
- * current runtime variable values from the player store.
+ * current runtime variable values from the engine store.
  */
 function interpolate(
   template: string,
@@ -18,14 +18,19 @@ function interpolate(
 }
 
 export const StatusDataDisplay: React.FC = () => {
-  const storyData = usePlayerStore((s) => s.storyData);
-  const variables = usePlayerStore((s) => s.variables);
-  const visitedPageIds = usePlayerStore((s) => s.visitedPageIds);
-  const currentPageId = usePlayerStore((s) => s.currentPageId);
-  const inventory = usePlayerStore((s) => s.inventory);
+  const storyData = useEngineStore((s) => s.storyData);
+  const variables = useEngineStore((s) => s.variables);
+  const visitedPageIds = useEngineStore((s) => s.visitedPageIds);
+  const currentPageId = useEngineStore((s) => s.currentPageId);
+  const inventory = useEngineStore((s) => s.inventory);
 
   const evalContext = useMemo(
-    () => ({ variables, visitedPageIds, currentPageId, inventory }),
+    () => ({ 
+      variables, 
+      visitedPageIds, 
+      currentPageId: currentPageId || '', 
+      inventory 
+    }),
     [variables, visitedPageIds, currentPageId, inventory]
   );
 
@@ -34,7 +39,7 @@ export const StatusDataDisplay: React.FC = () => {
     return entries
       .slice() // don't mutate
       .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
-      .filter((entry) => evaluateVisibility({ conditionals: entry.conditionals }, evalContext));
+      .filter((entry) => evaluateVisibility({ events: entry.conditionals ? [{ id: 'status', name: 'onEvaluate', logicTree: entry.conditionals as any }] : [] } as any, evalContext));
   }, [storyData?.statusData, evalContext]);
 
   if (visibleEntries.length === 0) return null;

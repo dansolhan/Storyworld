@@ -1,0 +1,30 @@
+import type { StoryData } from '../../domain/Story/StoryData';
+import type { StoryVariable } from '../../domain/Story/Variable';
+
+export interface PlayerMessage {
+  id: string;
+  text: string;
+  pageId?: string;
+  displayStyle?: 'styled' | 'paragraph';
+}
+
+export type StoryEffect = 
+  | { type: 'PLAY_SOUND'; payload: { soundId: string; category?: 'bgm' | 'sfx' } }
+  | { type: 'STOP_ALL_SOUNDS' }
+  | { type: 'SHOW_POPOVER'; payload: { text: string; title?: string; x: number; y: number; width: number; height: number } };
+
+export interface EngineState {
+  storyData: StoryData | null;
+  currentPageId: string | undefined;
+  visitedPageIds: string[];
+  variables: Record<string, StoryVariable>;
+  inventory: Record<string, number>;
+  messages: PlayerMessage[];
+  lastEffect?: StoryEffect;
+}
+
+export type StoryMessage =
+  | { type: 'INITIALIZE'; payload: { storyData: StoryData; startPageId?: string } }
+  | { type: 'SELECT_CHOICE'; payload: { choiceId: string; targetPageId?: string } }
+  | { type: 'EXECUTE_ITEM_CHOICE'; payload: { itemId: string; choiceId: string } }
+  | { type: 'RESTART' };

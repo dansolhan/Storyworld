@@ -4,18 +4,14 @@ import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { useContextualPopover } from './hooks/useContextualPopover';
-import { useChoiceSound } from './hooks/useChoiceSound';
-import { useAtmosphere } from './hooks/useAtmosphere';
-import { PlayerText } from './components/PlayerText';
-import { PlayerChoices } from './components/PlayerChoices';
-import { PlayerRightFrame } from './components/PlayerRightFrame';
-import { usePlayerStore } from './store/usePlayerStore';
-import { useCurrentPage } from './hooks/useStoryState';
-import { usePageEnterEvents } from './hooks/usePageEnterEvents';
-import { audioManager } from '../../lib/audioManager';
+import { useEngineStore, useEngine, EngineProvider } from './adapter/EngineContext';
+import { usePlayerUIStore } from './adapter/usePlayerUI';
+import { useSoundAdapter } from './adapter/useSoundAdapter';
 import { parseTextTokens } from '../../utils/textParser';
 import type { StoryData } from '../../domain/Story/StoryData';
-import { PageProvider } from './context/PageContext';
+import { PageRenderer } from './components/PageRenderer';
+import { ChoiceRenderer } from './components/ChoiceRenderer';
+import { PlayerRightFrame } from './components/PlayerRightFrame';
 import './player-theme.css';
 import styles from './Player.module.css';
 
@@ -25,52 +21,24 @@ export interface PlayerProps {
   onExit?: () => void;
 }
 
-export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
-  const {
-    currentPageId,
-    initialize,
-    addVisitedPageId,
-    restart,
-    contextualPopover,
-    setContextualPopover,
-    variables,
-  } = usePlayerStore();
+const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
+  const engine = useEngine();
+  const currentPageId = useEngineStore((s) => s.currentPageId);
+  const variables = useEngineStore((s) => s.variables);
+  const isTransitioning = usePlayerUIStore((s) => s.isTransitioning);
+  const contextualPopover = usePlayerUIStore((s) => s.contextualPopover);
+  const setContextualPopover = usePlayerUIStore((s) => s.setContextualPopover);
 
-  const currentPage = useCurrentPage();
-  const { play } = useChoiceSound();
-
-  // Initialization: Wipe the store and load fresh data
+  // Initialize engine: Wipe and load fresh data
   useEffect(() => {
     if (storyData) {
-      initialize(storyData, startPageId);
+      engine.dispatch({ type: 'INITIALIZE', payload: { storyData, startPageId } });
     }
-  }, [storyData, startPageId, initialize]);
+  }, [storyData, startPageId, engine]);
 
-  // Cleanup top-level audio on exit
-  useEffect(() => {
-    return () => {
-      audioManager.stopAll();
-    };
-  }, []);
-
-  // Track visited pages and play entry sound
-  useEffect(() => {
-    if (currentPageId) {
-      play();
-      addVisitedPageId(currentPageId);
-    }
-  }, [currentPageId, play, addVisitedPageId]);
-
-  // Handle atmosphere audio
-  useAtmosphere();
-
-  // Attach global click listener for contextual popovers
+  // Adapters for side-effects and global listeners
+  useSoundAdapter();
   useContextualPopover();
-
-  // Execute actions on page entry
-  usePageEnterEvents();
-
-  const isTransitioning = usePlayerStore((s) => s.isTransitioning);
 
   if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (
@@ -82,19 +50,7 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     );
   }
 
-  if (!currentPage) {
-    if (currentPageId) {
-      return (
-        <div className={styles.container}>
-          <Card padding="lg" className={styles.errorCard}>
-            <p>Could not find page with ID: {currentPageId}</p>
-            <Button onClick={restart} className={styles.restartButton}>Restart Story</Button>
-          </Card>
-        </div>
-      );
-    }
-    return null;
-  }
+  if (!currentPageId) return null;
 
   return (
     <div className={styles.container}>
@@ -114,10 +70,8 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
               transition={{ duration: 0.2 }}
               style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
             >
-              <PageProvider pageId={currentPageId}>
-                <PlayerText />
-                <PlayerChoices />
-              </PageProvider>
+              <PageRenderer pageId={currentPageId} />
+              <ChoiceRenderer pageId={currentPageId} />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -153,3 +107,9 @@ export const Player: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
     </div>
   );
 };
+
+export const Player: React.FC<PlayerProps> = (props) => (
+  <EngineProvider>
+    <PlayerContent {...props} />
+  </EngineProvider>
+);
