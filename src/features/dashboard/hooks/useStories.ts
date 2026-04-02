@@ -4,7 +4,6 @@ import { useEditorStore } from '../../editor/store/useEditorStore';
 import { parseStoryToGraph } from '../../../lib/storyMapper';
 import { migrateStory } from '../../../domain/Story/migrations/migrations';
 import exampleStoryRaw from '../../../data/exampleStory.json';
-import type { StoryData } from '../../../domain/Story/StoryData';
 
 const exampleStory = migrateStory(exampleStoryRaw);
 
@@ -92,7 +91,9 @@ export const useStories = () => {
       items: exampleStory.items || {},
       metadata: {
         title: exampleStory.title,
+        titleLocId: exampleStory.titleLocId,
         description: exampleStory.description,
+        descriptionLocId: exampleStory.descriptionLocId,
         startPageId: exampleStory.startPageId
       },
       subplots: exampleStory.subplots || [],
@@ -113,8 +114,11 @@ export const useStories = () => {
         
         const parsedData = migrateStory({
           ...data.state,
+          version: data.version,
           title: data.state.storyTitle,
+          titleLocId: data.state.storyTitleLocId,
           description: data.state.storyDescription,
+          descriptionLocId: data.state.storyDescriptionLocId,
         });
 
         const { nodes: parsedNodes, edges: parsedEdges, pages: parsedPages } = parseStoryToGraph(parsedData);
@@ -127,7 +131,9 @@ export const useStories = () => {
           items: parsedData.items || {},
           metadata: {
             title: parsedData.title,
+            titleLocId: parsedData.titleLocId,
             description: parsedData.description,
+            descriptionLocId: parsedData.descriptionLocId,
             startPageId: parsedData.startPageId
           },
           subplots: parsedData.subplots || [],

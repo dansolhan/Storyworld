@@ -4,6 +4,8 @@ import type { StoryData } from '../../domain/Story/StoryData';
 import type { ActionContext } from '../../domain/Actions/Action';
 import { executeLogicTree } from './logic/executeLogicTree';
 import { evaluateVisibility } from './logic/evaluator';
+import { actionBlueprints } from '../../domain/Actions/registry';
+import type { StoryEvent } from '../../domain/Events/StoryEvent';
 
 export class StoryEngine {
   public store: StoreApi<EngineState>;
@@ -124,6 +126,9 @@ export class StoryEngine {
       },
       preventMove: () => {
         scriptState.preventMove = true;
+      },
+      endStory: (data: Record<string, unknown>) => {
+        this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
       }
     };
 
@@ -189,6 +194,9 @@ export class StoryEngine {
       goToPage: (id: string) => {
           scriptState.nextTargetId = id;
           scriptState.newMessages.forEach(m => { if (!m.pageId) m.pageId = id; });
+      },
+      endStory: (data: Record<string, unknown>) => {
+        this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
       }
     };
 
@@ -202,9 +210,10 @@ export class StoryEngine {
     if (choice.actions) {
        choice.actions.forEach(action => {
           if (action.conditionals && action.conditionals.length > 0) {
-            if (!evaluateVisibility({ events: [{ id: 'synthetic', name: 'onEvaluate', logicTree: action.conditionals as any }] } as any, evalContext)) return;
+            const syntheticEvent: StoryEvent = { id: 'synthetic', name: 'onEvaluate', logicTree: action.conditionals as any };
+            if (!evaluateVisibility({ events: [syntheticEvent] }, evalContext)) return;
           }
-          const blueprint = (require('../../domain/Actions/registry').actionBlueprints)[action.blueprintId];
+          const blueprint = actionBlueprints[action.blueprintId];
           if (blueprint) {
             blueprint.execute(action.params, actionContext);
           }
@@ -282,6 +291,9 @@ export class StoryEngine {
             goToPage: (id: string) => {
                 scriptState.navigateToPage = id;
                 scriptState.newMessages.forEach(m => { if (!m.pageId) m.pageId = id; });
+            },
+            endStory: (data: Record<string, unknown>) => {
+                this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
             }
         };
 

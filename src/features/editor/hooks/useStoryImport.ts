@@ -33,7 +33,9 @@ export const useStoryImport = () => {
             items: parsedData.items || {},
             metadata: {
               title: parsedData.title,
+              titleLocId: parsedData.titleLocId,
               description: parsedData.description,
+              descriptionLocId: parsedData.descriptionLocId,
               startPageId: parsedData.startPageId
             },
             subplots: parsedData.subplots || [],

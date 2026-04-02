@@ -80,43 +80,69 @@ class AudioManager {
   /**
    * Play a registered sound by id.
    */
-  public play(id: string, options?: { fadeIn?: number }): void {
+  public play(id: string, options?: { fadeIn?: number, delay?: number, stopOtherInCategory?: boolean }): void {
+    // Resume AudioContext if it was suspended (handles some browser autoplay restrictions)
+    if (Howler.ctx && Howler.ctx.state === 'suspended') {
+      Howler.ctx.resume().catch((e) => console.warn('AudioManager: Failed to resume context', e));
+    }
+
+    const config = this.configs.get(id);
     const sound = this.sounds.get(id);
-    if (sound) {
+    
+    if (sound && config) {
+      if (options?.stopOtherInCategory) {
+        // Fade out others immediately
+        this.stopByCategory(config.category, { fadeOut: 600, exceptId: id });
+      }
+
+      // To satisfy browser autoplay/gesture requirements, we call .play() IMMEDIATELY
+      // but keep it silent if a delay is requested.
+      const targetVol = this.getTargetVolume(id);
+      const isMusic = config.category === 'bgm' || config.category === 'ambient';
+
+      if (!sound.playing()) {
+        sound.volume(0);
+        sound.play();
+      }
+
       if (this.pendingStops.has(id)) {
         const cancelStop = this.pendingStops.get(id);
         if (cancelStop) cancelStop();
         this.pendingStops.delete(id);
       }
-      sound.off('fade'); // Clear any pending fade out handlers
+      sound.off('fade');
 
-      if (options?.fadeIn) {
-        const targetVol = this.getTargetVolume(id);
-        if (!sound.playing()) {
-          sound.volume(0);
-          sound.play();
+      const startFade = () => {
+        // Re-fetch in case of rapid changes
+        const currentSound = this.sounds.get(id);
+        if (!currentSound || !currentSound.playing()) return;
+
+        if (options?.fadeIn) {
+          currentSound.fade(currentSound.volume(), targetVol, options.fadeIn);
+        } else {
+          currentSound.volume(targetVol);
         }
-        sound.fade(sound.volume(), targetVol, options.fadeIn);
+      };
+
+      if (options?.delay) {
+        setTimeout(startFade, options.delay);
       } else {
-        sound.volume(this.getTargetVolume(id));
-        if (!sound.playing()) {
-          sound.play();
-        }
+        startFade();
       }
     } else {
-      console.warn(`AudioManager: Sound '${id}' not found and could not be played.`);
+      console.warn(`AudioManager: Sound '${id}' not found or not registered.`);
     }
   }
 
   /**
-   * Stop a registered sound by id. Resolves when the sound is fully stopped (after fadeout if applicable).
+   * Stop a registered sound by id.
    */
   public stop(id: string, options?: { fadeOut?: number }): Promise<void> {
     return new Promise((resolve) => {
       const sound = this.sounds.get(id);
       if (sound) {
         sound.off('fade'); // Clear previous fade handlers
-        if (options?.fadeOut) {
+        if (options?.fadeOut && sound.playing()) {
           const currentVol = sound.volume();
           sound.fade(currentVol, 0, options.fadeOut);
 
@@ -124,24 +150,18 @@ class AudioManager {
             if (this.pendingStops.has(id)) {
               this.pendingStops.delete(id);
               sound.stop();
-              sound.unload();
-              this.sounds.delete(id);
-              this.configs.delete(id);
+              // No longer unloading immediately to keep a cache/buffer for BGM
               resolve();
             }
           };
 
           this.pendingStops.set(id, () => {
-            // Cancelled by play()
             resolve();
           });
 
           sound.once('fade', onFadeComplete);
         } else {
           sound.stop();
-          sound.unload();
-          this.sounds.delete(id);
-          this.configs.delete(id);
           resolve();
         }
       } else {
@@ -158,14 +178,26 @@ class AudioManager {
     this.pendingStops.forEach((cancel) => cancel());
     this.pendingStops.clear();
 
-    // Stop and unload all sounds
+    // Stop all sounds
     this.sounds.forEach((sound) => {
       sound.stop();
-      sound.unload();
+      // We still keep instances in the map for caching unless truly unmounting the whole app
     });
+  }
 
-    this.sounds.clear();
-    this.configs.clear();
+  /**
+   * Stop all sounds in a specific category (e.g., all 'bgm').
+   */
+  public async stopByCategory(category: AudioCategory, options?: { fadeOut?: number, exceptId?: string }): Promise<void> {
+    const stopPromises: Promise<void>[] = [];
+    
+    for (const [id, config] of this.configs) {
+      if (config.category === category && id !== options?.exceptId) {
+        stopPromises.push(this.stop(id, options));
+      }
+    }
+    
+    await Promise.all(stopPromises);
   }
 
   /**

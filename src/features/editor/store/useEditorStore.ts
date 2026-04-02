@@ -84,6 +84,7 @@ useEditorStore.subscribe((state) => {
       state: {
         nodes: state.nodes,
         edges: state.edges,
+        pages: state.pages,
         variables: state.variables,
         items: state.items || {},
         audio: state.audio || {},
@@ -91,7 +92,9 @@ useEditorStore.subscribe((state) => {
         subplots: state.subplots || [],
         statusData: state.statusData || [],
         storyTitle: state.storyTitle,
+        storyTitleLocId: state.storyTitleLocId,
         storyDescription: state.storyDescription,
+        storyDescriptionLocId: state.storyDescriptionLocId,
         startPageId: state.startPageId,
       },
     };

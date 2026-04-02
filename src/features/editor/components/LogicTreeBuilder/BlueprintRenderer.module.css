@@ -76,3 +76,95 @@
 .popoverButton:hover {
   background: #e5e7eb;
 }
+
+.dataList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dataRow {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.dataInputSmall {
+  flex: 1;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  outline: none;
+  min-width: 0;
+}
+
+.dataInputSmall:focus {
+  border-color: #3b82f6;
+}
+
+.dataCombobox {
+  flex: 1.5;
+  min-width: 0;
+}
+
+.iconButton {
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  transition: all 0.1s;
+}
+
+.iconButton:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.iconButton.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.iconButtonDelete {
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: #ef4444;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButtonDelete:hover {
+  color: #dc2626;
+}
+
+.addButton {
+  width: 100%;
+  padding: 0.4rem;
+  cursor: pointer;
+  background: #f0f9ff;
+  border: 1px dashed #7dd3fc;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #0369a1;
+  transition: all 0.15s;
+}
+
+.addButton:hover {
+  background: #e0f2fe;
+  border-style: solid;
+}

@@ -6,9 +6,10 @@ import { Popover } from '../../components/ui/Popover/Popover';
 import { useContextualPopover } from './hooks/useContextualPopover';
 import { useEngineStore, useEngine, EngineProvider } from './adapter/EngineContext';
 import { usePlayerUIStore } from './adapter/usePlayerUI';
-import { useSoundAdapter } from './adapter/useSoundAdapter';
+import { useEngineEffects } from './adapter/useEngineEffects';
 import { parseTextTokens } from '../../utils/textParser';
 import type { StoryData } from '../../domain/Story/StoryData';
+import { migrateStory } from '../../domain/Story/migrations/migrations';
 import { PageRenderer } from './components/PageRenderer';
 import { ChoiceRenderer } from './components/ChoiceRenderer';
 import { PlayerRightFrame } from './components/PlayerRightFrame';
@@ -19,9 +20,10 @@ export interface PlayerProps {
   storyData: StoryData;
   startPageId?: string;
   onExit?: () => void;
+  onStoryEnd?: (data: Record<string, unknown>) => void;
 }
 
-const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }) => {
+const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, onStoryEnd }) => {
   const engine = useEngine();
   const currentPageId = useEngineStore((s) => s.currentPageId);
   const variables = useEngineStore((s) => s.variables);
@@ -29,16 +31,17 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit }
   const contextualPopover = usePlayerUIStore((s) => s.contextualPopover);
   const setContextualPopover = usePlayerUIStore((s) => s.setContextualPopover);
 
+  // Adapters for side-effects and global listeners (register them BEFORE initialization)
+  useEngineEffects({ onStoryEnd });
+  useContextualPopover();
+
   // Initialize engine: Wipe and load fresh data
   useEffect(() => {
     if (storyData) {
-      engine.dispatch({ type: 'INITIALIZE', payload: { storyData, startPageId } });
+      const migratedData = migrateStory(storyData);
+      engine.dispatch({ type: 'INITIALIZE', payload: { storyData: migratedData, startPageId } });
     }
   }, [storyData, startPageId, engine]);
-
-  // Adapters for side-effects and global listeners
-  useSoundAdapter();
-  useContextualPopover();
 
   if (!storyData || !storyData.pages || storyData.pages.length === 0) {
     return (

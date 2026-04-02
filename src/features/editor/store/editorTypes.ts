@@ -73,7 +73,13 @@ export interface EditorState {
     pages: Record<string, Page>;
     variables?: Record<string, StoryVariable>;
     items?: Record<string, Item>;
-    metadata?: { title?: string; description?: string; startPageId?: string };
+    metadata?: { 
+      title?: string; 
+      titleLocId?: string; 
+      description?: string; 
+      descriptionLocId?: string; 
+      startPageId?: string 
+    };
     subplots?: Subplot[];
     audio?: Record<string, AudioItem>;
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;

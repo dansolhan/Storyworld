@@ -3,7 +3,13 @@ import type { StoryData } from '../StoryData';
 export const CURRENT_VERSION = '1.1.0';
 
 type MigrationFunction = (oldStory: any) => any;
-
+ 
+const ensurePagesArray = (pages: any): any[] => {
+  if (Array.isArray(pages)) return pages;
+  if (typeof pages === 'object' && pages !== null) return Object.values(pages);
+  return [];
+};
+ 
 const migrateV1_0_0_to_V1_1_0: MigrationFunction = (v1Story) => {
   // Version 1.1.0 renames:
   // - onEvaluate -> calculateVisibility (for pages, paragraphs, and choices)
@@ -46,7 +52,7 @@ const migrateV1_0_0_to_V1_1_0: MigrationFunction = (v1Story) => {
     }
   };
 
-  const pages = (v1Story.pages || []).map((page: any) => {
+  const pages = ensurePagesArray(v1Story.pages).map((page: any) => {
     const p = { ...page };
     
     const migrateEvents = (item: any, domain: 'page' | 'paragraph' | 'choice') => {
@@ -106,7 +112,7 @@ const migrateV3ToV4: MigrationFunction = (v3Story) => {
   // - Actions gain an optional `trigger` field ('on_enter' | 'on_exit').
   //   Existing actions without a trigger default to 'on_enter' at runtime,
   //   so no explicit field needs to be written here (undefined === on_enter).
-  const pages = (v3Story.pages || []).map((page: any) => ({
+  const pages = ensurePagesArray(v3Story.pages).map((page: any) => ({
     ...page,
     choices: (page.choices || []).map((choice: any) => ({
       ...choice,
@@ -251,7 +257,7 @@ const migrateV0_9_0_to_V1_0_0: MigrationFunction = (v0_9_story) => {
     return rest;
   };
 
-  const pages = (v0_9_story.pages || []).map((page: any) => {
+  const pages = ensurePagesArray(v0_9_story.pages).map((page: any) => {
     const p = migrateItem(page);
     p.choices = (p.choices || []).map(migrateItem);
     p.paragraphs = (p.paragraphs || []).map(migrateItem);

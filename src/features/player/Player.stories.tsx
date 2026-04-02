@@ -80,3 +80,53 @@ export const Default: Story = {
     }
   },
 };
+
+export const EndProject: Story = {
+  args: {
+    onStoryEnd: (data) => alert(`Story Ended! Received Data: ${JSON.stringify(data, null, 2)}`),
+    storyData: {
+      version: 6,
+      variables: {
+        playerName: { type: 'string', value: 'Champion' },
+        gold: { type: 'number', value: 500 }
+      },
+      pages: [
+        {
+          id: 'start',
+          title: 'The Final Gate',
+          paragraphs: [
+            { id: 'p1', text: 'You have reached the end of your long journey, {{playerName}}.' },
+            { id: 'p2', text: 'The golden gates of the celestial city stand open before you, radiating a warm, welcoming light.' }
+          ],
+          choices: [
+            { 
+              id: 'c-end', 
+              text: 'Enter the Gates (End Story)', 
+              events: [
+                {
+                  id: 'e1',
+                  name: 'onSelect',
+                  logicTree: [
+                    {
+                      id: 'node-end',
+                      type: 'action',
+                      blueprintId: 'end_story',
+                      name: 'End Story',
+                      params: {
+                        data: [
+                          { key: 'ending', value: 'celestial_ascent', isVariable: false },
+                          { key: 'finalGold', value: 'gold', isVariable: true },
+                          { key: 'heroName', value: 'playerName', isVariable: true }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+};

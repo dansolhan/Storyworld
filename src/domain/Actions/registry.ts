@@ -151,6 +151,37 @@ export const preventMoveToPageBlueprint: ActionBlueprint<PreventMoveToPageParams
   },
 };
 
+export interface EndStoryParams {
+  data: Array<{
+    key: string;
+    value: string;
+    isVariable: boolean;
+  }>;
+}
+
+export const endStoryBlueprint: ActionBlueprint<EndStoryParams> = {
+  id: 'end_story',
+  name: 'End Story',
+  template: 'End the story and return: {{data}}',
+  defaultParams: {
+    data: [],
+  },
+  execute: (params, context) => {
+    const resolvedData: Record<string, unknown> = {};
+    (params.data || []).forEach((entry) => {
+      if (entry.isVariable) {
+        const v = (context.variables as any)[entry.value];
+        resolvedData[entry.key] = v ? v.value : undefined;
+      } else {
+        resolvedData[entry.key] = entry.value;
+      }
+    });
+    if (context.endStory) {
+      context.endStory(resolvedData);
+    }
+  },
+};
+
 // Expose a central registry of blueprints for easy selection
 export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [setVariableBlueprint.id]: setVariableBlueprint as unknown as ActionBlueprint<unknown>,
@@ -161,4 +192,5 @@ export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [hideParagraphBlueprint.id]: hideParagraphBlueprint as unknown as ActionBlueprint<unknown>,
   [hideChoiceBlueprint.id]: hideChoiceBlueprint as unknown as ActionBlueprint<unknown>,
   [preventMoveToPageBlueprint.id]: preventMoveToPageBlueprint as unknown as ActionBlueprint<unknown>,
+  [endStoryBlueprint.id]: endStoryBlueprint as unknown as ActionBlueprint<unknown>,
 };

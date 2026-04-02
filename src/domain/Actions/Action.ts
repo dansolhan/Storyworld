@@ -15,6 +15,7 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   modifyInventory?: (itemId: string, amount: number) => void;
   setVisibility?: (visible: boolean) => void;
   preventMove?: () => void;
+  endStory?: (data: Record<string, unknown>) => void;
 }
 
 export interface Action<TParams = Record<string, unknown>> {

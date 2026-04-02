@@ -93,8 +93,29 @@ export const parseStoryToGraph = (
   (storyData.pages || []).forEach(p => { pagesRecord[p.id] = p; });
 
   if (storyData.uiMetadata?.nodes && storyData.uiMetadata?.edges) {
+    // Crucial: We must sync the DATA in the nodes with the potentially migrated domain pages.
+    // uiMetadata stores the React Flow state which might have stale data copies.
+    const syncedNodes = storyData.uiMetadata.nodes.map(node => {
+      if (node.type === 'pageNode' && pagesRecord[node.id]) {
+        const page = pagesRecord[node.id];
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            title: page.title,
+            subplotId: page.subplotId,
+            atmosphereId: page.atmosphereId,
+            paragraphs: page.paragraphs,
+            choices: page.choices,
+            events: page.events || [],
+          }
+        };
+      }
+      return node;
+    });
+
     return {
-      nodes: storyData.uiMetadata.nodes,
+      nodes: syncedNodes,
       edges: storyData.uiMetadata.edges,
       pages: pagesRecord
     };
