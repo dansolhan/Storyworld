@@ -7,7 +7,9 @@ import type { StatusData } from './StatusData';
 export interface StoryData {
   version: string | number;
   title?: string;
+  titleLocId?: string;
   description?: string;
+  descriptionLocId?: string;
   startPageId?: string;
   pages: Page[];
   variables: Record<string, StoryVariable>;

@@ -17,6 +17,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
       data: {
         type: 'location',
         title: 'New Page',
+        titleLocId: crypto.randomUUID(),
         paragraphs: [],
         choices: [],
         ...(currentPlotId ? { subplotId: currentPlotId } : {}),
@@ -27,6 +28,7 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
     const newPage: Page = {
       id: newId,
       title: 'New Page',
+      titleLocId: crypto.randomUUID(),
       paragraphs: [],
       choices: [],
       events: [],

@@ -6,12 +6,14 @@ export const createMetadataSlice: StateCreator<
   EditorState,
   [],
   [],
-  Pick<EditorState, 'storyId' | 'setStoryId' | 'storyTitle' | 'storyDescription' | 'startPageId' | 'setStoryTitle' | 'setStoryDescription' | 'setStartPageId' | 'subplots' | 'currentPlotId' | 'setCurrentPlotId' | 'addSubplot' | 'updateSubplot' | 'deleteSubplot'>
+  Pick<EditorState, 'storyId' | 'setStoryId' | 'storyTitle' | 'storyTitleLocId' | 'storyDescription' | 'storyDescriptionLocId' | 'startPageId' | 'setStoryTitle' | 'setStoryDescription' | 'setStartPageId' | 'subplots' | 'currentPlotId' | 'setCurrentPlotId' | 'addSubplot' | 'updateSubplot' | 'deleteSubplot'>
 > = (set) => ({
   storyId: null,
   setStoryId: (id) => set({ storyId: id }),
   storyTitle: 'Untitled Story',
+  storyTitleLocId: crypto.randomUUID(),
   storyDescription: '',
+  storyDescriptionLocId: crypto.randomUUID(),
   startPageId: null,
 
   subplots: [],

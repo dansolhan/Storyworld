@@ -15,10 +15,15 @@ export const createActionSlice: StateCreator<
       const blueprint = actionBlueprints[blueprintId];
       if (!blueprint) return state;
 
+      const params = Object.assign({}, blueprint.defaultParams) as Record<string, any>;
+      if (blueprintId === 'post_message') {
+        params.messageLocId = crypto.randomUUID();
+      }
+
       const newAction = {
         id: crypto.randomUUID(),
         blueprintId,
-        params: Object.assign({}, blueprint.defaultParams) as Record<string, unknown>,
+        params,
         conditionals: [],
       };
 

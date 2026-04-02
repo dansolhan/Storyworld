@@ -40,12 +40,17 @@ export const EditorSidebar: React.FC = React.memo(() => {
   const [previewStory, setPreviewStory] = useState(false);
   const [lockedParagraphIds, setLockedParagraphIds] = useState<Set<string>>(new Set());
   const [activeParagraphId, setActiveParagraphId] = useState<string | null>(null);
+  const [activeChoiceId, setActiveChoiceId] = useState<string | null>(null);
   const paragraphListRef = React.useRef<HTMLDivElement>(null);
+  const choiceListRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (paragraphListRef.current && !paragraphListRef.current.contains(event.target as Node)) {
         setActiveParagraphId(null);
+      }
+      if (choiceListRef.current && !choiceListRef.current.contains(event.target as Node)) {
+        setActiveChoiceId(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -67,6 +72,19 @@ export const EditorSidebar: React.FC = React.memo(() => {
       
       // Slight delay ensures the layout has started expanding
       // before attempting to scroll it into view.
+      setTimeout(() => {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 150);
+    }
+  };
+
+  const handleChoiceClick = (id: string, element: HTMLDivElement) => {
+    if (activeChoiceId !== id) {
+      setActiveChoiceId(id);
+      
       setTimeout(() => {
         element.scrollIntoView({
           behavior: 'smooth',
@@ -215,6 +233,7 @@ export const EditorSidebar: React.FC = React.memo(() => {
                     <div 
                       key={p.id} 
                       onClick={(e) => handleParagraphClick(p.id, e.currentTarget)}
+                      onFocusCapture={(e) => handleParagraphClick(p.id, e.currentTarget)}
                       className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.paragraphBlock} ${isLocked ? 'locked' : ''} ${isLocked ? styles.locked : ''} ${isActive ? styles.isActive : ''}`}
                     >
                       <div className={styles.paragraphTools}>
@@ -314,15 +333,21 @@ export const EditorSidebar: React.FC = React.memo(() => {
                   + Add
                 </Button>
               </div>
-              <div className={styles.itemList}>
+              <div className={styles.itemList} ref={choiceListRef}>
                 {selectedPage.choices.length === 0 && (
                   <p className={styles.emptyText}>End of the line. Add a choice to continue the story!</p>
                 )}
                 {selectedPage.choices.map((c: any, index: number) => {
                   const isConnecting = connectingChoice?.choiceId === c.id;
+                  const isActive = activeChoiceId === c.id || isConnecting;
 
                   return (
-                    <div key={c.id} className={styles.choiceCard}>
+                    <div 
+                      key={c.id} 
+                      className={`${styles.choiceCard} ${isActive ? styles.isActive : ''} ${isConnecting ? styles.isConnecting : ''}`}
+                      onClick={(e) => handleChoiceClick(c.id, e.currentTarget)}
+                      onFocusCapture={(e) => handleChoiceClick(c.id, e.currentTarget)}
+                    >
                       <input
                         type="text"
                         className={styles.input}
@@ -331,58 +356,60 @@ export const EditorSidebar: React.FC = React.memo(() => {
                         placeholder={`Choice ${index + 1}...`}
                       />
 
-                      <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                        <small className={styles.choiceMeta} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
-                          {c.targetPageId && (
-                            <button
-                              type="button"
-                              onClick={() => handleGoToTarget(c.targetPageId!)}
-                              title="Locate in graph"
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                color: 'var(--color-primary-500)'
+                      <div className={styles.choiceControls}>
+                        <div className={styles.choiceConnectionControls} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                          <small className={styles.choiceMeta} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            Target: {c.targetPageId ? `Page ${c.targetPageId}` : 'Unconnected'}
+                            {c.targetPageId && (
+                              <button
+                                type="button"
+                                onClick={() => handleGoToTarget(c.targetPageId!)}
+                                title="Locate in graph"
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  color: 'var(--color-primary-500)'
+                                }}
+                              >
+                                <Target size={14} />
+                              </button>
+                            )}
+                          </small>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button
+                              size="sm"
+                              variant={isConnecting ? "primary" : "secondary"}
+                              onClick={() => {
+                                if (isConnecting) {
+                                  setConnectingChoice(null);
+                                } else {
+                                  setConnectingChoice({ sourcePageId: selectedPageId, choiceId: c.id });
+                                }
                               }}
                             >
-                              <Target size={14} />
-                            </button>
-                          )}
-                        </small>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <Button
-                            size="sm"
-                            variant={isConnecting ? "primary" : "secondary"}
-                            onClick={() => {
-                              if (isConnecting) {
-                                setConnectingChoice(null);
-                              } else {
-                                setConnectingChoice({ sourcePageId: selectedPageId, choiceId: c.id });
-                              }
-                            }}
-                          >
-                            {isConnecting ? "Cancel" : "Connect"}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => createPageFromChoice(selectedPageId, c.id)}
-                          >
-                            New Page
-                          </Button>
+                              {isConnecting ? "Cancel" : "Connect"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => createPageFromChoice(selectedPageId, c.id)}
+                            >
+                              New Page
+                            </Button>
+                          </div>
                         </div>
-                      </div>
 
-                      <EventsEditor
-                        targetType="choice"
-                        pageId={selectedPageId}
-                        targetId={c.id}
-                        events={c.events || []}
-                      />
+                        <EventsEditor
+                          targetType="choice"
+                          pageId={selectedPageId}
+                          targetId={c.id}
+                          events={c.events || []}
+                        />
+                      </div>
                     </div>
                   );
                 })}

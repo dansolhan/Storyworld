@@ -41,6 +41,7 @@ export const goToSubplotBlueprint: ActionBlueprint<GoToSubplotParams> = {
 
 export interface PostMessageParams {
   message: string;
+  messageLocId?: string;
   displayStyle?: 'styled' | 'paragraph';
 }
 

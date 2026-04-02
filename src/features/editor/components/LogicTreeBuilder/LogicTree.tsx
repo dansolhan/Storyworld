@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect, createContext } from 'react';
 import { Tree, TreeApi } from 'react-arborist';
 import type { MoveHandler, NodeApi } from 'react-arborist';
 import type { LogicNode, DraggedToolboxItem } from './types';
+import { actionBlueprints } from '../../../../domain/Actions/registry';
+import { conditionalBlueprints } from '../../../../domain/Conditionals/registry';
 import { LogicTreeNode } from './LogicTreeNode';
 import styles from './LogicTree.module.css';
 
@@ -51,13 +53,22 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
       const draggedItem: DraggedToolboxItem = JSON.parse(draggedDataString);
       console.log('Parsed item:', draggedItem);
 
+      const blueprint = draggedItem.type === 'action' 
+        ? actionBlueprints[draggedItem.blueprintId] 
+        : conditionalBlueprints[draggedItem.blueprintId];
+      
+      const params = blueprint ? JSON.parse(JSON.stringify(blueprint.defaultParams)) : {};
+      if (draggedItem.blueprintId === 'post_message') {
+        params.messageLocId = crypto.randomUUID();
+      }
+
       // Create the new node structure based on type
       const newNode: LogicNode = {
         id: generateId(),
         type: draggedItem.type,
         name: draggedItem.name,
         blueprintId: draggedItem.blueprintId,
-        params: {} // Initialize with default params if needed
+        params
       };
 
       let newData = JSON.parse(JSON.stringify(data)) as LogicNode[];

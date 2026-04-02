@@ -11,15 +11,18 @@
       "paragraphs": [
         {
           "id": "p1-1",
-          "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>"
+          "text": "<p>You wake up in a <strong>dimly lit room</strong>. The air is cold, and you can scarcely see your own hands, <em>{{playerName}}</em>.</p>",
+          "textLocId": "7662567d-1e93-4ad9-8ee2-b866ba502a16"
         },
         {
           "id": "p1-2",
-          "text": "<p>A heavy wooden door stands to your north. To your right, a <span class=\"contextual-text-mark\" data-context=\"The window is covered in soot and barely lets any light in. At the bottom right corner, there is a small crack.\">small window</span> lets in a sliver of moonlight.</p>"
+          "text": "<p>A heavy wooden door stands to your north. To your right, a <span class=\"contextual-text-mark\" data-context=\"The window is covered in soot and barely lets any light in. At the bottom right corner, there is a small crack.\">small window</span> lets in a sliver of moonlight.</p>",
+          "textLocId": "01b8498a-f22b-47c4-8ffb-c3676b2736a5"
         },
         {
           "id": "p1-3",
-          "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>"
+          "text": "<p>You try to remember how you got here, but your mind is a blank slate. The only thing you are certain of is your training as a <strong>{{heroClass}}</strong>.</p>",
+          "textLocId": "a3eb280a-3bd3-4582-b446-6c8a58584d94"
         },
         {
           "id": "p1-4",
@@ -33,7 +36,8 @@
                 "pageId": "page-5"
               }
             }
-          ]
+          ],
+          "textLocId": "bf750820-a033-477e-8981-6bde312cb7a6"
         },
         {
           "id": "p1-5",
@@ -62,24 +66,28 @@
                 }
               ]
             }
-          ]
+          ],
+          "textLocId": "9866945f-aa32-46d0-a6e1-736f97849cdb"
         }
       ],
       "choices": [
         {
           "id": "c1-1",
           "text": "Inspect the door",
-          "targetPageId": "page-2"
+          "targetPageId": "page-2",
+          "textLocId": "817a2de0-a70a-4eed-a3be-f8b4884aae41"
         },
         {
           "id": "c1-2",
           "text": "Look out the window",
-          "targetPageId": "page-3"
+          "targetPageId": "page-3",
+          "textLocId": "ec00fc14-0d0d-49c2-a538-ef822f56a20e"
         },
         {
           "id": "c1-3",
           "text": "Search your pockets",
-          "targetPageId": "page-5"
+          "targetPageId": "page-5",
+          "textLocId": "9dcafb57-f1e1-4139-9783-6ec6ee458d85"
         },
         {
           "id": "c1-4",
@@ -94,7 +102,8 @@
                 "pageId": "page-5"
               }
             }
-          ]
+          ],
+          "textLocId": "aff419fa-bce3-4d52-ac2e-cc9f55513ccc"
         },
         {
           "id": "c1-5",
@@ -109,9 +118,11 @@
                 "pageId": "page-3"
               }
             }
-          ]
+          ],
+          "textLocId": "72b087c5-0523-4354-aa6f-ea4b37ea7732"
         }
-      ]
+      ],
+      "titleLocId": "021f8200-61e0-4fe1-af4e-de3658c309e7"
     },
     {
       "id": "page-2",
@@ -119,20 +130,24 @@
       "paragraphs": [
         {
           "id": "p2-1",
-          "text": "<p>The door is made of solid oak, reinforced with <span class=\"contextual-text-mark\" data-context=\"The iron bands are rusted, but thick. Forcing the door open without a tool seems impossible.\">iron bands</span>. You rattle the iron handle, but it doesn't budge.</p>"
+          "text": "<p>The door is made of solid oak, reinforced with <span class=\"contextual-text-mark\" data-context=\"The iron bands are rusted, but thick. Forcing the door open without a tool seems impossible.\">iron bands</span>. You rattle the iron handle, but it doesn't budge.</p>",
+          "textLocId": "66af02f1-20d4-4c0b-a5a0-e1c4bd7900f4"
         },
         {
           "id": "p2-2",
-          "text": "<p>There seems to be no keyhole. How peculiar.</p>"
+          "text": "<p>There seems to be no keyhole. How peculiar.</p>",
+          "textLocId": "073e0cf6-cb5d-4d72-8f85-28ac9bbfd280"
         }
       ],
       "choices": [
         {
           "id": "c2-1",
           "text": "Go back to the center of the room",
-          "targetPageId": "page-1"
+          "targetPageId": "page-1",
+          "textLocId": "721abd0a-aeaf-4bdb-8256-1fed6b6cf017"
         }
-      ]
+      ],
+      "titleLocId": "bb8be573-84db-45e4-b24e-404a8cfe5353"
     },
     {
       "id": "page-3",
@@ -140,25 +155,30 @@
       "paragraphs": [
         {
           "id": "p3-1",
-          "text": "<p>You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky.</p>"
+          "text": "<p>You peer through the dusty glass. Outside, an endless forest of towering pines stretches out beneath a starlit sky.</p>",
+          "textLocId": "221e7d31-68b6-4f9c-ba89-f526e9b92bcd"
         },
         {
           "id": "p3-2",
-          "text": "<p>Suddenly, you notice a faint glow moving through the trees. It looks like... a <span class=\"contextual-text-mark\" data-context=\"A spherical object emitting a warm, pulsating orange light. It bobs up and down rhythmically.\">floating lantern</span>.</p>"
+          "text": "<p>Suddenly, you notice a faint glow moving through the trees. It looks like... a <span class=\"contextual-text-mark\" data-context=\"A spherical object emitting a warm, pulsating orange light. It bobs up and down rhythmically.\">floating lantern</span>.</p>",
+          "textLocId": "f694a635-6b78-479e-919a-a687a36cf083"
         }
       ],
       "choices": [
         {
           "id": "c3-1",
           "text": "Watch the glow closely",
-          "targetPageId": "page-4"
+          "targetPageId": "page-4",
+          "textLocId": "efb8e609-683b-4083-99f5-cb40544844a4"
         },
         {
           "id": "c3-2",
           "text": "Step away from the window",
-          "targetPageId": "page-1"
+          "targetPageId": "page-1",
+          "textLocId": "ccbbb167-74c1-4029-903f-f4795799f797"
         }
-      ]
+      ],
+      "titleLocId": "fc50a8be-88ea-4462-a7f7-a8873c8c8397"
     },
     {
       "id": "page-4",
@@ -166,25 +186,30 @@
       "paragraphs": [
         {
           "id": "p4-1",
-          "text": "<p>The glow slowly grows brighter and takes the shape of the lantern, held by a <span class=\"contextual-text-mark\" data-context=\"The figure is shrouded in a dark, worn cloak. You cannot see their face, only a pair of glowing yellow eyes from beneath the hood.\">cloaked figure</span>.</p>"
+          "text": "<p>The glow slowly grows brighter and takes the shape of the lantern, held by a <span class=\"contextual-text-mark\" data-context=\"The figure is shrouded in a dark, worn cloak. You cannot see their face, only a pair of glowing yellow eyes from beneath the hood.\">cloaked figure</span>.</p>",
+          "textLocId": "afaa7a2a-7049-4f35-9427-4900ab71c41b"
         },
         {
           "id": "p4-2",
-          "text": "<p>The figure stops directly beneath your window, looks up, and beckons to you. They point towards a hidden lever beside your window.</p>"
+          "text": "<p>The figure stops directly beneath your window, looks up, and beckons to you. They point towards a hidden lever beside your window.</p>",
+          "textLocId": "13c6c635-a0eb-4f1f-a452-447445cea120"
         }
       ],
       "choices": [
         {
           "id": "c4-1",
           "text": "Pull the hidden lever",
-          "targetPageId": "page-end"
+          "targetPageId": "page-end",
+          "textLocId": "a0cac585-c428-4b08-8ef4-5d2491672ebb"
         },
         {
           "id": "c4-2",
           "text": "Ignore the figure and turn back",
-          "targetPageId": "page-1"
+          "targetPageId": "page-1",
+          "textLocId": "44f4fad9-7a50-41a7-86c2-2dccac69bf19"
         }
-      ]
+      ],
+      "titleLocId": "8a725201-af35-4598-bda6-f6b8e402a847"
     },
     {
       "id": "page-5",
@@ -192,25 +217,30 @@
       "paragraphs": [
         {
           "id": "p5-1",
-          "text": "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>{{weapon}}</strong> hanging at your side.</p>"
+          "text": "<p>You pat down your clothes. You are wearing a simple tunic, but you feel the weight of your trusty <strong>{{weapon}}</strong> hanging at your side.</p>",
+          "textLocId": "aa1b31bc-41cd-4ae0-bd18-3473d140cb68"
         },
         {
           "id": "p5-2",
-          "text": "<p>Deep in your left pocket, your hand brushes against something cold and geometric. A <span class=\"contextual-text-mark\" data-context=\"The key has no teeth, just a complex series of grooves carved into strange, iridescent metal.\">strange golden key</span>.</p>"
+          "text": "<p>Deep in your left pocket, your hand brushes against something cold and geometric. A <span class=\"contextual-text-mark\" data-context=\"The key has no teeth, just a complex series of grooves carved into strange, iridescent metal.\">strange golden key</span>.</p>",
+          "textLocId": "9857c75a-4c5a-4140-8af2-0edf717f170e"
         }
       ],
       "choices": [
         {
           "id": "c5-1",
           "text": "Take the key to the door",
-          "targetPageId": "page-6"
+          "targetPageId": "page-6",
+          "textLocId": "95349956-73ca-4d6f-87eb-5520279d5227"
         },
         {
           "id": "c5-2",
           "text": "Keep looking around",
-          "targetPageId": "page-1"
+          "targetPageId": "page-1",
+          "textLocId": "78ea9d89-8c3d-496d-8d9d-8f6d84e49e67"
         }
-      ]
+      ],
+      "titleLocId": "4d430a94-bbd6-4c49-88e9-0cca1527180f"
     },
     {
       "id": "page-6",
@@ -218,20 +248,24 @@
       "paragraphs": [
         {
           "id": "p6-1",
-          "text": "<p>Holding the strange golden key, you approach the oak door again. Though there's no visible keyhole, bringing the key close causes a <span class=\"contextual-text-mark\" data-context=\"A shimmering projection of light forms a complex lock mechanism mid-air.\">holographic lock</span> to materialize on the wood.</p>"
+          "text": "<p>Holding the strange golden key, you approach the oak door again. Though there's no visible keyhole, bringing the key close causes a <span class=\"contextual-text-mark\" data-context=\"A shimmering projection of light forms a complex lock mechanism mid-air.\">holographic lock</span> to materialize on the wood.</p>",
+          "textLocId": "d069dfbd-c8ef-4909-9deb-cb33ca9654bf"
         },
         {
           "id": "p6-2",
-          "text": "<p>You insert the key. The door groans and swings open heavily, revealing a dark stone corridor ahead.</p>"
+          "text": "<p>You insert the key. The door groans and swings open heavily, revealing a dark stone corridor ahead.</p>",
+          "textLocId": "16d3fb2b-510b-446b-85a6-33a8d24cae8d"
         }
       ],
       "choices": [
         {
           "id": "c6-1",
           "text": "Step into the corridor",
-          "targetPageId": "page-end"
+          "targetPageId": "page-end",
+          "textLocId": "45d5d464-c25f-4fd8-9af1-8016b1511a46"
         }
-      ]
+      ],
+      "titleLocId": "ee44d5b4-3b40-4caf-aea8-5e504c3a778f"
     },
     {
       "id": "page-end",
@@ -239,14 +273,17 @@
       "paragraphs": [
         {
           "id": "pend-1",
-          "text": "<p>You take your first steps out of the room. The air changes instantly, carrying the scent of damp earth and old magic.</p>"
+          "text": "<p>You take your first steps out of the room. The air changes instantly, carrying the scent of damp earth and old magic.</p>",
+          "textLocId": "71ed7f22-d262-49d2-a9a4-733c88dc68af"
         },
         {
           "id": "pend-2",
-          "text": "<p>A new adventure awaits you, <em>{{playerName}}</em>.</p>"
+          "text": "<p>A new adventure awaits you, <em>{{playerName}}</em>.</p>",
+          "textLocId": "3cd72d53-c462-455b-a4d0-e76ace097f97"
         }
       ],
-      "choices": []
+      "choices": [],
+      "titleLocId": "210a6d72-6e8b-4c22-aa44-eb952152f9d7"
     },
     {
       "id": "page-7",
@@ -254,20 +291,26 @@
       "paragraphs": [
         {
           "id": "p7-1",
-          "text": "<p>Now that you have seen the glint of moonlight from the window, you notice a subtle indentation in the wall.</p>"
+          "text": "<p>Now that you have seen the glint of moonlight from the window, you notice a subtle indentation in the wall.</p>",
+          "textLocId": "ea6e6025-7090-4a38-a738-a3f2a5bb44b8"
         },
         {
           "id": "p7-2",
-          "text": "<p>You press against it, and a small drawer slides open seamlessly. Inside is a vial of shimmering liquid.</p>"
+          "text": "<p>You press against it, and a small drawer slides open seamlessly. Inside is a vial of shimmering liquid.</p>",
+          "textLocId": "d93b368b-8ef8-4892-87a5-557b13937a5d"
         }
       ],
       "choices": [
         {
           "id": "c7-1",
           "text": "Take the vial and return",
-          "targetPageId": "page-1"
+          "targetPageId": "page-1",
+          "textLocId": "9fd38362-88fd-49dc-bbba-7d9e7f6efd26"
         }
-      ]
+      ],
+      "titleLocId": "cffbb99e-5a14-4ae3-b9b1-0f895ad306f0"
     }
-  ]
+  ],
+  "titleLocId": "ff68ad48-5609-44a7-b2e4-f93d4ec874dd",
+  "descriptionLocId": "868c6ae6-d710-468a-952c-f40a6e2a8ed7"
 }

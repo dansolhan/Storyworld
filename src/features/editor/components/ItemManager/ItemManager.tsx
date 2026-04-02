@@ -166,7 +166,9 @@ export const ItemManager: React.FC<ItemManagerProps> = React.memo(({ isOpen, onC
       addItem(newKey, {
         id: newKey,
         name: newName,
+        nameLocId: crypto.randomUUID(),
         description: newDesc,
+        descriptionLocId: crypto.randomUUID(),
         imageUrl: newImg || undefined,
         tags: newTags,
         multiple: newMultiple,

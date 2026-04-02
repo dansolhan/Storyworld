@@ -285,7 +285,9 @@ export const StatusDataManager: React.FC<StatusDataManagerProps> = React.memo(({
     const entry: StatusData = {
       id: crypto.randomUUID(),
       title: newTitle.trim(),
+      titleLocId: crypto.randomUUID(),
       value: newValue,
+      valueLocId: crypto.randomUUID(),
       priority: newPriority || 0,
       color: newColor || undefined,
       conditionals: [],

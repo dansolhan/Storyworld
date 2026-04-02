@@ -25,7 +25,12 @@ export const createChoiceSlice: StateCreator<
       const page = state.pages[pageId];
       if (!page) return state;
 
-      const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', conditionals: [] };
+      const newChoice: Choice = { 
+        id: `c-${Date.now()}`, 
+        text: 'New Choice...', 
+        textLocId: crypto.randomUUID(),
+        conditionals: [] 
+      };
       const nextPages = {
         ...state.pages,
         [pageId]: {
@@ -44,7 +49,13 @@ export const createChoiceSlice: StateCreator<
       const page = state.pages[pageId];
       if (!page) return state;
 
-      const newChoice: Choice = { id: `c-${Date.now()}`, text: 'New Choice...', conditionals: [], actions: [] };
+      const newChoice: Choice = { 
+        id: `c-${Date.now()}`, 
+        text: 'New Choice...', 
+        textLocId: crypto.randomUUID(),
+        conditionals: [], 
+        actions: [] 
+      };
       const nextPages = {
         ...state.pages,
         [pageId]: {

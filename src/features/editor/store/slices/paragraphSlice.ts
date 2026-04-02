@@ -9,7 +9,12 @@ export const createParagraphSlice: StateCreator<EditorState, [], [], Pick<Editor
       const page = state.pages[pageId];
       if (!page) return state;
 
-      const newParagraph: Paragraph = { id: `p-${Date.now()}`, text: 'New content here...', conditionals: [] };
+      const newParagraph: Paragraph = { 
+        id: `p-${Date.now()}`, 
+        text: 'New content here...', 
+        textLocId: crypto.randomUUID(),
+        conditionals: [] 
+      };
       const nextPages = {
         ...state.pages,
         [pageId]: {

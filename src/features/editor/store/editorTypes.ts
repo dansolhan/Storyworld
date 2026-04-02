@@ -29,7 +29,9 @@ export interface EditorState {
   storyId: string | null;
   setStoryId: (id: string | null) => void;
   storyTitle: string;
+  storyTitleLocId: string;
   storyDescription: string;
+  storyDescriptionLocId: string;
   startPageId: string | null;
   setStoryTitle: (title: string) => void;
   setStoryDescription: (description: string) => void;
