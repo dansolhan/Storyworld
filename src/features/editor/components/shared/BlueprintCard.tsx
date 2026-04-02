@@ -9,8 +9,6 @@ interface BlueprintCardProps {
   template: string;
   isGroup?: boolean;
   params: Record<string, unknown>;
-  trigger?: 'on_enter' | 'on_exit';
-  onChangeTrigger?: (trigger: 'on_enter' | 'on_exit') => void;
   onChangeParam: (key: string, value: unknown) => void;
   onRemove: () => void;
   children?: React.ReactNode;
@@ -20,8 +18,6 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
   template,
   isGroup,
   params,
-  trigger,
-  onChangeTrigger,
   onChangeParam,
   onRemove,
   children
@@ -279,31 +275,6 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         </button>
       </div>
 
-      {/* Trigger toggle — shown only when the parent passes trigger/onChangeTrigger */}
-      {onChangeTrigger && (
-        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.65rem', color: 'var(--color-text-secondary)', marginRight: '0.25rem' }}>Fires:</span>
-          {(['on_enter', 'on_exit'] as const).map((t) => (
-            <button
-              key={t}
-              onClick={() => onChangeTrigger(t)}
-              style={{
-                fontSize: '0.62rem',
-                padding: '2px 7px',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--color-border-default)',
-                cursor: 'pointer',
-                background: trigger === t ? 'var(--color-primary-500)' : 'transparent',
-                color: trigger === t ? '#fff' : 'var(--color-text-secondary)',
-                fontFamily: 'var(--font-family-sans)',
-                transition: 'background 0.15s, color 0.15s',
-              }}
-            >
-              {t === 'on_enter' ? 'On Enter' : 'On Exit'}
-            </button>
-          ))}
-        </div>
-      )}
 
       {warningText && (
         <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#b91c1c', background: '#fef2f2', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #f87171' }}>

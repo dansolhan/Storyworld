@@ -109,9 +109,6 @@ const migrateV3ToV4: MigrationFunction = (v3Story) => {
   // - Choice.targetPageId becomes optional (undefined) instead of empty string.
   //   Any choice with targetPageId === '' is normalised to undefined so that
   //   action-only choices can be cleanly distinguished from wired-up choices.
-  // - Actions gain an optional `trigger` field ('on_enter' | 'on_exit').
-  //   Existing actions without a trigger default to 'on_enter' at runtime,
-  //   so no explicit field needs to be written here (undefined === on_enter).
   const pages = ensurePagesArray(v3Story.pages).map((page: any) => ({
     ...page,
     choices: (page.choices || []).map((choice: any) => ({
