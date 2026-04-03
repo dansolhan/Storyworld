@@ -96,41 +96,7 @@ export class StoryEngine {
       preventMove: false
     };
 
-    const actionContext: ActionContext = {
-      variables: scriptState.variables as any,
-      setVariable: (key: string, value: unknown) => {
-        const currentVar = scriptState.variables[key];
-        const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-        scriptState.variables[key] = {
-          type,
-          value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value)
-        };
-      },
-      modifyInventory: (itemId: string, amount: number) => {
-        const current = scriptState.inventory[itemId] || 0;
-        const next = current + amount;
-        if (next <= 0) delete scriptState.inventory[itemId];
-        else scriptState.inventory[itemId] = next;
-      },
-      postMessage: (text: string, displayStyle?: 'styled' | 'paragraph') => {
-        scriptState.newMessages.push({
-          id: crypto.randomUUID(),
-          text,
-          displayStyle: displayStyle || 'styled',
-          pageId: scriptState.nextTargetId || state.currentPageId
-        });
-      },
-      goToPage: (id: string) => {
-        scriptState.nextTargetId = id;
-        scriptState.newMessages.forEach(m => { if (!m.pageId) m.pageId = id; });
-      },
-      preventMove: () => {
-        scriptState.preventMove = true;
-      },
-      endStory: (data: Record<string, unknown>) => {
-        this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
-      }
-    };
+    const actionContext = this.createActionContext(scriptState, state.currentPageId);
 
     const evalContext = {
       variables: scriptState.variables,
@@ -170,35 +136,7 @@ export class StoryEngine {
       nextTargetId: undefined as string | undefined,
     };
 
-    const actionContext: ActionContext = {
-      variables: scriptState.variables as any,
-      setVariable: (key: string, value: unknown) => {
-          const currentVar = scriptState.variables[key];
-          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-          scriptState.variables[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-      },
-      modifyInventory: (itemId: string, amount: number) => {
-          const current = scriptState.inventory[itemId] || 0;
-          const next = current + amount;
-          if (next <= 0) delete scriptState.inventory[itemId];
-          else scriptState.inventory[itemId] = next;
-      },
-      postMessage: (text: string, displayStyle?: 'styled' | 'paragraph') => {
-          scriptState.newMessages.push({
-              id: crypto.randomUUID(),
-              text,
-              displayStyle: displayStyle || 'styled',
-              pageId: scriptState.nextTargetId || state.currentPageId
-          });
-      },
-      goToPage: (id: string) => {
-          scriptState.nextTargetId = id;
-          scriptState.newMessages.forEach(m => { if (!m.pageId) m.pageId = id; });
-      },
-      endStory: (data: Record<string, unknown>) => {
-        this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
-      }
-    };
+    const actionContext = this.createActionContext(scriptState, state.currentPageId);
 
     const evalContext = {
       variables: scriptState.variables,
@@ -267,35 +205,7 @@ export class StoryEngine {
             navigateToPage: null as string | null,
         };
 
-        const actionContext: ActionContext = {
-            variables: scriptState.variables as any,
-            setVariable: (key: string, value: unknown) => {
-                const currentVar = scriptState.variables[key];
-                const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-                scriptState.variables[key] = { type, value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) };
-            },
-            modifyInventory: (itemId: string, amount: number) => {
-                const current = scriptState.inventory[itemId] || 0;
-                const next = current + amount;
-                if (next <= 0) delete scriptState.inventory[itemId];
-                else scriptState.inventory[itemId] = next;
-            },
-            postMessage: (text: string, displayStyle?: 'styled' | 'paragraph') => {
-                scriptState.newMessages.push({
-                    id: crypto.randomUUID(),
-                    text,
-                    displayStyle: displayStyle || 'styled',
-                    pageId: scriptState.navigateToPage || pageId
-                });
-            },
-            goToPage: (id: string) => {
-                scriptState.navigateToPage = id;
-                scriptState.newMessages.forEach(m => { if (!m.pageId) m.pageId = id; });
-            },
-            endStory: (data: Record<string, unknown>) => {
-                this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
-            }
-        };
+        const actionContext = this.createActionContext(scriptState, pageId);
 
         const evalContext = {
             variables: scriptState.variables,
@@ -333,9 +243,55 @@ export class StoryEngine {
       inventory: state.inventory
     };
 
+
     return {
       paragraphs: page.paragraphs.filter(p => evaluateVisibility(p, context)),
       choices: page.choices.filter(c => evaluateVisibility(c, context))
+    };
+  }
+
+  private createActionContext(scriptState: any, currentPageId?: string): ActionContext {
+    return {
+      variables: scriptState.variables as any,
+      setVariable: (key: string, value: unknown) => {
+          const currentVar = scriptState.variables[key];
+          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
+          scriptState.variables[key] = { 
+            type, 
+            value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) 
+          };
+      },
+      modifyInventory: (itemId: string, amount: number) => {
+          const current = scriptState.inventory[itemId] || 0;
+          const next = current + amount;
+          if (next <= 0) delete scriptState.inventory[itemId];
+          else scriptState.inventory[itemId] = next;
+      },
+      postMessage: (text: string, displayStyle?: 'styled' | 'paragraph') => {
+          scriptState.newMessages.push({
+              id: crypto.randomUUID(),
+              text,
+              displayStyle: displayStyle || 'styled',
+              pageId: scriptState.nextTargetId || scriptState.navigateToPage || currentPageId
+          });
+      },
+      goToPage: (id: string) => {
+          if (scriptState.nextTargetId !== undefined) scriptState.nextTargetId = id;
+          if (scriptState.navigateToPage !== undefined) scriptState.navigateToPage = id;
+          scriptState.newMessages.forEach((m: any) => { if (!m.pageId) m.pageId = id; });
+      },
+      preventMove: () => {
+          if ('preventMove' in scriptState) scriptState.preventMove = true;
+      },
+      endStory: (data: Record<string, unknown>) => {
+        this.emitEffect({ type: 'ON_STORY_END', payload: { data } });
+      },
+      playSound: (soundId: string, category: 'bgm' | 'sfx') => {
+        this.emitEffect({ type: 'PLAY_SOUND', payload: { soundId, category } });
+      },
+      stopAllSounds: () => {
+        this.emitEffect({ type: 'STOP_ALL_SOUNDS' });
+      }
     };
   }
 }

@@ -15,6 +15,7 @@ class AudioManager {
   private sounds: Map<string, Howl> = new Map();
   private configs: Map<string, SoundConfig> = new Map();
   private pendingStops: Map<string, () => void> = new Map();
+  private activeSounds: Map<AudioCategory, string> = new Map();
 
   // Master volumes per category
   private categoryVolumes: Record<AudioCategory, number> = {
@@ -40,17 +41,22 @@ class AudioManager {
     }
 
     const isMusic = config.category === 'bgm' || config.category === 'ambient';
+    // HTML5 mode is great for streaming large files, but it doesn't work with data URIs (Base64)
+    // and can be more restrictive with autoplay. We disable it for data URIs.
+    const isDataUri = config.src.some(s => s.startsWith('data:'));
+    const useHtml5 = config.html5 !== undefined ? config.html5 : (isMusic && !isDataUri);
 
     const howl = new Howl({
       src: config.src,
       volume: (config.volume ?? 1.0) * this.categoryVolumes[config.category],
       loop: config.loop || false,
-      html5: config.html5 !== undefined ? config.html5 : isMusic, // Use HTML5 for BGM to stream large files
+      html5: useHtml5,
       onloaderror: (_id, error) => {
         console.error(`AudioManager [${config.id}]: Load error`, error);
       },
       onplayerror: (_id, error) => {
         console.error(`AudioManager [${config.id}]: Play error (Autoplay blocked?)`, error);
+        // If autoplay is blocked, wait for an unlock gesture and try again
         howl.once('unlock', () => {
           howl.play();
         });
@@ -90,6 +96,14 @@ class AudioManager {
     const sound = this.sounds.get(id);
     
     if (sound && config) {
+      const activeInCat = this.activeSounds.get(config.category);
+      
+      // If it's already the active track in its category AND it is currently playing or loading,
+      // skip restarting it. This prevents echoes on re-renders.
+      if (activeInCat === id && (sound.playing() || sound.state() === 'loading')) {
+        return;
+      }
+
       if (options?.stopOtherInCategory) {
         // Fade out others immediately
         this.stopByCategory(config.category, { fadeOut: 600, exceptId: id });
@@ -98,7 +112,6 @@ class AudioManager {
       // To satisfy browser autoplay/gesture requirements, we call .play() IMMEDIATELY
       // but keep it silent if a delay is requested.
       const targetVol = this.getTargetVolume(id);
-      const isMusic = config.category === 'bgm' || config.category === 'ambient';
 
       if (!sound.playing()) {
         sound.volume(0);
@@ -115,7 +128,14 @@ class AudioManager {
       const startFade = () => {
         // Re-fetch in case of rapid changes
         const currentSound = this.sounds.get(id);
-        if (!currentSound || !currentSound.playing()) return;
+        if (!currentSound) return;
+
+        // If it's not playing yet (possibly still blocked or loading), 
+        // we should WAIT for it to play before fading.
+        if (!currentSound.playing()) {
+          currentSound.once('play', startFade);
+          return;
+        }
 
         if (options?.fadeIn) {
           currentSound.fade(currentSound.volume(), targetVol, options.fadeIn);
@@ -123,6 +143,9 @@ class AudioManager {
           currentSound.volume(targetVol);
         }
       };
+
+      // Track as the primary active sound for this category
+      this.activeSounds.set(config.category, id);
 
       if (options?.delay) {
         setTimeout(startFade, options.delay);
@@ -162,6 +185,10 @@ class AudioManager {
           sound.once('fade', onFadeComplete);
         } else {
           sound.stop();
+          const config = this.configs.get(id);
+          if (config && this.activeSounds.get(config.category) === id) {
+            this.activeSounds.delete(config.category);
+          }
           resolve();
         }
       } else {
@@ -181,8 +208,9 @@ class AudioManager {
     // Stop all sounds
     this.sounds.forEach((sound) => {
       sound.stop();
-      // We still keep instances in the map for caching unless truly unmounting the whole app
     });
+
+    this.activeSounds.clear();
   }
 
   /**
@@ -198,6 +226,20 @@ class AudioManager {
     }
     
     await Promise.all(stopPromises);
+    if (!options?.exceptId) {
+      this.activeSounds.delete(category);
+    }
+  }
+
+  /**
+   * Check if any sound in a category is currently playing
+   */
+  public isCategoryPlaying(category: AudioCategory): boolean {
+    const activeId = this.activeSounds.get(category);
+    if (!activeId) return false;
+    
+    const sound = this.sounds.get(activeId);
+    return !!sound?.playing();
   }
 
   /**

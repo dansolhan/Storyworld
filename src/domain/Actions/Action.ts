@@ -10,6 +10,8 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   setVisibility?: (visible: boolean) => void;
   preventMove?: () => void;
   endStory?: (data: Record<string, unknown>) => void;
+  playSound?: (soundId: string, category: 'bgm' | 'sfx') => void;
+  stopAllSounds?: () => void;
 }
 
 export interface Action<TParams = Record<string, unknown>> {
