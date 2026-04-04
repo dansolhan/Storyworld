@@ -21,11 +21,13 @@ export interface EngineState {
   variables: Record<string, StoryVariable>;
   inventory: Record<string, number>;
   messages: PlayerMessage[];
+  choiceOverrides?: Record<string, { text?: string }>;
   lastEffect?: StoryEffect;
 }
 
 export type StoryMessage =
   | { type: 'INITIALIZE'; payload: { storyData: StoryData; startPageId?: string } }
   | { type: 'SELECT_CHOICE'; payload: { choiceId: string; targetPageId?: string } }
+  | { type: 'HOVER_CHOICE'; payload: { choiceId: string; isHovering: boolean } }
   | { type: 'EXECUTE_ITEM_CHOICE'; payload: { itemId: string; choiceId: string } }
   | { type: 'RESTART' };

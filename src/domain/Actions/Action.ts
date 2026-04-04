@@ -8,6 +8,7 @@ export interface ActionContext<TVariables = Record<string, unknown>> {
   goToPage?: (pageId: string) => void;
   modifyInventory?: (itemId: string, amount: number) => void;
   setVisibility?: (visible: boolean) => void;
+  setChoiceText?: (text: string) => void;
   preventMove?: () => void;
   endStory?: (data: Record<string, unknown>) => void;
   playSound?: (soundId: string, category: 'bgm' | 'sfx') => void;

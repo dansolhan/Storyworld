@@ -46,6 +46,9 @@ export class StoryEngine {
       case 'SELECT_CHOICE':
         this.selectChoice(message.payload.choiceId, message.payload.targetPageId);
         break;
+      case 'HOVER_CHOICE':
+        this.hoverChoice(message.payload.choiceId, message.payload.isHovering);
+        break;
       case 'EXECUTE_ITEM_CHOICE':
         this.executeItemChoice(message.payload.itemId, message.payload.choiceId);
         break;
@@ -65,6 +68,7 @@ export class StoryEngine {
       variables: storyData.variables || {},
       inventory: {},
       messages: [],
+      choiceOverrides: {},
       lastEffect: undefined
     });
 
@@ -120,6 +124,54 @@ export class StoryEngine {
 
     if (!scriptState.preventMove && scriptState.nextTargetId) {
       this.enterPage(scriptState.nextTargetId);
+    }
+  }
+
+  private hoverChoice(choiceId: string, isHovering: boolean) {
+    const state = this.store.getState();
+    const currentPage = state.storyData?.pages.find(p => p.id === state.currentPageId);
+    const choice = currentPage?.choices.find(c => c.id === choiceId);
+    
+    if (!choice) return;
+
+    if (!isHovering) {
+        // Clear hover text change
+        const nextOverrides = { ...state.choiceOverrides };
+        if (nextOverrides[choiceId]) {
+             delete nextOverrides[choiceId].text;
+             if (Object.keys(nextOverrides[choiceId]).length === 0) delete nextOverrides[choiceId];
+        }
+        this.store.setState({ choiceOverrides: nextOverrides });
+        return;
+    }
+
+    const scriptState = {
+      variables: { ...state.variables },
+      inventory: { ...state.inventory },
+      newMessages: [] as PlayerMessage[],
+      choiceTextOverride: undefined as string | undefined,
+    };
+
+    const actionContext = this.createActionContext(scriptState, state.currentPageId);
+
+    const evalContext = {
+      variables: scriptState.variables,
+      visitedPageIds: state.visitedPageIds,
+      currentPageId: state.currentPageId,
+      inventory: scriptState.inventory
+    };
+
+    const hoverEvents = choice.events?.filter(e => e.name === 'onHover') || [];
+    if (hoverEvents.length === 0) return;
+
+    hoverEvents.forEach(event => {
+      executeLogicTree(event.logicTree || [], evalContext, actionContext);
+    });
+
+    if (scriptState.choiceTextOverride !== undefined) {
+         const nextOverrides = { ...state.choiceOverrides };
+         nextOverrides[choiceId] = { ...nextOverrides[choiceId], text: scriptState.choiceTextOverride };
+         this.store.setState({ choiceOverrides: nextOverrides });
     }
   }
 
@@ -246,7 +298,13 @@ export class StoryEngine {
 
     return {
       paragraphs: page.paragraphs.filter(p => evaluateVisibility(p, context)),
-      choices: page.choices.filter(c => evaluateVisibility(c, context))
+      choices: page.choices.filter(c => evaluateVisibility(c, context)).map(c => {
+         const override = state.choiceOverrides?.[c.id];
+         if (override && override.text) {
+             return { ...c, text: override.text };
+         }
+         return c;
+      })
     };
   }
 
@@ -282,6 +340,9 @@ export class StoryEngine {
       },
       preventMove: () => {
           if ('preventMove' in scriptState) scriptState.preventMove = true;
+      },
+      setChoiceText: (text: string) => {
+          if ('choiceTextOverride' in scriptState) scriptState.choiceTextOverride = text;
       },
       endStory: (data: Record<string, unknown>) => {
         this.emitEffect({ type: 'ON_STORY_END', payload: { data } });

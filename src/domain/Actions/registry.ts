@@ -182,6 +182,26 @@ export const endStoryBlueprint: ActionBlueprint<EndStoryParams> = {
   },
 };
 
+export interface ChangeChoiceTextParams {
+  text: string;
+}
+
+export const changeChoiceTextBlueprint: ActionBlueprint<ChangeChoiceTextParams> = {
+  id: 'change_choice_text',
+  name: 'Change Choice Text',
+  template: 'Change choice text to "{{text}}"',
+  domainContext: ['choice'],
+  eventContext: ['onHover', 'onSelect'],
+  defaultParams: {
+    text: '',
+  },
+  execute: (params, context) => {
+    if (context.setChoiceText && params.text) {
+      context.setChoiceText(params.text);
+    }
+  },
+};
+
 // Expose a central registry of blueprints for easy selection
 export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [setVariableBlueprint.id]: setVariableBlueprint as unknown as ActionBlueprint<unknown>,
@@ -192,5 +212,6 @@ export const actionBlueprints: Record<string, ActionBlueprint<unknown>> = {
   [hideParagraphBlueprint.id]: hideParagraphBlueprint as unknown as ActionBlueprint<unknown>,
   [hideChoiceBlueprint.id]: hideChoiceBlueprint as unknown as ActionBlueprint<unknown>,
   [preventMoveToPageBlueprint.id]: preventMoveToPageBlueprint as unknown as ActionBlueprint<unknown>,
+  [changeChoiceTextBlueprint.id]: changeChoiceTextBlueprint as unknown as ActionBlueprint<unknown>,
   [endStoryBlueprint.id]: endStoryBlueprint as unknown as ActionBlueprint<unknown>,
 };

@@ -55,7 +55,12 @@ export const ChoiceRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
       <ol className={styles.choicesList}>
         {choices.map((choice, idx) => (
           <li key={choice.id} className={styles.choiceItem}>
-            <button className={styles.choiceButton} onClick={() => handleChoiceSelect(choice)}>
+            <button 
+              className={styles.choiceButton} 
+              onClick={() => handleChoiceSelect(choice)}
+              onMouseEnter={() => engine.dispatch({ type: 'HOVER_CHOICE', payload: { choiceId: choice.id, isHovering: true } })}
+              onMouseLeave={() => engine.dispatch({ type: 'HOVER_CHOICE', payload: { choiceId: choice.id, isHovering: false } })}
+            >
               <span className={styles.choiceNumber}>[{idx + 1}]</span>
               <span className={styles.choiceArrow}>▶</span>
               <span className={styles.choiceText}>{choice.text}</span>

@@ -18,5 +18,6 @@ export const AVAILABLE_EVENTS: EventDefinition[] = [
   { name: 'onExit', label: 'onExit', domainContext: ['page'] },
   { name: 'onEvaluate', label: 'onEvaluate (Conditionals)', domainContext: ['page', 'choice'] },
   { name: 'calculateVisibility', label: 'Calculate Visibility', domainContext: ['paragraph', 'choice'] },
-  { name: 'onSelect', label: 'onSelect', domainContext: ['choice'] }
+  { name: 'onSelect', label: 'onSelect', domainContext: ['choice'] },
+  { name: 'onHover', label: 'onHover', domainContext: ['choice'] }
 ];
