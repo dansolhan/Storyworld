@@ -22,6 +22,7 @@ export class BoldFeature extends RTEFeature {
       <Button
         key={this.name}
         className={styles.toolbarBtn}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleBold().run()}
         variant={editor.isActive('bold') ? 'primary' : 'secondary'}
         size="sm"

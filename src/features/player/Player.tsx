@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card } from '../../components/ui/Card/Card';
 import { Button } from '../../components/ui/Button/Button';
@@ -30,6 +30,7 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, 
   const isTransitioning = usePlayerUIStore((s) => s.isTransitioning);
   const contextualPopover = usePlayerUIStore((s) => s.contextualPopover);
   const setContextualPopover = usePlayerUIStore((s) => s.setContextualPopover);
+  const arrowRef = useRef<HTMLDivElement>(null);
 
   // Adapters for side-effects and global listeners (register them BEFORE initialization)
   useEngineEffects({ onStoryEnd });
@@ -90,9 +91,10 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, 
         width={contextualPopover?.width || 0}
         height={contextualPopover?.height || 0}
         className={styles.popover}
+        arrowRef={arrowRef}
       >
         <div className={styles.popoverDecorations} />
-        <div className={styles.popoverArrow} />
+        <div ref={arrowRef} className={styles.popoverArrow} />
         {contextualPopover?.title && (
           <h5 className={styles.popoverTitle}>
             {parseTextTokens(contextualPopover.title, variables)}
@@ -102,7 +104,10 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, 
           <div 
             className={styles.popoverText}
             dangerouslySetInnerHTML={{ 
-              __html: parseTextTokens(contextualPopover.text, variables) 
+              __html: parseTextTokens(contextualPopover.text, variables)
+                .replace(/<\/p>\n/g, '</p>')
+                .replace(/<br\s*\/?>\n/g, '<br>')
+                .replace(/\n/g, '<br />')
             }}
           />
         )}

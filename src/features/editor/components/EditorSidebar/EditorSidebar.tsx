@@ -13,12 +13,7 @@ import { EventsEditor } from '../EventsEditor/EventsEditor';
 import { Tabs } from '../../../../components/ui/Tabs/Tabs';
 import styles from './EditorSidebar.module.css';
 
-const PARAGRAPH_FEATURES = [
-  new BoldFeature(),
-  new ItalicFeature(),
-  new ContextualTextFeature(),
-  new InsertVariableFeature(),
-];
+// PARAGRAPH_FEATURES moved inside ParagraphBlock to prevent shared state
 
 import { useSelectedPageId } from '../../hooks/page/useSelectedPageId';
 import { usePageActions } from '../../hooks/page/usePageActions';
@@ -27,6 +22,70 @@ import { useChoiceActions } from '../../hooks/page/useChoiceActions';
 import { useConnectingChoice } from '../../hooks/page/useConnectingChoice';
 import { useAtmospheres } from '../../hooks/page/useAtmospheres';
 import { useSidebarState } from '../../hooks/view/useSidebarState';
+
+const ParagraphBlock = React.memo(({ 
+  p, 
+  selectedPageId, 
+  isLocked, 
+  isActive, 
+  handleParagraphClick, 
+  toggleLock, 
+  updateParagraph 
+}: any) => {
+  const PARAGRAPH_FEATURES = React.useMemo(() => [
+    new BoldFeature(),
+    new ItalicFeature(),
+    new ContextualTextFeature(),
+    new InsertVariableFeature(),
+  ], []);
+
+  return (
+    <div 
+      onClick={(e) => handleParagraphClick(p.id, e.currentTarget)}
+      onFocusCapture={(e) => handleParagraphClick(p.id, e.currentTarget)}
+      className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.paragraphBlock} ${isLocked ? 'locked' : ''} ${isLocked ? styles.locked : ''} ${isActive ? styles.isActive : ''}`}
+    >
+      <div className={styles.paragraphTools}>
+        <button
+          type="button"
+          className={`${styles.lockToggle} ${isLocked ? styles.active : ''}`}
+          onClick={() => toggleLock(p.id)}
+          title={isLocked ? "Unlock Paragraph" : "Lock Paragraph"}
+        >
+          {isLocked ? <Lock size={12} /> : <Unlock size={12} />}
+          <span>{isLocked ? "Locked" : "Lock"}</span>
+        </button>
+      </div>
+
+      {(p.events || []).some((e: any) => e.name === 'calculateVisibility') && (
+        <div className={styles.permanentIndicators}>
+          <div 
+            className={styles.visibilityIndicator} 
+            title="Visibility Logic Attached: This paragraph contains logic that determines if it should be shown to the player."
+          >
+            <AlertCircle size={16} />
+          </div>
+        </div>
+      )}
+
+      <RichTextEditor
+        content={p.text}
+        features={PARAGRAPH_FEATURES}
+        hideToolbarUntilHover={true}
+        onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
+      />
+      
+      <div className={styles.eventsWrapper}>
+        <EventsEditor
+          targetType="paragraph"
+          pageId={selectedPageId}
+          targetId={p.id}
+          events={p.events || []}
+        />
+      </div>
+    </div>
+  );
+});
 
 export const EditorSidebar: React.FC = React.memo(() => {
   const selectedPageId = useSelectedPageId();
@@ -46,6 +105,9 @@ export const EditorSidebar: React.FC = React.memo(() => {
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      if ((event.target as Element).closest('[data-popover="true"]')) {
+        return;
+      }
       if (paragraphListRef.current && !paragraphListRef.current.contains(event.target as Node)) {
         setActiveParagraphId(null);
       }
@@ -230,51 +292,16 @@ export const EditorSidebar: React.FC = React.memo(() => {
                   const isActive = activeParagraphId === p.id;
 
                   return (
-                    <div 
-                      key={p.id} 
-                      onClick={(e) => handleParagraphClick(p.id, e.currentTarget)}
-                      onFocusCapture={(e) => handleParagraphClick(p.id, e.currentTarget)}
-                      className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.paragraphBlock} ${isLocked ? 'locked' : ''} ${isLocked ? styles.locked : ''} ${isActive ? styles.isActive : ''}`}
-                    >
-                      <div className={styles.paragraphTools}>
-                        <button
-                          type="button"
-                          className={`${styles.lockToggle} ${isLocked ? styles.active : ''}`}
-                          onClick={() => toggleLock(p.id)}
-                          title={isLocked ? "Unlock Paragraph" : "Lock Paragraph"}
-                        >
-                          {isLocked ? <Lock size={12} /> : <Unlock size={12} />}
-                          <span>{isLocked ? "Locked" : "Lock"}</span>
-                        </button>
-                      </div>
-
-                      {(p.events || []).some((e: any) => e.name === 'calculateVisibility') && (
-                        <div className={styles.permanentIndicators}>
-                          <div 
-                            className={styles.visibilityIndicator} 
-                            title="Visibility Logic Attached: This paragraph contains logic that determines if it should be shown to the player."
-                          >
-                            <AlertCircle size={16} />
-                          </div>
-                        </div>
-                      )}
-
-                      <RichTextEditor
-                        content={p.text}
-                        features={PARAGRAPH_FEATURES}
-                        hideToolbarUntilHover={true}
-                        onChange={(html) => updateParagraph(selectedPageId, p.id, html)}
-                      />
-                      
-                      <div className={styles.eventsWrapper}>
-                        <EventsEditor
-                          targetType="paragraph"
-                          pageId={selectedPageId}
-                          targetId={p.id}
-                          events={p.events || []}
-                        />
-                      </div>
-                    </div>
+                    <ParagraphBlock
+                      key={p.id}
+                      p={p}
+                      selectedPageId={selectedPageId}
+                      isLocked={isLocked}
+                      isActive={isActive}
+                      handleParagraphClick={handleParagraphClick}
+                      toggleLock={toggleLock}
+                      updateParagraph={updateParagraph}
+                    />
                   );
                 })}
               </div>

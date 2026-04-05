@@ -6,6 +6,7 @@ import {
   offset,
   flip,
   shift,
+  arrow,
   useTransitionStyles,
 } from '@floating-ui/react';
 import styles from './Popover.module.css';
@@ -21,6 +22,7 @@ export interface PopoverProps {
   className?: string;
   style?: React.CSSProperties;
   offset?: number;
+  arrowRef?: React.RefObject<HTMLElement | null>;
 }
 
 export const Popover: React.FC<PopoverProps> = ({
@@ -34,6 +36,7 @@ export const Popover: React.FC<PopoverProps> = ({
   className = '',
   style = {},
   offset: offsetValue = 8,
+  arrowRef,
 }) => {
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +65,7 @@ export const Popover: React.FC<PopoverProps> = ({
       offset(offsetValue),
       flip({ padding: 10 }),
       shift({ padding: 10 }),
+      ...(arrowRef ? [arrow({ element: arrowRef })] : []),
     ],
     whileElementsMounted: autoUpdate,
     placement: 'bottom',
@@ -129,8 +133,15 @@ export const Popover: React.FC<PopoverProps> = ({
     <div
       ref={setRefs}
       className={`${styles.popover} ${className}`}
-      style={{ ...floatingStyles, ...transitionStyles, ...style }}
+      style={{
+        ...floatingStyles,
+        ...transitionStyles,
+        ...style,
+        ...(context.middlewareData.arrow?.x != null ? { '--arrow-x': `${context.middlewareData.arrow.x}px` } : {}),
+        ...(context.middlewareData.arrow?.y != null ? { '--arrow-y': `${context.middlewareData.arrow.y}px` } : {}),
+      } as React.CSSProperties}
       data-placement={currentPlacement}
+      data-popover="true"
       onClick={(e) => e.stopPropagation()}
     >
       {isOpen ? children : lastChildren.current}

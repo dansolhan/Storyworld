@@ -25,14 +25,22 @@ export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
           <div
             key={p.id}
             className={styles.paragraphText}
-            dangerouslySetInnerHTML={{ __html: parseTextTokens(p.text, variables) }}
+            dangerouslySetInnerHTML={{ 
+              __html: parseTextTokens(p.text, variables)
+                .replace(/<\/p>\n/g, '</p>')
+                .replace(/<br\s*\/?>\n/g, '<br>') 
+            }}
           />
         ))}
         {filteredMessages.map((m) => (
           <div
             key={m.id}
             className={`${styles.paragraphText} ${m.displayStyle !== 'paragraph' ? styles.messageText : ''}`}
-            dangerouslySetInnerHTML={{ __html: parseTextTokens(m.text, variables) }}
+            dangerouslySetInnerHTML={{ 
+              __html: parseTextTokens(m.text, variables)
+                .replace(/<\/p>\n/g, '</p>')
+                .replace(/<br\s*\/?>\n/g, '<br>') 
+            }}
           />
         ))}
       </div>

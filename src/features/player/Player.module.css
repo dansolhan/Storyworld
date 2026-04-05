@@ -10,6 +10,26 @@
   position: relative;
 }
 
+/* Elegant Scrollbar for the Player */
+.container *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.container *::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.container *::-webkit-scrollbar-thumb {
+  background: var(--player-accent);
+  border-radius: 3px;
+}
+
+.container *::-webkit-scrollbar-thumb:hover {
+  background: var(--player-accent-hover, #e0bf6e);
+}
+
 .header {
   height: 60px;
   background-color: var(--player-bg-lighter);
@@ -110,7 +130,6 @@
 .paragraphs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
 
@@ -119,6 +138,7 @@
   font-size: var(--text-lg);
   line-height: 1.8;
   color: var(--player-text);
+  white-space: pre-wrap;
 }
 
 .messageText {
@@ -131,6 +151,7 @@
   /* very light gold */
   border-left: 3px solid var(--player-accent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  white-space: pre-wrap;
 }
 
 .choicesContainer {
@@ -143,6 +164,12 @@
   background-image: var(--paper-texture);
   z-index: 2;
   box-sizing: border-box;
+}
+
+.paragraphText p,
+.messageText p,
+.popoverText p {
+  margin: 0 0 var(--space-4) 0;
 }
 
 .choicesList {
@@ -292,23 +319,45 @@
 
 .popoverArrow {
   position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
+  top: -5px;
+  left: var(--arrow-x, 50%);
+  transform: rotate(45deg);
   width: 10px;
   height: 10px;
   background-color: var(--player-bg-lighter);
   border-left: 1px solid var(--player-accent);
   border-top: 1px solid var(--player-accent);
+  z-index: 10;
 }
 
 .popover[data-placement="top"] .popoverArrow {
   top: auto;
-  bottom: -6px;
+  bottom: -5px;
   border-left: none;
   border-top: none;
-  border-right: 1px solid #8a6d20;
-  border-bottom: 1px solid #8a6d20;
+  border-right: 1px solid var(--player-accent);
+  border-bottom: 1px solid var(--player-accent);
+}
+
+.popover[data-placement="left"] .popoverArrow {
+  top: var(--arrow-y, 50%);
+  left: auto;
+  right: -5px;
+  transform: rotate(45deg);
+  border-left: none;
+  border-bottom: none;
+  border-right: 1px solid var(--player-accent);
+  border-top: 1px solid var(--player-accent);
+}
+
+.popover[data-placement="right"] .popoverArrow {
+  top: var(--arrow-y, 50%);
+  left: -5px;
+  transform: rotate(45deg);
+  border-top: none;
+  border-right: none;
+  border-bottom: 1px solid var(--player-accent);
+  border-left: 1px solid var(--player-accent);
 }
 
 .popoverTitle {
@@ -327,6 +376,7 @@
   color: var(--player-text);
   position: relative;
   z-index: 1;
+  white-space: pre-wrap;
 }
 
 

@@ -24,18 +24,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return [StarterKit, ...featureExts];
   }, [features]);
 
+  const formatHTML = (html: string) => {
+    // Add newlines after paragraph closes and line breaks to ensure raw string has \n
+    // This allows version control and text blocks to be readable.
+    return html.replace(/<\/p>/g, '</p>\n').replace(/<br\s*\/?>/g, '<br>\n').trim();
+  };
+
   const editor = useEditor({
     extensions,
     content,
+    parseOptions: {
+      preserveWhitespace: 'full',
+    },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange(formatHTML(editor.getHTML()));
     },
   });
 
   // A tiny hack: if `content` is updated from outside, sync the editor. Better than keys causing re-mounts.
   useEffect(() => {
-    if (editor && editor.getHTML() !== content) {
-      editor.commands.setContent(content);
+    if (editor) {
+      const currentHTML = formatHTML(editor.getHTML());
+      if (currentHTML !== (content || '').trim()) {
+        editor.commands.setContent(content);
+      }
     }
   }, [content, editor]);
 

@@ -37,6 +37,7 @@ const VariableToolbarButton: React.FC<{ editor: Editor }> = ({ editor }) => {
       <Button
         ref={buttonRef}
         className={styles.toolbarBtn}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => setIsOpen(true)}
         variant="secondary"
         size="sm"
@@ -45,7 +46,7 @@ const VariableToolbarButton: React.FC<{ editor: Editor }> = ({ editor }) => {
         <VariableIcon size={16} />
       </Button>
 
-      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} x={x} y={y}>
+      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} x={x} y={y} data-popover="true">
         <Combobox
           options={options}
           onSelect={handleSelect}

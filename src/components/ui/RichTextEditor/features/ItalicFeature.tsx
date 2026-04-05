@@ -19,6 +19,7 @@ export class ItalicFeature extends RTEFeature {
       <Button
         key={this.name}
         className={styles.toolbarBtn}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         variant={editor.isActive('italic') ? 'primary' : 'secondary'}
         size="sm"

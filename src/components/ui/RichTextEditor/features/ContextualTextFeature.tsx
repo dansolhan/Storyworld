@@ -61,6 +61,7 @@ export class ContextualTextFeature extends RTEFeature {
       <Button
         key={this.name}
         className={styles.toolbarBtn}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={handleToggle}
         variant={isActive ? 'primary' : 'secondary'}
         size="sm"
@@ -200,6 +201,7 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
         x={menuState.x}
         y={menuState.y}
         className={styles.contextMenu}
+        data-popover="true"
       >
         <button className={styles.contextMenuItem} onClick={handleEdit}>
           Edit Context
@@ -215,6 +217,7 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
         x={popoverState?.x || 0}
         y={(popoverState?.y || 0) + 10}
         className={styles.popoverInput}
+        data-popover="true"
       >
         <h4 className={styles.popoverInputTitle}>
           {popoverState?.isEdit ? 'Edit Context' : 'Add Context'}
