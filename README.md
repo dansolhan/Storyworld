@@ -1,73 +1,65 @@
-# React + TypeScript + Vite
+# Storyworld AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Storyworld AI is an interactive text-based story creator and player. It features a fully-fledged visual logic builder, a rich text editor for authoring interactive paragraphs, and a robust headless game engine to run the stories, separating logic from the user interface.
 
-Currently, two official plugins are available:
+## Main Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Headless Story Engine**: A state-machine-based engine that processes JSON story data. It is entirely decoupled from the React UI to create a framework-agnostic, type-safe library capable of managing logic, rendering multi-paragraph text, and executing complex actions like variables and conditional choices.
+- **Player UI Component**: A beautiful, highly-responsive reading view for interactive stories. It includes smooth audio transitions, contextual popovers for on-hover events, custom UI scrollbars, and fluid animations for transitions between paragraphs and choice resolution.
+- **Visual Logic Tree Builder**: A node-based story visualization workspace powered by `@xyflow/react` that allows authors to visually explore passage relationships, map out storyline choices, and overview context parameters.
+- **Rich Text Authoring**: Built with TipTap, the editor allows for complex nested context, paragraph-level manipulation, text variables, and rich inline styling integration.
+- **Audio Management**: Seamless integration with Howler.js for background music, sound effects, staggers, and customizable fade transitions.
+- **Persistence & Migration Data**: Stores ongoing stories dynamically using IndexedDB (`idb-keyval`), equipped with robust schemas capable of migrating data safely without data loss.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: React 19 + TypeScript + Vite
+- **Styling & Animation**: CSS Modules, Framer Motion, Floating UI, Headless UI
+- **State Management**: Zustand
+- **Editor**: TipTap
+- **Nodal Interface**: React Flow
+- **Audio Framework**: Howler.js
+- **Testing**: Vitest + Testing Library
+- **UI Components Development**: Storybook
 
-## Expanding the ESLint configuration
+## How to Run the Project
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Ensure you have Node.js and `npm` installed. Start by installing the project's dependencies:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Running the Development Server
+To start the Vite development server and view the project locally:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Running Tests
+This project uses Vitest. To run the complete test suite:
+
+```bash
+npm run test
+```
+
+For the Vitest UI interface:
+
+```bash
+npm run test:ui
+```
+
+### Running Storybook
+View and develop UI components in isolation with Storybook:
+
+```bash
+npm run storybook
+```
+
+### Building for Production
+To build a highly optimized production version of the application:
+
+```bash
+npm run build
 ```
