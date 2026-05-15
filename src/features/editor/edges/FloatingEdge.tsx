@@ -1,4 +1,4 @@
-import { memo, useMemo, useCallback } from 'react';
+import { memo, useMemo } from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -9,11 +9,9 @@ import {
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 import { getEdgeParams } from './utils';
 import { useEditorStore } from '../store/useEditorStore';
-import { useThrottledNodePos } from '../hooks/graph/useThrottledNodePos';
+import { useEdgePairInfo } from './edgePairs';
 import { useShallow } from 'zustand/react/shallow';
 import styles from './FloatingEdge.module.css';
-
-const DRAG_THROTTLE_MS = 350;
 
 export const FloatingEdge = memo(({
   id,
@@ -27,39 +25,35 @@ export const FloatingEdge = memo(({
   const rawSourceNode = useInternalNode(source);
   const rawTargetNode = useInternalNode(target);
 
-  // Focus only on edges that belong to this pair. 
-  // useShallow ensures we only re-render if the set of parallel edges changes.
-  const pairEdges = useEditorStore(
-    useShallow(useCallback(
-      (state) => state.edges.filter(e => 
-        (e.source === source && e.target === target) ||
-        (e.source === target && e.target === source)
-      ).sort((a, b) => a.id.localeCompare(b.id)),
-      [source, target]
-    ))
-  );
+  // Position within the bundle of parallel edges between this (source,target) pair,
+  // derived once at the FlowView level so each edge does O(1) work here.
+  const { index: edgeIndex, total: totalEdges } = useEdgePairInfo(id);
 
-  const { showAllEdges, hoveredPageId, isDragging } = useEditorStore(
+  const { showAllEdges, hoveredPageId } = useEditorStore(
     useShallow((state) => ({
       showAllEdges: state.showAllEdges,
       hoveredPageId: state.hoveredPageId,
-      isDragging: state.isDragging,
     }))
   );
 
-  // Group edges between the same nodes (in either direction) to calculate parallel offsets
   const parallelOffset = useMemo(() => {
-    if (pairEdges.length <= 1) return 0;
-    const index = pairEdges.findIndex(e => e.id === id);
+    if (totalEdges <= 1) return 0;
     // 30px gap between bundled lines
     const GAP = 30;
-    return (index - (pairEdges.length - 1) / 2) * GAP;
-  }, [pairEdges, id]);
+    return (edgeIndex - (totalEdges - 1) / 2) * GAP;
+  }, [edgeIndex, totalEdges]);
 
-  // Throttle during drag, immediate otherwise
-  const throttleDelay = isDragging ? DRAG_THROTTLE_MS : 0;
-  const sourcePos = useThrottledNodePos(rawSourceNode, throttleDelay);
-  const targetPos = useThrottledNodePos(rawTargetNode, throttleDelay);
+  // Read positions directly from the internal node — React Flow already
+  // batches its internal store updates to the paint cycle, so no extra
+  // throttling is needed here and edges follow the cursor in real time.
+  const sx0 = rawSourceNode?.internals.positionAbsolute.x ?? 0;
+  const sy0 = rawSourceNode?.internals.positionAbsolute.y ?? 0;
+  const sw0 = rawSourceNode?.measured.width ?? 0;
+  const sh0 = rawSourceNode?.measured.height ?? 0;
+  const tx0 = rawTargetNode?.internals.positionAbsolute.x ?? 0;
+  const ty0 = rawTargetNode?.internals.positionAbsolute.y ?? 0;
+  const tw0 = rawTargetNode?.measured.width ?? 0;
+  const th0 = rawTargetNode?.measured.height ?? 0;
 
   const isVisible = useMemo(() => {
     if (showAllEdges) return true;
@@ -80,19 +74,12 @@ export const FloatingEdge = memo(({
     return null;
   }, [hoveredPageId, source, target, rawSourceNode?.selected, rawTargetNode?.selected]);
 
-  // Recompute edge path when throttled positions or sizes change
   const edgeParams = useMemo(() => {
     if (!rawSourceNode || !rawTargetNode) return null;
     return getEdgeParams(rawSourceNode, rawTargetNode, sourceHandleId, targetHandleId, parallelOffset);
   }, [
-    Math.round(sourcePos.x * 2) / 2,
-    Math.round(sourcePos.y * 2) / 2,
-    Math.round(sourcePos.w || 0),
-    Math.round(sourcePos.h || 0),
-    Math.round(targetPos.x * 2) / 2,
-    Math.round(targetPos.y * 2) / 2,
-    Math.round(targetPos.w || 0),
-    Math.round(targetPos.h || 0),
+    sx0, sy0, sw0, sh0,
+    tx0, ty0, tw0, th0,
     sourceHandleId,
     targetHandleId,
     rawSourceNode?.internals.handleBounds,
@@ -125,8 +112,6 @@ export const FloatingEdge = memo(({
 
   // Stagger labels to avoid overlap when bundled
   const STAGGER_Y_GAP = 35;
-  const totalEdges = pairEdges.length;
-  const edgeIndex = pairEdges.findIndex(e => e.id === id);
   const relativeIndex = edgeIndex - (totalEdges - 1) / 2;
   
   const alongLineGap = 60;
