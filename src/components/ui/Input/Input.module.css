@@ -24,12 +24,14 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
 }
 
-.input:focus {
+.input:focus-visible {
   border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-primary-200);
+  outline: none;
 }
 
 .input:disabled {

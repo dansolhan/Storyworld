@@ -32,21 +32,21 @@
 
 .selectionOverlay {
   position: absolute;
-  top: 16px;
+  top: var(--space-4);
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border-default);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-6);
   font-family: var(--font-family-sans);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  animation: slideDown 0.3s ease-out;
+  animation: slideDown var(--duration-slow) var(--ease-standard);
 }
 
 .selectionOverlayText {
@@ -68,6 +68,6 @@
 
 .flowPanel {
   display: flex;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--space-2);
+  padding: var(--space-2);
 }

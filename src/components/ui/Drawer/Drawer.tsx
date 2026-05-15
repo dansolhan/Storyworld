@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId } from 'react';
 import styles from './Drawer.module.css';
 
 interface DrawerProps {
@@ -16,7 +16,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   children,
   width = '400px'
 }) => {
-  // Prevent body scroll when drawer is open (optional, but good practice for full apps)
+  const titleId = useId();
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -25,6 +26,15 @@ export const Drawer: React.FC<DrawerProps> = ({
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [isOpen, onClose]);
 
   return (
     <>
@@ -36,9 +46,13 @@ export const Drawer: React.FC<DrawerProps> = ({
       <aside
         className={`${styles.drawer} ${isOpen ? styles.open : ''}`}
         style={{ width, maxWidth: '100vw' }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-hidden={!isOpen}
       >
         <div className={styles.header}>
-          {title && <h2 className={styles.title}>{title}</h2>}
+          {title && <h2 id={titleId} className={styles.title}>{title}</h2>}
           <button className={styles.closeButton} onClick={onClose} aria-label="Close drawer">
             ×
           </button>
