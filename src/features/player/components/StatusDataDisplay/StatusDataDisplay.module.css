@@ -9,7 +9,7 @@
 }
 
 .statusTitle {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-heading);
   font-size: var(--text-lg);
   color: var(--player-accent);
   text-align: center;
@@ -45,7 +45,7 @@
 }
 
 .statusValue {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: var(--text-base);
   color: var(--player-text);
 }

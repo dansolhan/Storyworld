@@ -5,9 +5,20 @@ This file defines the conventions and rules for the Storyworld AI project. AI ag
 ## 🎨 Styling & Theming
 - **CSS Modules only** (`.module.css`). Do NOT use Tailwind or any other utility class frameworks.
 - **Global Theme Variables**: Source all spacing, sizing, colors, typography, and border radius from `src/styles/theme.css`. Never hardcode values (use `var(--space-4)` instead of `16px`).
-- **Spacing Scale**: Use a 4px base spacing scale — values must be multiples of 4 (4, 8, 12, 16, …).
-- **Typography Tone**: Use `var(--font-family-serif)` (Lora) for story/reading content to invoke a classic "author" feel; use `var(--font-family-sans)` (Inter) for functional UI elements.
-- **Token Separation**: Define color tokens (`--color-*`) separately from structural tokens (`--space-*`, `--radius-*`, `--font-*`) so the palette can swap (dark/light) without affecting layout.
+- **Dark only**: The app has one palette — the warm dark "Classical" ground. Do NOT add a light palette, a theme toggle, or `@media (prefers-color-scheme: …)` blocks. Any surface that needs a lighter value takes the next ground role up, not a conditional override.
+- **Ground Roles, Not Shades**: Backgrounds are chosen by what the surface *is*, not how dark it looks: `--color-bg-canvas` (app ground) → `--color-bg-app` → `--color-bg-chrome` (menu bar, toolbar chips) → `--color-bg-panel` (rail, inspector) → `--color-bg-raised` (cards, fields, nodes) → `--color-bg-selected` → `--color-bg-float` (floating toolbars). Borders are `--color-line-soft` / `--color-line` / `--color-line-strong`; text runs `--color-text` → `--color-text-body` → `--color-text-muted` → `--color-text-dim` → `--color-text-faint`.
+- **Accent Is a Stroke**: Gold (`--color-accent`, borders `--color-accent-line`) is applied as border, text and tint — `--color-accent-tint` for selected rows, `--color-accent-ring` for selection rings. Solid gold fills are reserved for the rare badge that must shout.
+- **Spacing Scale**: Use a 4px base spacing scale — values must be multiples of 4 (4, 8, 12, 16, …). Design references that specify odd values (7px, 13px, 22px) are snapped to the nearest step. Fixed *structural* dimensions (rail 150px, inspector 400px, node widths) are exempt — they are layout contracts, not spacing.
+- **Typography Tone**: Two serifs, no sans. `var(--font-heading)` (Cormorant Garamond) carries headings, kickers and figures — capped at weight 600 for interface headings, weight 400 for display sizes (30px+). `var(--font-body)` (Lora) carries body prose *and all interface text*. `var(--font-mono)` is only for ids, variable tokens and key caps. Counts and timestamps set `font-feature-settings: var(--font-features-tabular)`.
+- **Kickers**: Small uppercase labels use `--text-kicker-sm` / `--text-kicker` with `letter-spacing: var(--tracking-kicker)`.
+- **Radius**: `--radius-md` (4px) is the default for nearly everything; `--radius-sm` (3px) for inline chips inside a text line; `--radius-full` for pills.
+- **Token Separation**: Define color tokens (`--color-*`) separately from structural tokens (`--space-*`, `--radius-*`, `--font-*`, `--duration-*`) so the palette can be retuned without affecting layout.
+- **Deprecated Aliases**: The bottom block of `theme.css` re-points pre-redesign names (`--color-bg-primary`, `--color-primary-*`, `--font-family-sans`, …) at the current roles so untouched files still render correctly. NEVER use an alias in new code, and delete each one as its last caller migrates.
+
+## 🧩 UI Primitives
+- **Radix + CSS Modules**: Generic primitives in `src/components/ui/` are built on `@radix-ui/react-*` for behaviour and accessibility (focus management, keyboard nav, ARIA) and styled entirely in `.module.css`. Never reach for a styled component library.
+- **shadcn as the API shape**: Follow shadcn/ui's structure — composable subcomponents over monolithic prop bags, `data-state` / `data-*` attributes as styling hooks, variant props for visual variations. Do NOT install shadcn or Tailwind; the CSS-Modules-only rule stands.
+- **Icons**: `lucide-react`, already a dependency. Do not add another icon set or hand-roll SVGs for icons the set already has.
 
 ## 🏗️ Architecture & Organization
 - **Component Driven**: Build everything as functional React components.

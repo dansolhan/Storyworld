@@ -49,7 +49,7 @@
 }
 
 .titleText {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.9375rem;
   font-weight: bold;
   color: var(--color-primary-600);

@@ -26,13 +26,6 @@
 }
 
 .tabButton.active {
-  color: var(--color-primary-600);
-  border-bottom-color: var(--color-primary-600);
-}
-
-@media (prefers-color-scheme: dark) {
-  .tabButton.active {
-    color: var(--color-primary-400);
-    border-bottom-color: var(--color-primary-400);
-  }
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent-line);
 }

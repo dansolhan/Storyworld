@@ -17,7 +17,7 @@
   /* Borders */
   --player-border: #3d3628;
 
-  /* Accent (gold) */
-  --player-accent: #c9a84c;
-  --player-accent-hover: #e0bf6e;
+  /* Accent (gold) — aligned to the app-wide accent so there is one gold. */
+  --player-accent: var(--color-accent);
+  --player-accent-hover: var(--color-accent-300);
 }

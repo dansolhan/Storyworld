@@ -6,42 +6,21 @@
 
 
 .typeLocation .card {
-  background-color: #eff6ff;
-  border-color: #93c5fd;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.5);
 }
 
 .typeLocation .header {
-  background-color: #dbeafe;
+  background-color: rgba(59, 130, 246, 0.2);
 }
 
 .typePlot .card {
-  background-color: #fee2e2;
-  border-color: #f87171;
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.6);
 }
 
 .typePlot .header {
-  background-color: #fecaca;
-}
-
-/* Dark theme specific overrides */
-@media (prefers-color-scheme: dark) {
-  .typeLocation .card {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.5);
-  }
-
-  .typeLocation .header {
-    background-color: rgba(59, 130, 246, 0.2);
-  }
-
-  .typePlot .card {
-    background-color: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.6);
-  }
-
-  .typePlot .header {
-    background-color: rgba(239, 68, 68, 0.25);
-  }
+  background-color: rgba(239, 68, 68, 0.25);
 }
 
 .targetHandle {

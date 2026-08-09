@@ -62,19 +62,12 @@
 }
 
 .dropdownItem:hover {
-  background-color: var(--color-primary-50);
-  color: var(--color-primary-700);
+  background-color: var(--color-accent-tint);
+  color: var(--color-accent);
 }
 
 .divider {
   height: 1px;
-  background-color: var(--color-border-default);
+  background-color: var(--color-line);
   margin: var(--space-1) 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dropdownItem:hover {
-    background-color: var(--color-primary-900);
-    color: var(--color-primary-100);
-  }
 }
