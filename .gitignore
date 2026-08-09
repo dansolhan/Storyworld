@@ -26,6 +26,10 @@ dist-ssr
 *storybook.log
 storybook-static
 
+# Generated UI snapshot (tools/design-snapshot.mjs)
+design-snapshot/
+design-snapshot.zip
+
 # Environment Variables
 .env
 .env.local

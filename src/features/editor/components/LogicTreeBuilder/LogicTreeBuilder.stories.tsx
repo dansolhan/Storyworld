@@ -41,7 +41,7 @@ const LogicTreeBuilderSandbox = () => {
         'has_sword': { type: 'boolean', value: false }
       },
       items: {
-        'item_sword': { id: 'item_sword', name: 'Iron Sword', description: 'Sharp', multiple: false }
+        'item_sword': { id: 'item_sword', name: 'Iron Sword', description: 'Sharp', multiple: false, tags: [], contextChoices: [] }
       }
     });
   }, []);
@@ -67,7 +67,7 @@ export const ToolboxOnly: Story = {
   render: () => (
     <div style={{ padding: '2rem', height: '100vh', backgroundColor: '#111115' }}>
       <LogicToolbox 
-        onDragStart={(e, item) => console.log('Storybook onDragStart', item)} 
+        onDragStart={(_e, item) => console.log('Storybook onDragStart', item)}
       />
     </div>
   ),
