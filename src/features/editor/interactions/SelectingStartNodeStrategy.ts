@@ -14,7 +14,7 @@ export class SelectingStartNodeStrategy implements InteractionStrategy {
     const state = useEditorStore.getState();
     state.setStartPageId(nodeId);
     state.setIsSelectingStartNode(false);
-    state.setIsStorySettingsOpen(true);
+    state.setActiveWorkspace('settings');
   }
 
   onNodeDoubleClick() {
@@ -24,12 +24,12 @@ export class SelectingStartNodeStrategy implements InteractionStrategy {
   onPaneClick() {
     const state = useEditorStore.getState();
     state.setIsSelectingStartNode(false);
-    state.setIsStorySettingsOpen(true);
+    state.setActiveWorkspace('settings');
   }
 
   onCancel() {
     const state = useEditorStore.getState();
     state.setIsSelectingStartNode(false);
-    state.setIsStorySettingsOpen(true);
+    state.setActiveWorkspace('settings');
   }
 }

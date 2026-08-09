@@ -7,8 +7,8 @@ import { Howl } from 'howler';
 import styles from './Audio.module.css';
 
 export const AudioManagerModal: React.FC = () => {
-  const isOpen = useEditorStore(state => state.isAudioManagerOpen);
-  const close = () => useEditorStore.getState().setIsAudioManagerOpen(false);
+  const isOpen = useEditorStore(state => state.activeWorkspace === 'audio');
+  const close = () => useEditorStore.getState().setActiveWorkspace('graph');
 
   const audio = useEditorStore(state => state.audio);
   const addAudio = useEditorStore(state => state.addAudio);

@@ -23,18 +23,18 @@ export const getMenuConfig = (
   {
     label: 'Story',
     items: [
-      { label: 'Settings', onClick: () => useEditorStore.getState().setIsStorySettingsOpen(true) }
+      { label: 'Settings', onClick: () => useEditorStore.getState().setActiveWorkspace('settings') }
     ]
   },
   {
     label: 'Data',
     items: [
-      { label: 'Items', onClick: () => useEditorStore.getState().setIsItemManagerOpen(true) },
-      { label: 'Variables', onClick: () => useEditorStore.getState().setIsVariableManagerOpen(true) },
-      { label: 'Audio', onClick: () => useEditorStore.getState().setIsAudioManagerOpen(true) },
-      { label: 'Atmosphere', onClick: () => useEditorStore.getState().setIsAtmosphereManagerOpen(true) },
-      { label: 'Status Data', onClick: () => useEditorStore.getState().setIsStatusDataManagerOpen(true) },
-      { label: 'Context', onClick: () => useEditorStore.getState().setIsContextManagerOpen(true) }
+      { label: 'Items', onClick: () => useEditorStore.getState().setActiveWorkspace('items') },
+      { label: 'Variables', onClick: () => useEditorStore.getState().setActiveWorkspace('variables') },
+      { label: 'Audio', onClick: () => useEditorStore.getState().setActiveWorkspace('audio') },
+      { label: 'Atmosphere', onClick: () => useEditorStore.getState().setActiveWorkspace('atmospheres') },
+      { label: 'Status Data', onClick: () => useEditorStore.getState().setActiveWorkspace('statusData') },
+      { label: 'Context', onClick: () => useEditorStore.getState().setActiveWorkspace('context') }
     ]
   },
   {

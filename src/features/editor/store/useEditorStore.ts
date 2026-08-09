@@ -33,10 +33,36 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createStatusDataSlice(...a),
 }));
 
+/**
+ * What actually lands in IndexedDB: an explicit whitelist of domain state, so
+ * UI state never leaks into a saved story. `version` is the snapshot envelope's
+ * own version, independent of the story schema's `CURRENT_VERSION`.
+ */
+interface PersistedSnapshot {
+  version: number;
+  state: Pick<
+    EditorState,
+    | 'nodes'
+    | 'edges'
+    | 'pages'
+    | 'variables'
+    | 'items'
+    | 'audio'
+    | 'atmospheres'
+    | 'subplots'
+    | 'statusData'
+    | 'storyTitle'
+    | 'storyTitleLocId'
+    | 'storyDescription'
+    | 'storyDescriptionLocId'
+    | 'startPageId'
+  >;
+}
+
 // Queue mechanism to prevent IndexedDB race conditions when dragging nodes rapidly
 // This now runs outside of Zustand persist so we can dynamically save to `story-${storyId}`
 let isSaving = false;
-let pendingSave: { name: string; value: any } | null = null;
+let pendingSave: { name: string; value: PersistedSnapshot } | null = null;
 
 const processSaveQueue = async () => {
   if (isSaving || !pendingSave) return;
@@ -48,6 +74,8 @@ const processSaveQueue = async () => {
   try {
     const { set } = await import('idb-keyval');
     await set(name, value);
+    // Surfaced by the rail footer as "Autosaved 12:04".
+    useEditorStore.getState().setLastSavedAt(Date.now());
     console.log(`[Storage] Saved game data for story: ${name}`);
   } catch (error) {
     console.error('Failed to save state to IndexedDB', error);
@@ -62,6 +90,54 @@ const processSaveQueue = async () => {
 // Debounce timer for saves — prevents flooding IndexedDB during node drags
 let saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
+/**
+ * The fields that actually reach IndexedDB. Everything else in the store is UI
+ * state, and a change to it is not a reason to write.
+ */
+const PERSISTED_KEYS = [
+  'storyId',
+  'nodes',
+  'edges',
+  'pages',
+  'variables',
+  'items',
+  'audio',
+  'atmospheres',
+  'subplots',
+  'statusData',
+  'storyTitle',
+  'storyTitleLocId',
+  'storyDescription',
+  'storyDescriptionLocId',
+  'startPageId',
+] as const satisfies readonly (keyof EditorState)[];
+
+type PersistedKey = (typeof PERSISTED_KEYS)[number];
+
+let lastPersistedRefs: Partial<Record<PersistedKey, unknown>> | null = null;
+
+/**
+ * Slices replace persisted collections immutably, so a reference comparison is
+ * both exact and cheap — far cheaper than deep-comparing the node array on
+ * every store write.
+ *
+ * This guard is load-bearing, not an optimisation: `processSaveQueue` writes
+ * `lastSavedAt` back into this same store, and without it that write would
+ * re-trigger this subscription and autosave would loop forever. It also stops
+ * ordinary UI churn — selecting a page, hovering a node — from scheduling
+ * pointless IndexedDB writes.
+ */
+const hasPersistedChange = (state: EditorState): boolean => {
+  if (!lastPersistedRefs) return true;
+  return PERSISTED_KEYS.some((key) => lastPersistedRefs![key] !== state[key]);
+};
+
+const rememberPersistedRefs = (state: EditorState): void => {
+  const refs: Partial<Record<PersistedKey, unknown>> = {};
+  for (const key of PERSISTED_KEYS) refs[key] = state[key];
+  lastPersistedRefs = refs;
+};
+
 useEditorStore.subscribe((state) => {
   // Only save if hydrated and inside a valid story.
   // CRITICAL: Bypass auto-save during active dragging or panning to prevent jitter.
@@ -71,6 +147,8 @@ useEditorStore.subscribe((state) => {
     }
     return;
   }
+
+  if (!hasPersistedChange(state)) return;
 
   if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
 
@@ -98,6 +176,7 @@ useEditorStore.subscribe((state) => {
         startPageId: state.startPageId,
       },
     };
+    rememberPersistedRefs(state);
     pendingSave = { name: `story-${state.storyId}`, value: snapshot };
     processSaveQueue();
   }, 300);

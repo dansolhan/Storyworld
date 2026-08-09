@@ -1,11 +1,54 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
+import { DEFAULT_WORKSPACE } from '../editorWorkspace';
 
+/**
+ * Editor UI state.
+ *
+ * The seven "is this manager open" booleans this slice used to carry were
+ * mutually exclusive, and every setter enforced that by hand — each one reset
+ * the other six, and so did `setSelectedPage`, `setConnectingChoice` and
+ * `setIsSelectingStartNode`. That is a single value wearing a bad costume, so
+ * it is now `activeWorkspace`: illegal combinations are unrepresentable and the
+ * left rail reads straight off it.
+ *
+ * None of this state is persisted — the autosave subscription in
+ * `useEditorStore` writes an explicit whitelist of domain state only — so the
+ * change needs no migration.
+ */
 export const createUISlice: StateCreator<
   EditorState,
   [],
   [],
-    Pick<EditorState, '_hasHydrated' | 'setHasHydrated' | 'selectedPageId' | 'setSelectedPage' | 'sidebarTab' | 'setSidebarTab' | 'isEditorSidebarExpanded' | 'setIsEditorSidebarExpanded' | 'pageColorMode' | 'setPageColorMode' | 'connectingChoice' | 'setConnectingChoice' | 'isSelectingStartNode' | 'setIsSelectingStartNode' | 'isDragging' | 'setIsDragging' | 'isPanning' | 'setIsPanning' | 'isStorySettingsOpen' | 'setIsStorySettingsOpen' | 'isVariableManagerOpen' | 'setIsVariableManagerOpen' | 'isAudioManagerOpen' | 'setIsAudioManagerOpen' | 'isAtmosphereManagerOpen' | 'setIsAtmosphereManagerOpen' | 'isItemManagerOpen' | 'setIsItemManagerOpen' | 'isStatusDataManagerOpen' | 'setIsStatusDataManagerOpen' | 'isContextManagerOpen' | 'setIsContextManagerOpen' | 'showAllEdges' | 'setShowAllEdges' | 'hoveredPageId' | 'setHoveredPageId'>
+  Pick<
+    EditorState,
+    | '_hasHydrated'
+    | 'setHasHydrated'
+    | 'selectedPageId'
+    | 'setSelectedPage'
+    | 'sidebarTab'
+    | 'setSidebarTab'
+    | 'isEditorSidebarExpanded'
+    | 'setIsEditorSidebarExpanded'
+    | 'pageColorMode'
+    | 'setPageColorMode'
+    | 'connectingChoice'
+    | 'setConnectingChoice'
+    | 'isSelectingStartNode'
+    | 'setIsSelectingStartNode'
+    | 'isDragging'
+    | 'setIsDragging'
+    | 'isPanning'
+    | 'setIsPanning'
+    | 'activeWorkspace'
+    | 'setActiveWorkspace'
+    | 'showAllEdges'
+    | 'setShowAllEdges'
+    | 'hoveredPageId'
+    | 'setHoveredPageId'
+    | 'lastSavedAt'
+    | 'setLastSavedAt'
+  >
 > = (set) => ({
   _hasHydrated: false,
   setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -18,33 +61,32 @@ export const createUISlice: StateCreator<
   isSelectingStartNode: false,
   isDragging: false,
   isPanning: false,
-  isStorySettingsOpen: false,
-  isVariableManagerOpen: false,
-  isAudioManagerOpen: false,
-  isAtmosphereManagerOpen: false,
-  isItemManagerOpen: false,
-  isStatusDataManagerOpen: false,
-  isContextManagerOpen: false,
+  activeWorkspace: DEFAULT_WORKSPACE,
   showAllEdges: true,
   hoveredPageId: null,
+  lastSavedAt: null,
+
+  setActiveWorkspace: (workspace) => {
+    set((state) => ({
+      ...state,
+      activeWorkspace: workspace,
+      // Leaving the graph abandons anything that only makes sense on it.
+      ...(workspace !== 'graph' && {
+        selectedPageId: null,
+        connectingChoice: null,
+        isSelectingStartNode: false,
+      }),
+    }));
+  },
 
   setSelectedPage: (pageId) => {
     set((state) => ({
       ...state,
       selectedPageId: pageId,
       sidebarTab: 'page', // reset to Page tab whenever a new page is selected
-      ...(pageId !== null && {
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-      ...(pageId === null && {
-        isEditorSidebarExpanded: false,
-      })
+      // Selecting a page is a statement about the graph, so go there.
+      ...(pageId !== null && { activeWorkspace: 'graph' as const }),
+      ...(pageId === null && { isEditorSidebarExpanded: false }),
     }));
   },
 
@@ -59,34 +101,24 @@ export const createUISlice: StateCreator<
   },
 
   setConnectingChoice: (choice) => {
-    set({
+    set((state) => ({
+      ...state,
       connectingChoice: choice,
       isSelectingStartNode: false,
       isDragging: false,
-      isStorySettingsOpen: false,
-      isVariableManagerOpen: false,
-      isAudioManagerOpen: false,
-      isAtmosphereManagerOpen: false,
-      isItemManagerOpen: false,
-      isStatusDataManagerOpen: false,
-      isContextManagerOpen: false,
-    });
+      ...(choice !== null && { activeWorkspace: 'graph' as const }),
+    }));
   },
 
   setIsSelectingStartNode: (isSelecting) => {
-    set({
+    set((state) => ({
+      ...state,
       isSelectingStartNode: isSelecting,
       isDragging: false,
       isPanning: false,
-      isStorySettingsOpen: false,
-      isVariableManagerOpen: false,
-      isAudioManagerOpen: false,
-      isAtmosphereManagerOpen: false,
-      isItemManagerOpen: false,
-      isStatusDataManagerOpen: false,
-      isContextManagerOpen: false,
       connectingChoice: null,
-    });
+      ...(isSelecting && { activeWorkspace: 'graph' as const }),
+    }));
   },
 
   setIsDragging: (dragging) => {
@@ -97,118 +129,7 @@ export const createUISlice: StateCreator<
     set({ isPanning: panning });
   },
 
-  setIsStorySettingsOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isStorySettingsOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsVariableManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isVariableManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsAudioManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isAudioManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsAtmosphereManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isAtmosphereManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsItemManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isItemManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isStatusDataManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsStatusDataManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isStatusDataManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isContextManagerOpen: false,
-      }),
-    }));
-  },
-
-  setIsContextManagerOpen: (isOpen) => {
-    set((state) => ({
-      ...state,
-      isContextManagerOpen: isOpen,
-      ...(isOpen && {
-        selectedPageId: null,
-        isStorySettingsOpen: false,
-        isVariableManagerOpen: false,
-        isAudioManagerOpen: false,
-        isAtmosphereManagerOpen: false,
-        isItemManagerOpen: false,
-        isStatusDataManagerOpen: false,
-      }),
-    }));
-  },
-  
   setShowAllEdges: (show) => set({ showAllEdges: show }),
   setHoveredPageId: (pageId) => set({ hoveredPageId: pageId }),
+  setLastSavedAt: (timestamp) => set({ lastSavedAt: timestamp }),
 });

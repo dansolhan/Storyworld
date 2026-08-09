@@ -8,6 +8,7 @@ import type { Item } from '../../../domain/Item/Item';
 import type { AudioItem } from '../../../domain/Story/Audio';
 import type { Page } from '../../../domain/Page/Page';
 import type { StatusData } from '../../../domain/Story/StatusData';
+import type { EditorWorkspace } from './editorWorkspace';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -39,8 +40,6 @@ export interface EditorState {
 
   // Audio
   audio: Record<string, AudioItem>;
-  isAudioManagerOpen: boolean;
-  setIsAudioManagerOpen: (isOpen: boolean) => void;
   addAudio: (audio: AudioItem) => void;
   updateAudio: (id: string, updates: Partial<AudioItem>) => void;
   deleteAudio: (id: string) => void;
@@ -121,23 +120,16 @@ export interface EditorState {
   pageColorMode: 'type' | 'atmosphere';
   setPageColorMode: (mode: 'type' | 'atmosphere') => void;
 
-  isStorySettingsOpen: boolean;
-  setIsStorySettingsOpen: (isOpen: boolean) => void;
+  /**
+   * The one surface the editor is currently showing. Replaces the seven
+   * mutually-exclusive `isXManagerOpen` booleans this store used to carry.
+   */
+  activeWorkspace: EditorWorkspace;
+  setActiveWorkspace: (workspace: EditorWorkspace) => void;
 
-  isVariableManagerOpen: boolean;
-  setIsVariableManagerOpen: (isOpen: boolean) => void;
-
-  isAtmosphereManagerOpen: boolean;
-  setIsAtmosphereManagerOpen: (isOpen: boolean) => void;
-
-  isItemManagerOpen: boolean;
-  setIsItemManagerOpen: (isOpen: boolean) => void;
-
-  isStatusDataManagerOpen: boolean;
-  setIsStatusDataManagerOpen: (isOpen: boolean) => void;
-
-  isContextManagerOpen: boolean;
-  setIsContextManagerOpen: (isOpen: boolean) => void;
+  /** Epoch ms of the last successful autosave; null until the first write. */
+  lastSavedAt: number | null;
+  setLastSavedAt: (timestamp: number) => void;
 
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;
