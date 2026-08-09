@@ -1,0 +1,14 @@
+.layout {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-canvas);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}

@@ -101,10 +101,10 @@ export const FlowView: React.FC = React.memo(() => {
         fitView
         style={flowStyle}
       >
-        <Background gap={16} color="var(--color-border-default)" />
+        <Background gap={24} size={1} color="var(--color-canvas-dot)" />
         <Controls />
         {!isDragging && (
-          <MiniMap zoomable pannable nodeColor="var(--color-primary-100)" />
+          <MiniMap zoomable pannable nodeColor="var(--color-accent-line)" />
         )}
 
         <Panel position="top-right" className={styles.flowPanel}>

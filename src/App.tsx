@@ -9,6 +9,7 @@ import { Dashboard } from './features/dashboard/Dashboard';
 import { MainLayout } from './layout/MainLayout';
 import { useAppActions } from './hooks/useAppActions';
 import { getMenuConfig } from './config/menuConfig';
+import styles from './App.module.css';
 
 function App() {
   const [mode, setMode] = useState<'dashboard' | 'editor' | 'player'>('dashboard');
@@ -17,33 +18,26 @@ function App() {
 
   const { handlePlay, handleExportJson, handleExportStoryworld } = useAppActions(setMode, setPlayingStory);
 
-  const menus = useMemo(() => 
+  const menus = useMemo(() =>
     getMenuConfig(setMode, handleImportClick, handleExportJson, handleExportStoryworld, handlePlay, mode),
     [setMode, handleImportClick, handleExportJson, handleExportStoryworld, handlePlay, mode]
   );
 
   return (
-    <MainLayout mode={mode} menus={menus}>
+    <MainLayout>
       <input
         type="file"
         accept=".json"
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        className={styles.hiddenFileInput}
         onChange={handleFileChange}
       />
-      
-      {/* Floating Toggle Button */}
-      {mode !== 'dashboard' && (
-        <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 100 }}>
-          {mode === 'editor' ? (
-            <Button variant="primary" onClick={handlePlay}>
-              ▶ Play Story
-            </Button>
-          ) : (
-            <Button variant="secondary" onClick={() => setMode('editor')}>
-              ■ Stop Playing
-            </Button>
-          )}
+
+      {mode === 'player' && (
+        <div className={styles.playerExit}>
+          <Button variant="secondary" onClick={() => setMode('editor')}>
+            ■ Stop Playing
+          </Button>
         </div>
       )}
 
@@ -54,7 +48,7 @@ function App() {
         />
       ) : mode === 'editor' ? (
         <ReactFlowProvider>
-          <GraphEditor />
+          <GraphEditor menus={menus} onPlay={handlePlay} />
         </ReactFlowProvider>
       ) : (
         playingStory && <Player storyData={playingStory} onExit={() => setMode('editor')} />

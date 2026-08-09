@@ -1,0 +1,14 @@
+.hiddenFileInput {
+  display: none;
+}
+
+/*
+ * The player has no chrome of its own yet, so its way back to the editor
+ * floats over the reading view.
+ */
+.playerExit {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 100;
+}

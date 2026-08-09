@@ -170,6 +170,7 @@
   --color-edge-selected: var(--color-accent-line);
   --color-edge-label-bg: var(--color-bg-chrome);
   --color-edge-label-text: var(--color-text-dim);
+  --color-canvas-dot: rgba(242, 237, 229, 0.07);
 
   /*
    * Elevation — a hairline edge plus ambient darkness. Nothing heavier than

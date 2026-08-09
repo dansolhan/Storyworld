@@ -1,11 +1,31 @@
-.container {
+.shell {
   width: 100%;
   height: 100%;
-  background-color: var(--color-bg-secondary);
-  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: var(--color-bg-canvas);
+}
+
+/* Rail, working surface and inspector share one row below the menu bar. */
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.surface {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-bg-canvas);
+  /*
+   * The 24px dot grid is drawn by React Flow's own <Background>, not here — it
+   * has to pan and zoom with the viewport, and a CSS grid on this element
+   * would sit still while the graph moved under it.
+   */
 }
 
 .flowWrapper {
@@ -17,17 +37,39 @@
   overflow: hidden;
 }
 
-
+/*
+ * React Flow ships a light theme through its own `--xy-*` variables. Rebinding
+ * them here is cheaper and more durable than overriding its selectors.
+ */
+.surface :global(.react-flow) {
+  --xy-background-color: transparent;
+  --xy-edge-stroke: var(--color-edge-default);
+  --xy-edge-stroke-selected: var(--color-edge-selected);
+  --xy-edge-label-background-color: var(--color-edge-label-bg);
+  --xy-edge-label-color: var(--color-edge-label-text);
+  --xy-connectionline-stroke: var(--color-accent-line);
+  --xy-handle-background-color: var(--color-accent-line);
+  --xy-handle-border-color: var(--color-bg-canvas);
+  --xy-controls-button-background-color: var(--color-bg-raised);
+  --xy-controls-button-background-color-hover: var(--color-bg-selected);
+  --xy-controls-button-color: var(--color-text-dim);
+  --xy-controls-button-color-hover: var(--color-text);
+  --xy-controls-button-border-color: var(--color-line);
+  --xy-controls-box-shadow: var(--shadow-lg);
+  --xy-minimap-background-color: var(--color-bg-panel);
+  --xy-minimap-mask-background-color: var(--color-scrim-soft);
+  --xy-attribution-background-color: transparent;
+}
 
 /* Override default React Flow edge styles to use our CSS variables */
 :global(.react-flow__edge-path) {
   stroke: var(--color-edge-default);
-  stroke-width: 2;
+  stroke-width: 1;
 }
 
 :global(.react-flow__edge.selected .react-flow__edge-path) {
   stroke: var(--color-edge-selected);
-  stroke-width: 3;
+  stroke-width: 1.4;
 }
 
 .selectionOverlay {
@@ -36,13 +78,13 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-border-default);
-  box-shadow: var(--shadow-md);
+  background-color: var(--color-bg-float);
+  border: 1px solid var(--color-line-strong);
+  box-shadow: var(--shadow-lg);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-6);
-  font-family: var(--font-family-sans);
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -50,7 +92,7 @@
 }
 
 .selectionOverlayText {
-  color: var(--color-text-primary);
+  color: var(--color-text);
   margin: 0;
 }
 

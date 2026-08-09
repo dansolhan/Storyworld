@@ -1,19 +1,20 @@
 import React from 'react';
-import { MenuBar, type MenuConfig } from '../components/ui/MenuBar/MenuBar';
+import styles from './MainLayout.module.css';
 
-interface MainLayoutProps {
-  mode: 'dashboard' | 'editor' | 'player';
-  menus: MenuConfig[];
+export interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ mode, menus, children }) => {
+/**
+ * The app's viewport frame. It deliberately owns no chrome: the editor draws
+ * its own menu bar as part of its shell, and the player is a full-surface
+ * reading view. A shared menu bar here previously appeared over the player too,
+ * where its Data entries pointed at managers the player never mounts.
+ */
+export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {mode !== 'dashboard' && <MenuBar menus={menus} />}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        {children}
-      </div>
+    <div className={styles.layout}>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 };
