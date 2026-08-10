@@ -161,12 +161,32 @@ describe('storyMapper', () => {
   });
 
   describe('parseStoryToGraph', () => {
-    it('should parse pure StoryData loading previously saved raw graphical nodes entirely', () => {
+    it('keeps the saved layout but refreshes page data from the domain', () => {
       const { nodes, edges } = parseStoryToGraph(expectedStoryData);
 
-      // Verify it loaded exactly what was inside uiMetadata
-      expect(nodes).toEqual(expectedStoryData.uiMetadata?.nodes);
+      // Layout is taken from uiMetadata verbatim.
+      const layoutOf = (list: { id: string; type?: string; position: { x: number; y: number } }[]) =>
+        list.map(({ id, type, position }) => ({ id, type, position }));
+      expect(layoutOf(nodes)).toEqual(layoutOf(mockNodes));
       expect(edges).toEqual(expectedStoryData.uiMetadata?.edges);
+
+      /*
+       * Node data is not. uiMetadata holds a copy of the React Flow state that
+       * can be stale — here it has an empty targetPageId for c1 where the
+       * domain page says page-2 — so parseStoryToGraph overwrites it from
+       * `pages`. Asserting the nodes come back untouched would contradict the
+       * reason the sync exists.
+       */
+      const pageOne = nodes.find((node) => node.id === 'page-1') as PageNodeType;
+      expect(pageOne.data.choices[0].targetPageId).toBe('page-2');
+      expect(pageOne.data.title).toBe('Start Page');
+      // Absent collections are normalised rather than left undefined.
+      const pageTwo = nodes.find((node) => node.id === 'page-2') as PageNodeType;
+      expect(pageTwo.data.events).toEqual([]);
+
+      // Synthetic nodes carry no domain page, so they pass through untouched.
+      const actionNode = nodes.find((node) => node.id === 'action-node-c2');
+      expect(actionNode?.data).toEqual(mockNodes[2].data);
     });
 
     it('should provide default layout fallback if uiMetadata nodes are missing', () => {

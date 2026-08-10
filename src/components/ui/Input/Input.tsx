@@ -1,4 +1,4 @@
-import React, { startTransition } from 'react';
+import React, { startTransition, useId } from 'react';
 import type { InputHTMLAttributes } from 'react';
 import styles from './Input.module.css';
 
@@ -17,7 +17,11 @@ export const Input: React.FC<InputProps> = ({
   onChange,
   ...props
 }) => {
-  const generatedId = id || Math.random().toString(36).substring(7);
+  // `useId` rather than a random string: the id has to survive re-renders, and
+  // generating one during render is impure.
+  const fallbackId = useId();
+  const inputId = id ?? fallbackId;
+  const errorId = `${inputId}-error`;
 
   const containerClasses = [
     styles.container,
@@ -40,14 +44,16 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <div className={containerClasses}>
-      {label && <label htmlFor={generatedId} className={styles.label}>{label}</label>}
+      {label && <label htmlFor={inputId} className={styles.label}>{label}</label>}
       <input
-        id={generatedId}
+        id={inputId}
         className={inputClasses}
         onChange={handleChange}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         {...props}
       />
-      {error && <span className={styles.errorText}>{error}</span>}
+      {error && <span id={errorId} className={styles.errorText}>{error}</span>}
     </div>
   );
 };

@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--color-scrim);
   backdrop-filter: blur(4px);
   padding: 1rem;
 }
@@ -16,7 +16,7 @@
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--shadow-xl);
   display: flex;
   flex-direction: column;
   transition: all 0.2s ease-in-out;
@@ -24,7 +24,7 @@
 
 .modalDragOver {
   border-color: var(--color-primary-500);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .header {
@@ -208,16 +208,21 @@
   margin-right: 0.25rem;
 }
 
+/*
+ * Music and effect were purple and blue. With one accent, music takes the
+ * accent and effects stay neutral — the distinction survives without
+ * introducing hues the palette does not have.
+ */
 .badgeMusic {
-  background-color: rgba(168, 85, 247, 0.2);
-  color: #d8b4fe;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  background-color: var(--color-accent-tint);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-line);
 }
 
 .badgeEffect {
-  background-color: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background-color: var(--color-bg-selected);
+  color: var(--color-text-dim);
+  border: 1px solid var(--color-line-strong);
 }
 
 .itemDescription {

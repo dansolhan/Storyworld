@@ -49,18 +49,6 @@ export const FloatingEdge = memo(({
     return (edgeIndex - (totalEdges - 1) / 2) * GAP;
   }, [edgeIndex, totalEdges]);
 
-  // Read positions directly from the internal node — React Flow already
-  // batches its internal store updates to the paint cycle, so no extra
-  // throttling is needed here and edges follow the cursor in real time.
-  const sx0 = rawSourceNode?.internals.positionAbsolute.x ?? 0;
-  const sy0 = rawSourceNode?.internals.positionAbsolute.y ?? 0;
-  const sw0 = rawSourceNode?.measured.width ?? 0;
-  const sh0 = rawSourceNode?.measured.height ?? 0;
-  const tx0 = rawTargetNode?.internals.positionAbsolute.x ?? 0;
-  const ty0 = rawTargetNode?.internals.positionAbsolute.y ?? 0;
-  const tw0 = rawTargetNode?.measured.width ?? 0;
-  const th0 = rawTargetNode?.measured.height ?? 0;
-
   const isVisible = useMemo(() => {
     if (showAllEdges) return true;
     if (hoveredPageId === source || hoveredPageId === target) return true;
@@ -80,18 +68,22 @@ export const FloatingEdge = memo(({
     return null;
   }, [hoveredPageId, source, target, rawSourceNode?.selected, rawTargetNode?.selected]);
 
+  /*
+   * Positions come straight off the internal nodes — React Flow batches its
+   * store updates to the paint cycle, so edges follow the cursor without extra
+   * throttling here.
+   *
+   * This used to depend on the individual coordinates rather than the nodes, so
+   * that a change like `selected` flipping would not recompute the geometry.
+   * React Compiler cannot verify a dependency list narrower than what the body
+   * reads, so it was skipping this component entirely — and `getEdgeParams` is
+   * cheap arithmetic. Depending on the nodes lets the whole component be
+   * optimised, which is worth more.
+   */
   const edgeParams = useMemo(() => {
     if (!rawSourceNode || !rawTargetNode) return null;
     return getEdgeParams(rawSourceNode, rawTargetNode, sourceHandleId, targetHandleId, parallelOffset);
-  }, [
-    sx0, sy0, sw0, sh0,
-    tx0, ty0, tw0, th0,
-    sourceHandleId,
-    targetHandleId,
-    rawSourceNode?.internals.handleBounds,
-    rawTargetNode?.internals.handleBounds,
-    parallelOffset,
-  ]);
+  }, [rawSourceNode, rawTargetNode, sourceHandleId, targetHandleId, parallelOffset]);
 
   if (!rawSourceNode || !rawTargetNode || !isVisible || !edgeParams) {
     return null;

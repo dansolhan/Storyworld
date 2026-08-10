@@ -1,4 +1,4 @@
-import React, { startTransition } from 'react';
+import React, { startTransition, useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
 import styles from './TextArea.module.css';
 
@@ -17,7 +17,11 @@ export const TextArea: React.FC<TextAreaProps> = ({
   onChange,
   ...props
 }) => {
-  const generatedId = id || Math.random().toString(36).substring(7);
+  // `useId` rather than a random string: the id has to survive re-renders, and
+  // generating one during render is impure.
+  const fallbackId = useId();
+  const textareaId = id ?? fallbackId;
+  const errorId = `${textareaId}-error`;
 
   const containerClasses = [
     styles.container,
@@ -40,15 +44,17 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   return (
     <div className={containerClasses}>
-      {label && <label htmlFor={generatedId} className={styles.label}>{label}</label>}
+      {label && <label htmlFor={textareaId} className={styles.label}>{label}</label>}
       <textarea
-        id={generatedId}
+        id={textareaId}
         className={textareaClasses}
         rows={props.rows || 4}
         onChange={handleChange}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         {...props}
       />
-      {error && <span className={styles.errorText}>{error}</span>}
+      {error && <span id={errorId} className={styles.errorText}>{error}</span>}
     </div>
   );
 };

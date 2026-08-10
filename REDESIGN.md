@@ -85,20 +85,39 @@ Roughly in dependency order.
   snapshot-churn machine.
 - **Story health count badge** on the rail — arrives with `4b`.
 
-## Known rot, not yet addressed
+## Known rot
 
-- `src/lib/storyMapper.test.ts` has **one failing test**, and it failed before
-  this work started: the fixture does not expect the `atmosphereId` and
-  `events` keys that `syncSyntheticNodes` now writes onto nodes. Either the
-  fixture or the sync is wrong; deciding which is a separate question.
-- The **Audio manager** still holds hardcoded light-theme colours, including a
-  canvas waveform painted `#6366f1`. It is restyled with `3a`.
-- `src/components/ui/SidePanel/index.ts` is a **barrel file**, which
-  `claude.md` forbids. It goes when `SidePanel` does.
-- `FloatingEdge` has two **React Compiler memoization** lint errors on a
-  pre-existing `useMemo` whose manual dependency list cannot be preserved.
-- `Input` generates its id with **`Math.random()`** in render, which the purity
-  lint rightly objects to; `useId` is the fix.
+Fixed after step 1b:
+
+- **`storyMapper.test.ts` passed the wrong assertion.** It expected
+  `parseStoryToGraph` to return `uiMetadata.nodes` verbatim, which contradicts
+  that function's purpose — it deliberately refreshes node data from the domain
+  pages, because the saved React Flow state can be stale. The test now asserts
+  what the function actually promises: layout from `uiMetadata`, data from
+  `pages`. The fixture even contains the stale case (an empty `targetPageId`
+  that the sync corrects), so the test is now worth something.
+- **Audio manager** is on the palette. The badges were purple and blue; music
+  takes the accent and effects stay neutral. The canvas waveform reads
+  `--color-accent-line` off the element at draw time, since canvas needs a
+  resolved colour but should not pin a hex.
+- **`SidePanel/index.ts` barrel deleted** — nothing imported it; its one
+  consumer already imported the file directly.
+- **`FloatingEdge` memoization.** `edgeParams` depended on individual
+  coordinates rather than the nodes, so that a `selected` flip would not
+  recompute geometry. React Compiler cannot verify a dependency list narrower
+  than what the body reads, so it was skipping the whole component;
+  `getEdgeParams` is cheap arithmetic, so depending on the nodes and letting the
+  component be optimised is the better trade.
+- **`Input` and `TextArea` generated ids with `Math.random()` during render.**
+  Now `useId`. While there, both gained `aria-invalid` and `aria-describedby`,
+  so the error text they already rendered is actually announced.
+
+Still outstanding:
+
+- Roughly 130 `no-explicit-any` lint errors remain across `src/`, concentrated
+  in `domain/Story/migrations`, the action and conditional registries, and the
+  rich-text feature classes. `claude.md` forbids `any`; this wants a pass of its
+  own rather than being smuggled into redesign commits.
 
 ## Conventions this work established
 

@@ -55,8 +55,16 @@ export const WaveformDisplay: React.FC<WaveformDisplayProps> = ({ base64Audio })
 
         // Normalize
         const multiplier = Math.max(...filteredData);
-        // Draw
-        ctx.fillStyle = '#6366f1'; // Primary color (indigo-500)
+
+        /*
+         * Canvas takes a resolved colour, not a CSS variable, so the accent is
+         * read off the element at draw time. Keeping it a token means the
+         * waveform follows the palette instead of pinning a hex here.
+         */
+        const accent = getComputedStyle(canvas)
+          .getPropertyValue('--color-accent-line')
+          .trim();
+        ctx.fillStyle = accent || '#c28d41';
 
         filteredData.forEach((point, i) => {
           const x = (canvas.width / samples) * i;
