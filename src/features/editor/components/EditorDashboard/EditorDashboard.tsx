@@ -1,20 +1,18 @@
 import React, { useCallback } from 'react';
 import { useActiveWorkspace } from '../../hooks/view/useActiveWorkspace';
 import { StorySettingsDrawer } from '../StorySettings/StorySettingsDrawer';
-import { ItemManager } from '../ItemManager/ItemManager';
 import { StatusDataManager } from '../StatusDataManager/StatusDataManager';
-import { VariableManager } from '../VariableManager/VariableManager';
 import { AtmosphereManager } from '../AtmosphereManager/AtmosphereManager';
 import { ContextManager } from '../ContextManager/ContextManager';
 import { AudioManagerModal } from '../Audio/AudioManagerModal';
 
 /**
- * Host for the data surfaces the left rail navigates to.
+ * The data surfaces still living as modals over the canvas.
  *
- * These are still the pre-redesign modal managers — they are folded into a
- * single Data workspace in a later step. Until then this component's job is
- * just to render whichever one `activeWorkspace` names, and to send the editor
- * back to the graph when it is dismissed.
+ * Items and Variables have moved into the Data workspace. These four keep their
+ * modals until the design's own screens exist for them — Atmospheres and Audio
+ * at 4c, Status data at 5d, Contextual text at 5a — at which point this
+ * component and `ExpandableBottomPanel` go with them.
  */
 export const EditorDashboard: React.FC = React.memo(() => {
   const { activeWorkspace, setActiveWorkspace } = useActiveWorkspace();
@@ -24,9 +22,7 @@ export const EditorDashboard: React.FC = React.memo(() => {
   return (
     <>
       <StorySettingsDrawer isOpen={activeWorkspace === 'settings'} onClose={returnToGraph} />
-      <ItemManager isOpen={activeWorkspace === 'items'} onClose={returnToGraph} />
       <StatusDataManager isOpen={activeWorkspace === 'statusData'} onClose={returnToGraph} />
-      <VariableManager isOpen={activeWorkspace === 'variables'} onClose={returnToGraph} />
       <AtmosphereManager isOpen={activeWorkspace === 'atmospheres'} onClose={returnToGraph} />
       <ContextManager isOpen={activeWorkspace === 'context'} onClose={returnToGraph} />
       <AudioManagerModal />

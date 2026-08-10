@@ -60,11 +60,42 @@ The foundation every other screen is drawn inside.
   palette's create action now place pages through it instead of at a random
   offset that could land on top of an existing node.
 
+## Done — step 3a, the Data workspace
+
+- **A shared shell** (`DataWorkspace`) owning the header, one-line explanation,
+  220px filter, accent `+ New`, table frame, row selection and the 400px detail
+  panel. Each entity supplies only its columns and its detail form — the field
+  sets have almost nothing in common, so a generic column config would have been
+  four escape hatches wearing a trench coat.
+- **Items** (`3a`'s own columns: NAME / ID / TAGS / USED ON) and **Variables**
+  (`5b`'s: NAME / TYPE / STARTS AS / TAGS / READ BY) have moved in. The
+  workspace replaces the canvas and inspector rather than covering them; React
+  Flow stays mounted but hidden so the viewport survives.
+- **One usage index** (`buildUsageIndex`) scanning the graph once: `{{tokens}}`
+  in paragraphs, choices and `StatusData.value`; blueprint params by *blueprint
+  id* rather than by param name, recursively through every `logicTree` branch and
+  through legacy `actions`/`conditionals`; `Atmosphere.music`; and indirect
+  references inside an item's own `contextChoices`. It feeds USED ON, WHERE IT
+  APPEARS and — when it arrives — `4b`'s UNUSED group.
+- **Variable names are immutable.** Renaming would mean re-keying the record and
+  rewriting every reference; READ BY shows exactly what that would have to touch.
+  `+ New variable` therefore asks for the name up front, and validates it against
+  what `{{token}}` can actually address.
+- **Deleting warns and proceeds**, naming what depends on it, through a real
+  dialog rather than `window.confirm`.
+- **WHERE IT APPEARS** names each site's relationship in an author's words —
+  given, taken away, condition, printed, set — and clicking a page reveals it on
+  the graph.
+
+Still modal until their own screens exist: Atmospheres and Audio (`4c`), Status
+data (`5d`), Contextual text (`5a`).
+
 ## Next
 
 Roughly in dependency order.
 
-1. **`3a` Data workspace** — fold the six modal managers into one workspace
+1. **`4c` Atmospheres & audio** — expanding rows with a colour dot, play button,
+   waveform and settings line. Retires two of the four remaining modals. — fold the six modal managers into one workspace
    behind the rail. Retires `ExpandableBottomPanel` and `SidePanel`, still used
    by six managers. **This also removes a real trap**: the Audio manager is a
    true modal that covers the rail, so while it is open the rail — the
@@ -109,6 +140,12 @@ Roughly in dependency order.
   the design stops moving; against a design mid-implementation it is a
   snapshot-churn machine.
 - **Story health count badge** on the rail — arrives with `4b`.
+- **`Item.contextChoices` is authorable nowhere.** The player's inventory reads
+  it — Examine, Use — but `ItemManager` only ever wrote `[]`, and the new detail
+  panel does not add it either, because editing one needs a nested logic editor
+  and `3b` is about to replace the logic editor wholesale. The usage index does
+  count references made from inside a context choice, so they are at least
+  visible.
 
 ## Known rot
 

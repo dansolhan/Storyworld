@@ -28,6 +28,14 @@
    */
 }
 
+/*
+ * A data workspace takes the surface. React Flow stays mounted so the viewport
+ * survives, but must not be reachable while it is not showing.
+ */
+.surface[data-hidden] {
+  display: none;
+}
+
 .flowWrapper {
   flex: 1;
   width: 100%;

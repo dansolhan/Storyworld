@@ -5,6 +5,7 @@ import { EditorMenuBar } from './components/EditorShell/EditorMenuBar';
 import { EditorRail } from './components/EditorShell/EditorRail';
 import { NewSubplotDialog } from './components/EditorShell/NewSubplotDialog';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
+import { WorkspaceSurface } from './components/DataWorkspace/WorkspaceSurface';
 import { Inspector } from './components/Inspector/Inspector';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
 import { FlowView } from './components/FlowView/FlowView';
@@ -15,6 +16,8 @@ import { useEditorLayoutActions } from './hooks/core/useEditorLayoutActions';
 import { useDeselectOnEscape } from './hooks/view/useDeselectOnEscape';
 import { usePaletteShortcut } from './hooks/search/usePaletteShortcut';
 import { useEditorStore } from './store/useEditorStore';
+import { useActiveWorkspace } from './hooks/view/useActiveWorkspace';
+import { isFullSurfaceWorkspace } from './store/editorWorkspace';
 import type { MenuConfig } from '../../config/menuConfig';
 
 import styles from './GraphEditor.module.css';
@@ -34,6 +37,9 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
   const { _hasHydrated } = usePersistenceState();
   const nodesCount = useNodesCount();
   const { addPage } = useEditorLayoutActions();
+
+  const { activeWorkspace } = useActiveWorkspace();
+  const showsGraph = !isFullSurfaceWorkspace(activeWorkspace);
 
   useDeselectOnEscape();
   usePaletteShortcut();
@@ -56,12 +62,17 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
       <div className={styles.body}>
         <EditorRail />
 
-        <main className={styles.surface}>
+        {/*
+          A data workspace replaces the canvas and inspector rather than covering
+          them. React Flow stays mounted but hidden — unmounting it loses the
+          viewport, and the graph is the surface you keep returning to.
+        */}
+        <main className={styles.surface} data-hidden={showsGraph ? undefined : true}>
           <EditorToolbar />
           <FlowView />
         </main>
 
-        <Inspector onPlayFromPage={onPlay} />
+        {showsGraph ? <Inspector onPlayFromPage={onPlay} /> : <WorkspaceSurface />}
       </div>
 
       <EditorDashboard />

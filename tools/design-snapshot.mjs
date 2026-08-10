@@ -383,8 +383,6 @@ async function captureApp(browser) {
      */
     const panels = [
       ['Settings', 'story-settings', 'Story settings drawer'],
-      ['Items', 'items-manager', 'Item manager'],
-      ['Variables', 'variables-manager', 'Variable manager'],
       ['Audio', 'audio-manager', 'Audio manager'],
       ['Atmospheres', 'atmosphere-manager', 'Atmosphere manager'],
       ['Status data', 'status-data-manager', 'Status data manager'],
@@ -401,6 +399,27 @@ async function captureApp(browser) {
         // rail click cannot land until it is dismissed. Folding these six into
         // the Data workspace removes the problem.
         await dismiss(page);
+      });
+    }
+
+    /*
+     * Items and Variables are workspaces now, not modals, and their detail panel
+     * only exists once a row is selected — so they are captured with one.
+     */
+    const workspaces = [
+      ['Items', 'items-workspace', 'Data workspace — items, with a row selected'],
+      ['Variables', 'variables-workspace', 'Data workspace — variables and what reads them'],
+    ];
+    for (const [railLabel, slug, title] of workspaces) {
+      await step(slug, async () => {
+        if (!(await clickIfPresent(page, railLabel, { exact: false }))) {
+          throw new Error(`rail item "${railLabel}" unavailable`);
+        }
+        await settle(page, 500);
+        await page.locator('[role="row"][aria-selected]').first().click({ timeout: 4000 })
+          .catch(() => {});
+        await settle(page, 400);
+        await capture(page, { slug, group: 'app-panels', title });
       });
     }
 
