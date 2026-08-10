@@ -128,14 +128,11 @@ Also cleared, in a pass of its own after step 1b:
 - `src/features/player/context/PageContext.tsx` was deleted: nothing imported
   `PageProvider` or `usePageId`.
 
-Still outstanding:
-
-- Root-level throwaway scripts and fixtures — `upgradeStory.ts`,
+- The root-level throwaway pile is gone: `upgradeStory.ts`,
   `upgradeStorySelect.ts`, `migrate_adventure.cjs`, `migrate_adventure.js`,
-  `test_adventure.json`, `test_output.txt`, `lint_output.txt` — are unreferenced
-  one-offs, superseded by the migration system. `upgradeStory.ts` was typed
-  rather than deleted; deciding whether the whole set should go is a separate
-  call.
+  `test_adventure.json`, `test_output.txt`, `lint_output.txt`, and an
+  `eslint.json` that turned out to be a stale captured lint report rather than
+  config. All were unreferenced one-offs superseded by the migration system.
 
 ## Conventions this work established
 
