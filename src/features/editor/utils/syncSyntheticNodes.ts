@@ -9,8 +9,8 @@ import { updateGraphVisibility } from './visibility';
 
 const SYNTHETIC_LABEL_STYLE = {
   fontSize: 10,
-  fill: 'var(--color-text-secondary, #94a3b8)',
-  fontFamily: 'var(--font-family-sans, sans-serif)',
+  fill: 'var(--color-text-dim, #a49c90)',
+  fontFamily: 'var(--font-body, serif)',
 };
 
 export function syncSyntheticNodes(

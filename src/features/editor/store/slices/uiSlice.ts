@@ -30,8 +30,6 @@ export const createUISlice: StateCreator<
     | 'setSidebarTab'
     | 'isEditorSidebarExpanded'
     | 'setIsEditorSidebarExpanded'
-    | 'pageColorMode'
-    | 'setPageColorMode'
     | 'connectingChoice'
     | 'setConnectingChoice'
     | 'isSelectingStartNode'
@@ -58,7 +56,6 @@ export const createUISlice: StateCreator<
   selectedPageId: null,
   sidebarTab: 'page' as string,
   isEditorSidebarExpanded: false,
-  pageColorMode: 'type' as const,
   connectingChoice: null,
   isSelectingStartNode: false,
   isDragging: false,
@@ -97,10 +94,6 @@ export const createUISlice: StateCreator<
 
   setIsEditorSidebarExpanded: (expanded) => {
     set({ isEditorSidebarExpanded: expanded });
-  },
-
-  setPageColorMode: (mode) => {
-    set({ pageColorMode: mode });
   },
 
   setConnectingChoice: (choice) => {

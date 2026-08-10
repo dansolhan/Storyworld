@@ -1,64 +1,44 @@
 .nodeWrapper {
-  width: 200px;
+  /* Fixed: the design's node width is a layout contract. */
+  width: 160px;
   position: relative;
 }
 
-
-
-.typeLocation .card {
-  background-color: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.5);
-}
-
-.typeLocation .header {
-  background-color: rgba(59, 130, 246, 0.2);
-}
-
-.typePlot .card {
-  background-color: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.6);
-}
-
-.typePlot .header {
-  background-color: rgba(239, 68, 68, 0.25);
-}
-
-.targetHandle {
-  background-color: var(--color-primary-500);
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--color-bg-primary);
-}
-
-.sourceHandle {
-  background-color: var(--color-primary-500);
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--color-bg-primary);
-  transition: transform 0.2s, background-color 0.2s;
-  cursor: crosshair;
-}
-
-.sourceHandle:hover {
-  transform: scale(1.5);
-  background-color: var(--color-primary-400);
-}
-
 .card {
-  border-width: 2px;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  padding: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+/*
+ * Plot/action pages are drawn with a dashed stroke rather than a coloured
+ * fill, so type never competes with the accent for meaning.
+ */
+.card[data-plot] {
+  border-style: dashed;
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-text-faint);
 }
 
-/* Update border when node is selected (React Flow adds .selected class) */
 :global(.react-flow__node.selected) .card {
-  border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 4px var(--color-primary-100);
+  background-color: var(--color-bg-selected);
+  border-color: var(--color-accent-line);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+:global(.react-flow__node.selected) .kicker {
+  color: var(--color-accent-line);
 }
 
 /* Disable transitions during interactions to prevent jitter/ghosting */
@@ -67,72 +47,48 @@
   transition: none !important;
 }
 
-.header {
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.kicker[data-editing] {
+  color: var(--color-accent);
+}
+
+/*
+ * Atmosphere colour rides along as a dot rather than tinting the whole card —
+ * an author-chosen hue filling a node would drown out the selection state.
+ */
+.atmosphereDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--radius-full);
 }
 
 .title {
   margin: 0;
-  font-family: var(--font-family-sans);
-  font-size: var(--text-base);
+  font-family: var(--font-heading);
+  font-size: 1.0625rem; /* 17px */
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  text-align: center;
-  word-wrap: break-word;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
 }
 
-.choicesContainer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 0;
-}
-
-.choiceWrapper {
-  position: absolute;
-  right: -6px;
-  /* Offset to center the handle on the border */
-  display: flex;
-  align-items: center;
-}
-
-.startNodeBadge {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  background-color: var(--color-primary-500);
-  color: white;
-  font-family: var(--font-family-sans);
-  font-size: 0.65rem;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.portalBadge {
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  background-color: #9c27b0;
-  color: white;
-  font-family: var(--font-family-sans);
-  font-size: 0.65rem;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: help;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.meta {
+  margin: 0;
+  font-size: var(--text-kicker);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-dim);
 }

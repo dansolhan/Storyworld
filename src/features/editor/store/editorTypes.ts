@@ -118,9 +118,6 @@ export interface EditorState {
   isEditorSidebarExpanded: boolean;
   setIsEditorSidebarExpanded: (expanded: boolean) => void;
 
-  pageColorMode: 'type' | 'atmosphere';
-  setPageColorMode: (mode: 'type' | 'atmosphere') => void;
-
   /**
    * The one surface the editor is currently showing. Replaces the seven
    * mutually-exclusive `isXManagerOpen` booleans this store used to carry.

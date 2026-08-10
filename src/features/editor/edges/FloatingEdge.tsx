@@ -11,6 +11,12 @@ import { getEdgeParams } from './utils';
 import { useEditorStore } from '../store/useEditorStore';
 import { useEdgePairInfo } from './edgePairs';
 import { useShallow } from 'zustand/react/shallow';
+import {
+  edgeColorFor,
+  EDGE_COLOR_DEFAULT,
+  EDGE_WIDTH_DEFAULT,
+  EDGE_WIDTH_EMPHASIS,
+} from './edgeColors';
 import styles from './FloatingEdge.module.css';
 
 export const FloatingEdge = memo(({
@@ -129,21 +135,13 @@ export const FloatingEdge = memo(({
   const hasManualArrow = labelText.startsWith('<-') || labelText.endsWith('->') || labelText.startsWith('↑') || labelText.endsWith('↓');
   const shouldShowIcon = !!DirectionIcon && labelText && !hasManualArrow;
 
-  const ENTRY_HEX = '#10b981';
-  const EXIT_HEX = '#6366f1';
-  const DEFAULT_HEX = '#94a3b8';
-
-  const activeColor = edgeType === 'entry' 
-    ? ENTRY_HEX 
-    : edgeType === 'exit' 
-      ? EXIT_HEX 
-      : (style?.stroke || DEFAULT_HEX);
+  const activeColor = edgeColorFor(edgeType) ?? style?.stroke ?? EDGE_COLOR_DEFAULT;
 
   const dynamicEdgeStyle = {
     ...(style || {}),
     stroke: activeColor,
-    strokeWidth: edgeType ? 3 : (style?.strokeWidth || 2),
-    transition: 'stroke 0.2s, stroke-width 0.2s',
+    strokeWidth: edgeType ? EDGE_WIDTH_EMPHASIS : (style?.strokeWidth || EDGE_WIDTH_DEFAULT),
+    transition: 'stroke var(--duration-fast) var(--ease-standard), stroke-width var(--duration-fast) var(--ease-standard)',
   };
 
   const markerId = edgeType === 'entry' 

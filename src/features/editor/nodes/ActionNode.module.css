@@ -1,24 +1,31 @@
+/*
+ * A marker for a choice that carries actions. Not a page — it is regenerated
+ * from the graph on every sync — so it is drawn small and quiet, in the same
+ * material as the page cards rather than in a colour of its own.
+ */
 .node {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
-  border: 2px solid rgba(217, 119, 6, 0.6);
-  background-color: rgba(217, 119, 6, 0.15);
+  border: 1px solid var(--color-accent-line);
+  background-color: var(--color-bg-raised);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: box-shadow 0.15s, border-color 0.15s, background-color 0.15s;
+  transition:
+    box-shadow var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
 }
 
 .node:hover {
-  background-color: rgba(217, 119, 6, 0.28);
-  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.35);
+  background-color: var(--color-bg-selected);
 }
 
 :global(.react-flow__node.selected) .node {
-  border-color: #b45309;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
+  background-color: var(--color-bg-selected);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
 }
 
 /* Disable transitions during interactions to prevent jitter/ghosting */
@@ -28,14 +35,14 @@
 }
 
 .icon {
-  width: 22px;
-  height: 22px;
-  color: #92400e;
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
 }
 
 .handle {
-  background-color: #d97706;
+  background-color: var(--color-accent-line);
   width: 10px;
   height: 10px;
-  border: 2px solid var(--color-bg-primary);
+  border: 2px solid var(--color-bg-canvas);
 }

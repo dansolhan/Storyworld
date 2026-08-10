@@ -1,58 +1,43 @@
-/* Edge label — rendered via EdgeLabelRenderer (HTML, not SVG) */
+/*
+ * Edge label — rendered via EdgeLabelRenderer (HTML, not SVG).
+ *
+ * A pill on the chrome ground. Entry and exit used to be tinted emerald and
+ * indigo; on this palette direction is carried by the icon alone, so the pills
+ * stay one material and the canvas keeps its two colours.
+ */
 .label {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 10px;
-  background: var(--color-bg-primary, #fff);
-  border: 1px solid var(--color-border-default, #e2e8f0);
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  background: var(--color-edge-label-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-full);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
-  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
 }
 
-.entry {
-  background-color: var(--color-edge-entry-bg);
-  border-color: var(--color-edge-entry-stroke);
-}
-
-.entry .labelText {
-  color: var(--color-edge-entry-text);
-}
-
-.entry .iconWrapper {
-  color: var(--color-edge-entry-stroke);
-}
-
+.entry,
 .exit {
-  background-color: var(--color-edge-exit-bg);
-  border-color: var(--color-edge-exit-stroke);
-}
-
-.exit .labelText {
-  color: var(--color-edge-exit-text);
-}
-
-.exit .iconWrapper {
-  color: var(--color-edge-exit-stroke);
+  border-color: var(--color-line-strong);
 }
 
 .iconWrapper {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: var(--color-primary-500);
+  color: var(--color-text-faint);
 }
 
 .labelText {
-  font-family: var(--font-family-sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-kicker);
+  color: var(--color-edge-label-text);
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
