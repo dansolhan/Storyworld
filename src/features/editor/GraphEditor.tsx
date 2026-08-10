@@ -3,6 +3,7 @@ import '@xyflow/react/dist/style.css';
 
 import { EditorMenuBar } from './components/EditorShell/EditorMenuBar';
 import { EditorRail } from './components/EditorShell/EditorRail';
+import { NewSubplotDialog } from './components/EditorShell/NewSubplotDialog';
 import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
 import { FlowView } from './components/FlowView/FlowView';
@@ -63,6 +64,7 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
       <EditorSidebar />
 
       <EditorDashboard />
+      <NewSubplotDialog />
     </div>
   );
 };

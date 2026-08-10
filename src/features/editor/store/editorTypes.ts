@@ -9,6 +9,7 @@ import type { AudioItem } from '../../../domain/Story/Audio';
 import type { Page } from '../../../domain/Page/Page';
 import type { StatusData } from '../../../domain/Story/StatusData';
 import type { EditorWorkspace } from './editorWorkspace';
+import type { EditorDialog } from './editorDialog';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -130,6 +131,10 @@ export interface EditorState {
   /** Epoch ms of the last successful autosave; null until the first write. */
   lastSavedAt: number | null;
   setLastSavedAt: (timestamp: number) => void;
+
+  /** The modal dialog raised over the current workspace, if any. */
+  openDialog: EditorDialog | null;
+  setOpenDialog: (dialog: EditorDialog | null) => void;
 
   // State for when user clicks "Connect" on a choice and is waiting to click a target page
   connectingChoice: { sourcePageId: string; choiceId: string } | null;

@@ -1,13 +1,18 @@
 import { useEditorStore } from '../features/editor/store/useEditorStore';
 import type { MenuConfig } from '../components/ui/MenuBar/MenuBar';
 
+/**
+ * The groups behind the wordmark. The design's menu bar carries no menu row,
+ * so these live under the STORYWORLD mark rather than disappearing.
+ *
+ * There is no View group: Play is a button in the same bar, Back to Dashboard
+ * is under File, and "Editor Mode" was a no-op everywhere it appeared.
+ */
 export const getMenuConfig = (
   setMode: (mode: 'dashboard' | 'editor' | 'player') => void,
   handleImportClick: () => void,
   handleExportJson: () => void,
-  handleExportStoryworld: () => void,
-  handlePlay: () => void,
-  currentMode: 'dashboard' | 'editor' | 'player'
+  handleExportStoryworld: () => void
 ): MenuConfig[] => [
   {
     label: 'File',
@@ -23,7 +28,8 @@ export const getMenuConfig = (
   {
     label: 'Story',
     items: [
-      { label: 'Settings', onClick: () => useEditorStore.getState().setActiveWorkspace('settings') }
+      { label: 'Settings', onClick: () => useEditorStore.getState().setActiveWorkspace('settings') },
+      { label: 'New Subplot...', onClick: () => useEditorStore.getState().setOpenDialog('newSubplot') },
     ]
   },
   {
@@ -37,11 +43,4 @@ export const getMenuConfig = (
       { label: 'Context', onClick: () => useEditorStore.getState().setActiveWorkspace('context') }
     ]
   },
-  {
-    label: 'View',
-    items: [
-      { label: 'Editor Mode', onClick: () => setMode('editor') },
-      { label: 'Play Mode', onClick: () => currentMode === 'editor' ? handlePlay() : undefined }
-    ]
-  }
 ];

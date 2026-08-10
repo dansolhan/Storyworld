@@ -19,8 +19,8 @@ function App() {
   const { handlePlay, handleExportJson, handleExportStoryworld } = useAppActions(setMode, setPlayingStory);
 
   const menus = useMemo(() =>
-    getMenuConfig(setMode, handleImportClick, handleExportJson, handleExportStoryworld, handlePlay, mode),
-    [setMode, handleImportClick, handleExportJson, handleExportStoryworld, handlePlay, mode]
+    getMenuConfig(setMode, handleImportClick, handleExportJson, handleExportStoryworld),
+    [setMode, handleImportClick, handleExportJson, handleExportStoryworld]
   );
 
   return (
