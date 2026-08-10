@@ -1,13 +1,14 @@
 import React from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Play } from 'lucide-react';
-import type { MenuConfig } from '../../../../components/ui/MenuBar/MenuBar';
+import type { MenuConfig } from '../../../../config/menuConfig';
 import { useEditorStore } from '../../store/useEditorStore';
 import styles from './EditorMenuBar.module.css';
 
 export interface EditorMenuBarProps {
-  /** File / Story / View groups, rendered as sections of the wordmark menu. */
+  /** File / Story groups, rendered as sections of the wordmark menu. */
   menus: MenuConfig[];
+  /** Plays from the story's own start page. */
   onPlay: () => void;
 }
 

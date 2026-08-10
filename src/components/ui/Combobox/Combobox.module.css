@@ -1,45 +1,63 @@
+/*
+ * Still built on Headless UI. Radix has no combobox primitive and this one is
+ * used in ten places — six of them logic pickers where type-to-filter is the
+ * point — so the headless layer migrates as its own step. This file is the
+ * palette, not the behaviour.
+ */
+
 .container {
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 250px;
-  font-family: var(--font-family-sans);
+  width: 100%;
+  font-family: var(--font-body);
 }
 
 .inputWrapper {
   display: flex;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
   align-items: center;
+  overflow: hidden;
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.inputWrapper:hover {
+  border-color: var(--color-text-faint);
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--color-accent-line);
 }
 
 .input {
   flex: 1;
+  min-width: 0;
   padding: var(--space-2) var(--space-3);
   border: none;
   background: transparent;
   color: var(--color-text);
-  font-size: var(--text-sm);
+  caret-color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
   outline: none;
-  min-width: 0;
 }
 
 .input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-text-faint);
 }
 
 .button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0 var(--space-3);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-muted);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .button:hover {
@@ -51,64 +69,64 @@
   top: 100%;
   left: 0;
   width: 100%;
-  margin-top: 4px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  z-index: 50;
+  margin-top: var(--space-1);
+  padding: var(--space-1) 0;
   list-style: none;
-  padding: 0;
-  max-height: 200px;
+  max-height: 240px;
   overflow-y: auto;
+  z-index: 50;
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
 }
 
 .option {
-  padding: var(--space-2) var(--space-3);
-  cursor: pointer;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  transition: background-color 0.1s ease;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  /* Reserved at rest so the selected marker does not shift the row. */
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--duration-instant) var(--ease-standard);
 }
 
 .active {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-accent-hover-row);
 }
 
 .selected {
-  background-color: var(--color-primary-100);
-}
-
-/* For dark mode if needed, ensure primary-100 looks okay, or use an opacity approach */
-:global(.theme-dark) .selected {
-  background-color: rgba(156, 39, 176, 0.2);
-  /* Adjust based on primary color */
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-tint);
 }
 
 .optionLabel {
-  font-weight: 500;
-  color: var(--color-text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
 }
 
+.selected .optionLabel,
 .selectedText {
-  color: var(--color-primary-600);
-  font-weight: 600;
-}
-
-:global(.theme-dark) .selectedText {
-  color: var(--color-primary-400);
+  color: var(--color-accent);
 }
 
 .optionValue {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  font-family: monospace;
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
 }
 
 .empty {
-  padding: var(--space-12);
+  padding: var(--space-4);
   text-align: center;
-  color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
 }

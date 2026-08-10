@@ -1,10 +1,11 @@
 .card {
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  color: var(--color-text-primary);
-  transition: all 0.2s ease-in-out;
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
 }
 
 /* Padding variants */
@@ -29,8 +30,11 @@
   cursor: pointer;
 }
 
+/*
+ * No lift on hover. Elevation on this palette is a hairline plus ambient
+ * darkness, so a translate reads as a glitch rather than as depth.
+ */
 .interactive:hover {
-  border-color: var(--color-primary-500);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  border-color: var(--color-accent-line);
+  background-color: var(--color-bg-selected);
 }

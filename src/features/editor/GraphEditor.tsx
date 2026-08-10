@@ -13,7 +13,7 @@ import { useNodesCount } from './hooks/core/useNodesCount';
 import { useEditorLayoutActions } from './hooks/core/useEditorLayoutActions';
 import { useDeselectOnEscape } from './hooks/view/useDeselectOnEscape';
 import { useEditorStore } from './store/useEditorStore';
-import type { MenuConfig } from '../../components/ui/MenuBar/MenuBar';
+import type { MenuConfig } from '../../config/menuConfig';
 
 import styles from './GraphEditor.module.css';
 

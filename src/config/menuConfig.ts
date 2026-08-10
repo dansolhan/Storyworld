@@ -1,5 +1,15 @@
 import { useEditorStore } from '../features/editor/store/useEditorStore';
-import type { MenuConfig } from '../components/ui/MenuBar/MenuBar';
+
+export interface MenuItems {
+  label?: string;
+  onClick?: () => void;
+  divider?: boolean;
+}
+
+export interface MenuConfig {
+  label: string;
+  items: MenuItems[];
+}
 
 /**
  * The groups behind the wordmark. The design's menu bar carries no menu row,

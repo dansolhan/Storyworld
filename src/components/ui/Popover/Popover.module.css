@@ -1,11 +1,16 @@
+/*
+ * Coordinate-anchored popover, still on Floating UI. Its six call sites
+ * position from a text selection rather than from a trigger element, so the
+ * move to Radix is its own step. This file is the palette, not the behaviour.
+ */
 .popover {
   position: fixed;
   z-index: 2000;
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
-  /* Allow the popover content to define its own padding and width if needed */
+  background-color: var(--color-bg-float);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  /* Content defines its own padding and width. */
 }
