@@ -1,4 +1,8 @@
 import type { Node, Edge } from '@xyflow/react';
+import type { EditorNode } from '../store/editorTypes';
+import type { PageNodeType } from '../nodes/PageNode';
+import type { ActionNodeType } from '../nodes/ActionNode';
+import type { PortalNodeType } from '../nodes/PortalNode';
 
 const NODE_WIDTH = 220; // 200px + margin
 const NODE_HEIGHT = 180; // ~150px + margin
@@ -73,12 +77,14 @@ export function findSmartNodePosition(nodes: Node[], baseX: number, baseY: numbe
  * 3. Position Page nodes in each depth-rank.
  * 4. Place Action/Portal nodes in clusters near their parent Pages.
  */
-export function autoLayoutGraph(nodes: Node[], edges: Edge[]) {
+export function autoLayoutGraph(nodes: EditorNode[], edges: Edge[]): EditorNode[] {
   // Separate Page nodes from Action/Portal nodes
-  const pageNodes = nodes.filter(n => n.type === 'pageNode');
-  const synNodes = nodes.filter(n => n.type === 'actionNode' || n.type === 'portalNode');
+  const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
+  const synNodes = nodes.filter(
+    (n): n is ActionNodeType | PortalNodeType => n.type === 'actionNode' || n.type === 'portalNode'
+  );
 
-  const startNode = pageNodes.find(n => (n.data as any).isStartNode) || pageNodes[0];
+  const startNode = pageNodes.find(n => n.data.isStartNode) || pageNodes[0];
   if (!startNode) return nodes;
 
   // Build adjacency for Page nodes only
@@ -145,13 +151,13 @@ export function autoLayoutGraph(nodes: Node[], edges: Edge[]) {
 
   // Second, position Action/Portal nodes (satellites)
   synNodes.forEach(n => {
-    const sourcePageId = (n.data as any).sourcePageId;
+    const sourcePageId = n.data.sourcePageId;
     const parentPos = newPositions[sourcePageId];
     
     if (parentPos) {
       // Find all syn nodes for this parent
       const siblings = synNodes
-        .filter(sn => (sn.data as any).sourcePageId === sourcePageId)
+        .filter(sn => sn.data.sourcePageId === sourcePageId)
         .sort((a, b) => a.id.localeCompare(b.id));
       const index = siblings.indexOf(n);
       

@@ -34,9 +34,8 @@ export const exportToJson = (data: StoryData, filename = 'game_data.json') => {
  * Helps prevent casual players from reading/spoiling the story easily.
  */
 export const exportToStoryworld = (data: StoryData, filename = 'game_data.storyworld') => {
-  // We strip away uiMetadata (editor positions) inside the player game bundle
-  const gameData = { ...data };
-  delete (gameData as any).uiMetadata;
+  // Editor positions are not part of the player bundle; naming uiMetadata here drops it.
+  const { uiMetadata, ...gameData } = data;
   const jsonString = JSON.stringify(gameData);
   // btoa encodes to Base64
   const base64String = btoa(unescape(encodeURIComponent(jsonString)));

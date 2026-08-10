@@ -6,6 +6,8 @@ import styles from './ActionNode.module.css';
 
 export interface ActionNodeData extends Record<string, unknown> {
   sourcePageId: string;
+  /** The subplot the source page belongs to; drives plot-lane visibility. */
+  sourceSubplotId?: string;
   choiceId: string;
   choiceText: string;
   actionNames: string[];

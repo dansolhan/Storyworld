@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useEngine, useEngineStore } from './EngineContext';
 import { audioManager } from '../../../lib/audioManager';
+import type { StoryEffect } from '../../../lib/engine/types';
 
 interface EngineEffectsOptions {
   onStoryEnd?: (data: Record<string, unknown>) => void;
@@ -13,7 +14,8 @@ interface EngineEffectsOptions {
 export const useEngineEffects = (options: EngineEffectsOptions = {}) => {
   const engine = useEngine();
   const lastEffect = useEngineStore((s) => s.lastEffect);
-  const lastProcessedEffectId = useRef<any>(null);
+  // Identity, not an id: each dispatch produces a fresh effect object.
+  const lastProcessedEffectId = useRef<StoryEffect | null>(null);
   const optionsRef = useRef(options);
   optionsRef.current = options;
 

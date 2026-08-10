@@ -3,6 +3,7 @@ import { useEngineStore, useEngine } from '../../adapter/EngineContext';
 import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './Inventory.module.css';
 import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';
+import type { Item } from '../../../../domain/Item/Item';
 
 export const Inventory: React.FC = () => {
   const engine = useEngine();
@@ -50,7 +51,7 @@ export const Inventory: React.FC = () => {
     handleContextMenu(e, itemId);
   };
 
-  const handleExamine = (itemDef: any) => {
+  const handleExamine = (itemDef: Item) => {
     setContextMenu(null);
     engine.store.setState((prev) => ({
       messages: [

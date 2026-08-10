@@ -61,13 +61,13 @@ export function syncSyntheticNodes(
     const pageDomain = pages[page.id];
     if (!pageDomain) return;
 
-    (pageDomain.choices || []).forEach((choice: any) => {
+    (pageDomain.choices || []).forEach((choice) => {
       if (choice.targetPageId) return; // connected to a real page
 
       const choiceActions = Array.isArray(choice.actions) ? choice.actions : [];
       if (choiceActions.length === 0) return;
 
-      const portalAction = choiceActions.find((a: any) => a.blueprintId === 'go_to_subplot');
+      const portalAction = choiceActions.find((a) => a.blueprintId === 'go_to_subplot');
 
       if (portalAction) {
         const params = portalAction.params as Record<string, string>;
@@ -79,7 +79,7 @@ export function syncSyntheticNodes(
 
         // Calculate a centered horizontal offset above the node
         const choiceIdx = (pageDomain.choices || []).indexOf(choice);
-        const totalChoices = (pageDomain.choices || []).filter((c: any) => !c.targetPageId).length;
+        const totalChoices = (pageDomain.choices || []).filter((c) => !c.targetPageId).length;
         const hOffset = (choiceIdx - (totalChoices - 1) / 2) * 80;
 
         synNodes.push({
@@ -119,7 +119,7 @@ export function syncSyntheticNodes(
         const nodeId = `action-node-${choice.id}`;
 
         const choiceIdx = (pageDomain.choices || []).indexOf(choice);
-        const totalChoices = (pageDomain.choices || []).filter((c: any) => !c.targetPageId).length;
+        const totalChoices = (pageDomain.choices || []).filter((c) => !c.targetPageId).length;
         const hOffset = (choiceIdx - (totalChoices - 1) / 2) * 80;
 
         synNodes.push({
@@ -133,7 +133,7 @@ export function syncSyntheticNodes(
             sourceSubplotId: page.data.subplotId,
             choiceId: choice.id,
             choiceText: choice.text || 'Action Choice',
-            actionNames: choiceActions.map((a: any) => a.blueprintId),
+            actionNames: choiceActions.map((a) => a.blueprintId),
           },
           selectable: true,
           draggable: true,

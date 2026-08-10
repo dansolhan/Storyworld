@@ -1,14 +1,18 @@
 import type { EditorNode } from '../store/editorTypes';
 import type { Edge } from '@xyflow/react';
 
-export function updateGraphVisibility(nodes: EditorNode[], edges: Edge[], currentPlotId: string | null) {
+export function updateGraphVisibility(
+  nodes: EditorNode[],
+  edges: Edge[],
+  currentPlotId: string | null
+): { nodes: EditorNode[]; edges: Edge[] } {
   let nodesChanged = false;
   const nextNodes = nodes.map(n => {
     let isVisible = false;
     if (n.type === 'pageNode') {
       isVisible = currentPlotId ? n.data.subplotId === currentPlotId : !n.data.subplotId;
     } else if (n.type === 'actionNode' || n.type === 'portalNode') {
-      isVisible = currentPlotId ? (n.data as any).sourceSubplotId === currentPlotId : !(n.data as any).sourceSubplotId;
+      isVisible = currentPlotId ? n.data.sourceSubplotId === currentPlotId : !n.data.sourceSubplotId;
     }
 
     const hidden = !isVisible;

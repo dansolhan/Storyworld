@@ -1,5 +1,6 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { EngineState, StoryMessage, StoryEffect, PlayerMessage } from './types';
+import type { StoryVariable } from '../../domain/Story/Variable';
 import type { StoryData } from '../../domain/Story/StoryData';
 import type { ActionContext } from '../../domain/Actions/Action';
 import { executeLogicTree } from './logic/executeLogicTree';
@@ -7,6 +8,22 @@ import { evaluateVisibility } from './logic/evaluator';
 import { actionBlueprints } from '../../domain/Actions/registry';
 import type { StoryEvent } from '../../domain/Events/StoryEvent';
 import { conditionalsToLogicTree } from '../../domain/Conditionals/conditionalsToLogicTree';
+
+/**
+ * The mutable scratch object an action batch writes into before the engine
+ * commits it. Which fields are present depends on what the batch is allowed to
+ * do — only choice selection can prevent a move, only hover can override text —
+ * so the optional fields are guarded with `in` checks at the point of use.
+ */
+interface ActionScriptState {
+  variables: Record<string, StoryVariable>;
+  inventory: Record<string, number>;
+  newMessages: PlayerMessage[];
+  nextTargetId?: string;
+  navigateToPage?: string | null;
+  preventMove?: boolean;
+  choiceTextOverride?: string;
+}
 
 export class StoryEngine {
   public store: StoreApi<EngineState>;
@@ -313,9 +330,9 @@ export class StoryEngine {
     };
   }
 
-  private createActionContext(scriptState: any, currentPageId?: string): ActionContext {
+  private createActionContext(scriptState: ActionScriptState, currentPageId?: string): ActionContext {
     return {
-      variables: scriptState.variables as any,
+      variables: scriptState.variables,
       setVariable: (key: string, value: unknown) => {
           const currentVar = scriptState.variables[key];
           const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
@@ -341,7 +358,7 @@ export class StoryEngine {
       goToPage: (id: string) => {
           if (scriptState.nextTargetId !== undefined) scriptState.nextTargetId = id;
           if (scriptState.navigateToPage !== undefined) scriptState.navigateToPage = id;
-          scriptState.newMessages.forEach((m: any) => { if (!m.pageId) m.pageId = id; });
+          scriptState.newMessages.forEach((message) => { if (!message.pageId) message.pageId = id; });
       },
       preventMove: () => {
           if ('preventMove' in scriptState) scriptState.preventMove = true;

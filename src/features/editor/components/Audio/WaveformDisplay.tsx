@@ -34,7 +34,11 @@ export const WaveformDisplay: React.FC<WaveformDisplayProps> = ({ base64Audio })
           bytes[i] = binaryString.charCodeAt(i);
         }
 
-        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        // Safari only exposed the prefixed constructor for a long while.
+        const withPrefix = window as Window & { webkitAudioContext?: typeof AudioContext };
+        const AudioCtor = window.AudioContext ?? withPrefix.webkitAudioContext;
+        if (!AudioCtor) throw new Error('Web Audio is unavailable in this browser.');
+        const audioCtx = new AudioCtor();
         const audioBuffer = await audioCtx.decodeAudioData(bytes.buffer);
         if (!active) return;
 

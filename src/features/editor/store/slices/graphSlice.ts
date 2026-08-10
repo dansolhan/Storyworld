@@ -28,9 +28,9 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
     const targetPageId = connection.target;
 
     if (sourcePageId && choiceId && targetPageId) {
-      // If we don't cast to any, TypeScript will yell since get() won't know about the
-      // full EditorState in this partial slice context, but our central store has it.
-      (get() as any).setChoiceDestination(sourcePageId, choiceId, targetPageId);
+      // `get()` is typed as the whole EditorState, not just this slice, so the
+      // coordinator's other slices are reachable from here.
+      get().setChoiceDestination(sourcePageId, choiceId, targetPageId);
     } else {
       // Fallback
       set({
@@ -43,7 +43,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   setEdges: (edges) => set({ edges }),
 
   organizeGraph: () => set((state) => ({
-    nodes: autoLayoutGraph(state.nodes, state.edges) as any
+    nodes: autoLayoutGraph(state.nodes, state.edges)
   })),
 
   loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres, statusData }) => set((state) => {
@@ -64,6 +64,6 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
       audio: audio || {},
       atmospheres: atmospheres || {},
       statusData: statusData || [],
-    } as any;
+    };
   }),
 });

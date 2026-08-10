@@ -6,6 +6,8 @@ import styles from './PortalNode.module.css';
 
 export interface PortalNodeData extends Record<string, unknown> {
   sourcePageId: string;
+  /** The subplot the source page belongs to; drives plot-lane visibility. */
+  sourceSubplotId?: string;
   subplotId: string;
   subplotName: string;
   targetPageName: string;
