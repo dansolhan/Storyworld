@@ -358,6 +358,22 @@ async function captureApp(browser) {
       });
     });
 
+    await step('editor-palette', async () => {
+      await page.keyboard.press('Control+k');
+      await settle(page, 500);
+      const field = page.getByRole('combobox', { name: /Search/ });
+      if (!(await field.count())) throw new Error('command palette did not open');
+      await field.fill('shrine');
+      await settle(page, 500);
+      await capture(page, {
+        slug: 'editor-palette', group: 'app',
+        title: 'Command palette — pages, choices, prose and actions',
+        note: 'Ctrl+K / ⌘K. Groups are capped at 8 rows with an "n of N shown" count.',
+      });
+      await page.keyboard.press('Escape');
+      await settle(page, 300);
+    });
+
     /*
      * Reached from the rail rather than the menu — the rail is the real
      * navigation now, and it is one click with nothing to dismiss first: each
