@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useEngineStore, useEngine } from '../../adapter/EngineContext';
 import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './Inventory.module.css';
+import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';
 
 export const Inventory: React.FC = () => {
   const engine = useEngine();
@@ -123,9 +124,15 @@ export const Inventory: React.FC = () => {
             return def.contextChoices.map((choice) => {
               // Convert to EvaluatableItem format for evaluator
               const evaluatable = {
-                events: choice.conditionals ? [{ id: 'synthetic', name: 'onEvaluate', logicTree: choice.conditionals as any }] : []
+                events: choice.conditionals
+                  ? [{
+                      id: 'synthetic',
+                      name: 'onEvaluate',
+                      logicTree: conditionalsToLogicTree(choice.conditionals),
+                    }]
+                  : [],
               };
-              if (!evaluateVisibility(evaluatable as any, evalContext)) return null;
+              if (!evaluateVisibility(evaluatable, evalContext)) return null;
 
               return (
                 <button

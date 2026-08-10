@@ -18,8 +18,13 @@ export interface StoryData {
   atmospheres?: Record<string, import('../Atmosphere/Atmosphere').Atmosphere>;
   audio?: Record<string, AudioItem>;
   statusData?: StatusData[];
+  /**
+   * Editor layout, opaque to the domain: React Flow nodes and edges, whose
+   * shape belongs to the editor feature. `storyMapper` is the only place that
+   * gives them a concrete type, at the boundary where it reads and writes them.
+   */
   uiMetadata?: {
-    nodes?: any[];
-    edges?: any[];
+    nodes?: unknown[];
+    edges?: unknown[];
   };
 }

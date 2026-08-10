@@ -1,88 +1,95 @@
 import type { StoryData } from '../StoryData';
+import {
+  type LegacyRecord,
+  ensurePagesArray,
+  isRecord,
+  optionalString,
+  paramsOf,
+  recordList,
+} from './legacyStory';
 
 export const CURRENT_VERSION = '1.1.0';
 
-type MigrationFunction = (oldStory: any) => any;
- 
-const ensurePagesArray = (pages: any): any[] => {
-  if (Array.isArray(pages)) return pages;
-  if (typeof pages === 'object' && pages !== null) return Object.values(pages);
-  return [];
-};
- 
+type MigrationFunction = (oldStory: LegacyRecord) => LegacyRecord;
+
+const newId = (): string => crypto.randomUUID();
+
 const migrateV1_0_0_to_V1_1_0: MigrationFunction = (v1Story) => {
   // Version 1.1.0 renames:
   // - onEvaluate -> calculateVisibility (for pages, paragraphs, and choices)
   // - onEnter -> onSelect (for choices only)
   // - Automates adding "hide" actions to failed calculateVisibility conditions to match legacy behavior
 
-  const upgradeLogicTree = (tree: any[], hideBlueprintId: string) => {
-    if (!tree) return;
-    for (const node of tree) {
-      if (node.type === 'condition') {
-        const children = node.children || [];
-        let branchElse = children.find((c: any) => c.type === 'branch_else');
-        
-        if (!branchElse) {
-          branchElse = {
-            id: crypto.randomUUID(),
-            type: 'branch_else',
-            name: 'Else',
-            children: []
-          };
-          node.children = [...children, branchElse];
-        }
+  const upgradeLogicTree = (tree: unknown, hideBlueprintId: string): void => {
+    for (const node of recordList(tree)) {
+      if (node.type !== 'condition') continue;
 
-        if (!branchElse.children) branchElse.children = [];
-        
-        const hasHide = branchElse.children.some((c: any) => 
-          c.type === 'action' && (c.blueprintId === 'hide_paragraph' || c.blueprintId === 'hide_choice')
-        );
+      const children = recordList(node.children);
+      let branchElse = children.find((child) => child.type === 'branch_else');
 
-        if (!hasHide) {
-          branchElse.children.push({
-            id: crypto.randomUUID(),
+      if (!branchElse) {
+        branchElse = { id: newId(), type: 'branch_else', name: 'Else', children: [] };
+        node.children = [...children, branchElse];
+      }
+
+      const elseChildren = recordList(branchElse.children);
+      const hasHide = elseChildren.some(
+        (child) =>
+          child.type === 'action' &&
+          (child.blueprintId === 'hide_paragraph' || child.blueprintId === 'hide_choice')
+      );
+
+      if (!hasHide) {
+        // Mutates the same object that sits in the tree, whether it was found or just created.
+        branchElse.children = [
+          ...elseChildren,
+          {
+            id: newId(),
             type: 'action',
             name: hideBlueprintId === 'hide_paragraph' ? 'Hide Paragraph' : 'Hide Choice',
             blueprintId: hideBlueprintId,
-            params: {}
-          });
-        }
+            params: {},
+          },
+        ];
       }
     }
   };
 
-  const pages = ensurePagesArray(v1Story.pages).map((page: any) => {
-    const p = { ...page };
-    
-    const migrateEvents = (item: any, domain: 'page' | 'paragraph' | 'choice') => {
-      if (!item.events) return item;
-      const hideBlueprintId = domain === 'choice' ? 'hide_choice' : 'hide_paragraph';
+  const migrateEvents = (
+    item: LegacyRecord,
+    domain: 'page' | 'paragraph' | 'choice'
+  ): LegacyRecord => {
+    if (!item.events) return item;
+    const hideBlueprintId = domain === 'choice' ? 'hide_choice' : 'hide_paragraph';
 
-      return {
-        ...item,
-        events: item.events.map((evt: any) => {
-          let newName = evt.name;
-          if (newName === 'onEvaluate') {
-            newName = 'calculateVisibility';
-          }
-          if (domain === 'choice' && (newName === 'onEnter' || newName === 'onClick')) {
-            newName = 'onSelect';
-          }
-          
-          const newEvt = { ...evt, name: newName };
-          if (newName === 'calculateVisibility') {
-            upgradeLogicTree(newEvt.logicTree, hideBlueprintId);
-          }
-          return newEvt;
-        })
-      };
+    return {
+      ...item,
+      events: recordList(item.events).map((event) => {
+        let name = event.name;
+        if (name === 'onEvaluate') {
+          name = 'calculateVisibility';
+        }
+        if (domain === 'choice' && (name === 'onEnter' || name === 'onClick')) {
+          name = 'onSelect';
+        }
+
+        const migrated: LegacyRecord = { ...event, name };
+        if (name === 'calculateVisibility') {
+          upgradeLogicTree(migrated.logicTree, hideBlueprintId);
+        }
+        return migrated;
+      }),
     };
+  };
 
-    const migratedPage = migrateEvents(p, 'page');
-    migratedPage.paragraphs = (migratedPage.paragraphs || []).map((para: any) => migrateEvents(para, 'paragraph'));
-    migratedPage.choices = (migratedPage.choices || []).map((choice: any) => migrateEvents(choice, 'choice'));
-    
+  const pages = ensurePagesArray(v1Story.pages).map((page) => {
+    const migratedPage = migrateEvents({ ...page }, 'page');
+    migratedPage.paragraphs = recordList(migratedPage.paragraphs).map((paragraph) =>
+      migrateEvents(paragraph, 'paragraph')
+    );
+    migratedPage.choices = recordList(migratedPage.choices).map((choice) =>
+      migrateEvents(choice, 'choice')
+    );
     return migratedPage;
   });
 
@@ -100,7 +107,7 @@ const migrateV2ToV3: MigrationFunction = (v2Story) => {
   // Version 3 introduces subplots.
   return {
     ...v2Story,
-    subplots: v2Story.subplots || [],
+    subplots: Array.isArray(v2Story.subplots) ? v2Story.subplots : [],
   };
 };
 
@@ -109,11 +116,11 @@ const migrateV3ToV4: MigrationFunction = (v3Story) => {
   // - Choice.targetPageId becomes optional (undefined) instead of empty string.
   //   Any choice with targetPageId === '' is normalised to undefined so that
   //   action-only choices can be cleanly distinguished from wired-up choices.
-  const pages = ensurePagesArray(v3Story.pages).map((page: any) => ({
+  const pages = ensurePagesArray(v3Story.pages).map((page) => ({
     ...page,
-    choices: (page.choices || []).map((choice: any) => ({
+    choices: recordList(page.choices).map((choice) => ({
       ...choice,
-      targetPageId: choice.targetPageId || undefined,
+      targetPageId: optionalString(choice.targetPageId) || undefined,
     })),
   }));
 
@@ -124,19 +131,20 @@ const migrateV3ToV4: MigrationFunction = (v3Story) => {
 };
 
 const migrateV4ToV5: MigrationFunction = (v4Story) => {
-  // Version 5 converts Record<string, string> variables to Record<string, { type: 'string' | 'number' | 'boolean', value: any }>
-  const migratedVariables: Record<string, any> = {};
+  // Version 5 converts Record<string, string> variables to
+  // Record<string, { type: 'string' | 'number' | 'boolean', value: unknown }>
+  const migratedVariables: LegacyRecord = {};
 
-  if (v4Story.variables) {
+  if (isRecord(v4Story.variables)) {
     for (const [key, value] of Object.entries(v4Story.variables)) {
-      if (typeof value === 'object' && value !== null && 'type' in value) {
+      if (isRecord(value) && 'type' in value) {
         // Already migrated or structurally valid
         migratedVariables[key] = value;
       } else {
         // Old string variable
         migratedVariables[key] = {
           type: 'string', // Default to string for old variables
-          value: value
+          value,
         };
       }
     }
@@ -144,20 +152,20 @@ const migrateV4ToV5: MigrationFunction = (v4Story) => {
 
   return {
     ...v4Story,
-    variables: migratedVariables
+    variables: migratedVariables,
   };
 };
 
 const migrateV5ToV6: MigrationFunction = (v5Story) => {
   // Version 6 adds `tags?: string[]` to variables.
-  const migratedVariables: Record<string, any> = {};
+  const migratedVariables: LegacyRecord = {};
 
-  if (v5Story.variables) {
+  if (isRecord(v5Story.variables)) {
     for (const [key, value] of Object.entries(v5Story.variables)) {
-      if (typeof value === 'object' && value !== null) {
+      if (isRecord(value)) {
         migratedVariables[key] = {
           ...value,
-          tags: (value as any).tags || []
+          tags: Array.isArray(value.tags) ? value.tags : [],
         };
       } else {
         migratedVariables[key] = value;
@@ -167,7 +175,7 @@ const migrateV5ToV6: MigrationFunction = (v5Story) => {
 
   return {
     ...v5Story,
-    variables: migratedVariables
+    variables: migratedVariables,
   };
 };
 
@@ -175,8 +183,8 @@ const migrateV6ToV7: MigrationFunction = (v6Story) => {
   // Version 7 adds audio and atmospheres to the story root.
   return {
     ...v6Story,
-    audio: v6Story.audio || {},
-    atmospheres: v6Story.atmospheres || {}
+    audio: isRecord(v6Story.audio) ? v6Story.audio : {},
+    atmospheres: isRecord(v6Story.atmospheres) ? v6Story.atmospheres : {},
   };
 };
 
@@ -184,69 +192,72 @@ const migrateV7ToV8: MigrationFunction = (v7Story) => {
   // Version 8 adds items to the story root.
   return {
     ...v7Story,
-    items: v7Story.items || {}
+    items: isRecord(v7Story.items) ? v7Story.items : {},
   };
 };
 
-const mapLegacyAction = (a: any) => ({
-  id: a.id || crypto.randomUUID(),
+const mapLegacyAction = (action: LegacyRecord): LegacyRecord => ({
+  id: optionalString(action.id) ?? newId(),
   type: 'action',
-  name: a.blueprintId || 'Action',
-  blueprintId: a.blueprintId,
-  params: a.params || {}
+  name: optionalString(action.blueprintId) ?? 'Action',
+  blueprintId: action.blueprintId,
+  params: paramsOf(action.params),
 });
 
-const mapLegacyConditional = (c: any): any => {
-  const isGroup = c.blueprintId === 'and_group' || c.blueprintId === 'or_group';
-  const node: any = {
-    id: c.id || crypto.randomUUID(),
+const branchNode = (type: string, name: string): LegacyRecord => ({
+  id: newId(),
+  type,
+  name,
+  children: [],
+});
+
+const mapLegacyConditional = (conditional: LegacyRecord): LegacyRecord => {
+  const isGroup =
+    conditional.blueprintId === 'and_group' || conditional.blueprintId === 'or_group';
+
+  return {
+    id: optionalString(conditional.id) ?? newId(),
     type: 'condition',
-    name: c.blueprintId || 'Condition',
-    blueprintId: c.blueprintId,
-    params: c.params || {},
+    name: optionalString(conditional.blueprintId) ?? 'Condition',
+    blueprintId: conditional.blueprintId,
+    params: paramsOf(conditional.params),
+    children: isGroup
+      ? [
+          {
+            ...branchNode('branch_conditions', 'Conditions'),
+            children: recordList(conditional.children).map(mapLegacyConditional),
+          },
+          branchNode('branch_then', 'Then'),
+          branchNode('branch_else', 'Else'),
+        ]
+      : [branchNode('branch_then', 'Then'), branchNode('branch_else', 'Else')],
   };
-  
-  if (isGroup) {
-    node.children = [
-      {
-        id: crypto.randomUUID(),
-        type: 'branch_conditions',
-        name: 'Conditions',
-        children: (c.children || []).map(mapLegacyConditional)
-      },
-      { id: crypto.randomUUID(), type: 'branch_then', name: 'Then', children: [] },
-      { id: crypto.randomUUID(), type: 'branch_else', name: 'Else', children: [] }
-    ];
-  } else {
-    node.children = [
-      { id: crypto.randomUUID(), type: 'branch_then', name: 'Then', children: [] },
-      { id: crypto.randomUUID(), type: 'branch_else', name: 'Else', children: [] }
-    ];
-  }
-  return node;
 };
 
 const migrateV0_9_0_to_V1_0_0: MigrationFunction = (v0_9_story) => {
   // Version 1.0.0 replaces actions/conditionals with a unified events array carrying Logic Trees
-  const migrateItem = (item: any) => {
-    const events: any[] = [];
+  const migrateItem = (item: LegacyRecord): LegacyRecord => {
+    const events: LegacyRecord[] = [];
+    const legacyConditionals = recordList(item.conditionals);
+    const legacyActions = recordList(item.actions);
 
-    if (item.conditionals && item.conditionals.length > 0) {
-       events.push({
-         id: crypto.randomUUID(),
-         name: 'onEvaluate',
-         logicTree: item.conditionals.map(mapLegacyConditional)
-       });
+    if (legacyConditionals.length > 0) {
+      events.push({
+        id: newId(),
+        name: 'onEvaluate',
+        logicTree: legacyConditionals.map(mapLegacyConditional),
+      });
     }
 
-    if (item.actions && item.actions.length > 0) {
-       events.push({
-         id: crypto.randomUUID(),
-         name: 'onEnter',
-         logicTree: item.actions.map(mapLegacyAction)
-       });
+    if (legacyActions.length > 0) {
+      events.push({
+        id: newId(),
+        name: 'onEnter',
+        logicTree: legacyActions.map(mapLegacyAction),
+      });
     }
 
+    // `actions` and `conditionals` are dropped by being named here.
     const { actions, conditionals, ...rest } = item;
     if (events.length > 0) {
       rest.events = events;
@@ -254,11 +265,11 @@ const migrateV0_9_0_to_V1_0_0: MigrationFunction = (v0_9_story) => {
     return rest;
   };
 
-  const pages = ensurePagesArray(v0_9_story.pages).map((page: any) => {
-    const p = migrateItem(page);
-    p.choices = (p.choices || []).map(migrateItem);
-    p.paragraphs = (p.paragraphs || []).map(migrateItem);
-    return p;
+  const pages = ensurePagesArray(v0_9_story.pages).map((page) => {
+    const migratedPage = migrateItem(page);
+    migratedPage.choices = recordList(migratedPage.choices).map(migrateItem);
+    migratedPage.paragraphs = recordList(migratedPage.paragraphs).map(migrateItem);
+    return migratedPage;
   });
 
   return { ...v0_9_story, pages };
@@ -284,15 +295,20 @@ const migrationSteps: MigrationStep[] = [
   { from: '1.0.0', to: '1.1.0', migrate: migrateV1_0_0_to_V1_1_0 },
 ];
 
-export function migrateStory(storyJson: any): StoryData {
-  if (!storyJson) throw new Error('Cannot migrate undefined or null story structure.');
+export function migrateStory(storyJson: unknown): StoryData {
+  if (!isRecord(storyJson)) {
+    throw new Error('Cannot migrate undefined or null story structure.');
+  }
 
-  let migratedStory =
+  let migratedStory: LegacyRecord =
     typeof structuredClone === 'function'
       ? structuredClone(storyJson)
-      : JSON.parse(JSON.stringify(storyJson));
+      : (JSON.parse(JSON.stringify(storyJson)) as LegacyRecord);
 
-  let currentVersion = migratedStory.version || 1;
+  let currentVersion: string | number =
+    typeof migratedStory.version === 'string' || typeof migratedStory.version === 'number'
+      ? migratedStory.version
+      : 1;
 
   let step = migrationSteps.find((s) => s.from === currentVersion);
 
@@ -303,9 +319,11 @@ export function migrateStory(storyJson: any): StoryData {
   }
 
   if (currentVersion !== CURRENT_VERSION) {
-    throw new Error(`Missing migration script to step from version ${currentVersion} to ${CURRENT_VERSION}`);
+    throw new Error(
+      `Missing migration script to step from version ${currentVersion} to ${CURRENT_VERSION}`
+    );
   }
 
   migratedStory.version = CURRENT_VERSION;
-  return migratedStory as StoryData;
+  return migratedStory as unknown as StoryData;
 }

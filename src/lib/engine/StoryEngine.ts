@@ -6,6 +6,7 @@ import { executeLogicTree } from './logic/executeLogicTree';
 import { evaluateVisibility } from './logic/evaluator';
 import { actionBlueprints } from '../../domain/Actions/registry';
 import type { StoryEvent } from '../../domain/Events/StoryEvent';
+import { conditionalsToLogicTree } from '../../domain/Conditionals/conditionalsToLogicTree';
 
 export class StoryEngine {
   public store: StoreApi<EngineState>;
@@ -200,7 +201,11 @@ export class StoryEngine {
     if (choice.actions) {
        choice.actions.forEach(action => {
           if (action.conditionals && action.conditionals.length > 0) {
-            const syntheticEvent: StoryEvent = { id: 'synthetic', name: 'onEvaluate', logicTree: action.conditionals as any };
+            const syntheticEvent: StoryEvent = {
+              id: 'synthetic',
+              name: 'onEvaluate',
+              logicTree: conditionalsToLogicTree(action.conditionals),
+            };
             if (!evaluateVisibility({ events: [syntheticEvent] }, evalContext)) return;
           }
           const blueprint = actionBlueprints[action.blueprintId];

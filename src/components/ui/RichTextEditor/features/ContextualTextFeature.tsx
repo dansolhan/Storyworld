@@ -46,7 +46,7 @@ export class ContextualTextFeature extends RTEFeature {
       let coords;
       try {
         coords = editor.view.coordsAtPos(from);
-      } catch (e) {
+      } catch {
         const rect = editor.view.dom.getBoundingClientRect();
         coords = { left: rect.left, bottom: rect.top + 30 };
       }

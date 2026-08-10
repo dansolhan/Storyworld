@@ -2,6 +2,7 @@ import type { Paragraph } from '../Paragraph/Paragraph';
 import type { Choice } from '../Choice/Choice';
 import type { StoryEvent } from '../Events/StoryEvent';
 import type { Action } from '../Actions/Action';
+import type { Conditional } from '../Conditionals/Conditional';
 
 export type PageType = 'location' | 'plot';
 
@@ -11,7 +12,8 @@ export interface Page {
   title: string;
   titleLocId?: string;
   actions?: Action[];
-  conditionals?: any[];
+  /** Pre-1.0.0 shape, superseded by `events`. Still read as a fallback. */
+  conditionals?: Conditional[];
   subplotId?: string;
   atmosphereId?: string;
   paragraphs: Paragraph[];

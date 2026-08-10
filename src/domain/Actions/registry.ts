@@ -1,4 +1,6 @@
 import type { ActionBlueprint } from './Action';
+import type { NoParams } from '../Blueprints/NoParams';
+import { readVariableValue } from '../Story/Variable';
 
 export interface SetVariableParams {
   variableKey: string | null;
@@ -103,9 +105,7 @@ export const removeItemBlueprint: ActionBlueprint<RemoveItemParams> = {
   },
 };
 
-export interface HideParagraphParams {}
-
-export const hideParagraphBlueprint: ActionBlueprint<HideParagraphParams> = {
+export const hideParagraphBlueprint: ActionBlueprint<NoParams> = {
   id: 'hide_paragraph',
   name: 'Hide Paragraph',
   template: 'Hide this paragraph',
@@ -119,9 +119,7 @@ export const hideParagraphBlueprint: ActionBlueprint<HideParagraphParams> = {
   },
 };
 
-export interface HideChoiceParams {}
-
-export const hideChoiceBlueprint: ActionBlueprint<HideChoiceParams> = {
+export const hideChoiceBlueprint: ActionBlueprint<NoParams> = {
   id: 'hide_choice',
   name: 'Hide Choice',
   template: 'Hide this choice',
@@ -135,9 +133,7 @@ export const hideChoiceBlueprint: ActionBlueprint<HideChoiceParams> = {
   },
 };
 
-export interface PreventMoveToPageParams {}
-
-export const preventMoveToPageBlueprint: ActionBlueprint<PreventMoveToPageParams> = {
+export const preventMoveToPageBlueprint: ActionBlueprint<NoParams> = {
   id: 'prevent_move_to_page',
   name: 'Prevent Move to Page',
   template: 'Prevent moving to the next page',
@@ -170,8 +166,7 @@ export const endStoryBlueprint: ActionBlueprint<EndStoryParams> = {
     const resolvedData: Record<string, unknown> = {};
     (params.data || []).forEach((entry) => {
       if (entry.isVariable) {
-        const v = (context.variables as any)[entry.value];
-        resolvedData[entry.key] = v ? v.value : undefined;
+        resolvedData[entry.key] = readVariableValue(context.variables, entry.value);
       } else {
         resolvedData[entry.key] = entry.value;
       }

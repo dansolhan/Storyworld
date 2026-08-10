@@ -93,9 +93,17 @@ export const parseStoryToGraph = (
   (storyData.pages || []).forEach(p => { pagesRecord[p.id] = p; });
 
   if (storyData.uiMetadata?.nodes && storyData.uiMetadata?.edges) {
+    /*
+     * `uiMetadata` is typed `unknown[]` in the domain, which has no business
+     * knowing about React Flow. This mapper is the boundary that owns their
+     * concrete shape, so the assertion belongs here and nowhere else.
+     */
+    const savedNodes = storyData.uiMetadata.nodes as AnyNode[];
+    const savedEdges = storyData.uiMetadata.edges as Edge[];
+
     // Crucial: We must sync the DATA in the nodes with the potentially migrated domain pages.
     // uiMetadata stores the React Flow state which might have stale data copies.
-    const syncedNodes = storyData.uiMetadata.nodes.map(node => {
+    const syncedNodes = savedNodes.map(node => {
       if (node.type === 'pageNode' && pagesRecord[node.id]) {
         const page = pagesRecord[node.id];
         return {
@@ -116,7 +124,7 @@ export const parseStoryToGraph = (
 
     return {
       nodes: syncedNodes,
-      edges: storyData.uiMetadata.edges,
+      edges: savedEdges,
       pages: pagesRecord
     };
   }

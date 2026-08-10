@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useEngineStore } from '../../adapter/EngineContext';
 import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './StatusDataDisplay.module.css';
+import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';
 
 /**
  * Interpolates {{ varName }} placeholders in a template string using the
@@ -39,7 +40,16 @@ export const StatusDataDisplay: React.FC = () => {
     return entries
       .slice() // don't mutate
       .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
-      .filter((entry) => evaluateVisibility({ events: entry.conditionals ? [{ id: 'status', name: 'onEvaluate', logicTree: entry.conditionals as any }] : [] } as any, evalContext));
+      .filter((entry) =>
+        evaluateVisibility(
+          {
+            events: entry.conditionals
+              ? [{ id: 'status', name: 'onEvaluate', logicTree: conditionalsToLogicTree(entry.conditionals) }]
+              : [],
+          },
+          evalContext
+        )
+      );
   }, [storyData?.statusData, evalContext]);
 
   if (visibleEntries.length === 0) return null;

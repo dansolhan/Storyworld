@@ -1,4 +1,6 @@
 import type { ConditionalBlueprint } from './Conditional';
+import type { NoParams } from '../Blueprints/NoParams';
+import { readVariableValue } from '../Story/Variable';
 
 export interface VisitedPageParams {
   not: boolean;
@@ -67,15 +69,14 @@ export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams>
   },
   evaluate: (params, context) => {
     if (!params.variableKey) return true;
-    const variables = context.variables as Record<string, any>;
-    const variable = variables[params.variableKey];
-    if (!variable) return false;
+    const value = readVariableValue(context.variables, params.variableKey);
+    if (value === undefined) return false;
 
     const comparison = params.comparison ?? 'equal';
 
     // For numeric comparisons that aren't 'equal', parse both as numbers
     if (comparison !== 'equal') {
-      const actual = parseFloat(String(variable.value));
+      const actual = parseFloat(String(value));
       const target = parseFloat(String(params.value));
       if (isNaN(actual) || isNaN(target)) return false;
       if (comparison === 'greater than') return actual > target;
@@ -85,7 +86,7 @@ export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams>
     }
 
     // Equal: string comparison (works for strings, booleans, and numbers)
-    return String(variable.value) === String(params.value);
+    return String(value) === String(params.value);
   },
 };
 
@@ -132,7 +133,7 @@ export const hasItemCountBlueprint: ConditionalBlueprint<HasItemCountParams> = {
   },
 };
 
-export const andGroupBlueprint: ConditionalBlueprint<{}> = {
+export const andGroupBlueprint: ConditionalBlueprint<NoParams> = {
   id: 'and_group',
   name: 'AND Group',
   template: 'ALL of the following must be true:',
@@ -145,7 +146,7 @@ export const andGroupBlueprint: ConditionalBlueprint<{}> = {
   }
 };
 
-export const orGroupBlueprint: ConditionalBlueprint<{}> = {
+export const orGroupBlueprint: ConditionalBlueprint<NoParams> = {
   id: 'or_group',
   name: 'OR Group',
   template: 'ANY of the following must be true:',

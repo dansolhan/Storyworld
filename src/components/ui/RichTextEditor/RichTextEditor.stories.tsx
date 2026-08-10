@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RichTextEditor } from './RichTextEditor';
 import { BoldFeature } from './features/BoldFeature';
 import { ItalicFeature } from './features/ItalicFeature';

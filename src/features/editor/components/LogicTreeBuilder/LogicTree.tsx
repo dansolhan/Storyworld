@@ -71,7 +71,7 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
         params
       };
 
-      let newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
+      const newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
 
       const targetElement = (e.target as Element).closest('[data-id]');
       const targetId = targetElement ? targetElement.getAttribute('data-id') : null;
@@ -158,6 +158,7 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
     }
 
     // Since onChange is required to persist the move in controlled mode, we need to manually update our data structure.
+    // Reassigned below: extractNodes replaces the whole array with the filtered one.
     let newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
 
     // Check if target is a branch_conditions list
@@ -312,7 +313,7 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
   };
 
   const updateNodeParams = (nodeId: string, params: Record<string, unknown>) => {
-    let newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
+    const newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
     const update = (list: LogicNode[]) => {
       for (const node of list) {
         if (node.id === nodeId) {
@@ -388,7 +389,7 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
             onMove={handleMove}
             onDelete={(args) => {
               // Remove from tree
-              let newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
+              const newData = JSON.parse(JSON.stringify(data)) as LogicNode[];
               const filterNodes = (list: LogicNode[]) => {
                 return list.filter(node => {
                   if (args.ids.includes(node.id)) {
