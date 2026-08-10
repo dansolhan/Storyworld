@@ -20,10 +20,31 @@ const CONTEXT_EDITOR_FEATURES = [
 
 
 
-export class ContextualTextFeature extends RTEFeature {
-  private listener: ((action: any) => void) | null = null;
+/**
+ * What the toolbar button asks the mounted UI to do. Typing this surfaced a
+ * missing `title` in the payload below: the popover state declares it as a
+ * string, and the untyped dispatch was leaving it undefined.
+ */
+export interface ContextualTextOpenPopoverAction {
+  type: 'open_popover';
+  payload: {
+    x: number;
+    y: number;
+    text: string;
+    title: string;
+    pos: number;
+    isEdit: boolean;
+    range: { from: number; to: number };
+  };
+}
 
-  public setListener(fn: any) { this.listener = fn; }
+export type ContextualTextAction = ContextualTextOpenPopoverAction;
+export type ContextualTextListener = (action: ContextualTextAction) => void;
+
+export class ContextualTextFeature extends RTEFeature {
+  private listener: ContextualTextListener | null = null;
+
+  public setListener(fn: ContextualTextListener | null) { this.listener = fn; }
 
   get name() {
     return 'contextualText';
@@ -53,7 +74,7 @@ export class ContextualTextFeature extends RTEFeature {
 
       this.listener?.({
         type: 'open_popover',
-        payload: { x: coords.left, y: coords.bottom, text: '', pos: from, isEdit: false, range: { from, to } }
+        payload: { x: coords.left, y: coords.bottom, text: '', title: '', pos: from, isEdit: false, range: { from, to } }
       });
     };
 
@@ -104,7 +125,7 @@ const ContextualTextUI: React.FC<{ editor: Editor; feature: ContextualTextFeatur
   } | null>(null);
 
   useEffect(() => {
-    feature.setListener((action: any) => {
+    feature.setListener((action) => {
       if (action.type === 'open_popover') {
         setPopoverState({ visible: true, ...action.payload });
         setMenuState((prev) => ({ ...prev, visible: false })); // close context menu if open

@@ -16,7 +16,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const RichTextEditorWithState = (args: any) => {
+const RichTextEditorWithState = (args: React.ComponentProps<typeof RichTextEditor>) => {
   const [content, setContent] = useState('<p>Start typing here...</p>');
 
   return (

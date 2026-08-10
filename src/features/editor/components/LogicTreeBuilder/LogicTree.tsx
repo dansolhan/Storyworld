@@ -307,7 +307,7 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
   };
 
   // Prevent dragging branches themselves
-  const disableDrag = (node: any) => {
+  const disableDrag = (node: { data?: { type?: string }; type?: string }) => {
      const type = node.data?.type || node.type; // Fallback in case it actually passes LogicNode at runtime
      return type === 'branch_then' || type === 'branch_else' || type === 'branch_conditions';
   };

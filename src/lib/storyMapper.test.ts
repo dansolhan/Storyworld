@@ -5,6 +5,8 @@ import type { ActionNodeType } from '../features/editor/nodes/ActionNode';
 import type { PortalNodeType } from '../features/editor/nodes/PortalNode';
 import type { StoryData } from '../domain/Story/StoryData';
 import { CURRENT_VERSION } from '../domain/Story/migrations/migrations';
+import type { Edge } from '@xyflow/react';
+import type { Page } from '../domain/Page/Page';
 
 describe('storyMapper', () => {
 
@@ -12,7 +14,7 @@ describe('storyMapper', () => {
     keyOpen: { type: 'boolean' as const, value: false, tags: [] }
   };
 
-  const mockPages = {
+  const mockPages: Record<string, Page> = {
     'page-1': {
       id: 'page-1',
       title: 'Start Page',
@@ -71,7 +73,7 @@ describe('storyMapper', () => {
     }
   ];
 
-  const mockEdges = [
+  const mockEdges: Edge[] = [
     {
       id: 'e-c1-page-2',
       source: 'page-1',
@@ -113,18 +115,18 @@ describe('storyMapper', () => {
       }
     ],
     uiMetadata: {
-      nodes: mockNodes as any,
-      edges: mockEdges as any
+      nodes: mockNodes,
+      edges: mockEdges
     }
   };
 
   describe('compileGraphToStory', () => {
     it('should correctly map React Flow nodes and edges into pure StoryData', () => {
       const result = compileGraphToStory(
-        mockNodes as any,
-        mockEdges as any,
-        mockPages as any,
-        mockVariables as any,
+        mockNodes,
+        mockEdges,
+        mockPages,
+        mockVariables,
         {},
         { title: 'Test Story', description: 'A story for testing mapping', startPageId: 'page-1' }
       );
@@ -149,13 +151,13 @@ describe('storyMapper', () => {
     });
 
     it('should filter out synthetic nodes when compiling back to domain story', () => {
-      const result = compileGraphToStory(mockNodes as any, mockEdges as any, mockPages as any, {}, {});
+      const result = compileGraphToStory(mockNodes, mockEdges, mockPages, {}, {});
       expect(result.pages.length).toBe(2);
       expect(result.pages.find(p => p.id === 'action-node-c2')).toBeUndefined();
     });
 
     it('should handle choices with missing edges gracefully', () => {
-      const result = compileGraphToStory(mockNodes as any, [], mockPages as any, {}, {});
+      const result = compileGraphToStory(mockNodes, [], mockPages, {}, {});
       expect(result.pages[0].choices![0].targetPageId).toBeUndefined();
     });
   });

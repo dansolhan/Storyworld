@@ -6,7 +6,7 @@ import { InteractiveToken } from './InteractiveToken';
 
 interface BlueprintTokenProps {
   tokenKey: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   nodes: EditorNode[];
   subplots: Subplot[];
   items: Record<string, Item>;
@@ -151,7 +151,7 @@ export const BlueprintToken: React.FC<BlueprintTokenProps> = ({
   }
 
   if (tokenKey === 'data') {
-    const data = (params.data as any[]) || [];
+    const data = Array.isArray(params.data) ? params.data : [];
     const label = data.length > 0 
       ? `${data.length} field${data.length > 1 ? 's' : ''}` 
       : 'Add data...';

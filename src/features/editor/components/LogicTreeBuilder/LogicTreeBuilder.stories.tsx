@@ -15,6 +15,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 import { useEditorStore } from '../../store/useEditorStore';
+import type { EditorNode } from '../../store/editorTypes';
 
 // A container component to hold state for the story
 const LogicTreeBuilderSandbox = () => {
@@ -31,11 +32,12 @@ const LogicTreeBuilderSandbox = () => {
   // Seed standard Zustand store so BlueprintRenderer popovers have mock items to select in Storybook
   useEffect(() => {
     useEditorStore.setState({
+      // 'page' was never a registered node type; the cast that used to be here hid it.
       nodes: [
-        { id: 'page_1', type: 'page', data: { title: 'Tavern Entrance' }, position: { x:0, y:0 } },
-        { id: 'page_2', type: 'page', data: { title: 'Dark Forest' }, position: { x:0, y:0 } },
-        { id: 'page_3', type: 'page', data: { title: 'Goblin Cave' }, position: { x:0, y:0 } }
-      ] as any,
+        { id: 'page_1', type: 'pageNode', position: { x: 0, y: 0 }, data: { title: 'Tavern Entrance', paragraphs: [], choices: [] } },
+        { id: 'page_2', type: 'pageNode', position: { x: 0, y: 0 }, data: { title: 'Dark Forest', paragraphs: [], choices: [] } },
+        { id: 'page_3', type: 'pageNode', position: { x: 0, y: 0 }, data: { title: 'Goblin Cave', paragraphs: [], choices: [] } },
+      ] satisfies EditorNode[],
       variables: {
         'player_gold': { type: 'number', value: 50 },
         'has_sword': { type: 'boolean', value: false }

@@ -1,5 +1,5 @@
 import type { Editor } from '@tiptap/core';
-import type { Extension, Mark, Node } from '@tiptap/core';
+import type { AnyExtension } from '@tiptap/core';
 import type { ReactNode } from 'react';
 
 /**
@@ -16,7 +16,7 @@ export abstract class RTEFeature {
   /**
    * Returns an array of TipTap extensions, marks, or nodes to inject into the editor.
    */
-  abstract getExtensions(): (Extension<any, any> | Mark<any, any> | Node<any, any>)[];
+  abstract getExtensions(): AnyExtension[];
 
   /**
    * Renders the toolbar button for this feature. 

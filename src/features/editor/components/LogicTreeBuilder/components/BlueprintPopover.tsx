@@ -1,6 +1,6 @@
 import React from 'react';
 import { Popover } from '../../../../../components/ui/Popover/Popover';
-import { EndDataEditor } from './EndDataEditor';
+import { EndDataEditor, endStoryFields } from './EndDataEditor';
 import { PageSelection } from './popovers/PageSelection';
 import { SubplotSelection } from './popovers/SubplotSelection';
 import { VariableSelection } from './popovers/VariableSelection';
@@ -17,8 +17,8 @@ interface BlueprintPopoverProps {
   y: number;
   tokenTarget: string;
   onClose: () => void;
-  params: Record<string, any>;
-  onChangeParam: (key: string, value: any) => void;
+  params: Record<string, unknown>;
+  onChangeParam: (key: string, value: unknown) => void;
   inputValue: string;
   setInputValue: (val: string) => void;
   pageOptions: { label: string; value: string }[];
@@ -165,7 +165,7 @@ export const BlueprintPopover: React.FC<BlueprintPopoverProps> = ({
       case 'data':
         return (
           <EndDataEditor
-            data={(params.data as any[]) || []}
+            data={endStoryFields(params.data)}
             variableOptions={variableOptions}
             onChange={(newData) => onChangeParam('data', newData)}
           />

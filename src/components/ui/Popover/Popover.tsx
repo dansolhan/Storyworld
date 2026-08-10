@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   useFloating,
@@ -88,9 +88,7 @@ export const Popover: React.FC<PopoverProps> = ({
   // Combine refs
   const setRefs = (node: HTMLDivElement | null) => {
     refs.setFloating(node);
-    if (popoverRef) {
-      (popoverRef as any).current = node;
-    }
+    popoverRef.current = node;
   };
 
   useEffect(() => {
@@ -99,10 +97,16 @@ export const Popover: React.FC<PopoverProps> = ({
     }
   }, [isOpen, virtualElement, refs]);
 
-  const lastChildren = useRef<React.ReactNode>(null);
-  if (isOpen) {
-    lastChildren.current = children;
-  }
+  /*
+   * The panel stays mounted through its fade-out, so it needs something to show
+   * after `isOpen` goes false. This used to write and read a ref during render,
+   * which React cannot track; holding it in state settles after one extra
+   * render and stays honest.
+   */
+  const [childrenWhileClosing, setChildrenWhileClosing] = useState<React.ReactNode>(children);
+  useEffect(() => {
+    if (isOpen) setChildrenWhileClosing(children);
+  }, [isOpen, children]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -144,7 +148,7 @@ export const Popover: React.FC<PopoverProps> = ({
       data-popover="true"
       onClick={(e) => e.stopPropagation()}
     >
-      {isOpen ? children : lastChildren.current}
+      {isOpen ? children : childrenWhileClosing}
     </div>,
     document.body
   );

@@ -6,7 +6,7 @@ import { BlueprintPopover } from './components/BlueprintPopover';
 
 interface BlueprintRendererProps {
   template: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   onChangeParam: (key: string, value: unknown) => void;
 }
 
