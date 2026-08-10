@@ -1,6 +1,6 @@
 .interactiveToken {
   cursor: pointer;
-  color: var(--color-primary-400, #3b82f6);
+  color: var(--color-primary-400, var(--color-accent-line));
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 4px;
@@ -21,25 +21,25 @@
 
 .popoverContent {
   padding: 0.75rem;
-  background: #ffffff;
+  background: var(--color-bg-raised);
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-line-strong);
   min-width: 180px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  color: #1a1a1a;
+  color: var(--color-text);
 }
 
 .popoverTitle {
   margin: 0 0 0.5rem 0;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--color-text-dim);
 }
 
 .popoverEmpty {
   margin: 0;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-faint);
 }
 
 .inputGroup {
@@ -50,7 +50,7 @@
 .popoverInput {
   flex: 1;
   padding: 0.35rem 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-line-strong);
   border-radius: 4px;
   font-size: 0.8rem;
   font-family: inherit;
@@ -58,23 +58,23 @@
 }
 
 .popoverInput:focus {
-  border-color: #3b82f6;
+  border-color: var(--color-accent-line);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .popoverButton {
   padding: 0.25rem 0.75rem;
   cursor: pointer;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
+  background: var(--color-bg-selected);
+  border: 1px solid var(--color-line-strong);
   border-radius: 4px;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-muted);
   transition: background 0.15s;
 }
 
 .popoverButton:hover {
-  background: #e5e7eb;
+  background: var(--color-line-strong);
 }
 
 .dataList {
@@ -95,7 +95,7 @@
 .dataInputSmall {
   flex: 1;
   padding: 0.25rem 0.4rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-line-strong);
   border-radius: 4px;
   font-size: 0.75rem;
   outline: none;
@@ -103,7 +103,7 @@
 }
 
 .dataInputSmall:focus {
-  border-color: #3b82f6;
+  border-color: var(--color-accent-line);
 }
 
 .dataCombobox {
@@ -114,24 +114,24 @@
 .iconButton {
   padding: 0.2rem 0.4rem;
   cursor: pointer;
-  background: #f9fafb;
-  border: 1px solid #d1d5db;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
   border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-text-faint);
   transition: all 0.1s;
 }
 
 .iconButton:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
+  background: var(--color-bg-selected);
+  border-color: var(--color-text-faint);
 }
 
 .iconButton.active {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #2563eb;
+  background: var(--color-accent-tint);
+  border-color: var(--color-accent-line);
+  color: var(--color-accent);
 }
 
 .iconButtonDelete {
@@ -140,7 +140,7 @@
   background: transparent;
   border: none;
   font-size: 1.1rem;
-  color: #ef4444;
+  color: var(--color-danger);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -148,23 +148,23 @@
 }
 
 .iconButtonDelete:hover {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .addButton {
   width: 100%;
   padding: 0.4rem;
   cursor: pointer;
-  background: #f0f9ff;
-  border: 1px dashed #7dd3fc;
+  background: var(--color-accent-tint);
+  border: 1px dashed var(--color-accent-line);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #0369a1;
+  color: var(--color-accent);
   transition: all 0.15s;
 }
 
 .addButton:hover {
-  background: #e0f2fe;
+  background: var(--color-accent-tint);
   border-style: solid;
 }

@@ -7,6 +7,7 @@ export const usePageActions = () => {
       setSelectedPage: state.setSelectedPage,
       updatePageTitle: state.updatePageTitle,
       updatePageType: state.updatePageType,
+      updatePageAtmosphere: state.updatePageAtmosphere,
     }))
   );
 };

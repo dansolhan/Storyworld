@@ -13,13 +13,11 @@ export class SelectionStrategy implements InteractionStrategy {
   onNodeClick(nodeId: string) {
     const state = useEditorStore.getState();
     state.setSelectedPage(nodeId);
-    // Don't change height on single click; handled explicitly if they double click
   }
 
   onNodeDoubleClick(nodeId: string) {
-    const state = useEditorStore.getState();
-    state.setSelectedPage(nodeId);
-    state.setIsEditorSidebarExpanded(true);
+    // The inspector is always open now, so selecting is all there is to do.
+    useEditorStore.getState().setSelectedPage(nodeId);
   }
 
   onPaneClick() {

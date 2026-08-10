@@ -74,15 +74,15 @@
 }
 
 .typeCondition {
-  border-left: 3px solid #eab308; /* Yellow/Gold for conditionals */
+  border-left: 3px solid var(--color-accent); /* Yellow/Gold for conditionals */
 }
 .typeCondition svg {
-  color: #eab308;
+  color: var(--color-accent);
 }
 
 .typeAction {
-  border-left: 3px solid #3b82f6; /* Blue for actions */
+  border-left: 3px solid var(--color-accent-line); /* Blue for actions */
 }
 .typeAction svg {
-  color: #3b82f6;
+  color: var(--color-accent-line);
 }

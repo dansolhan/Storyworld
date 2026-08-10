@@ -81,17 +81,17 @@
 }
 
 .typeCondition {
-  border-left: 3px solid #eab308;
+  border-left: 3px solid var(--color-accent);
 }
 .typeCondition .icon {
-  color: #eab308;
+  color: var(--color-accent);
 }
 
 .typeAction {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--color-text-dim);
 }
 .typeAction .icon {
-  color: #3b82f6;
+  color: var(--color-text-dim);
 }
 
 .typeBranch {
@@ -130,7 +130,7 @@
 }
 
 .deleteButton:hover {
-  color: #ef4444; /* red */
+  color: var(--color-danger); /* red */
   background: rgba(239, 68, 68, 0.1);
 }
 

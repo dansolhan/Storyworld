@@ -10,6 +10,7 @@ import type { Page } from '../../../domain/Page/Page';
 import type { StatusData } from '../../../domain/Story/StatusData';
 import type { EditorWorkspace } from './editorWorkspace';
 import type { EditorDialog } from './editorDialog';
+import type { InspectorTab } from './inspectorTab';
 
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
@@ -112,11 +113,9 @@ export interface EditorState {
   selectedPageId: string | null;
   setSelectedPage: (pageId: string | null) => void;
 
-  sidebarTab: string;
-  setSidebarTab: (tab: string) => void;
-
-  isEditorSidebarExpanded: boolean;
-  setIsEditorSidebarExpanded: (expanded: boolean) => void;
+  /** Which inspector tab is showing for the selected page. */
+  inspectorTab: InspectorTab;
+  setInspectorTab: (tab: InspectorTab) => void;
 
   /**
    * The one surface the editor is currently showing. Replaces the seven
@@ -157,6 +156,7 @@ export interface EditorState {
   addPage: (x: number, y: number, atmosphereId?: string) => string;
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updatePageType: (pageId: string, newType: 'location' | 'plot') => void;
+  updatePageAtmosphere: (pageId: string, atmosphereId: string | undefined) => void;
 
   // Domain Handlers - Paragraph
   addParagraph: (pageId: string) => void;

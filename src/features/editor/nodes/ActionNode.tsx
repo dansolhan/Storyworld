@@ -16,23 +16,23 @@ export type ActionNodeType = Node<ActionNodeData, 'actionNode'>;
 const HIDDEN: React.CSSProperties = { opacity: 0 };
 
 export const ActionNode = React.memo(({ data, id }: NodeProps<ActionNodeType>) => {
-  const { setSelectedPage, setSidebarTab, setHoveredPageId } = useEditorStore(
+  const { setSelectedPage, setInspectorTab, setHoveredPageId } = useEditorStore(
     useShallow((state) => ({
       setSelectedPage: state.setSelectedPage,
-      setSidebarTab: state.setSidebarTab,
+      setInspectorTab: state.setInspectorTab,
       setHoveredPageId: state.setHoveredPageId,
     }))
   );
 
   const handleDoubleClick = () => {
     setSelectedPage(data.sourcePageId);
-    setSidebarTab('actions');
+    setInspectorTab('choices');
   };
 
   const tooltip = [
     data.choiceText || 'Action Choice',
     data.actionNames.length ? `Actions: ${data.actionNames.join(', ')}` : null,
-    'Double-click to open Actions pane',
+    'Double-click to open the choice it belongs to',
   ].filter(Boolean).join('\n');
 
   return (

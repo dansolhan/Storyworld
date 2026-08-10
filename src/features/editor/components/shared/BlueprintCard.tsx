@@ -277,7 +277,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
 
 
       {warningText && (
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#b91c1c', background: '#fef2f2', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #f87171' }}>
+        <div className={styles.validationError}>
           {warningText}
         </div>
       )}
@@ -291,7 +291,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         onClose={handleClosePopover}
       >
         {popoverState.tokenTarget === 'pageId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a page:</p>
             <Combobox
               options={pageOptions}
@@ -305,7 +305,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'targetPageId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a target page:</p>
             <Combobox
               options={targetPageOptions}
@@ -319,7 +319,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'subplotId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a subplot:</p>
             <Combobox
               options={subplotOptions}
@@ -337,7 +337,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'variableKey' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select a variable:</p>
             {variableOptions.length > 0 ? (
               <Combobox
@@ -355,7 +355,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'value' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Set value:</p>
             <div style={{ display: 'flex', gap: '0.25rem' }}>
               <input
@@ -486,7 +486,7 @@ export const BlueprintCard: React.FC<BlueprintCardProps> = ({
         )}
 
         {popoverState.tokenTarget === 'itemId' && (
-          <div style={{ padding: '0.5rem', background: '#fff', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <div className={styles.popoverPanel}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', fontWeight: 600 }}>Select an item:</p>
             {itemOptions.length > 0 ? (
               <Combobox

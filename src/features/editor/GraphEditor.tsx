@@ -4,32 +4,36 @@ import '@xyflow/react/dist/style.css';
 import { EditorMenuBar } from './components/EditorShell/EditorMenuBar';
 import { EditorRail } from './components/EditorShell/EditorRail';
 import { NewSubplotDialog } from './components/EditorShell/NewSubplotDialog';
-import { EditorSidebar } from './components/EditorSidebar/EditorSidebar';
+import { Inspector } from './components/Inspector/Inspector';
 import { EditorToolbar } from './components/EditorToolbar/EditorToolbar';
 import { FlowView } from './components/FlowView/FlowView';
 import { EditorDashboard } from './components/EditorDashboard/EditorDashboard';
 import { usePersistenceState } from './hooks/core/usePersistenceState';
 import { useNodesCount } from './hooks/core/useNodesCount';
 import { useEditorLayoutActions } from './hooks/core/useEditorLayoutActions';
+import { useDeselectOnEscape } from './hooks/view/useDeselectOnEscape';
 import { useEditorStore } from './store/useEditorStore';
 import type { MenuConfig } from '../../components/ui/MenuBar/MenuBar';
 
 import styles from './GraphEditor.module.css';
 
 export interface GraphEditorProps {
-  /** File / Story / View groups, shown behind the wordmark. */
+  /** File / Story groups, shown behind the wordmark. */
   menus: MenuConfig[];
-  onPlay: () => void;
+  /** Starts playback, optionally from a page other than the story's start. */
+  onPlay: (startAtPageId?: string) => void;
 }
 
 /**
- * The editor shell: menu bar across the top, then rail, working surface and
- * inspector in a row. Panels sit beside the canvas rather than over it.
+ * The editor shell: menu bar across the top, then rail, canvas and inspector
+ * in a row. Nothing covers the canvas.
  */
 export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
   const { _hasHydrated } = usePersistenceState();
   const nodesCount = useNodesCount();
   const { addPage } = useEditorLayoutActions();
+
+  useDeselectOnEscape();
 
   // Initialization: add one starting node if canvas is empty
   useEffect(() => {
@@ -53,15 +57,9 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
           <EditorToolbar />
           <FlowView />
         </main>
-      </div>
 
-      {/*
-        Still the bottom drawer, so it sits below the row rather than inside it
-        — as a full-width, non-shrinking flex child it would take the whole row
-        and collapse the canvas to nothing. It becomes the persistent 400px
-        inspector column in the next step, and moves inside `body` then.
-      */}
-      <EditorSidebar />
+        <Inspector onPlayFromPage={onPlay} />
+      </div>
 
       <EditorDashboard />
       <NewSubplotDialog />

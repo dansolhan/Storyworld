@@ -1,0 +1,204 @@
+/* Shared by the four inspector tab bodies. */
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.sectionKicker {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+/* — add row — */
+
+.addRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-start;
+  padding: var(--space-1) 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.addRow:hover {
+  color: var(--color-accent-300);
+}
+
+.addIcon {
+  width: 12px;
+  height: 12px;
+}
+
+/* — fields — */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fieldLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text);
+}
+
+.input:hover {
+  border-color: var(--color-text-faint);
+}
+
+.input:focus-visible {
+  border-color: var(--color-accent-line);
+  outline-offset: 0;
+}
+
+.pageId {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+/* — choices — */
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.choice:hover {
+  border-color: var(--color-line-strong);
+}
+
+.choice[data-active] {
+  border-color: var(--color-accent-line);
+  background-color: var(--color-bg-selected);
+}
+
+.choiceText {
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.choiceText::placeholder {
+  color: var(--color-text-faint);
+}
+
+.choiceTarget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.targetLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.targetLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.targetMissing {
+  font-size: var(--text-meta);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.choiceActions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.rowIcon {
+  width: 11px;
+  height: 11px;
+}
+
+.rowButton {
+  padding: 2px var(--space-2);
+  background: none;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.rowButton:hover {
+  background-color: var(--color-accent-hover-row);
+  color: var(--color-text);
+}
+
+.rowButton[data-active] {
+  border-color: var(--color-accent-line);
+  color: var(--color-accent);
+}

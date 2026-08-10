@@ -45,3 +45,24 @@
 .deleteBtn:hover {
   opacity: 0.8;
 }
+/*
+ * Two blocks that were inline light-theme styles: a validation message and the
+ * parameter popover panel.
+ */
+.validationError {
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-danger-line);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+.popoverPanel {
+  min-width: 200px;
+  padding: var(--space-2);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}

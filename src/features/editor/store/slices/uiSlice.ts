@@ -1,6 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState } from '../editorTypes';
 import { DEFAULT_WORKSPACE } from '../editorWorkspace';
+import { DEFAULT_INSPECTOR_TAB } from '../inspectorTab';
 
 /**
  * Editor UI state.
@@ -26,10 +27,8 @@ export const createUISlice: StateCreator<
     | 'setHasHydrated'
     | 'selectedPageId'
     | 'setSelectedPage'
-    | 'sidebarTab'
-    | 'setSidebarTab'
-    | 'isEditorSidebarExpanded'
-    | 'setIsEditorSidebarExpanded'
+    | 'inspectorTab'
+    | 'setInspectorTab'
     | 'connectingChoice'
     | 'setConnectingChoice'
     | 'isSelectingStartNode'
@@ -54,8 +53,7 @@ export const createUISlice: StateCreator<
   setHasHydrated: (state) => set({ _hasHydrated: state }),
 
   selectedPageId: null,
-  sidebarTab: 'page' as string,
-  isEditorSidebarExpanded: false,
+  inspectorTab: DEFAULT_INSPECTOR_TAB,
   connectingChoice: null,
   isSelectingStartNode: false,
   isDragging: false,
@@ -83,18 +81,13 @@ export const createUISlice: StateCreator<
     set((state) => ({
       ...state,
       selectedPageId: pageId,
-      sidebarTab: 'page', // reset to Page tab whenever a new page is selected
+      inspectorTab: DEFAULT_INSPECTOR_TAB, // a new page starts on Write
       // Selecting a page is a statement about the graph, so go there.
       ...(pageId !== null && { activeWorkspace: 'graph' as const }),
-      ...(pageId === null && { isEditorSidebarExpanded: false }),
     }));
   },
 
-  setSidebarTab: (tab) => set({ sidebarTab: tab }),
-
-  setIsEditorSidebarExpanded: (expanded) => {
-    set({ isEditorSidebarExpanded: expanded });
-  },
+  setInspectorTab: (tab) => set({ inspectorTab: tab }),
 
   setConnectingChoice: (choice) => {
     set((state) => ({

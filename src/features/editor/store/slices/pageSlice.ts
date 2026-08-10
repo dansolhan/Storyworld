@@ -3,7 +3,7 @@ import type { EditorState, EditorNode } from '../editorTypes';
 import type { Page } from '../../../../domain/Page/Page';
 import { syncSyntheticNodes } from '../../utils/syncSyntheticNodes';
 
-export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType'>> = (set, get) => ({
+export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType' | 'updatePageAtmosphere'>> = (set, get) => ({
   pages: {},
   setPages: (pages) => set({ pages }),
   addPage: (x, y, atmosphereId) => {
@@ -59,6 +59,23 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
       const nextPages = {
         ...state.pages,
         [pageId]: { ...state.pages[pageId], type: newType }
+      };
+      const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
+    });
+  },
+
+  /**
+   * Assigning a page's atmosphere. This lived as a raw `setState` with a cast
+   * inside the sidebar component; syncSyntheticNodes already copies
+   * `atmosphereId` from the domain page onto the node, so the page is the only
+   * thing that needs writing.
+   */
+  updatePageAtmosphere: (pageId, atmosphereId) => {
+    set((state) => {
+      const nextPages = {
+        ...state.pages,
+        [pageId]: { ...state.pages[pageId], atmosphereId }
       };
       const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
       return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };

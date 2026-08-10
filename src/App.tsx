@@ -4,19 +4,18 @@ import { GraphEditor } from './features/editor/GraphEditor';
 import { Player } from './features/player/Player';
 import { Button } from './components/ui/Button/Button';
 import { useStoryImport } from './features/editor/hooks/useStoryImport';
-import type { StoryData } from './domain/Story/StoryData';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MainLayout } from './layout/MainLayout';
-import { useAppActions } from './hooks/useAppActions';
+import { useAppActions, type PlaySession } from './hooks/useAppActions';
 import { getMenuConfig } from './config/menuConfig';
 import styles from './App.module.css';
 
 function App() {
   const [mode, setMode] = useState<'dashboard' | 'editor' | 'player'>('dashboard');
-  const [playingStory, setPlayingStory] = useState<StoryData | null>(null);
+  const [playSession, setPlaySession] = useState<PlaySession | null>(null);
   const { fileInputRef, handleImportClick, handleFileChange } = useStoryImport();
 
-  const { handlePlay, handleExportJson, handleExportStoryworld } = useAppActions(setMode, setPlayingStory);
+  const { handlePlay, handleExportJson, handleExportStoryworld } = useAppActions(setMode, setPlaySession);
 
   const menus = useMemo(() =>
     getMenuConfig(setMode, handleImportClick, handleExportJson, handleExportStoryworld),
@@ -51,7 +50,13 @@ function App() {
           <GraphEditor menus={menus} onPlay={handlePlay} />
         </ReactFlowProvider>
       ) : (
-        playingStory && <Player storyData={playingStory} onExit={() => setMode('editor')} />
+        playSession && (
+          <Player
+            storyData={playSession.story}
+            startPageId={playSession.startPageId}
+            onExit={() => setMode('editor')}
+          />
+        )
       )}
     </MainLayout>
   );

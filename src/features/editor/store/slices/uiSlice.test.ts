@@ -98,6 +98,26 @@ describe('uiSlice', () => {
     });
   });
 
+  describe('inspectorTab', () => {
+    it('starts on Write', () => {
+      expect(useEditorStore.getState().inspectorTab).toBe('write');
+    });
+
+    it('returns to Write whenever a page is selected', () => {
+      useEditorStore.getState().setInspectorTab('logic');
+      expect(useEditorStore.getState().inspectorTab).toBe('logic');
+
+      useEditorStore.getState().setSelectedPage('page-1');
+      expect(useEditorStore.getState().inspectorTab).toBe('write');
+    });
+
+    it('holds a tab while the same page stays selected', () => {
+      useEditorStore.getState().setSelectedPage('page-1');
+      useEditorStore.getState().setInspectorTab('choices');
+      expect(useEditorStore.getState().inspectorTab).toBe('choices');
+    });
+  });
+
   describe('lastSavedAt', () => {
     it('records the timestamp it is given', () => {
       useEditorStore.getState().setLastSavedAt(1_700_000_000_000);

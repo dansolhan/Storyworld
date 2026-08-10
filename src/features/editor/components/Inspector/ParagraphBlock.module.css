@@ -1,0 +1,75 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.block:hover {
+  border-color: var(--color-line-strong);
+}
+
+.block[data-active] {
+  border-color: var(--color-accent-line);
+  background-color: var(--color-bg-selected);
+}
+
+.block[data-locked] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* The lock toggle has to stay reachable to unlock the block again. */
+.block[data-locked] .lockToggle {
+  pointer-events: auto;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lockToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.lockToggle:hover,
+.lockToggle[data-active] {
+  color: var(--color-accent);
+}
+
+.visibilityIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+}
+
+.toolIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.events {
+  border-top: 1px solid var(--color-line-soft);
+  padding-top: var(--space-2);
+}
