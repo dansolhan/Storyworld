@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useEngine, useEngineStore } from './EngineContext';
+import { useEngine } from './useEngine';
+import { useEngineStore } from './useEngineStore';
 import { audioManager } from '../../../lib/audioManager';
 import type { StoryEffect } from '../../../lib/engine/types';
 
@@ -17,7 +18,12 @@ export const useEngineEffects = (options: EngineEffectsOptions = {}) => {
   // Identity, not an id: each dispatch produces a fresh effect object.
   const lastProcessedEffectId = useRef<StoryEffect | null>(null);
   const optionsRef = useRef(options);
-  optionsRef.current = options;
+
+  // Kept current in an effect rather than during render, and declared before
+  // the effect below so it is already up to date when that one runs.
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
 
   useEffect(() => {
     if (!lastEffect || lastEffect === lastProcessedEffectId.current) return;

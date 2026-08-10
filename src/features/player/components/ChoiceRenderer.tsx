@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useEngine } from '../adapter/EngineContext';
+import { useEngine } from '../adapter/useEngine';
 import { usePlayerUIStore } from '../adapter/usePlayerUI';
 import { useChoiceSound } from '../hooks/useChoiceSound';
 import { Button } from '../../../components/ui/Button/Button';

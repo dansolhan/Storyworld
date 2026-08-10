@@ -1,6 +1,7 @@
 import React from 'react';
 import { Popover } from '../../../../../components/ui/Popover/Popover';
-import { EndDataEditor, endStoryFields } from './EndDataEditor';
+import { EndDataEditor } from './EndDataEditor';
+import { endStoryFields } from './endStoryField';
 import { PageSelection } from './popovers/PageSelection';
 import { SubplotSelection } from './popovers/SubplotSelection';
 import { VariableSelection } from './popovers/VariableSelection';

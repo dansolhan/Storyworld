@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useEngineStore } from '../../adapter/EngineContext';
+import { useEngineStore } from '../../adapter/useEngineStore';
 import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './StatusDataDisplay.module.css';
 import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';

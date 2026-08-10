@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect, createContext } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { LogicTreeContext } from './logicTreeContext';
 import { Tree, TreeApi } from 'react-arborist';
 import type { MoveHandler, NodeApi } from 'react-arborist';
 import type { LogicNode, DraggedToolboxItem } from './types';
@@ -14,10 +15,6 @@ interface LogicTreeProps {
 
 const generateId = () => crypto.randomUUID();
 
-export interface LogicTreeContextValue {
-  updateNodeParams: (nodeId: string, params: Record<string, unknown>) => void;
-}
-export const LogicTreeContext = createContext<LogicTreeContextValue | null>(null);
 
 export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
   const treeRef = useRef<TreeApi<LogicNode>>(null);
@@ -336,17 +333,17 @@ export const LogicTree: React.FC<LogicTreeProps> = ({ data, onChange }) => {
   // Use a ResizeObserver to sync the container width to Tree
   useEffect(() => {
     if (!dndRoot) return;
-    
-    const rect = dndRoot.getBoundingClientRect();
-    setWidth(rect.width);
 
+    // ResizeObserver reports the current size on observe, so the initial
+    // measurement arrives through the callback rather than a synchronous
+    // setState in the effect body.
     const observer = new ResizeObserver((entries) => {
       if (entries[0]) {
         setWidth(entries[0].contentRect.width);
       }
     });
     observer.observe(dndRoot);
-    
+
     return () => observer.disconnect();
   }, [dndRoot]);
 

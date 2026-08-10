@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useEngineStore, useEngine } from '../../adapter/EngineContext';
+import { useEngine } from '../../adapter/useEngine';
+import { useEngineStore } from '../../adapter/useEngineStore';
 import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
 import styles from './Inventory.module.css';
 import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';

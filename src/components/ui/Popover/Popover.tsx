@@ -103,10 +103,12 @@ export const Popover: React.FC<PopoverProps> = ({
    * which React cannot track; holding it in state settles after one extra
    * render and stays honest.
    */
-  const [childrenWhileClosing, setChildrenWhileClosing] = useState<React.ReactNode>(children);
-  useEffect(() => {
-    if (isOpen) setChildrenWhileClosing(children);
-  }, [isOpen, children]);
+  const [lastOpenChildren, setLastOpenChildren] = useState<React.ReactNode>(children);
+  if (isOpen && lastOpenChildren !== children) {
+    // Adjusting state during render, as React documents for deriving from
+    // props: it re-renders immediately, before anything is painted.
+    setLastOpenChildren(children);
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -148,7 +150,7 @@ export const Popover: React.FC<PopoverProps> = ({
       data-popover="true"
       onClick={(e) => e.stopPropagation()}
     >
-      {isOpen ? children : childrenWhileClosing}
+      {lastOpenChildren}
     </div>,
     document.body
   );

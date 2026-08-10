@@ -4,7 +4,7 @@ import type { LogicNode } from './types';
 import { Zap, HelpCircle, ChevronRight, ChevronDown, GripVertical, Trash2 } from 'lucide-react';
 import { actionBlueprints } from '../../../../domain/Actions/registry';
 import { conditionalBlueprints } from '../../../../domain/Conditionals/registry';
-import { LogicTreeContext } from './LogicTree';
+import { LogicTreeContext } from './logicTreeContext';
 import { BlueprintRenderer } from './BlueprintRenderer';
 import styles from './LogicTreeNode.module.css';
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useEngineStore, useEngine } from '../adapter/EngineContext';
+import { useEngine } from '../adapter/useEngine';
+import { useEngineStore } from '../adapter/useEngineStore';
 import { parseTextTokens } from '../../../utils/textParser';
 import styles from '../Player.module.css';
 

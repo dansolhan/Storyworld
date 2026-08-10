@@ -112,12 +112,30 @@ Fixed after step 1b:
   Now `useId`. While there, both gained `aria-invalid` and `aria-describedby`,
   so the error text they already rendered is actually announced.
 
+Also cleared, in a pass of its own after step 1b:
+
+- **`npm run lint` reports zero problems**, down from 152 at the branch point.
+  All 94 `any`s are gone, along with the React hook-correctness errors
+  (refs read during render, `setState` in effect bodies, a stale closure in
+  `AudioUploader`) and the fast-refresh violations.
+- Two bugs surfaced while typing, both recorded above and below: the
+  `Conditional[]` adapter, and a `title` field the contextual-text popover was
+  never sent.
+- Contexts and hooks were split out of component modules — `EngineContext`
+  became `engineContext` / `useEngine` / `useEngineStore` / `EngineProvider`,
+  and `LogicTreeContext` got its own file — which is what `claude.md`'s
+  one-entity-per-file rule wanted anyway.
+- `src/features/player/context/PageContext.tsx` was deleted: nothing imported
+  `PageProvider` or `usePageId`.
+
 Still outstanding:
 
-- Roughly 130 `no-explicit-any` lint errors remain across `src/`, concentrated
-  in `domain/Story/migrations`, the action and conditional registries, and the
-  rich-text feature classes. `claude.md` forbids `any`; this wants a pass of its
-  own rather than being smuggled into redesign commits.
+- Root-level throwaway scripts and fixtures — `upgradeStory.ts`,
+  `upgradeStorySelect.ts`, `migrate_adventure.cjs`, `migrate_adventure.js`,
+  `test_adventure.json`, `test_output.txt`, `lint_output.txt` — are unreferenced
+  one-offs, superseded by the migration system. `upgradeStory.ts` was typed
+  rather than deleted; deciding whether the whole set should go is a separate
+  call.
 
 ## Conventions this work established
 
