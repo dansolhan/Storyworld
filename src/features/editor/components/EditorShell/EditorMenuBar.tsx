@@ -3,6 +3,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Play } from 'lucide-react';
 import type { MenuConfig } from '../../../../config/menuConfig';
 import { useEditorStore } from '../../store/useEditorStore';
+import { shortcutLabel } from '../../../../utils/platform';
 import styles from './EditorMenuBar.module.css';
 
 export interface EditorMenuBarProps {
@@ -57,6 +58,14 @@ export const EditorMenuBar: React.FC<EditorMenuBarProps> = ({ menus, onPlay }) =
       </DropdownMenu.Root>
 
       <span className={styles.storyTitle}>{storyTitle}</span>
+
+      <button
+        type="button"
+        className={styles.search}
+        onClick={() => useEditorStore.getState().setOpenDialog('palette')}
+      >
+        Search anything <span className={styles.searchKey}>{shortcutLabel('K')}</span>
+      </button>
 
       <button type="button" className={styles.play} onClick={onPlay}>
         <Play className={styles.playIcon} aria-hidden="true" />

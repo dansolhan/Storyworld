@@ -5,6 +5,8 @@ import { useEditorLayoutActions } from '../../hooks/core/useEditorLayoutActions'
 import { useSubplots } from '../../hooks/story/useSubplots';
 import { usePlotActions } from '../../hooks/story/usePlotActions';
 import { useEdgeVisibilityState } from '../../hooks/view/useEdgeVisibilityState';
+import { useEditorStore } from '../../store/useEditorStore';
+import { nextPagePosition } from '../../utils/nextPagePosition';
 import styles from './EditorToolbar.module.css';
 
 const MAIN_PLOT = 'MAIN';
@@ -25,8 +27,8 @@ export const EditorToolbar: React.FC = memo(() => {
   const { showAllEdges, setShowAllEdges } = useEdgeVisibilityState();
 
   const handleAddNewPage = () => {
-    const x = Math.random() * 400;
-    const y = Math.random() * 400;
+    const { nodes, selectedPageId } = useEditorStore.getState();
+    const { x, y } = nextPagePosition(nodes, selectedPageId);
     addPage(x, y);
   };
 

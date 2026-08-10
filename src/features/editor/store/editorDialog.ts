@@ -5,4 +5,4 @@
  * mistake `activeWorkspace` replaced. The command palette and shortcut sheet
  * join this union when they are built.
  */
-export type EditorDialog = 'newSubplot';
+export type EditorDialog = 'newSubplot' | 'palette';

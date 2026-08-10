@@ -99,3 +99,31 @@
   margin: var(--space-1) 0;
   background-color: var(--color-line);
 }
+
+/* The ⌘K affordance, per the design: a hairline chip left of Play. */
+.search {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  padding: var(--space-1) var(--space-2);
+  background: none;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.search:hover {
+  border-color: var(--color-line-strong);
+  color: var(--color-text-dim);
+}
+
+.searchKey {
+  font-family: var(--font-mono);
+}

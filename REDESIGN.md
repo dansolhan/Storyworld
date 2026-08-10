@@ -34,45 +34,70 @@ The foundation every other screen is drawn inside.
 - **Primitives** restyled onto the palette; `MenuBar` and `Tabs` deleted as
   dead. New components (wordmark menu, dialog, inspector tabs) are on Radix.
 
+## Done — step 2, the ⌘K command palette
+
+- **Ctrl+K / ⌘K** open it, both bound and the hint rendered per platform. Editor
+  only — it searches one story's contents.
+- **Four groups**, in the design's order: `PAGES`, `CHOICES`, `IN TEXT`,
+  `ACTIONS`. Prose rows quote an excerpt and name where it lives
+  ("The Forgotten Shrine · paragraph 1").
+- **A memoised index** (`useSearchIndex`) flattens pages, choices and paragraphs,
+  stripping HTML once per story change rather than once per keystroke. Variable
+  tokens survive stripping, so `{{gold}}` is findable; contextual `data-context`
+  text does not, since it belongs to screen 5a.
+- **Substring matching**, all terms required, behind a single `matchPosition` so
+  fuzzy can replace it later. Ranked pages → choices → prose, then by match
+  position.
+- **Empty query is a page switcher** — pages alphabetically, plus actions.
+- **`⏎`** opens the highlighted row; **`⌘⏎`** fires the first action. Creating a
+  page is ordered *last* among actions, so a matching command stays reachable —
+  it is still first whenever nothing else matched.
+- Selecting a row navigates, frames the page, opens the right tab and reveals the
+  paragraph or choice, via a shared `useRevealPage` and a `revealRequest` in the
+  store. The Choices tab's target link was rewritten onto it, and Story Health
+  will use the same path.
+- `findSmartNodePosition` was written but never called; both `+ Page` and the
+  palette's create action now place pages through it instead of at a random
+  offset that could land on top of an existing node.
+
 ## Next
 
 Roughly in dependency order.
 
-1. **⌘K command palette** — pages, full-text matches over paragraphs, and
-   actions. Needs a page index and a text index. The `⌘K` chip is deliberately
-   *not* rendered until this works. Add `'palette'` to `EditorDialog`.
-2. **`3a` Data workspace** — fold the six modal managers into one workspace
+1. **`3a` Data workspace** — fold the six modal managers into one workspace
    behind the rail. Retires `ExpandableBottomPanel` and `SidePanel`, still used
    by six managers. **This also removes a real trap**: the Audio manager is a
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-3. **`3b` Logic as sentences** — replace the drag-and-drop `LogicTreeBuilder`
+2. **`3b` Logic as sentences** — replace the drag-and-drop `LogicTreeBuilder`
    with prose and a searchable rule picker. Same data model (`events[]` with
    `logicTree`); presentation only. Likely retires `react-arborist`.
-4. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
+3. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
    dashed `NEW · UNWRITTEN` node; undo toast. The Choices tab already has the
    structure and both buttons.
-5. **`4b` Story health** — pure derivation over existing state: unreachable
+4. **`4b` Story health** — pure derivation over existing state: unreachable
    pages, dead ends, unconnected choices, unused items/variables/audio/
    atmospheres. Add `'health'` to `EditorWorkspace`.
-6. **`4a` Dashboard** and **`4c` Atmospheres & audio**.
-7. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+5. **`4a` Dashboard** and **`4c` Atmospheres & audio**.
+6. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-8. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-9. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+7. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+8. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-10. **`6c` History & export**, **`6d` shortcut sheet**.
+9. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
 - **Rail items `Outline` and `Text search`** — in the design, absent from the
   codebase. The rail lists only places you can actually go, so they were left
-  out rather than shipped disabled. Add to `RAIL_SECTIONS` when built.
+  out rather than shipped disabled. Add to `RAIL_SECTIONS` when built. Text
+  search should read the palette's index (`useSearchIndex`) rather than build
+  its own.
 - **Headless-layer migration to Radix.** `Combobox` has ten call sites, six of
   them logic pickers where type-to-filter is the point, and Radix has no
   combobox primitive. `Popover` has six call sites that anchor to coordinates

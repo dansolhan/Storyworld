@@ -65,8 +65,9 @@ export function findSmartNodePosition(nodes: Node[], baseX: number, baseY: numbe
     }
   }
 
-  // Fallback if no spot found
-  return { x: baseX + 400, y: baseY + (Math.random() * 100) };
+  // Nowhere free within the grid: step out past the last column tried, which
+  // is deterministic — a random offset here made the caller impure for no gain.
+  return { x: baseX + columns.length * 400, y: baseY };
 }
 
 /**

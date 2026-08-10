@@ -14,8 +14,6 @@
   max-height: calc(100vh - 140px);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
   background-color: var(--color-bg-raised);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-md);
@@ -25,6 +23,11 @@
 .content:focus-visible {
   /* Radix focuses the panel on open; the ring reads as an error there. */
   outline: none;
+}
+
+.padded {
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
 }
 
 .header {

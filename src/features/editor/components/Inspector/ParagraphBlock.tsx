@@ -33,6 +33,7 @@ export const ParagraphBlock = React.memo(
 
     return (
       <div
+        id={`paragraph-${paragraph.id}`}
         className={`story-paragraph-block ${isActive ? 'story-paragraph-active' : ''} ${styles.block} ${isLocked ? 'locked' : ''}`}
         data-locked={isLocked || undefined}
         data-active={isActive || undefined}

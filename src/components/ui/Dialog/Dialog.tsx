@@ -24,6 +24,11 @@ export interface DialogContentProps extends React.ComponentPropsWithoutRef<typeo
   /** Width of the panel; the design's modals are 560px and 640px. */
   width?: number;
   showCloseButton?: boolean;
+  /**
+   * Set false for a panel that owns its own internal spacing — the command
+   * palette's rows run edge to edge under a query row.
+   */
+  padded?: boolean;
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({
@@ -32,28 +37,38 @@ export const DialogContent: React.FC<DialogContentProps> = ({
   description,
   width = 440,
   showCloseButton = true,
+  padded = true,
+  className,
   children,
   ...contentProps
 }) => (
   <RadixDialog.Portal>
     <RadixDialog.Overlay className={styles.overlay} />
     <RadixDialog.Content
-      className={styles.content}
+      // Merged rather than replaced, so a caller can extend the panel without
+      // losing the surface, border and elevation it is built on.
+      className={[styles.content, padded ? styles.padded : '', className].filter(Boolean).join(' ')}
       style={{ width: `min(${width}px, calc(100vw - 32px))` }}
       {...contentProps}
     >
-      <div className={styles.header}>
-        {hideTitle ? (
-          <RadixDialog.Title className={styles.visuallyHidden}>{title}</RadixDialog.Title>
-        ) : (
-          <RadixDialog.Title className={styles.title}>{title}</RadixDialog.Title>
-        )}
-        {showCloseButton && (
-          <RadixDialog.Close className={styles.close} aria-label="Close">
-            <X className={styles.closeIcon} aria-hidden="true" />
-          </RadixDialog.Close>
-        )}
-      </div>
+      {(!hideTitle || showCloseButton) && (
+        <div className={styles.header}>
+          {hideTitle ? (
+            <RadixDialog.Title className={styles.visuallyHidden}>{title}</RadixDialog.Title>
+          ) : (
+            <RadixDialog.Title className={styles.title}>{title}</RadixDialog.Title>
+          )}
+          {showCloseButton && (
+            <RadixDialog.Close className={styles.close} aria-label="Close">
+              <X className={styles.closeIcon} aria-hidden="true" />
+            </RadixDialog.Close>
+          )}
+        </div>
+      )}
+
+      {hideTitle && !showCloseButton && (
+        <RadixDialog.Title className={styles.visuallyHidden}>{title}</RadixDialog.Title>
+      )}
 
       {description !== undefined && (
         <RadixDialog.Description className={styles.description}>{description}</RadixDialog.Description>

@@ -1,0 +1,135 @@
+/* Sits nearer the top than a regular dialog, as the design draws it. */
+.panel {
+  top: 70px;
+  max-height: calc(100vh - 140px);
+}
+
+.palette {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.queryRow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.prompt {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  /* The design draws a 1px accent caret in the query row. */
+  caret-color: var(--color-accent);
+}
+
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.escHint {
+  flex: none;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.results {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2) 0 var(--space-1);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4);
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.group + .group {
+  margin-top: var(--space-2);
+}
+
+.groupHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  padding: var(--space-1) var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.groupCount {
+  letter-spacing: normal;
+  text-transform: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  /* Reserved at rest so the active marker never shifts the row. */
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.row[data-active] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-hover);
+}
+
+.rowLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+}
+
+.row[data-active] .rowLabel {
+  color: var(--color-text);
+}
+
+.rowDetail,
+.rowHint {
+  flex: none;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.rowHint {
+  font-family: var(--font-mono);
+  color: var(--color-accent);
+}

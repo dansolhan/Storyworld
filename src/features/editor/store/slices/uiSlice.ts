@@ -47,6 +47,8 @@ export const createUISlice: StateCreator<
     | 'setLastSavedAt'
     | 'openDialog'
     | 'setOpenDialog'
+    | 'revealRequest'
+    | 'setRevealRequest'
   >
 > = (set) => ({
   _hasHydrated: false,
@@ -63,6 +65,7 @@ export const createUISlice: StateCreator<
   hoveredPageId: null,
   lastSavedAt: null,
   openDialog: null,
+  revealRequest: null,
 
   setActiveWorkspace: (workspace) => {
     set((state) => ({
@@ -122,4 +125,5 @@ export const createUISlice: StateCreator<
   setHoveredPageId: (pageId) => set({ hoveredPageId: pageId }),
   setLastSavedAt: (timestamp) => set({ lastSavedAt: timestamp }),
   setOpenDialog: (dialog) => set({ openDialog: dialog }),
+  setRevealRequest: (request) => set({ revealRequest: request }),
 });

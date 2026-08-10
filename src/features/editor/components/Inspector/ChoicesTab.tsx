@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from 'react';
-import { useReactFlow } from '@xyflow/react';
+import React, { useState } from 'react';
 import { Crosshair, Plus } from 'lucide-react';
 import { useChoiceActions } from '../../hooks/page/useChoiceActions';
 import { useConnectingChoice } from '../../hooks/page/useConnectingChoice';
-import { usePageActions } from '../../hooks/page/usePageActions';
+import { useRevealPage } from '../../hooks/view/useRevealPage';
 import { useEditorStore } from '../../store/useEditorStore';
 import { EventsEditor } from '../EventsEditor/EventsEditor';
 import type { Page } from '../../../../domain/Page/Page';
@@ -23,21 +22,21 @@ export interface ChoicesTabProps {
  */
 export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
   const { addChoice, updateChoiceText, setConnectingChoice, createPageFromChoice } = useChoiceActions();
-  const { setSelectedPage } = usePageActions();
   const connectingChoice = useConnectingChoice();
   const pages = useEditorStore((state) => state.pages);
-  const { fitView, setNodes } = useReactFlow();
+  const revealRequest = useEditorStore((state) => state.revealRequest);
+  const revealPage = useRevealPage();
 
-  const [activeChoiceId, setActiveChoiceId] = useState<string | null>(null);
+  const [manualChoiceId, setManualChoiceId] = useState<string | null>(null);
+  const [lastRevealed, setLastRevealed] = useState(revealRequest?.choiceId);
 
-  const revealTarget = useCallback(
-    (targetPageId: string) => {
-      setSelectedPage(targetPageId);
-      setNodes((nodes) => nodes.map((node) => ({ ...node, selected: node.id === targetPageId })));
-      setTimeout(() => fitView({ nodes: [{ id: targetPageId }], duration: 800, maxZoom: 1 }), 50);
-    },
-    [setSelectedPage, setNodes, fitView]
-  );
+  const revealedChoiceId = revealRequest?.pageId === page.id ? revealRequest.choiceId : undefined;
+  if (revealedChoiceId !== lastRevealed) {
+    // A fresh reveal supersedes whatever was clicked before it.
+    setLastRevealed(revealedChoiceId);
+    setManualChoiceId(null);
+  }
+  const activeChoiceId = manualChoiceId ?? revealedChoiceId ?? null;
 
   return (
     <div className={styles.tab}>
@@ -58,8 +57,8 @@ export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
               key={choice.id}
               className={styles.choice}
               data-active={isActive || undefined}
-              onClick={() => setActiveChoiceId(choice.id)}
-              onFocusCapture={() => setActiveChoiceId(choice.id)}
+              onClick={() => setManualChoiceId(choice.id)}
+              onFocusCapture={() => setManualChoiceId(choice.id)}
             >
               <input
                 type="text"
@@ -74,7 +73,7 @@ export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
                   <button
                     type="button"
                     className={styles.targetLink}
-                    onClick={() => revealTarget(choice.targetPageId!)}
+                    onClick={() => revealPage({ pageId: choice.targetPageId! })}
                     title="Show on canvas"
                   >
                     <Crosshair className={styles.rowIcon} aria-hidden="true" />
