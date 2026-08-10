@@ -24,6 +24,7 @@ export const EditorRail: React.FC = React.memo(() => {
             {section.items.map((item) => {
               const isActive = activeWorkspace === item.workspace;
               const Icon = item.icon;
+              const count = item.countKey === undefined ? undefined : counts[item.countKey];
               return (
                 <li key={item.workspace}>
                   <button
@@ -31,13 +32,17 @@ export const EditorRail: React.FC = React.memo(() => {
                     className={styles.item}
                     data-active={isActive || undefined}
                     aria-current={isActive ? 'page' : undefined}
+                    /*
+                     * The label and count sit in adjacent elements with no
+                     * whitespace between them, which a screen reader would
+                     * otherwise read as "Items1".
+                     */
+                    aria-label={count === undefined ? undefined : `${item.label}, ${count}`}
                     onClick={() => setActiveWorkspace(item.workspace)}
                   >
                     <Icon className={styles.icon} aria-hidden="true" />
                     <span className={styles.label}>{item.label}</span>
-                    {item.countKey !== undefined && (
-                      <span className={styles.count}>{counts[item.countKey]}</span>
-                    )}
+                    {count !== undefined && <span className={styles.count}>{count}</span>}
                   </button>
                 </li>
               );

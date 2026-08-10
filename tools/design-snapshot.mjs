@@ -11,7 +11,6 @@
  *
  *   --skip-build       reuse an existing dist/ and cached Storybook build
  *   --only app|sb      capture only the app, or only Storybook
- *   --no-dark          skip the forced-dark variants
  *   --no-png           skip screenshots
  *   --zip              also write design-snapshot.zip
  *   --headed           show the browser (useful when a step misbehaves)
@@ -33,8 +32,7 @@ const CACHE = path.join(ROOT, 'node_modules', '.cache', 'design-snapshot');
 const SB_STATIC = path.join(CACHE, 'storybook');
 
 const FONTS =
-  'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700' +
-  '&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900' +
+  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400' +
   '&family=Lora:ital,wght@0,400..700;1,400..700&display=swap';
 
 const argv = process.argv.slice(2);
@@ -46,7 +44,6 @@ const opt = (n, d) => {
 
 const SKIP_BUILD = flag('skip-build');
 const ONLY = opt('only', 'both');
-const WANT_DARK = !flag('no-dark');
 const WANT_PNG = !flag('no-png');
 const WANT_ZIP = flag('zip');
 const HEADED = flag('headed');
@@ -172,41 +169,18 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const attrs = (pairs) =>
   pairs.map(([k, v]) => ` ${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
 
-/**
- * Lift the declarations inside `@media (prefers-color-scheme: dark)` out of the
- * media query so the dark variant renders dark regardless of the viewer's OS.
+/*
+ * The app is dark-only, so there is one snapshot per screen. This used to emit
+ * a `.dark.html` twin as well, hoisting declarations out of
+ * `@media (prefers-color-scheme: dark)`; there is no such block left to hoist.
  */
-function forceDark(css) {
-  const marker = '@media (prefers-color-scheme: dark)';
-  const out = [];
-  let i = 0;
-  for (;;) {
-    const at = css.indexOf(marker, i);
-    if (at === -1) break;
-    const open = css.indexOf('{', at);
-    if (open === -1) break;
-    let depth = 0, end = open;
-    for (let j = open; j < css.length; j++) {
-      if (css[j] === '{') depth++;
-      else if (css[j] === '}' && --depth === 0) { end = j; break; }
-    }
-    out.push(css.slice(open + 1, end));
-    i = end + 1;
-  }
-  return out.join('\n');
-}
-
-async function writeSnapshot({ slug, group, title, note, data, theme }) {
-  const dark = theme === 'dark';
-  const name = dark ? `${slug}.dark` : slug;
-  const file = path.join(OUT, group, `${name}.html`);
+async function writeSnapshot({ slug, group, title, note, data }) {
+  const file = path.join(OUT, group, `${slug}.html`);
   await mkdir(path.dirname(file), { recursive: true });
 
   const links = [...new Set([FONTS, ...data.external])]
     .map((h) => `<link rel="stylesheet" href="${h}">`)
     .join('\n');
-
-  const override = dark ? forceDark(data.css) : '';
 
   const html = `<!doctype html>
 <!-- @dsCard group="${esc(group)}" -->
@@ -214,16 +188,11 @@ async function writeSnapshot({ slug, group, title, note, data, theme }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}${dark ? ' (dark)' : ''}</title>
+<title>${esc(title)}</title>
 ${note ? `<!-- ${esc(note)} -->\n` : ''}${links}
 <style>
 ${data.css}
-</style>${override ? `
-<!-- dark palette hoisted out of the prefers-color-scheme media query -->
-<style>
-:root { color-scheme: dark; }
-${override}
-</style>` : ''}
+</style>
 </head>
 <body${attrs(data.bodyAttrs)}>
 ${data.bodyHtml}
@@ -234,13 +203,10 @@ ${data.bodyHtml}
   return path.relative(OUT, file).split(path.sep).join('/');
 }
 
-/** Capture the page as-is: HTML (light + dark) and optionally a PNG. */
+/** Capture the page as-is: HTML and optionally a PNG. */
 async function capture(page, { slug, group, title, note, clip }) {
   const data = await page.evaluate(serializeInPage);
-  const files = [await writeSnapshot({ slug, group, title, note, data, theme: 'light' })];
-  if (WANT_DARK) {
-    files.push(await writeSnapshot({ slug, group, title, note, data, theme: 'dark' }));
-  }
+  const files = [await writeSnapshot({ slug, group, title, note, data })];
 
   let png = null;
   if (WANT_PNG) {
@@ -258,20 +224,25 @@ async function capture(page, { slug, group, title, note, clip }) {
 const settle = (page, ms = 350) => page.waitForTimeout(ms);
 
 /** Click by accessible name; resolves false instead of throwing if absent. */
-async function clickIfPresent(page, name, { exact = true, timeout = 4000 } = {}) {
+async function clickIfPresent(page, name, { exact = true, timeout = 4000, role = 'button' } = {}) {
   try {
-    await page.getByRole('button', { name, exact }).first().click({ timeout });
+    await page.getByRole(role, { name, exact }).first().click({ timeout });
     await settle(page);
     return true;
   } catch {
     return false;
   }
 }
-
-/** Open a MenuBar dropdown and pick an item. */
-async function menu(page, top, item) {
-  if (!(await clickIfPresent(page, top))) return false;
-  if (!(await clickIfPresent(page, item))) {
+/**
+ * The editor's menu lives behind the STORYWORLD wordmark, and every group is
+ * shown at once, so `group` is only here to say what the caller meant — the
+ * group headings are labels, not clickable items.
+ */
+async function menu(page, group, item) {
+  void group;
+  if (!(await clickIfPresent(page, 'Storyworld menu'))) return false;
+  // Radix menu entries are `menuitem`, not `button`.
+  if (!(await clickIfPresent(page, item, { role: 'menuitem' }))) {
     await page.keyboard.press('Escape').catch(() => {});
     return false;
   }
@@ -359,7 +330,7 @@ async function captureApp(browser) {
 
     await step('editor-graph', () =>
       capture(page, {
-        slug: 'editor-graph', group: 'app', title: 'Graph editor — canvas, toolbar, menubar',
+        slug: 'editor-graph', group: 'app', title: 'Graph editor — canvas, rail, toolbar, menu bar',
         note: 'React Flow canvas frozen at one zoom/pan; nodes are transform-positioned.',
       })
     );
@@ -382,30 +353,49 @@ async function captureApp(browser) {
       await selectGraphNode(page);
       await capture(page, {
         slug: 'editor-node-selected', group: 'app',
-        title: 'Editor — page selected, sidebar inspector open',
-        note: 'Covers EditorSidebar, Tabs, RichTextEditor, EventsEditor, TagInput.',
+        title: 'Editor — page selected, inspector open',
+        note: 'Covers Inspector, its four tabs, RichTextEditor and EventsEditor.',
       });
     });
 
+    /*
+     * Reached from the rail rather than the menu — the rail is the real
+     * navigation now, and it is one click with nothing to dismiss first: each
+     * workspace replaces the last, because `activeWorkspace` holds only one.
+     * Rail labels carry their count in the accessible name ("Items, 5"), so
+     * these match loosely.
+     */
     const panels = [
-      ['Story', 'Settings', 'story-settings', 'Story settings drawer'],
-      ['Data', 'Items', 'items-manager', 'Item manager'],
-      ['Data', 'Variables', 'variables-manager', 'Variable manager'],
-      ['Data', 'Audio', 'audio-manager', 'Audio manager'],
-      ['Data', 'Atmosphere', 'atmosphere-manager', 'Atmosphere manager'],
-      ['Data', 'Status Data', 'status-data-manager', 'Status data manager'],
-      ['Data', 'Context', 'context-manager', 'Context manager'],
+      ['Settings', 'story-settings', 'Story settings drawer'],
+      ['Items', 'items-manager', 'Item manager'],
+      ['Variables', 'variables-manager', 'Variable manager'],
+      ['Audio', 'audio-manager', 'Audio manager'],
+      ['Atmospheres', 'atmosphere-manager', 'Atmosphere manager'],
+      ['Status data', 'status-data-manager', 'Status data manager'],
+      ['Context', 'context-manager', 'Context manager'],
     ];
-    for (const [top, item, slug, title] of panels) {
+    for (const [railLabel, slug, title] of panels) {
       await step(slug, async () => {
-        if (!(await menu(page, top, item))) throw new Error(`${top} > ${item} unavailable`);
+        if (!(await clickIfPresent(page, railLabel, { exact: false }))) {
+          throw new Error(`rail item "${railLabel}" unavailable`);
+        }
+        await settle(page, 500);
         await capture(page, { slug, group: 'app-panels', title });
+        // The Audio manager is a true modal and covers the rail, so the next
+        // rail click cannot land until it is dismissed. Folding these six into
+        // the Data workspace removes the problem.
         await dismiss(page);
       });
     }
 
+    // Back to the graph so the player capture can reach the menu bar.
+    await step('return-to-graph', async () => {
+      await clickIfPresent(page, 'Graph', { exact: false });
+      await settle(page, 400);
+    });
+
     await step('player', async () => {
-      if (!(await clickIfPresent(page, '▶ Play Story', { exact: false }))) {
+      if (!(await clickIfPresent(page, 'Play', { exact: true }))) {
         throw new Error('play button not found');
       }
       await settle(page, 1500);
@@ -580,12 +570,12 @@ async function writeIndex() {
       .filter((m) => m.group === g)
       .map((m) => {
         const light = m.files[0];
-        const dark = m.files[1];
+
         return `<figure>
   <a href="${light}"><iframe src="${light}" loading="lazy" title="${esc(m.title)}"></iframe></a>
   <figcaption>
     <strong>${esc(m.title)}</strong>
-    <span><a href="${light}">html</a>${dark ? ` · <a href="${dark}">dark</a>` : ''}${m.png ? ` · <a href="${m.png}">png</a>` : ''}</span>
+    <span><a href="${light}">html</a>${m.png ? ` · <a href="${m.png}">png</a>` : ''}</span>
     ${m.note ? `<em>${esc(m.note)}</em>` : ''}
   </figcaption>
 </figure>`;
@@ -599,8 +589,7 @@ async function writeIndex() {
 <title>StoryworldAI — UI snapshot</title>
 <link rel="stylesheet" href="${FONTS}">
 <style>
-  :root { color-scheme: light dark; --fg:#111827; --bg:#fff; --mut:#6b7280; --line:#e5e7eb; }
-  @media (prefers-color-scheme: dark) { :root { --fg:#f8fafc; --bg:#0f172a; --mut:#94a3b8; --line:#334155; } }
+  :root { color-scheme: dark; --fg:#f2ede5; --bg:#141311; --mut:#736c63; --line:rgba(242,237,229,.12); }
   body { margin:0; padding:32px; font:16px/1.5 Inter,system-ui,sans-serif; color:var(--fg); background:var(--bg); }
   h1 { font-size:1.75rem; margin:0 0 4px; }
   p.lede { color:var(--mut); margin:0 0 32px; max-width:70ch; }
