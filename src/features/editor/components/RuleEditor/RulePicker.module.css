@@ -1,0 +1,199 @@
+.panel {
+  top: 70px;
+  /* Fixed: the design's 640 × 470 modal. */
+  height: 470px;
+  max-height: calc(100vh - 140px);
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.queryRow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.prompt {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+}
+
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.escHint {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* — category rail — */
+
+.rail {
+  /* Fixed: a layout contract from the design. */
+  width: 170px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-line);
+}
+
+.railHeading {
+  margin: 0 0 var(--space-1);
+  padding: 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.railItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  background: none;
+  border: none;
+  /* Reserved at rest so the active marker never shifts the row. */
+  border-left: 2px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-dim);
+  text-align: left;
+  cursor: pointer;
+}
+
+.railItem:hover {
+  background-color: var(--color-accent-hover-row);
+  color: var(--color-text);
+}
+
+.railItem[data-active] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-tint);
+  color: var(--color-text);
+}
+
+.railCount {
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-faint);
+}
+
+/* — results — */
+
+.results {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) 0;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4);
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.group + .group {
+  margin-top: var(--space-3);
+}
+
+.groupHeading {
+  margin: 0 0 var(--space-1);
+  padding: 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-2) var(--space-4);
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.row[data-active] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-hover);
+}
+
+.rowSentence {
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+}
+
+.row[data-active] .rowSentence {
+  color: var(--color-text);
+}
+
+.rowMeta {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+/* — footer — */
+
+.footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-line);
+}
+
+.hint {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.count {
+  margin-left: auto;
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-faint);
+}

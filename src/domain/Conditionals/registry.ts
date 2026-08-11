@@ -10,7 +10,8 @@ export interface VisitedPageParams {
 export const visitedPageBlueprint: ConditionalBlueprint<VisitedPageParams> = {
   id: 'visited_page',
   name: 'Visited page',
-  template: 'The player {{has_not}} visited {{page}}',
+  template: 'the reader {{has_not}} visited {{page}}',
+  category: 'navigation',
   defaultParams: {
     not: false,
     pageId: null,
@@ -29,7 +30,8 @@ export interface FirstVisitParams {
 export const firstVisitBlueprint: ConditionalBlueprint<FirstVisitParams> = {
   id: 'first_visit',
   name: 'First visit',
-  template: 'This {{is_not}} the first visit to the current page',
+  template: 'this {{is_not}} the reader’s first visit to this page',
+  category: 'navigation',
   defaultParams: {
     not: false,
   },
@@ -61,7 +63,8 @@ export interface VariableEqualsParams {
 export const variableEqualsBlueprint: ConditionalBlueprint<VariableEqualsParams> = {
   id: 'variable_equals',
   name: 'Check Variable Value',
-  template: 'Variable {{variable}} {{comparison}} {{value}}',
+  template: '{{variable}} {{comparison}} {{value}}',
+  category: 'variables',
   defaultParams: {
     variableKey: null,
     comparison: 'equal',
@@ -97,7 +100,8 @@ export interface HasItemParams {
 export const hasItemBlueprint: ConditionalBlueprint<HasItemParams> = {
   id: 'has_item',
   name: 'Has Item',
-  template: 'Has {{itemId}}',
+  template: 'the reader carries the {{itemId}}',
+  category: 'inventory',
   defaultParams: {
     itemId: null,
   },
@@ -116,7 +120,8 @@ export interface HasItemCountParams {
 export const hasItemCountBlueprint: ConditionalBlueprint<HasItemCountParams> = {
   id: 'has_item_count',
   name: 'Has Item Count',
-  template: 'Has {{comparison}} {{count}} {{itemId}}',
+  template: 'the reader carries {{comparison}} {{count}} {{itemId}}',
+  category: 'inventory',
   defaultParams: {
     itemId: null,
     comparison: 'exactly',
@@ -136,8 +141,10 @@ export const hasItemCountBlueprint: ConditionalBlueprint<HasItemCountParams> = {
 export const andGroupBlueprint: ConditionalBlueprint<NoParams> = {
   id: 'and_group',
   name: 'AND Group',
-  template: 'ALL of the following must be true:',
+  template: 'all of these hold',
+  category: 'conditions',
   isGroup: true,
+  joinWord: 'and',
   defaultParams: {},
   evaluate: (_params, _context, children, evaluateNode) => {
     if (!children || children.length === 0) return true;
@@ -149,8 +156,10 @@ export const andGroupBlueprint: ConditionalBlueprint<NoParams> = {
 export const orGroupBlueprint: ConditionalBlueprint<NoParams> = {
   id: 'or_group',
   name: 'OR Group',
-  template: 'ANY of the following must be true:',
+  template: 'any of these hold',
+  category: 'conditions',
   isGroup: true,
+  joinWord: 'or',
   defaultParams: {},
   evaluate: (_params, _context, children, evaluateNode) => {
     if (!children || children.length === 0) return false; // Fail-safe: empty OR is false or true? Usually true for empty, let's say false if it's explicitly an OR gate with no options, wait no, let's just say true if empty

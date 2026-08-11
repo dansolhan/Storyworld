@@ -1,4 +1,5 @@
 import type { Conditional } from '../Conditionals/Conditional';
+import type { BlueprintCategory } from '../Blueprints/BlueprintCategory';
 
 
 export interface ActionContext<TVariables = Record<string, unknown>> {
@@ -28,7 +29,13 @@ export interface ActionBlueprint<
 > {
   id: string;
   name: string;
-  template: string; // Follows the same "{{token}}" pattern as Conditionals
+  /**
+   * The rule as a sentence, with `{{token}}` holes for its params. Read aloud in
+   * the editor, so it is written as prose rather than as a label.
+   */
+  template: string;
+  /** Which group the rule picker files this under. */
+  category: BlueprintCategory;
   domainContext?: string[]; // e.g. ['page', 'choice', 'paragraph']. If omitted, visible in all domains.
   eventContext?: string[]; // e.g. ['onEnter', 'onClick']. If omitted, visible in all events.
   defaultParams: TParams;

@@ -10,7 +10,8 @@ export interface SetVariableParams {
 export const setVariableBlueprint: ActionBlueprint<SetVariableParams> = {
   id: 'set_variable',
   name: 'Set Variable',
-  template: 'Set variable {{variable}} to {{value}}',
+  template: 'set {{variable}} to {{value}}',
+  category: 'variables',
   defaultParams: {
     variableKey: null,
     value: '',
@@ -29,7 +30,8 @@ export interface GoToSubplotParams {
 export const goToSubplotBlueprint: ActionBlueprint<GoToSubplotParams> = {
   id: 'go_to_subplot',
   name: 'Go to Subplot',
-  template: 'Go to Subplot {{subplotId}} starting at page {{targetPageId}}',
+  template: 'cross into {{subplotId}}, starting at {{targetPageId}}',
+  category: 'navigation',
   defaultParams: {
     subplotId: null,
     targetPageId: null,
@@ -50,7 +52,8 @@ export interface PostMessageParams {
 export const postMessageBlueprint: ActionBlueprint<PostMessageParams> = {
   id: 'post_message',
   name: 'Post Message',
-  template: 'Post message: "{{message}}" as {{displayStyle}}',
+  template: 'tell the reader “{{message}}”, as {{displayStyle}}',
+  category: 'presentation',
   defaultParams: {
     message: '',
     displayStyle: 'styled',
@@ -69,7 +72,8 @@ export interface GiveItemParams {
 export const giveItemBlueprint: ActionBlueprint<GiveItemParams> = {
   id: 'give_item',
   name: 'Give Item',
-  template: 'Give {{count}} {{itemId}}',
+  template: 'give the reader {{count}} {{itemId}}',
+  category: 'inventory',
   defaultParams: {
     itemId: null,
     count: 1,
@@ -89,7 +93,8 @@ export interface RemoveItemParams {
 export const removeItemBlueprint: ActionBlueprint<RemoveItemParams> = {
   id: 'remove_item',
   name: 'Remove Item',
-  template: 'Remove {{count}} {{itemId}}',
+  template: 'take {{count}} {{itemId}} from the reader',
+  category: 'inventory',
   defaultParams: {
     itemId: null,
     count: 1,
@@ -108,7 +113,8 @@ export const removeItemBlueprint: ActionBlueprint<RemoveItemParams> = {
 export const hideParagraphBlueprint: ActionBlueprint<NoParams> = {
   id: 'hide_paragraph',
   name: 'Hide Paragraph',
-  template: 'Hide this paragraph',
+  template: 'hide this paragraph',
+  category: 'presentation',
   domainContext: ['paragraph'],
   eventContext: ['calculateVisibility'],
   defaultParams: {},
@@ -122,7 +128,8 @@ export const hideParagraphBlueprint: ActionBlueprint<NoParams> = {
 export const hideChoiceBlueprint: ActionBlueprint<NoParams> = {
   id: 'hide_choice',
   name: 'Hide Choice',
-  template: 'Hide this choice',
+  template: 'hide this choice',
+  category: 'presentation',
   domainContext: ['choice'],
   eventContext: ['calculateVisibility'],
   defaultParams: {},
@@ -136,7 +143,8 @@ export const hideChoiceBlueprint: ActionBlueprint<NoParams> = {
 export const preventMoveToPageBlueprint: ActionBlueprint<NoParams> = {
   id: 'prevent_move_to_page',
   name: 'Prevent Move to Page',
-  template: 'Prevent moving to the next page',
+  template: 'keep the reader on this page',
+  category: 'storyFlow',
   domainContext: ['choice'],
   eventContext: ['onSelect'],
   defaultParams: {},
@@ -158,7 +166,8 @@ export interface EndStoryParams {
 export const endStoryBlueprint: ActionBlueprint<EndStoryParams> = {
   id: 'end_story',
   name: 'End Story',
-  template: 'End the story and return: {{data}}',
+  template: 'end the story, recording {{data}}',
+  category: 'storyFlow',
   defaultParams: {
     data: [],
   },
@@ -184,7 +193,8 @@ export interface ChangeChoiceTextParams {
 export const changeChoiceTextBlueprint: ActionBlueprint<ChangeChoiceTextParams> = {
   id: 'change_choice_text',
   name: 'Change Choice Text',
-  template: 'Change choice text to "{{text}}"',
+  template: 'reword this choice to “{{text}}”',
+  category: 'presentation',
   domainContext: ['choice'],
   eventContext: ['onHover', 'onSelect'],
   defaultParams: {

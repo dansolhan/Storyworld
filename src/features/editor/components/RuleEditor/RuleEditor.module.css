@@ -1,0 +1,248 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.noRules {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+/* — a moment — */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.removeSection {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.removeSection:hover {
+  color: var(--color-danger);
+}
+
+/* — a rule — */
+
+.conditionRule {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.rule {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.sentence {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text-body);
+}
+
+.ifWord {
+  color: var(--color-text-faint);
+}
+
+/* The word joining a group's clauses — quieter than the clauses themselves. */
+.joinWord {
+  color: var(--color-text-faint);
+}
+
+.emptyClause,
+.unknownRule {
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+/* — branches — */
+
+.branch {
+  display: flex;
+  gap: var(--space-2);
+  /* 18px indent behind a 2px border, per the design. */
+  margin-left: 18px;
+  padding-left: var(--space-2);
+  border-left: 2px solid var(--color-line);
+}
+
+.branch[data-kind='then'] {
+  border-left-color: rgba(225, 173, 102, 0.4);
+}
+
+.branchLabel {
+  /* Fixed: the design's 36px label column. */
+  width: 36px;
+  flex: none;
+  padding-top: 2px;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.branchBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.doNothing {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+/* — controls — */
+
+.controls {
+  flex: none;
+  display: inline-flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+/* Revealed on hover or when anything inside has focus, so keyboard users see them. */
+.rule:hover .controls,
+.controls:focus-within {
+  opacity: 1;
+}
+
+.control {
+  display: inline-flex;
+  padding: 1px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.control:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.control:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.controlIcon {
+  width: 12px;
+  height: 12px;
+}
+
+/* — adding — */
+
+.addRule,
+.addInline,
+.addClause {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.addInline,
+.addClause {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.addInline:hover,
+.addClause:hover {
+  color: var(--color-accent);
+}
+
+.addIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.addClause {
+  margin-left: 18px;
+}
+
+/* — adding a moment — */
+
+.addMoment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.addMomentLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.momentButton {
+  padding: 2px var(--space-2);
+  background: none;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.momentButton:hover {
+  border-color: var(--color-accent-line);
+  color: var(--color-accent);
+}

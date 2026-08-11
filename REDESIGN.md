@@ -125,6 +125,61 @@ Two things fell out of it:
   and the uploader's preview gained playback.
 - Only Status data (`5d`) and Contextual text (`5a`) are still modals.
 
+## Done — step 3b, logic as sentences
+
+- **Rules read as prose.** All 17 blueprint templates were reworded from labels
+  to clauses — `Give {{count}} {{itemId}}` became `give the reader {{count}}
+  {{itemId}}`, `Set variable {{variable}} to {{value}}` became `set {{variable}}
+  to {{value}}` — so a rule reads left to right: *If the reader carries the
+  Strange Golden Key → Then keep the reader on this page*. Data is untouched: the
+  same `events[]` carrying the same `logicTree` the evaluator reads, so **no
+  `CURRENT_VERSION` bump**.
+- **Moments, not event names.** Each `EventDefinition` gained a `label` — "When
+  the reader arrives", "Whether this is shown at all" — and `RuleEditor` titles a
+  section with it. `eventLabel` falls back to the raw name so a story carrying a
+  moment this build does not know still shows its rules instead of losing them.
+- **Groups join inline.** `and_group` renders as "… and …" on one line rather
+  than as a header over an indented list, which is the whole reason the rule
+  reads as a sentence. A group nested inside another is bracketed, so "a and (b
+  or c)" cannot be misread. `ConditionalBlueprint` gained `joinWord` for this.
+- **The rule picker** is a 640×470 dialog: query row, a 170px category rail with
+  live counts, results grouped by category, each row showing the sentence the
+  rule would become plus `name · used n times in this story`. `⇥` walks the rail,
+  `↑↓` moves, `⏎` inserts into the named destination. Categories come from a new
+  `BlueprintCategory` on every blueprint, so a new blueprint appears in the
+  picker by existing — there is no second list to keep in step.
+- **Preview sentences use nouns, not ellipses.** Three tokens in a row rendered
+  as "… … …", which tells an author nothing. `tokenNoun` maps each token to a
+  noun phrase ("an item", "a page"), with per-blueprint overrides where one token
+  name has to read two ways — `{{comparison}}` compares a variable in one
+  blueprint and a quantity in another.
+- **Order is still editable.** The drag handles are gone but actions run in
+  sequence, so each row has up/down/remove — which, unlike dragging, works from
+  the keyboard.
+- **Retired:** `LogicTreeBuilder` (toolbox, tree, node, story, context, types),
+  `EventsEditor`, and the `react-arborist` dependency. The reusable sentence
+  pieces moved to `RuleEditor/sentence/`.
+
+Three things fell out of it:
+
+- **The Play button never worked.** `onClick={onPlay}` handed React's click event
+  to `handlePlay`, whose first parameter is an optional start page — so the
+  engine started at a page id that was a `MouseEvent`, no page matched, and every
+  story opened on "— The End —". Present on `master` too. The prop type is
+  `() => void`, which is exactly why TypeScript could not see it; a test now
+  asserts Play is called with no arguments.
+- **`{{text}}` had no editor.** `Change choice text` has been in the registry all
+  along, but `BlueprintToken` had no branch for its token, so the sentence
+  printed a literal `{{text}}` and clicking did nothing. It now opens a free-text
+  field, and `MessageInput` took `title`/`placeholder` props rather than being
+  cloned a fourth time.
+- **Two moments shared one label.** `onEvaluate` was renamed to
+  `calculateVisibility` by the 1.1.0 migration, but both were still offered to
+  authors — under identical titles, one of them deprecated. `onEvaluate` is now
+  marked `legacy` and excluded from what can be added, while keeping its label so
+  old stories still display. "Add a moment" also dedupes by label, so a story
+  carrying the old name is not offered its replacement.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -133,26 +188,23 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`3b` Logic as sentences** — replace the drag-and-drop `LogicTreeBuilder`
-   with prose and a searchable rule picker. Same data model (`events[]` with
-   `logicTree`); presentation only. Likely retires `react-arborist`.
-2. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
+1. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
    dashed `NEW · UNWRITTEN` node; undo toast. The Choices tab already has the
    structure and both buttons.
-3. **`4b` Story health** — pure derivation over existing state: unreachable
+2. **`4b` Story health** — pure derivation over existing state: unreachable
    pages, dead ends, unconnected choices, unused items/variables/audio/
    atmospheres. Add `'health'` to `EditorWorkspace`.
-4. **`4a` Dashboard**.
-5. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+3. **`4a` Dashboard**.
+4. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-6. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-7. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+5. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+6. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-8. **`6c` History & export**, **`6d` shortcut sheet**.
+7. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
@@ -173,11 +225,12 @@ Roughly in dependency order. — fold the six modal managers into one workspace
   snapshot-churn machine.
 - **Story health count badge** on the rail — arrives with `4b`.
 - **`Item.contextChoices` is authorable nowhere.** The player's inventory reads
-  it — Examine, Use — but `ItemManager` only ever wrote `[]`, and the new detail
-  panel does not add it either, because editing one needs a nested logic editor
-  and `3b` is about to replace the logic editor wholesale. The usage index does
-  count references made from inside a context choice, so they are at least
-  visible.
+  it — Examine, Use — but `ItemManager` only ever wrote `[]`, and the item detail
+  panel does not add it either. `3b` has now built the editor this needs:
+  `RuleEditor` takes a `targetType`, so adding `'contextChoice'` to it plus a
+  choice list in `ItemDetail` is the remaining work. The usage index and the
+  blueprint usage counts already read context choices, so they are visible even
+  while unauthorable.
 
 ## Known rot
 

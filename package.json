@@ -29,7 +29,6 @@
     "lucide-react": "^0.575.0",
     "motion": "^12.35.0",
     "react": "^19.2.0",
-    "react-arborist": "^3.4.3",
     "react-dom": "^19.2.0",
     "zustand": "^5.0.11"
   },

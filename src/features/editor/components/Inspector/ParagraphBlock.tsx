@@ -5,7 +5,7 @@ import { BoldFeature } from '../../../../components/ui/RichTextEditor/features/B
 import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features/ItalicFeature';
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
-import { EventsEditor } from '../EventsEditor/EventsEditor';
+import { RuleEditor } from '../RuleEditor/RuleEditor';
 import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
 import styles from './ParagraphBlock.module.css';
 
@@ -71,7 +71,7 @@ export const ParagraphBlock = React.memo(
         />
 
         <div className={styles.events}>
-          <EventsEditor
+          <RuleEditor
             targetType="paragraph"
             pageId={pageId}
             targetId={paragraph.id}

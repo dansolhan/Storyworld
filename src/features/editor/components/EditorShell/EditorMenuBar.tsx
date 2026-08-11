@@ -67,7 +67,14 @@ export const EditorMenuBar: React.FC<EditorMenuBarProps> = ({ menus, onPlay }) =
         Search anything <span className={styles.searchKey}>{shortcutLabel('K')}</span>
       </button>
 
-      <button type="button" className={styles.play} onClick={onPlay}>
+      {/*
+        Wrapped, not passed straight through: `handlePlay` takes an optional start
+        page, so `onClick={onPlay}` would hand it the click event and the engine
+        would start at a page id that is a MouseEvent — no page matches, and the
+        story opens on "The End". The prop type says `() => void`, which is exactly
+        why TypeScript cannot see it.
+      */}
+      <button type="button" className={styles.play} onClick={() => onPlay()}>
         <Play className={styles.playIcon} aria-hidden="true" />
         Play
       </button>

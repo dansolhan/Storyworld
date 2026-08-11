@@ -354,8 +354,36 @@ async function captureApp(browser) {
       await capture(page, {
         slug: 'editor-node-selected', group: 'app',
         title: 'Editor — page selected, inspector open',
-        note: 'Covers Inspector, its four tabs, RichTextEditor and EventsEditor.',
+        note: 'Covers Inspector, its four tabs and the RichTextEditor.',
       });
+    });
+
+    await step('editor-logic-rules', async () => {
+      const logic = page.getByRole('tab', { name: /Logic/ });
+      if (!(await logic.count())) throw new Error('inspector Logic tab unavailable');
+      await logic.click();
+      await settle(page, 600);
+      await capture(page, {
+        slug: 'editor-logic-rules', group: 'app',
+        title: 'Logic — rules as sentences, grouped by the moment they run',
+        note: 'Every underlined value is a token that opens a popover. Move and remove appear on hover.',
+      });
+    });
+
+    await step('editor-rule-picker', async () => {
+      if (!(await clickIfPresent(page, 'Add rule', { exact: false }))) {
+        throw new Error('"Add rule" unavailable');
+      }
+      await settle(page, 600);
+      await capture(page, {
+        slug: 'editor-rule-picker', group: 'app',
+        title: 'Rule picker — categories, sentences and how often the story uses each',
+        note: 'Rows show the sentence the rule becomes; ⇥ walks the category rail.',
+      });
+      await page.keyboard.press('Escape');
+      await settle(page, 300);
+      await clickIfPresent(page, 'Write', { exact: true });
+      await settle(page, 300);
     });
 
     await step('editor-palette', async () => {

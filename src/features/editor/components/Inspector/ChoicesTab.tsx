@@ -4,7 +4,7 @@ import { useChoiceActions } from '../../hooks/page/useChoiceActions';
 import { useConnectingChoice } from '../../hooks/page/useConnectingChoice';
 import { useRevealPage } from '../../hooks/view/useRevealPage';
 import { useEditorStore } from '../../store/useEditorStore';
-import { EventsEditor } from '../EventsEditor/EventsEditor';
+import { RuleEditor } from '../RuleEditor/RuleEditor';
 import type { Page } from '../../../../domain/Page/Page';
 import styles from './InspectorTabs.module.css';
 
@@ -106,7 +106,7 @@ export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
                 </div>
               </div>
 
-              <EventsEditor
+              <RuleEditor
                 targetType="choice"
                 pageId={page.id}
                 targetId={choice.id}
