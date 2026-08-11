@@ -1,0 +1,294 @@
+/* — collapsed: a single line — */
+
+.collapsed {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-line-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.collapsed:hover {
+  background-color: var(--color-accent-hover-row);
+}
+
+.collapsedName {
+  flex: none;
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.collapsedSummary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+/* An atmosphere with no track is worth noticing. */
+.collapsedNoTrack {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+}
+
+/* — expanded — */
+
+.expanded {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  align-self: center;
+  border-radius: var(--radius-full);
+}
+
+.name {
+  flex: none;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nameInput {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-selected);
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+}
+
+.pageCount {
+  flex: 1;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.action,
+.actionDanger {
+  flex: none;
+  padding: 2px var(--space-2);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.action:hover {
+  border-color: var(--color-line-strong);
+  color: var(--color-text);
+}
+
+.actionDanger:hover {
+  border-color: var(--color-danger-line);
+  color: var(--color-danger);
+}
+
+.noTrack {
+  margin: 0;
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+}
+
+.chooseTrack {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* — settings line — */
+
+.settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.settingLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.select {
+  min-width: 140px;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-chrome);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text);
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.slider {
+  width: 110px;
+  accent-color: var(--color-accent);
+}
+
+.settingValue {
+  min-width: 42px;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-dim);
+}
+
+/* — colour — */
+
+.colours {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.swatch[data-selected] {
+  outline: 1px solid var(--color-text);
+  outline-offset: 1px;
+}
+
+.customColour {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.customColourLabel {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.colourInput {
+  width: 20px;
+  height: 16px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* — used on — */
+
+.usedOn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.chip {
+  padding: 2px var(--space-2);
+  background-color: var(--color-bg-chrome);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.chip:hover {
+  border-color: var(--color-accent-line);
+  color: var(--color-accent);
+}
+
+.more {
+  padding: 2px var(--space-2);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.usedOnEmpty {
+  margin: 0;
+  font-size: var(--text-meta);
+  font-style: italic;
+  color: var(--color-text-faint);
+}

@@ -90,37 +90,69 @@ The foundation every other screen is drawn inside.
 Still modal until their own screens exist: Atmospheres and Audio (`4c`), Status
 data (`5d`), Contextual text (`5a`).
 
+## Done — step 4c, Atmospheres & audio
+
+- **Atmospheres as expanding rows**, one open at a time: colour dot, name, page
+  count, Rename/Delete; a 34px play button beside a waveform whose played portion
+  fills, with a playhead and a `m:ss / m:ss` readout; a settings line of TRACK,
+  FADE IN, VOLUME, COLOUR; and USED ON page chips with `+ n more`. Collapsed rows
+  are one line — track, fade, page count — and an atmosphere with no track says so
+  in the accent.
+- **`fadeIn` and `volume` are new but optional.** `claude.md`'s migration rule
+  covers *breaking* changes; two optional fields with defaults break nothing, so
+  there is **no `CURRENT_VERSION` bump**. `atmosphereSettings` is the single place
+  absence is resolved, defaulting to exactly what the player hardcoded before —
+  1000ms and full category volume.
+- **The player honours them.** `StoryEngine` emits fade and volume with the
+  PLAY_SOUND effect, and `useEngineEffects` uses them instead of a fixed 1000ms.
+  `audioManager.play` gained a `volume` option that writes back to the cached
+  config, so a track shared by two atmospheres does not keep the first one's
+  level.
+- **Colour is four palette swatches plus a picker**, and a colour already set
+  outside the palette keeps its own swatch rather than being silently rewritten.
+- **The Audio library** is a third caller of `3a`'s table shell — title, type,
+  description, and how many atmospheres play the track — with the waveform in its
+  detail panel and the existing uploader behind `+ Upload audio`.
+- Rename edits in place, committing on Enter and abandoning on Escape; deleting
+  warns with the page count through the shared dialog.
+
+Two things fell out of it:
+
+- **Waveforms never worked for the bundled example music.** `WaveformDisplay`
+  assumed every track was a base64 data URI, but the demo's tracks are paths
+  under `public/`, so `atob` threw and the bars were flat. Decoding now handles
+  both, and `AudioWaveform` replaced `WaveformDisplay` — one waveform component,
+  and the uploader's preview gained playback.
+- Only Status data (`5d`) and Contextual text (`5a`) are still modals.
+
 ## Next
 
-Roughly in dependency order.
-
-1. **`4c` Atmospheres & audio** — expanding rows with a colour dot, play button,
-   waveform and settings line. Retires two of the four remaining modals. — fold the six modal managers into one workspace
+Roughly in dependency order. — fold the six modal managers into one workspace
    behind the rail. Retires `ExpandableBottomPanel` and `SidePanel`, still used
    by six managers. **This also removes a real trap**: the Audio manager is a
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-2. **`3b` Logic as sentences** — replace the drag-and-drop `LogicTreeBuilder`
+1. **`3b` Logic as sentences** — replace the drag-and-drop `LogicTreeBuilder`
    with prose and a searchable rule picker. Same data model (`events[]` with
    `logicTree`); presentation only. Likely retires `react-arborist`.
-3. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
+2. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
    dashed `NEW · UNWRITTEN` node; undo toast. The Choices tab already has the
    structure and both buttons.
-4. **`4b` Story health** — pure derivation over existing state: unreachable
+3. **`4b` Story health** — pure derivation over existing state: unreachable
    pages, dead ends, unconnected choices, unused items/variables/audio/
    atmospheres. Add `'health'` to `EditorWorkspace`.
-5. **`4a` Dashboard** and **`4c` Atmospheres & audio**.
-6. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+4. **`4a` Dashboard**.
+5. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-7. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-8. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+6. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+7. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-9. **`6c` History & export**, **`6d` shortcut sheet**.
+8. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 

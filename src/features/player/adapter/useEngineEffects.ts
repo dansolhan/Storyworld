@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useEngine } from './useEngine';
 import { useEngineStore } from './useEngineStore';
 import { audioManager } from '../../../lib/audioManager';
+import { DEFAULT_FADE_IN_MS } from '../../../domain/Atmosphere/atmosphereSettings';
 import type { StoryEffect } from '../../../lib/engine/types';
 
 interface EngineEffectsOptions {
@@ -53,13 +54,15 @@ export const useEngineEffects = (options: EngineEffectsOptions = {}) => {
         if (currentCategory === 'bgm') {
           // Check if this specific sound is already playing to avoid echoes/restarts.
           const isTransitioning = audioManager.isCategoryPlaying('bgm');
-          audioManager.play(soundId, { 
-            fadeIn: 1000, 
-            delay: isTransitioning ? 300 : 0, 
-            stopOtherInCategory: true 
+          audioManager.play(soundId, {
+            // The atmosphere's own fade and level, rather than a fixed 1000ms.
+            fadeIn: effect.payload.fadeIn ?? DEFAULT_FADE_IN_MS,
+            volume: effect.payload.volume,
+            delay: isTransitioning ? 300 : 0,
+            stopOtherInCategory: true,
           });
         } else {
-          audioManager.play(soundId, { fadeIn: 0 });
+          audioManager.play(soundId, { fadeIn: 0, volume: effect.payload.volume });
         }
       }
     }

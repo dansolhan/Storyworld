@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { WaveformDisplay } from './WaveformDisplay';
+import { AudioWaveform } from '../AudioWaveform/AudioWaveform';
 import { Button } from '../../../../components/ui/Button/Button';
 import type { AudioType, AudioItem } from '../../../../domain/Story/Audio';
 import styles from './Audio.module.css';
@@ -100,7 +100,7 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({ initialFile, onSav
 
       {base64Audio && (
         <>
-          <WaveformDisplay base64Audio={base64Audio} />
+          <AudioWaveform src={base64Audio} label={title || "the new track"} />
 
           <div className={styles.formFields}>
             <div className={styles.formGroup}>

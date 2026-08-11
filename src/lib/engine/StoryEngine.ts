@@ -1,6 +1,7 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { EngineState, StoryMessage, StoryEffect, PlayerMessage } from './types';
 import type { StoryVariable } from '../../domain/Story/Variable';
+import { atmosphereSettings } from '../../domain/Atmosphere/atmosphereSettings';
 import type { StoryData } from '../../domain/Story/StoryData';
 import type { ActionContext } from '../../domain/Actions/Action';
 import { executeLogicTree } from './logic/executeLogicTree';
@@ -263,7 +264,12 @@ export class StoryEngine {
     if (page.atmosphereId) {
       const atmo = state.storyData?.atmospheres?.[page.atmosphereId];
       if (atmo?.music) {
-        this.emitEffect({ type: 'PLAY_SOUND', payload: { soundId: atmo.music, category: 'bgm' } });
+        // The atmosphere decides how its track comes in, not the adapter.
+        const { fadeIn, volume } = atmosphereSettings(atmo);
+        this.emitEffect({
+          type: 'PLAY_SOUND',
+          payload: { soundId: atmo.music, category: 'bgm', fadeIn, volume },
+        });
       }
     }
 

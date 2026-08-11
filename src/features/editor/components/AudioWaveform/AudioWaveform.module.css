@@ -1,0 +1,72 @@
+.player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.playButton {
+  /* Fixed: the design's 34px circle. */
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-full);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.playButton:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.playButton:disabled {
+  border-color: var(--color-line);
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+
+.playIcon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.waveform {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.bar {
+  flex: 1;
+  min-width: 1px;
+  border-radius: 1px;
+  background-color: rgba(242, 237, 229, 0.18);
+  transition: background-color var(--duration-instant) linear;
+}
+
+.bar[data-played] {
+  background-color: rgba(225, 173, 102, 0.55);
+}
+
+/* The one bar at the current position, brighter than what it has passed. */
+.bar[data-playhead] {
+  background-color: var(--color-accent);
+}
+
+.time {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-dim);
+}

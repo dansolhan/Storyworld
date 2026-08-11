@@ -86,7 +86,10 @@ class AudioManager {
   /**
    * Play a registered sound by id.
    */
-  public play(id: string, options?: { fadeIn?: number, delay?: number, stopOtherInCategory?: boolean }): void {
+  public play(
+    id: string,
+    options?: { fadeIn?: number; delay?: number; stopOtherInCategory?: boolean; volume?: number }
+  ): void {
     // Resume AudioContext if it was suspended (handles some browser autoplay restrictions)
     if (Howler.ctx && Howler.ctx.state === 'suspended') {
       Howler.ctx.resume().catch((e) => console.warn('AudioManager: Failed to resume context', e));
@@ -94,7 +97,16 @@ class AudioManager {
 
     const config = this.configs.get(id);
     const sound = this.sounds.get(id);
-    
+
+    /*
+     * Sounds are registered once and cached, so a track shared by two
+     * atmospheres keeps the first one's level unless the caller's volume is
+     * written back onto the config before the target is computed.
+     */
+    if (config && options?.volume !== undefined && options.volume !== config.volume) {
+      this.configs.set(id, { ...config, volume: options.volume });
+    }
+
     if (sound && config) {
       const activeInCat = this.activeSounds.get(config.category);
       

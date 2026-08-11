@@ -9,7 +9,17 @@ export interface PlayerMessage {
 }
 
 export type StoryEffect = 
-  | { type: 'PLAY_SOUND'; payload: { soundId: string; category?: 'bgm' | 'sfx' } }
+  | {
+      type: 'PLAY_SOUND';
+      payload: {
+        soundId: string;
+        category?: 'bgm' | 'sfx';
+        /** Milliseconds to reach full volume; from the atmosphere. */
+        fadeIn?: number;
+        /** Fraction of the category's level, 0–1; from the atmosphere. */
+        volume?: number;
+      };
+    }
   | { type: 'STOP_ALL_SOUNDS' }
   | { type: 'SHOW_POPOVER'; payload: { text: string; title?: string; x: number; y: number; width: number; height: number } }
   | { type: 'ON_STORY_END'; payload: { data: Record<string, unknown> } };

@@ -383,8 +383,6 @@ async function captureApp(browser) {
      */
     const panels = [
       ['Settings', 'story-settings', 'Story settings drawer'],
-      ['Audio', 'audio-manager', 'Audio manager'],
-      ['Atmospheres', 'atmosphere-manager', 'Atmosphere manager'],
       ['Status data', 'status-data-manager', 'Status data manager'],
       ['Context', 'context-manager', 'Context manager'],
     ];
@@ -409,6 +407,7 @@ async function captureApp(browser) {
     const workspaces = [
       ['Items', 'items-workspace', 'Data workspace — items, with a row selected'],
       ['Variables', 'variables-workspace', 'Data workspace — variables and what reads them'],
+      ['Audio', 'audio-workspace', 'Audio library — a track with its waveform'],
     ];
     for (const [railLabel, slug, title] of workspaces) {
       await step(slug, async () => {
@@ -418,10 +417,27 @@ async function captureApp(browser) {
         await settle(page, 500);
         await page.locator('[role="row"][aria-selected]').first().click({ timeout: 4000 })
           .catch(() => {});
-        await settle(page, 400);
+        // Waveforms decode asynchronously; capture once the bars have shape.
+        await settle(page, 1500);
         await capture(page, { slug, group: 'app-panels', title });
       });
     }
+
+    await step('atmospheres-workspace', async () => {
+      if (!(await clickIfPresent(page, 'Atmospheres', { exact: false }))) {
+        throw new Error('rail item "Atmospheres" unavailable');
+      }
+      await settle(page, 500);
+      // The row must be expanded for the waveform and settings line to exist.
+      await page.locator('button[class*="collapsed"]').first().click({ timeout: 4000 })
+        .catch(() => {});
+      await settle(page, 1800);
+      await capture(page, {
+        slug: 'atmospheres-workspace', group: 'app-panels',
+        title: 'Atmospheres — one row expanded, with its track and settings',
+        note: 'Waveform bars are decoded from the track; the played portion fills during playback.',
+      });
+    });
 
     // Back to the graph so the player capture can reach the menu bar.
     await step('return-to-graph', async () => {
