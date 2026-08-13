@@ -86,12 +86,29 @@ describe('PageNode', () => {
     expect(kicker()).toBe('Location · Start · Unwritten');
   });
 
-  it('says Editing instead, because that is what you need to know then', () => {
+  /*
+   * The regression this pins: the kicker read "Editing" while a page was selected,
+   * which replaced the facts — so selecting the start page hid that it *was* the
+   * start page, and setting one hid it the moment it was set, since setting selects.
+   * Selection tints the kicker instead, which is what the design asks for.
+   */
+  it('keeps stating the facts while the page is selected', () => {
+    useEditorStore.setState({
+      pages: { 'page-1': page() },
+      startPageId: 'page-1',
+      selectedPageId: 'page-1',
+    });
+    renderNode();
+
+    expect(kicker()).toBe('Location · Start · Unwritten');
+    expect(screen.queryByText('Editing')).toBeNull();
+  });
+
+  it('marks a selected page for the stylesheet to tint', () => {
     useEditorStore.setState({ pages: { 'page-1': page() }, selectedPageId: 'page-1' });
     renderNode();
 
-    expect(screen.getByText('Editing')).toBeTruthy();
-    expect(screen.queryByText(/Unwritten/)).toBeNull();
+    expect(document.querySelector('[data-editing]')).toBeTruthy();
   });
 
   it('counts what is on the page', () => {

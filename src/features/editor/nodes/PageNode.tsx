@@ -57,12 +57,22 @@ export const PageNode = React.memo(
     const isPlot = data.type === 'plot';
     const unwritten = isUnwritten({ paragraphs: pageParagraphs ?? data.paragraphs ?? [] });
 
-    // The kicker says what this page is, or that you are editing it right now.
-    const kicker = isEditing
-      ? 'Editing'
-      : [isPlot ? 'Plot / Action' : 'Location', isStartNode ? 'Start' : null, unwritten ? 'Unwritten' : null]
-          .filter(Boolean)
-          .join(' · ');
+    /*
+     * The kicker states facts about the page, and selection is not one of them.
+     *
+     * It used to read "Editing" while a page was selected, which *replaced* the
+     * facts — so selecting the start page hid that it was the start page, and setting
+     * one hid it at the very moment it was set, since setting selects. The design
+     * says selection tints the kicker rather than rewriting it, which the stylesheet
+     * already does; the node's accent border and ring say the rest.
+     */
+    const kicker = [
+      isPlot ? 'Plot / Action' : 'Location',
+      isStartNode ? 'Start' : null,
+      unwritten ? 'Unwritten' : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
 
     const meta = [
       pluralise(choices.length, 'choice'),
