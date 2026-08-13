@@ -590,4 +590,85 @@ describe('Story Migrations', () => {
       ).toHaveLength(1);
     });
   });
+
+  /*
+   * A migration is walked again every time a story is opened whose schema version was
+   * never recorded, so every step has to survive being re-run. This one did not: it
+   * assigned `contextualText` from what it found in the prose, and on a second pass it
+   * found nothing and wrote an empty collection over the real entries. The marks kept
+   * their ids, so the references survived and the text was gone.
+   */
+  describe('re-running the chain on an already-migrated story', () => {
+    const alreadyCurrent = {
+      version: 3, // what the snapshot envelope carries, and what used to be passed in
+      pages: [
+        {
+          id: 'page-1',
+          choices: [],
+          paragraphs: [
+            {
+              id: 'p1',
+              text: '<p>a <span class="contextual-text-mark" data-context-id="ctx-1">small window</span></p>',
+            },
+          ],
+        },
+      ],
+      contextualText: {
+        'ctx-1': { id: 'ctx-1', phrase: 'small window', text: 'Looks onto an old shrine.' },
+      },
+      statusData: [
+        {
+          id: 'sd-1',
+          title: 'Curse',
+          condition: [{ id: 'c1', type: 'condition', name: 'Has Item', blueprintId: 'has_item' }],
+        },
+      ],
+    };
+
+    it('keeps contextual entries that are already extracted', () => {
+      const migrated = migrateStory(alreadyCurrent);
+
+      expect(migrated.contextualText).toEqual(alreadyCurrent.contextualText);
+    });
+
+    it('keeps status conditions that are already a logic tree', () => {
+      const migrated = migrateStory(alreadyCurrent);
+      const entries = migrated.statusData as unknown as Record<string, unknown>[];
+
+      expect(entries[0].condition).toHaveLength(1);
+    });
+
+    it('leaves the marks in the prose alone', () => {
+      const migrated = migrateStory(alreadyCurrent);
+      const text = (migrated.pages[0].paragraphs[0] as unknown as { text: string }).text;
+
+      expect(text).toContain('data-context-id="ctx-1"');
+      expect(text).not.toContain('data-context=');
+    });
+
+    it('still extracts a legacy mark alongside entries that already exist', () => {
+      const mixed = {
+        ...alreadyCurrent,
+        pages: [
+          {
+            id: 'page-1',
+            choices: [],
+            paragraphs: [
+              { id: 'p1', text: '<p><span data-context-id="ctx-1">small window</span></p>' },
+              { id: 'p2', text: '<p><span data-context="A note.">the door</span></p>' },
+            ],
+          },
+        ],
+      };
+
+      const entries = migrateStory(mixed).contextualText as Record<string, { text: string }>;
+
+      expect(Object.keys(entries)).toHaveLength(2);
+      expect(entries['ctx-1'].text).toBe('Looks onto an old shrine.');
+    });
+
+    it('reaches the current version without needing a second pass', () => {
+      expect(migrateStory(alreadyCurrent).version).toBe(CURRENT_VERSION);
+    });
+  });
 });

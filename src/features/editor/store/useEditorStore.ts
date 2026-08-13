@@ -15,6 +15,7 @@ import { createItemSlice } from './slices/itemSlice';
 import { createStatusDataSlice } from './slices/statusDataSlice';
 import { createContextualTextSlice } from './slices/contextualTextSlice';
 import { createDerivedTextSlice } from './slices/derivedTextSlice';
+import { CURRENT_VERSION } from '../../../domain/Story/migrations/migrations';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our
@@ -174,6 +175,12 @@ useEditorStore.subscribe((state) => {
      */
     const snapshot = {
       version: 3,
+      /*
+       * The *story schema* version, which the envelope's own `version` is not.
+       * Without it, opening a story had to guess — and guessing meant re-running the
+       * whole migration chain on data that was already current.
+       */
+      storyVersion: CURRENT_VERSION,
       savedAt: Date.now(),
       state: {
         nodes: state.nodes,

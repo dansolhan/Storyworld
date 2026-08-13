@@ -114,7 +114,24 @@ export const useStories = () => {
         
         const parsedData = migrateStory({
           ...data.state,
-          version: data.version,
+          /*
+           * The snapshot keeps pages keyed by id — the editor's shape — while
+           * `StoryData` wants a list. `ensurePagesArray` inside the migration chain
+           * used to do this by accident, so skipping migrations for an
+           * already-current story broke opening it outright. The conversion belongs
+           * at this boundary, where the two shapes actually meet.
+           */
+          pages: Array.isArray(data.state.pages)
+            ? data.state.pages
+            : Object.values(data.state.pages ?? {}),
+          /*
+           * The story's own schema version, not the snapshot envelope's. Passing
+           * `data.version` here — the envelope's `3` — made every open re-run the
+           * whole migration chain over data that was already current. A save made
+           * before `storyVersion` existed has none, and falls back to the old
+           * behaviour, which the migrations tolerate.
+           */
+          version: data.storyVersion ?? data.version,
           title: data.state.storyTitle,
           titleLocId: data.state.storyTitleLocId,
           description: data.state.storyDescription,

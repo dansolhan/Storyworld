@@ -349,7 +349,17 @@ const LEGACY_MARK = /<span\b([^>]*)>([\s\S]*?)<\/span>/g;
 const ATTR = (name: string) => new RegExp(`\\b${name}="([^"]*)"`);
 
 const migrateV1_2_0_to_V1_3_0: MigrationFunction = (v1_2_story) => {
-  const entries: LegacyRecord = {};
+  /*
+   * Seeded with whatever is already there, never replacing it.
+   *
+   * A migration has to survive being run twice. This one did not: it scanned for
+   * legacy `data-context` marks and assigned the result, so re-running it on an
+   * already-migrated story found nothing and wrote an empty collection over the real
+   * entries — the marks kept their ids and the text was gone.
+   */
+  const entries: LegacyRecord = isRecord(v1_2_story.contextualText)
+    ? { ...v1_2_story.contextualText }
+    : {};
 
   /* HTML-escaped in the source, so decoded before being stored as data. */
   const decode = (value: string): string =>

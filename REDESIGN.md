@@ -618,6 +618,25 @@ Still open:
 
 Fixed after the design steps:
 
+- **Opening a story wiped its contextual entries.** The autosave snapshot never
+  recorded the *story schema* version, so `handleOpenExisting` passed the snapshot
+  envelope's `version: 3` to `migrateStory` — and every open re-ran the whole
+  migration chain over data that was already current. Harmless until `1.3.0`, whose
+  contextual-text step scanned the prose for legacy `data-context` marks and then
+  *assigned* the result: on a second pass it found none and wrote `{}` over the real
+  entries. The marks kept their ids, so the references survived and every note's text
+  was gone.
+
+  Three fixes: the migration seeds from what is already there and never replaces it
+  (**a migration has to survive being run twice**); the snapshot records
+  `storyVersion`, so a current story skips the chain entirely; and the id-keyed
+  `pages` record is converted to a list at the boundary where it is read.
+
+  That last one was load-bearing and hidden: `ensurePagesArray`, inside the chain, had
+  been doing that conversion by accident. Skipping migrations for an already-current
+  story broke opening it outright — caught only by driving the real app, since every
+  unit test builds `pages` in whichever shape it wants.
+
 - **Deleting a node on the canvas orphaned its page.** `onNodesChange` applied React
   Flow's `remove` change to `nodes` alone, so the node vanished while the page record,
   its edges and every choice pointing at it survived — invisible, unreachable, and
