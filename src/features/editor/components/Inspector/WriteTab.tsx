@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useParagraphActions } from '../../hooks/page/useParagraphActions';
+import { usePageActions } from '../../hooks/page/usePageActions';
 import { useEditorStore } from '../../store/useEditorStore';
 import { ParagraphBlock } from './ParagraphBlock';
 import type { Page } from '../../../../domain/Page/Page';
@@ -10,9 +11,16 @@ export interface WriteTabProps {
   page: Page;
 }
 
-/** The page's prose. Settings that used to share this scroll now have their own tab. */
+/**
+ * The page's prose, title first.
+ *
+ * The title sits here rather than in Settings because it is content: the player sets
+ * it as the page's headline above the paragraphs, and this is the one place you see
+ * both at once while writing.
+ */
 export const WriteTab: React.FC<WriteTabProps> = ({ page }) => {
   const { addParagraph, updateParagraph } = useParagraphActions();
+  const { updatePageTitle } = usePageActions();
 
   const revealRequest = useEditorStore((state) => state.revealRequest);
   const revealedParagraphId =
@@ -72,6 +80,22 @@ export const WriteTab: React.FC<WriteTabProps> = ({ page }) => {
 
   return (
     <div className={styles.tab}>
+      {/*
+        A labelled field, not a second heading: the inspector's own header already shows
+        the title, and two identical headings one under the other leave it unclear which
+        one you are meant to change.
+      */}
+      <label className={styles.field}>
+        <span className={styles.fieldLabel}>Title</span>
+        <input
+          type="text"
+          className={styles.input}
+          value={page.title}
+          placeholder="Untitled page"
+          onChange={(event) => updatePageTitle(page.id, event.target.value)}
+        />
+      </label>
+
       <div className={styles.list} ref={listRef}>
         {page.paragraphs.length === 0 && (
           <p className={styles.empty}>Nothing written yet.</p>

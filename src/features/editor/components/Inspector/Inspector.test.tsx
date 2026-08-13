@@ -120,8 +120,10 @@ describe('Inspector', () => {
 
       await user.click(screen.getByRole('tab', { name: 'Settings' }));
 
-      expect(screen.getByDisplayValue('The Locked Door')).toBeTruthy();
+      /* The title is not here: it moved to Write, where the prose is. */
+      expect(screen.getByRole('combobox', { name: 'Type' })).toBeTruthy();
       expect(screen.getByText('The story starts here')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Delete this page' })).toBeTruthy();
     });
 
     it('plays from the selected page', async () => {

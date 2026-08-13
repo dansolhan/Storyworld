@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../../../../components/ui/Button/Button';
 import { usePageActions } from '../../hooks/page/usePageActions';
 import { useDeletePages } from '../../hooks/page/useDeletePages';
 import { useAtmospheres } from '../../hooks/page/useAtmospheres';
@@ -10,9 +11,13 @@ export interface SettingsTabProps {
   page: Page;
 }
 
-/** What the page is, rather than what it says. */
+/**
+ * What the page is, rather than what it says.
+ *
+ * The title lives in the Write tab: it is the first thing you write, not a setting.
+ */
 export const SettingsTab: React.FC<SettingsTabProps> = ({ page }) => {
-  const { updatePageTitle, updatePageType, updatePageAtmosphere } = usePageActions();
+  const { updatePageType, updatePageAtmosphere } = usePageActions();
   const { deletePages } = useDeletePages();
   const atmospheres = useAtmospheres();
   const startPageId = useEditorStore((state) => state.startPageId);
@@ -22,17 +27,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ page }) => {
 
   return (
     <div className={styles.tab}>
-      <label className={styles.field}>
-        <span className={styles.fieldLabel}>Title</span>
-        <input
-          type="text"
-          className={styles.input}
-          value={page.title}
-          placeholder="e.g. The Dark Forest"
-          onChange={(event) => updatePageTitle(page.id, event.target.value)}
-        />
-      </label>
-
       <label className={styles.field}>
         <span className={styles.fieldLabel}>Type</span>
         <select
@@ -76,17 +70,15 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ page }) => {
       <p className={styles.pageId}>{page.id}</p>
 
       {/*
-        The only visible way to delete a page — until now it was the canvas keyboard
-        or nothing, while every other entity in the app had a button. No confirmation:
-        the delete is undoable, and `useDeletePages` says so.
+        Below a rule and in the danger outline, so it reads as its own zone rather than
+        as one more setting. Outlined rather than filled: colour is a stroke here, and
+        the delete is undoable — it should be findable, not frightening.
       */}
-      <button
-        type="button"
-        className={styles.deletePage}
-        onClick={() => deletePages([page.id])}
-      >
-        Delete this page
-      </button>
+      <div className={styles.dangerZone}>
+        <Button variant="danger" size="sm" onClick={() => deletePages([page.id])}>
+          Delete this page
+        </Button>
+      </div>
     </div>
   );
 };

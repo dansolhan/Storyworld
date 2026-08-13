@@ -631,7 +631,14 @@ Fixed after the design steps:
 
   React Flow also binds **Backspace alone** by default, so the Delete key did nothing
   — which reads as the feature being broken rather than as a different shortcut. Both
-  are bound now.
+  are bound now. The button sits below a rule in the danger outline, so it reads as its
+  own zone rather than as one more setting — outlined rather than filled, because
+  colour is a stroke here and an undoable delete should be findable, not frightening.
+
+- **The page title moved from Settings to Write.** It is content, not configuration:
+  the player sets it as the page's headline directly above the prose, and this is the
+  one place you see both while writing. Settings keeps what a page *is* — type,
+  atmosphere, start page, id — and the delete.
 
 - **Opening a story wiped its contextual entries.** The autosave snapshot never
   recorded the *story schema* version, so `handleOpenExisting` passed the snapshot

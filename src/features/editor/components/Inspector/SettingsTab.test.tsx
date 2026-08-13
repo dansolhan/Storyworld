@@ -50,10 +50,16 @@ describe('SettingsTab', () => {
   it('edits what the page is', async () => {
     render(<LiveSettings pageId={ids.second} />);
 
-    await userEvent.clear(screen.getByRole('textbox', { name: 'Title' }));
-    await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), 'The Oak Door');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Type' }), 'plot');
 
-    expect(page(ids.second).title).toBe('The Oak Door');
+    expect(page(ids.second).type).toBe('plot');
+  });
+
+  /* The title is content, so it lives in the Write tab. */
+  it('does not offer the title — that belongs where the prose is', () => {
+    render(<LiveSettings pageId={ids.second} />);
+
+    expect(screen.queryByRole('textbox', { name: 'Title' })).toBeNull();
   });
 
   describe('deleting the page', () => {
