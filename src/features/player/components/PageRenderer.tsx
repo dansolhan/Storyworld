@@ -51,14 +51,30 @@ export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
 
   const filteredMessages = messages.filter((m) => !m.pageId || m.pageId === pageId);
 
+  const isEnding = engine.getVisibleContent(pageId).choices.length === 0;
+
   return (
     <div className={styles.textContent}>
+      {/*
+        The running heads of a printed page: the story on the left, where you are in
+        it on the right. "Last page" rather than a chapter number, because a
+        branching story has no linear count to give.
+      */}
+      <div className={styles.runningHead}>
+        <span className={styles.headKicker}>{storyData.title || 'Untitled story'}</span>
+        <span className={styles.headKicker}>{isEnding ? 'Last page' : 'This page'}</span>
+      </div>
+
       <h2 className={styles.pageTitle}>{page.title}</h2>
+      <p className={styles.ornament} aria-hidden="true">─ ✦ ─</p>
+
       <div className={styles.paragraphs}>
-        {paragraphs.map((p) => (
+        {paragraphs.map((p, index) => (
           <div
             key={p.id}
             className={styles.paragraphText}
+            /* Only the opening paragraph takes the drop cap, as a page would. */
+            data-opening={index === 0 || undefined}
             dangerouslySetInnerHTML={{ __html: renderProse(p.text) }}
           />
         ))}

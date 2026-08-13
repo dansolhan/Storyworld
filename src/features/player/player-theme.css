@@ -6,12 +6,20 @@
    ============================================================= */
 
 :root {
-  /* Backgrounds */
+  /*
+   * Backgrounds, as the 2c "open book" sets them: the reader looks at a volume
+   * lying on a desk, so there are three grounds — the desk, the page, and the
+   * facing page the ledger is written on.
+   */
+  --player-bg-ground: #14110c; /* the desk the book lies on */
   --player-bg: #1a1610;
-  --player-bg-lighter: #231f18;
+  --player-bg-lighter: #231f18; /* the recto: where the story is set */
+  --player-bg-ledger: #1f1b15; /* the verso: the reader's ledger */
 
   /* Text */
+  --player-title: #f2e8d6; /* the page's own title, a shade above body */
   --player-text: #e8dfc8;
+  --player-text-dim: #c8bda4; /* a neutral action beside an accent one */
   --player-text-muted: #9e9278;
 
   /* Borders */

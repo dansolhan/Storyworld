@@ -6,7 +6,8 @@
   overflow: hidden;
   /* Colors defined in ./player-theme.css */
   --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
-  background-color: var(--player-bg);
+  /* The desk the book lies on — a shade below the page, so the volume sits on it. */
+  background-color: var(--player-bg-ground);
   position: relative;
 }
 
@@ -50,47 +51,139 @@
   letter-spacing: 0.08em;
 }
 
-.mainContent {
+/*
+ * A volume lying on a desk. The 26px inset is the desk showing around the book —
+ * without it the page would run to the window edge and stop reading as an object.
+ */
+.book {
   flex: 1;
   display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
-  padding: 0;
-  overflow: hidden;
-}
-
-.storyContainer {
-  width: 100%;
+  min-height: 0;
+  margin: var(--space-6);
   background-color: var(--player-bg-lighter);
   background-image: var(--paper-texture);
   background-blend-mode: overlay;
-  animation: fadeIn 0.4s ease-out forwards;
+  border: 1px solid var(--player-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.recto {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
   min-height: 0;
-  flex: 1; /* Take up all available space */
+  overflow: hidden;
+}
+
+.leaf {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/*
+ * The gutter, fading at head and foot so it reads as the fold of a book rather
+ * than a panel divider ruled edge to edge.
+ */
+.gutter {
+  width: 1px;
+  flex: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--player-border) 12%,
+    var(--player-border) 88%,
+    transparent
+  );
 }
 
 .rightFrame {
-  width: 350px; /* Fixed width for the sidebar */
+  /* Fixed: the design's 400px verso. */
+  width: 400px;
   flex-shrink: 0;
-  background-color: var(--player-bg);
+  background-color: var(--player-bg-ledger);
   background-image: var(--paper-texture);
-  border-left: 1px solid var(--player-border);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-8) var(--space-6) var(--space-6);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
+}
+
+/* — the ledger's head — */
+
+.ledgerHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.ledgerKicker {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--player-text-muted);
+}
+
+/* The one way out during play, kept quiet on purpose. */
+.ledgerExit {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(225, 173, 102, 0.4);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--player-accent);
+  cursor: pointer;
+}
+
+.ledgerExit:hover {
+  border-bottom-color: var(--player-accent);
 }
 
 .textContent {
   flex: 1 1 0;
   overflow-y: auto;
-  padding: var(--space-8) var(--space-4);
+  /*
+   * The design's 38/44 page margins, snapped to the scale: prose needs room, and
+   * the Classical guide is explicit about not crowding it.
+   */
+  padding: var(--space-10) var(--space-12) var(--space-6);
   min-height: 0;
+}
+
+.runningHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.headKicker {
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--player-text-muted);
+}
+
+.headKicker:last-child {
+  margin-left: auto;
+}
+
+.ornament {
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-meta);
+  letter-spacing: 0.34em;
+  color: var(--player-text-muted);
 }
 
 @keyframes fadeIn {
@@ -105,26 +198,30 @@
   }
 }
 
+/*
+ * The page's own title, flush left over the justified block, as the Classical
+ * direction sets headlines. Not the accent: on a page of prose the title is the
+ * brightest thing, and gold is spent on the drop cap and the marks.
+ */
 .pageTitle {
+  margin: 0 0 var(--space-2);
   font-family: var(--font-heading);
-  font-size: var(--text-3xl);
-  font-weight: 600;
-  color: var(--player-accent);
-  letter-spacing: 0.05em;
-  text-align: center;
-  margin-bottom: var(--space-2);
-  padding-bottom: var(--space-4);
+  /* 42px — a display size, so the lightest cut. */
+  font-size: 2.625rem;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.05;
+  letter-spacing: 0;
+  color: var(--player-title);
 }
 
-.pageTitle::after {
-  content: '─ ✦ ─';
-  display: block;
-  text-align: center;
-  font-size: var(--text-sm);
-  color: var(--player-text-muted);
-  letter-spacing: 0.3em;
-  margin-top: var(--space-3);
-  margin-bottom: var(--space-2);
+/*
+ * A comfortable measure, which the Classical guide asks for by name. The prototype
+ * card is a mock at one width; at 1360px its recto gives ~95 characters a line, and
+ * justification turns that into rivers. Only the prose is capped — the running heads
+ * sit at the page edges and a choice is one short line, so neither needs a measure.
+ */
+.paragraphs {
+  max-width: 64ch;
 }
 
 .paragraphs {
@@ -134,11 +231,39 @@
 }
 
 .paragraphText {
-  font-family: var(--font-family-serif);
+  font-family: var(--font-body);
+  /*
+   * Hyphenation is what makes justification work: without it, a long word forces
+   * the line to stretch its word-spaces and the page grows rivers. The Classical
+   * guide asks for justified copy at a comfortable measure, and this is the half of
+   * that the browser has to be told about.
+   */
+  hyphens: auto;
   font-size: var(--text-lg);
-  line-height: 1.8;
+  line-height: 1.9;
   color: var(--player-text);
-  white-space: pre-wrap;
+  /*
+   * Justified, as the Classical direction sets body copy, with `text-wrap: pretty`
+   * to keep the rag off the last line. `white-space: pre-wrap` is gone: the prose is
+   * HTML from the editor, and preserving source newlines double-spaced it.
+   */
+  text-align: justify;
+  text-wrap: pretty;
+}
+
+/*
+ * A drop cap on the opening paragraph, as a printed page opens. Floated rather than
+ * `::first-letter` because the paragraph's first child is often a `<p>` from the
+ * editor, which `::first-letter` would not reach through.
+ */
+.paragraphText[data-opening] :global(p:first-child)::first-letter {
+  float: left;
+  font-family: var(--font-heading);
+  font-size: 3.5rem; /* 56px */
+  font-weight: var(--font-weight-regular);
+  line-height: 0.82;
+  color: var(--player-accent);
+  padding: 4px 10px 0 0;
 }
 
 .messageText {
@@ -154,14 +279,18 @@
   white-space: pre-wrap;
 }
 
+/*
+ * The choices sit at the foot of the page, on the page — not on a panel of their
+ * own. `margin-top: auto` is what keeps them at the foot on a short page, so a page
+ * with one line of prose still reads as a page rather than a floating fragment.
+ */
 .choicesContainer {
   flex: 0 1 auto;
   min-height: 0;
+  margin-top: auto;
   overflow-y: auto;
   border-top: 1px solid var(--player-border);
-  padding: var(--space-4) var(--space-4);
-  background-color: var(--player-bg);
-  background-image: var(--paper-texture);
+  padding: var(--space-5) var(--space-12) var(--space-6);
   z-index: 2;
   box-sizing: border-box;
 }
@@ -178,51 +307,38 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
 }
 
-.choiceItem {
-  display: flex;
+/* Hairlines between the choices, but not above the first — the container rules that. */
+.choiceItem + .choiceItem {
+  border-top: 1px solid rgba(61, 54, 40, 0.6);
 }
 
 .choiceButton {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  align-items: baseline;
+  gap: var(--space-4);
   width: 100%;
   background: none;
   border: none;
-  padding: var(--space-2) var(--space-2);
+  padding: var(--space-2) 0;
   cursor: pointer;
   text-align: left;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.15s, padding-left 0.2s;
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
-.choiceButton:hover {
-  background-color: rgba(201, 168, 76, 0.08);
-  padding-left: var(--space-4);
+.choiceButton:hover .choiceText {
+  color: var(--player-accent);
 }
 
 .choiceNumber {
   font-family: var(--font-heading);
   font-feature-settings: var(--font-features-tabular);
-  font-size: var(--text-xs);
-  color: var(--player-text-muted);
-  min-width: 2ch;
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-
-.choiceArrow {
+  font-size: var(--text-sm);
   color: var(--player-accent);
-  font-size: 0.6rem;
-  flex-shrink: 0;
-  transition: transform 0.2s;
-}
-
-.choiceButton:hover .choiceArrow {
-  transform: translateX(2px);
+  /* Fixed: a 14px numeral column, so the choice texts align down the page. */
+  width: 14px;
+  flex: none;
 }
 
 .choiceText {
@@ -232,21 +348,64 @@
   line-height: 1.4;
 }
 
+/* A colophon: the rule, the words, and two ways on. No statistics. */
 .endContainer {
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  text-align: center;
-  padding: var(--space-4) 0;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-12) var(--space-6);
+  border-top: 1px solid var(--player-border);
 }
 
 .endText {
+  margin: 0;
   font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  font-weight: 400;
+  /* 30px — a display size, so the lighter cut. */
+  font-size: 1.875rem;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
   color: var(--player-accent);
-  letter-spacing: 0.2em;
+}
+
+.endActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.endPrimary,
+.endSecondary {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: var(--space-2) var(--space-5);
+  background: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.endPrimary {
+  border: 1px solid var(--color-accent-line);
+  color: var(--player-accent);
+}
+
+.endPrimary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.endSecondary {
+  border: 1px solid var(--player-border);
+  color: var(--player-text-dim);
+}
+
+.endSecondary:hover {
+  border-color: var(--player-text-muted);
+  color: var(--player-text);
 }
 
 .errorCard {
@@ -435,12 +594,18 @@
   }
 }
 
+/*
+ * The accent, not the old teal — the handoff replaces `--color-success` here
+ * outright, so there is one gold across the app. A dotted underline rather than a
+ * solid one: the phrase is annotated, not linked away.
+ */
 .paragraphText :global(.contextual-text-mark) {
-  color: var(--color-success);
+  color: var(--player-accent);
+  border-bottom: 1px dotted rgba(225, 173, 102, 0.7);
   cursor: help;
-  transition: opacity 0.2s;
+  transition: border-bottom-color var(--duration-fast) var(--ease-standard);
 }
 
 .paragraphText :global(.contextual-text-mark:hover) {
-  opacity: 0.7;
+  border-bottom-color: var(--player-accent);
 }

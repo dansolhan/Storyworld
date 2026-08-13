@@ -35,10 +35,8 @@ export const Inventory: React.FC = () => {
   if (itemsArray.length === 0) {
     return (
       <div className={styles.container}>
-        <h2 className={styles.title}>Inventory</h2>
-        <div style={{ textAlign: 'center', color: 'var(--player-text-muted)', fontStyle: 'italic', marginTop: 'var(--space-4)' }}>
-          Your inventory is empty.
-        </div>
+        <h2 className={styles.title}>Carried</h2>
+        <p className={styles.empty}>Nothing yet — your pockets are unsearched.</p>
       </div>
     );
   }
@@ -74,29 +72,25 @@ export const Inventory: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Inventory</h2>
+      <h2 className={styles.title}>Carried</h2>
+
+      {/*
+        Pills rather than cards with thumbnails: the ledger is a margin, and the
+        design carries the count inside the label — "River Coin ×2" — so a row of
+        them reads as one line of a list rather than a grid of tiles.
+      */}
       <div className={styles.list}>
         {itemsArray.map(({ itemId, count, itemDef }) => (
-          <div
+          <button
             key={itemId}
-            className={styles.itemCard}
+            type="button"
+            className={styles.itemPill}
             onClick={(e) => handleItemClick(e, itemId)}
             onContextMenu={(e) => handleContextMenu(e, itemId)}
           >
-            <div className={styles.imageContainer}>
-              {itemDef?.imageUrl ? (
-                <img src={itemDef.imageUrl} alt={itemDef.name} className={styles.image} />
-              ) : (
-                <span className={styles.placeholderImage}>?</span>
-              )}
-            </div>
-            <div className={styles.info}>
-              <h3 className={styles.name}>{itemDef?.name}</h3>
-              {itemDef?.multiple && count > 1 && (
-                <span className={styles.count}>x{count}</span>
-              )}
-            </div>
-          </div>
+            {itemDef?.name ?? itemId}
+            {itemDef?.multiple && count > 1 && <span className={styles.count}>×{count}</span>}
+          </button>
         ))}
       </div>
 

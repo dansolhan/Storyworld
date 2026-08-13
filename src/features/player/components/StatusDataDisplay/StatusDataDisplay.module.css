@@ -1,55 +1,40 @@
+/*
+ * Rows in a ledger, not a card: the verso already frames them, so a bordered box
+ * inside it would be a second frame around the same three figures.
+ */
 .statusContainer {
-  padding: var(--space-4);
-  background-color: var(--player-bg-lighter);
-  border: 1px solid var(--player-border);
-  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-}
-
-.statusTitle {
-  font-family: var(--font-heading);
-  font-size: var(--text-lg);
-  color: var(--player-accent);
-  text-align: center;
-  margin: 0;
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--player-border);
 }
 
 .statusList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
 }
 
 .statusEntry {
   display: flex;
   align-items: baseline;
-  gap: var(--space-2);
-  font-family: var(--font-family-serif);
-  font-size: var(--text-base);
-  line-height: 1.4;
-  color: var(--player-text);
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid rgba(61, 54, 40, 0.7);
+}
+
+.statusEntry:last-child {
+  border-bottom: none;
 }
 
 .statusLabel {
-  font-weight: 600;
-  color: var(--player-accent);
+  font-family: var(--font-body);
   font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
+  color: var(--player-text-muted);
 }
 
+/* The figure is the point, so it takes the heading face and tabular digits. */
 .statusValue {
   font-family: var(--font-heading);
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
+  font-feature-settings: var(--font-features-tabular);
   color: var(--player-text);
-}
-
-.divider {
-  display: none; /* Removed in favor of card structure */
 }

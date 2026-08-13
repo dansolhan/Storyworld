@@ -44,9 +44,12 @@ export const StatusDataDisplay: React.FC = () => {
 
   if (visibleEntries.length === 0) return null;
 
+  /*
+   * No heading: the verso already says "The reader's ledger", and a second title
+   * over three rows would be furniture rather than information.
+   */
   return (
     <div className={styles.statusContainer}>
-      <h2 className={styles.statusTitle}>Status</h2>
       <div className={styles.statusList}>
         {visibleEntries.map((entry) => {
           const hasValue = entry.value !== undefined && entry.value.trim() !== '';
@@ -58,11 +61,7 @@ export const StatusDataDisplay: React.FC = () => {
               className={styles.statusEntry}
               style={entry.color ? { color: entry.color } : undefined}
             >
-              {entry.title && (
-                <span className={styles.statusLabel}>
-                  {entry.title}{hasValue ? ':' : ''}
-                </span>
-              )}
+              {entry.title && <span className={styles.statusLabel}>{entry.title}</span>}
               {hasValue && (
                 <span className={styles.statusValue}>{resolvedValue}</span>
               )}

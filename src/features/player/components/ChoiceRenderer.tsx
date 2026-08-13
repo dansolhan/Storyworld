@@ -2,11 +2,16 @@ import React, { useEffect } from 'react';
 import { useEngine } from '../adapter/useEngine';
 import { usePlayerUIStore } from '../adapter/usePlayerUI';
 import { useChoiceSound } from '../hooks/useChoiceSound';
-import { Button } from '../../../components/ui/Button/Button';
 import styles from '../Player.module.css';
 import type { Choice } from '../../../domain/Choice/Choice';
 
-export const ChoiceRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
+export interface ChoiceRendererProps {
+  pageId: string;
+  /** Offered at the end of the story, beside "Begin again". */
+  onExit?: () => void;
+}
+
+export const ChoiceRenderer: React.FC<ChoiceRendererProps> = ({ pageId, onExit }) => {
   const engine = useEngine();
   const { play: playClickSound } = useChoiceSound();
   const setTransitioning = usePlayerUIStore((s) => s.setTransitioning);
@@ -39,13 +44,29 @@ export const ChoiceRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choices]);
 
+  /*
+   * A colophon page, per 6b: the rule, THE END, and two ways on. Deliberately no
+   * statistics and no ending count — the ledger keeps showing exactly what it
+   * showed during play, which is the whole point of not summarising.
+   */
   if (!choices || choices.length === 0) {
     return (
       <div className={styles.endContainer}>
-        <p className={styles.endText}>— The End —</p>
-        <Button variant="secondary" size="lg" onClick={() => engine.dispatch({ type: 'RESTART' })}>
-          Restart Story
-        </Button>
+        <p className={styles.endText}>The End</p>
+        <div className={styles.endActions}>
+          <button
+            type="button"
+            className={styles.endPrimary}
+            onClick={() => engine.dispatch({ type: 'RESTART' })}
+          >
+            Begin again
+          </button>
+          {onExit && (
+            <button type="button" className={styles.endSecondary} onClick={onExit}>
+              Back to the editor
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -61,8 +82,8 @@ export const ChoiceRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
               onMouseEnter={() => engine.dispatch({ type: 'HOVER_CHOICE', payload: { choiceId: choice.id, isHovering: true } })}
               onMouseLeave={() => engine.dispatch({ type: 'HOVER_CHOICE', payload: { choiceId: choice.id, isHovering: false } })}
             >
-              <span className={styles.choiceNumber}>[{idx + 1}]</span>
-              <span className={styles.choiceArrow}>▶</span>
+              {/* A numbered line, as a gamebook sets its choices. */}
+              <span className={styles.choiceNumber}>{idx + 1}</span>
               <span className={styles.choiceText}>{choice.text}</span>
             </button>
           </li>

@@ -458,6 +458,58 @@ nothing and the sentence closes over it, rather than showing a reader scaffoldin
 That is the same bargain contextual entries strike, and the same reason: deleting
 should not rewrite an author's paragraphs behind their back.
 
+## Done — steps 2c & 6b, the player as an open book
+
+- **`2c` is not a two-column reading view.** The handoff README has no section for
+  it — only its name in the build order — so this step began by reading the
+  prototype, where 2c is *"an open book: story on the recto, the reader's ledger on
+  the verso, gutter down the middle"*. The earlier note in this file was a guess and
+  was wrong; had it been built from the guess, the whole shape would have been off.
+- **A volume lying on a desk.** Three grounds now, where there were two:
+  `--player-bg-ground` is the desk the book sits on, `--player-bg-lighter` the
+  recto, `--player-bg-ledger` the verso. The gutter is a 1px gradient that fades at
+  head and foot, so it reads as a fold rather than a panel divider ruled edge to
+  edge.
+- **The recto is a printed page**: running heads (story on the left, where you are
+  on the right), a 42px title flush left, the `─ ✦ ─` ornament, and a drop cap on
+  the opening paragraph. "Last page" rather than a chapter number — a branching
+  story has no linear count to give.
+- **Justified prose at a comfortable measure.** The Classical guide asks for
+  justified body copy by name, and for a comfortable measure; the prototype card is
+  a mock at one width, and at 1360px its recto gives ~95 characters a line, which
+  justification turned into rivers. The prose is capped and hyphenated; the running
+  heads and choices stay at page width, since neither needs a measure.
+- **Choices are numbered lines**, accent numeral in a fixed 14px column so the texts
+  align down the page, hairlines between them, sitting at the foot of the page via
+  `margin-top: auto` — so a short page still reads as a page.
+- **`6b` is a colophon**: the rule, `THE END` letterspaced in the accent, and two
+  ways on — `Begin again` and `Back to the editor`. **No statistics and no ending
+  counts**, and the ledger keeps showing exactly what it showed during play. A test
+  asserts the page offers exactly two buttons, so a future "you visited 14 pages"
+  cannot creep in.
+- **One way out during play**, in the ledger's head. The floating "■ Stop Playing"
+  and the "Storyworld Engine" header bar are both gone: a reader finishing a story
+  was being offered four ways to leave it, which is what the design's bare ending is
+  reacting against.
+- **The ledger is rows, not cards** — label left, figure right in the heading face
+  with tabular digits, hairline between. `CARRIED` holds pills with the count in the
+  label ("River Coin ×2"), and the item context menu — Examine and context choices —
+  is unchanged behind them.
+- **The contextual mark takes the accent**, with a dotted underline. The handoff
+  replaces the teal `--color-success` here outright, so there is one gold across the
+  app; the mark is annotated, not linked away, which is what the dots say.
+- `--font-family-serif` and `--font-family-sans` are gone from the player, which
+  removes two more callers of the deprecated aliases.
+
+Two notes for later:
+
+- The design's ledger shows an **Afflictions row of pill chips**, which our status
+  entries cannot express: an entry carries one value string, not a list. Rendering
+  it would need a shape change, so the rows stay label/value.
+- The player keeps its **paper texture** — the reader's surface is allowed to feel
+  like paper while the editor stays flat. They are different rooms, which is why the
+  handoff keeps `player-theme.css` separate in the first place.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -466,10 +518,9 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-2. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+1. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-3. **`6c` History & export**, **`6d` shortcut sheet**.
+2. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 

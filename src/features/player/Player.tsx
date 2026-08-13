@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card } from '../../components/ui/Card/Card';
-import { Button } from '../../components/ui/Button/Button';
 import { Popover } from '../../components/ui/Popover/Popover';
 import { useContextualPopover } from './hooks/useContextualPopover';
 import { useEngine } from './adapter/useEngine';
@@ -60,13 +59,13 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, 
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.headerTitle}>Storyworld Engine</h1>
-        {onExit && <Button variant="secondary" size="sm" onClick={onExit}>Exit Player</Button>}
-      </header>
-
-      <main className={styles.mainContent}>
-        <div className={styles.storyContainer}>
+      {/*
+        The 2c "open book": the desk, then a volume lying on it — story on the
+        recto, the reader's ledger on the verso, a gutter down the middle. There is
+        no header bar; the story's own title is the kicker at the head of the page.
+      */}
+      <main className={styles.book}>
+        <div className={styles.recto}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPageId}
@@ -74,15 +73,17 @@ const PlayerContent: React.FC<PlayerProps> = ({ storyData, startPageId, onExit, 
               animate={{ opacity: isTransitioning ? 0 : 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
+              className={styles.leaf}
             >
               <PageRenderer pageId={currentPageId} />
-              <ChoiceRenderer pageId={currentPageId} />
+              <ChoiceRenderer pageId={currentPageId} onExit={onExit} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <PlayerRightFrame />
+        <div className={styles.gutter} aria-hidden="true" />
+
+        <PlayerRightFrame onExit={onExit} />
       </main>
 
       <Popover

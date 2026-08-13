@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { ReactFlowProvider } from '@xyflow/react';
 import { GraphEditor } from './features/editor/GraphEditor';
 import { Player } from './features/player/Player';
-import { Button } from './components/ui/Button/Button';
 import { useStoryImport } from './features/editor/hooks/useStoryImport';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MainLayout } from './layout/MainLayout';
@@ -31,14 +30,6 @@ function App() {
         className={styles.hiddenFileInput}
         onChange={handleFileChange}
       />
-
-      {mode === 'player' && (
-        <div className={styles.playerExit}>
-          <Button variant="secondary" onClick={() => setMode('editor')}>
-            ■ Stop Playing
-          </Button>
-        </div>
-      )}
 
       {mode === 'dashboard' ? (
         <Dashboard
