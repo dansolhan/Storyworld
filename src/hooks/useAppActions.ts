@@ -19,33 +19,33 @@ export const useAppActions = (
    * page, so nothing about the schema changes.
    */
   const handlePlay = (startAtPageId?: string) => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText } = useEditorStore.getState();
     const compiledStory = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres, statusData);
+    }, audio, atmospheres, statusData, contextualText);
     setPlaySession({ story: compiledStory, startPageId: startAtPageId });
     setMode('player');
   };
 
   const handleExportJson = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres, statusData);
+    }, audio, atmospheres, statusData, contextualText);
     exportToJson(storyData);
   };
 
   const handleExportStoryworld = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData } = useEditorStore.getState();
+    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText } = useEditorStore.getState();
     const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
       title: storyTitle,
       description: storyDescription,
       startPageId
-    }, audio, atmospheres, statusData);
+    }, audio, atmospheres, statusData, contextualText);
     exportToStoryworld(storyData);
   };
 

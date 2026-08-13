@@ -437,4 +437,157 @@ describe('Story Migrations', () => {
       expect(statusEntries(migrated)[0].condition).toHaveLength(1);
     });
   });
+
+  describe('1.2.0 → 1.3.0: contextual text becomes a shared collection', () => {
+    const storyWithParagraph = (text: string) => ({
+      version: '1.2.0',
+      pages: [{ id: 'page-1', paragraphs: [{ id: 'para-1', text }], choices: [] }],
+    });
+
+    const entriesOf = (story: ReturnType<typeof migrateStory>): Record<string, Record<string, unknown>> =>
+      (story.contextualText ?? {}) as unknown as Record<string, Record<string, unknown>>;
+
+    const paragraphText = (story: ReturnType<typeof migrateStory>): string =>
+      (story.pages[0].paragraphs[0] as unknown as { text: string }).text;
+
+    const MARK =
+      '<p>a <span class="contextual-text-mark" data-context="Looks onto an old shrine." data-title="The window">small window</span> above</p>';
+
+    it('lifts the note out of the mark and into an entry', () => {
+      const migrated = migrateStory(storyWithParagraph(MARK));
+      const entries = Object.values(entriesOf(migrated));
+
+      expect(entries).toHaveLength(1);
+      expect(entries[0]).toMatchObject({
+        phrase: 'small window',
+        text: 'Looks onto an old shrine.',
+        title: 'The window',
+      });
+    });
+
+    it('leaves the mark holding only a reference', () => {
+      const migrated = migrateStory(storyWithParagraph(MARK));
+      const [id] = Object.keys(entriesOf(migrated));
+
+      expect(paragraphText(migrated)).toContain(`data-context-id="${id}"`);
+      expect(paragraphText(migrated)).not.toContain('data-context=');
+      expect(paragraphText(migrated)).not.toContain('data-title=');
+    });
+
+    /*
+     * The reason for a targeted rewrite rather than parse-and-reserialise: every
+     * byte the migration was not asked to touch has to survive it.
+     */
+    it('leaves the rest of the prose exactly as it was', () => {
+      const migrated = migrateStory(storyWithParagraph(MARK));
+      const text = paragraphText(migrated);
+
+      expect(text.startsWith('<p>a ')).toBe(true);
+      expect(text.endsWith(' above</p>')).toBe(true);
+      expect(text).toContain('>small window</span>');
+    });
+
+    it('keeps markup inside the marked words', () => {
+      const migrated = migrateStory(
+        storyWithParagraph('<p><span data-context="A note.">a <em>small</em> window</span></p>')
+      );
+
+      expect(paragraphText(migrated)).toContain('a <em>small</em> window');
+      // The phrase is the words, without the markup around them.
+      expect(Object.values(entriesOf(migrated))[0].phrase).toBe('a small window');
+    });
+
+    it('leaves spans that are not contextual marks alone', () => {
+      const html = '<p><span class="something-else">plain</span></p>';
+      const migrated = migrateStory(storyWithParagraph(html));
+
+      expect(paragraphText(migrated)).toBe(html);
+      expect(entriesOf(migrated)).toEqual({});
+    });
+
+    it('decodes escaped characters into the entry', () => {
+      const migrated = migrateStory(
+        storyWithParagraph('<p><span data-context="Bell &amp; Whistle &quot;the inn&quot;">sign</span></p>')
+      );
+
+      expect(Object.values(entriesOf(migrated))[0].text).toBe('Bell & Whistle "the inn"');
+    });
+
+    it('omits a title that was never set, rather than storing an empty one', () => {
+      const migrated = migrateStory(storyWithParagraph('<p><span data-context="A note.">x</span></p>'));
+      expect(Object.values(entriesOf(migrated))[0]).not.toHaveProperty('title');
+    });
+
+    /*
+     * Two identical notes stay two entries: deciding they are "the same" would be an
+     * irreversible guess about intent. The workspace offers the join instead.
+     */
+    it('does not merge two marks that say the same thing', () => {
+      const migrated = migrateStory({
+        version: '1.2.0',
+        pages: [
+          {
+            id: 'page-1',
+            choices: [],
+            paragraphs: [
+              { id: 'p1', text: '<p><span data-context="A note.">one</span></p>' },
+              { id: 'p2', text: '<p><span data-context="A note.">two</span></p>' },
+            ],
+          },
+        ],
+      });
+
+      expect(Object.keys(entriesOf(migrated))).toHaveLength(2);
+    });
+
+    it('gives every mark its own id', () => {
+      const migrated = migrateStory({
+        version: '1.2.0',
+        pages: [
+          {
+            id: 'page-1',
+            choices: [],
+            paragraphs: [
+              {
+                id: 'p1',
+                text: '<p><span data-context="One.">a</span> and <span data-context="Two.">b</span></p>',
+              },
+            ],
+          },
+        ],
+      });
+
+      const ids = Object.keys(entriesOf(migrated));
+      expect(ids).toHaveLength(2);
+      for (const id of ids) expect(paragraphText(migrated)).toContain(id);
+    });
+
+    it('gives a story with no marks an empty collection rather than nothing', () => {
+      const migrated = migrateStory(storyWithParagraph('<p>plain prose</p>'));
+      expect(migrated.contextualText).toEqual({});
+    });
+
+    it('tolerates a paragraph whose text is missing', () => {
+      const migrated = migrateStory({
+        version: '1.2.0',
+        pages: [{ id: 'page-1', choices: [], paragraphs: [{ id: 'p1' }] }],
+      });
+
+      expect(migrated.version).toBe(CURRENT_VERSION);
+    });
+
+    it('carries a 1.0.0 story through every hop', () => {
+      const migrated = migrateStory({
+        version: '1.0.0',
+        pages: [{ id: 'page-1', choices: [], paragraphs: [{ id: 'p1', text: MARK }] }],
+        statusData: [{ id: 'sd-1', title: 'Curse', conditionals: [{ id: 'c1', blueprintId: 'has_item' }] }],
+      });
+
+      expect(migrated.version).toBe(CURRENT_VERSION);
+      expect(Object.keys(entriesOf(migrated))).toHaveLength(1);
+      expect(
+        (migrated.statusData as unknown as Record<string, unknown>[])[0].condition
+      ).toHaveLength(1);
+    });
+  });
 });

@@ -1,38 +1,54 @@
+import React from 'react';
 import { MessageSquareText } from 'lucide-react';
 import { Button } from '../../Button/Button';
 import type { Editor } from '@tiptap/core';
 import { RTEFeature } from '../RTEFeature';
 import { ContextualText } from '../extensions/ContextualText';
-import { ContextualTextUI } from './ContextualTextUI';
+import { ContextualTextHost } from './ContextualTextHost';
 import styles from '../RichTextEditor.module.css';
 
-
-
 /**
- * What the toolbar button asks the mounted UI to do. Typing this surfaced a
- * missing `title` in the payload below: the popover state declares it as a
- * string, and the untyped dispatch was leaving it undefined.
+ * The author has asked to attach a contextual entry to a range of prose.
+ *
+ * `entryId` is set when the range already carries a mark, so the picker can open
+ * on the entry it is currently attached to.
  */
-export interface ContextualTextOpenPopoverAction {
-  type: 'open_popover';
-  payload: {
-    x: number;
-    y: number;
-    text: string;
-    title: string;
-    pos: number;
-    isEdit: boolean;
-    range: { from: number; to: number };
-  };
+export interface ContextualTextRequest {
+  x: number;
+  y: number;
+  /** The marked words, which a new entry is named after. */
+  phrase: string;
+  entryId: string | null;
+  range: { from: number; to: number };
 }
 
-export type ContextualTextAction = ContextualTextOpenPopoverAction;
-export type ContextualTextListener = (action: ContextualTextAction) => void;
+export interface ContextualTextPickerProps {
+  request: ContextualTextRequest;
+  /** Attaches the chosen entry to the range the request names. */
+  onAttach: (entryId: string) => void;
+  onCancel: () => void;
+}
+
+export interface ContextualTextFeatureOptions {
+  /**
+   * Renders the picker. Supplied by the caller rather than imported here, because
+   * choosing an entry needs the story's entries and this is generic UI — a
+   * `useEditorStore` import in `components/ui` would tie every consumer of the
+   * rich-text editor to the editor feature.
+   */
+  renderPicker?: (props: ContextualTextPickerProps) => React.ReactNode;
+}
 
 export class ContextualTextFeature extends RTEFeature {
-  private listener: ContextualTextListener | null = null;
+  private request: ContextualTextRequest | null = null;
+  private notify: (() => void) | null = null;
+  /* An explicit field, not a parameter property: `erasableSyntaxOnly` forbids those. */
+  private options: ContextualTextFeatureOptions;
 
-  public setListener(fn: ContextualTextListener | null) { this.listener = fn; }
+  constructor(options: ContextualTextFeatureOptions = {}) {
+    super();
+    this.options = options;
+  }
 
   get name() {
     return 'contextualText';
@@ -40,6 +56,34 @@ export class ContextualTextFeature extends RTEFeature {
 
   getExtensions() {
     return [ContextualText];
+  }
+
+  /** Lets the mounted UI re-render when a request opens or closes. */
+  public subscribe(notify: (() => void) | null) {
+    this.notify = notify;
+  }
+
+  public get openRequest(): ContextualTextRequest | null {
+    return this.request;
+  }
+
+  public closeRequest() {
+    this.request = null;
+    this.notify?.();
+  }
+
+  public attach(editor: Editor, entryId: string) {
+    const request = this.request;
+    this.request = null;
+    if (!request) return;
+
+    editor
+      .chain()
+      .focus()
+      .setTextSelection(request.range)
+      .setContextualText({ contextId: entryId })
+      .run();
+    this.notify?.();
   }
 
   renderToolbarButton(editor: Editor) {
@@ -52,6 +96,8 @@ export class ContextualTextFeature extends RTEFeature {
       }
 
       const { from, to } = editor.state.selection;
+      if (from === to) return; // Nothing selected: there is no phrase to mark.
+
       let coords;
       try {
         coords = editor.view.coordsAtPos(from);
@@ -60,10 +106,14 @@ export class ContextualTextFeature extends RTEFeature {
         coords = { left: rect.left, bottom: rect.top + 30 };
       }
 
-      this.listener?.({
-        type: 'open_popover',
-        payload: { x: coords.left, y: coords.bottom, text: '', title: '', pos: from, isEdit: false, range: { from, to } }
-      });
+      this.request = {
+        x: coords.left,
+        y: coords.bottom,
+        phrase: editor.state.doc.textBetween(from, to),
+        entryId: (editor.getAttributes(this.name).contextId as string | null) ?? null,
+        range: { from, to },
+      };
+      this.notify?.();
     };
 
     return (
@@ -74,7 +124,7 @@ export class ContextualTextFeature extends RTEFeature {
         onClick={handleToggle}
         variant={isActive ? 'primary' : 'secondary'}
         size="sm"
-        title="Add Contextual Text"
+        title={isActive ? 'Remove contextual text' : 'Contextual text'}
       >
         <MessageSquareText size={16} />
       </Button>
@@ -82,7 +132,11 @@ export class ContextualTextFeature extends RTEFeature {
   }
 
   renderUI(editor: Editor) {
-    // Return a React component that manages the context menu and input popover state.
-    return <ContextualTextUI key="contextual-text-ui" editor={editor} feature={this} />;
+    const render = this.options.renderPicker;
+    if (!render) return null;
+
+    return (
+      <ContextualTextHost key="contextual-text-host" editor={editor} feature={this} render={render} />
+    );
   }
 }

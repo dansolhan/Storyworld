@@ -25,6 +25,7 @@ export interface StoredSnapshot {
     atmospheres?: Record<string, Atmosphere>;
     statusData?: StatusData[];
     subplots?: unknown[];
+    contextualText?: import('../../domain/ContextualText/ContextualEntry').ContextualEntries;
     storyTitle?: string;
     storyDescription?: string;
     startPageId?: string | null;
@@ -74,6 +75,7 @@ export const summariseStory = (id: string, snapshot: unknown): StorySummary => {
     audio: state.audio ?? {},
     atmospheres: state.atmospheres ?? {},
     startPageId: state.startPageId ?? null,
+    contextualText: state.contextualText ?? {},
     usage,
   });
 

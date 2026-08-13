@@ -3,6 +3,7 @@ import type { Subplot } from './Subplot';
 import type { StoryVariable } from './Variable';
 import type { AudioItem } from './Audio';
 import type { StatusData } from './StatusData';
+import type { ContextualEntries } from '../ContextualText/ContextualEntry';
 
 export interface StoryData {
   version: string | number;
@@ -18,6 +19,8 @@ export interface StoryData {
   atmospheres?: Record<string, import('../Atmosphere/Atmosphere').Atmosphere>;
   audio?: Record<string, AudioItem>;
   statusData?: StatusData[];
+  /** Shared contextual entries, referenced from paragraph marks. Schema 1.3.0. */
+  contextualText?: ContextualEntries;
   /**
    * Editor layout, opaque to the domain: React Flow nodes and edges, whose
    * shape belongs to the editor feature. `storyMapper` is the only place that

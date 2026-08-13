@@ -32,7 +32,8 @@ export const compileGraphToStory = (
   metadata?: { title: string; description: string; startPageId: string | null },
   audio?: Record<string, AudioItem>,
   atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>,
-  statusData?: import('../domain/Story/StatusData').StatusData[]
+  statusData?: import('../domain/Story/StatusData').StatusData[],
+  contextualText?: import('../domain/ContextualText/ContextualEntry').ContextualEntries
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
@@ -73,6 +74,7 @@ export const compileGraphToStory = (
     audio,
     atmospheres,
     statusData,
+    contextualText,
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,

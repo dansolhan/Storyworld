@@ -4,6 +4,8 @@ import type { Atmosphere } from '../../../domain/Atmosphere/Atmosphere';
 import type { StoryVariable } from '../../../domain/Story/Variable';
 import type { AudioItem } from '../../../domain/Story/Audio';
 import { isUnwritten } from '../../../domain/Page/pageStatus';
+import { contextIdsIn } from '../../../domain/ContextualText/contextualMark';
+import type { ContextualEntries } from '../../../domain/ContextualText/ContextualEntry';
 import { buildPageGraph, reachableFrom } from './pageLinks';
 import type { UsageIndex } from '../usage/usageReference';
 import type { HealthCheck, HealthFinding, HealthReport } from './healthFinding';
@@ -15,6 +17,7 @@ export interface HealthSources {
   audio: Record<string, AudioItem>;
   atmospheres: Record<string, Atmosphere>;
   startPageId: string | null;
+  contextualText: ContextualEntries;
   /** So "unused" means exactly what the Data workspace's USED ON column means. */
   usage: UsageIndex;
 }
@@ -42,6 +45,7 @@ export const buildHealthReport = ({
   audio,
   atmospheres,
   startPageId,
+  contextualText,
   usage,
 }: HealthSources): HealthReport => {
   const allPages = Object.values(pages ?? {});
@@ -110,6 +114,32 @@ export const buildHealthReport = ({
       detail: `on ${titleOf(pages[dangling.pageId])}, points at ${dangling.targetPageId}`,
       pageId: dangling.pageId,
     })),
+  });
+
+  /*
+   * A mark pointing at a deleted entry. The player renders those words as ordinary
+   * prose so a reader never meets a dead link, which means the author would never
+   * notice without this — the story looks fine and quietly says less than it did.
+   */
+  checks.push({
+    id: 'dangling-marks',
+    title: 'Marks pointing nowhere',
+    explanation:
+      'A phrase is marked for contextual text whose entry has been deleted. The reader sees the words as plain prose.',
+    severity: 'breaks',
+    clear: 'Every marked phrase names an entry that exists.',
+    findings: allPages.flatMap((page) =>
+      page.paragraphs.flatMap((paragraph) =>
+        contextIdsIn(paragraph.text)
+          .filter((entryId) => !(contextualText ?? {})[entryId])
+          .map((entryId) => ({
+            id: `dangling-mark:${paragraph.id}:${entryId}`,
+            label: titleOf(page),
+            detail: 'a marked phrase has lost its entry',
+            pageId: page.id,
+          }))
+      )
+    ),
   });
 
   /*

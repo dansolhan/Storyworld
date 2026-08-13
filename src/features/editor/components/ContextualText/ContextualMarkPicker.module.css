@@ -1,0 +1,199 @@
+.panel {
+  /* Fixed: the design's picker column. */
+  width: 380px;
+  max-height: 500px;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 500px;
+}
+
+.header {
+  flex: none;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.kicker {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.phrase {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+}
+
+.query {
+  flex: none;
+  margin: var(--space-3) var(--space-4) var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-app);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text);
+}
+
+.query:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--space-2);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.entry {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: none;
+  /* Reserved at rest so the current entry's marker never shifts the row. */
+  border-left: 2px solid transparent;
+  font-family: var(--font-body);
+  text-align: left;
+  cursor: pointer;
+}
+
+.entry:hover {
+  background-color: var(--color-accent-hover-row);
+}
+
+.entry[data-current] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-tint);
+}
+
+.entryPhrase {
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+}
+
+.entryText {
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+  /* Two lines is enough to recognise an entry; the workspace shows it whole. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.entryMeta {
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.footer {
+  flex: none;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-line);
+}
+
+.newEntry {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+/* — writing a new entry — */
+
+.draft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.draftField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.draftInput {
+  padding: var(--space-2);
+  background-color: var(--color-bg-app);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  line-height: 1.5;
+  color: var(--color-text);
+  resize: vertical;
+}
+
+.draftInput:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.draftActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cancel {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.cancel:hover {
+  color: var(--color-text);
+}
+
+.save {
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.save:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.save:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

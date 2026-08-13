@@ -8,7 +8,7 @@ import {
   recordList,
 } from './legacyStory';
 
-export const CURRENT_VERSION = '1.2.0';
+export const CURRENT_VERSION = '1.3.0';
 
 type MigrationFunction = (oldStory: LegacyRecord) => LegacyRecord;
 
@@ -325,6 +325,71 @@ const migrateV1_1_0_to_V1_2_0: MigrationFunction = (v1_1_story) => {
   return { ...v1_1_story, statusData };
 };
 
+/**
+ * Contextual text becomes a shared collection.
+ *
+ * Before this, every mark carried its own copy of the note inside the paragraph
+ * HTML — `data-context` and `data-title` — so the same note on three pages was
+ * three unrelated copies. Each mark becomes an entry with an id and the mark keeps
+ * only a reference to it.
+ *
+ * Nothing is merged. Two marks with identical text stay two entries, because
+ * deciding they are "the same" would be an irreversible guess about intent; the
+ * workspace offers to join them, which is the author's call to make. Sharing from
+ * here on is deliberate: the picker attaches an existing entry to a new phrase.
+ *
+ * The rewrite is deliberately surgical. Only the matched span's attributes change;
+ * every other byte of the author's prose is left exactly as it was. Parsing and
+ * reserialising the paragraph would normalise entity encoding, attribute quoting
+ * and self-closing tags — silently editing writing this migration was not asked to
+ * touch.
+ */
+const LEGACY_MARK = /<span\b([^>]*)>([\s\S]*?)<\/span>/g;
+/* `\\b` so the template literal yields a word boundary — a bare `\b` is a backspace. */
+const ATTR = (name: string) => new RegExp(`\\b${name}="([^"]*)"`);
+
+const migrateV1_2_0_to_V1_3_0: MigrationFunction = (v1_2_story) => {
+  const entries: LegacyRecord = {};
+
+  /* HTML-escaped in the source, so decoded before being stored as data. */
+  const decode = (value: string): string =>
+    value
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#0?39;/g, "'")
+      .replace(/&amp;/g, '&');
+
+  const rewriteParagraph = (html: string): string =>
+    html.replace(LEGACY_MARK, (whole, attrs: string, inner: string) => {
+      const context = ATTR('data-context').exec(attrs);
+      // A span without `data-context` is some other markup and is left alone.
+      if (!context) return whole;
+
+      const title = ATTR('data-title').exec(attrs);
+      const id = newId();
+      entries[id] = {
+        id,
+        // The marked words are the phrase, with any nested markup dropped.
+        phrase: inner.replace(/<[^>]*>/g, '').trim(),
+        text: decode(context[1]),
+        ...(title && title[1] ? { title: decode(title[1]) } : {}),
+      };
+
+      return `<span class="contextual-text-mark" data-context-id="${id}">${inner}</span>`;
+    });
+
+  const pages = ensurePagesArray(v1_2_story.pages).map((page) => ({
+    ...page,
+    paragraphs: recordList(page.paragraphs).map((paragraph) => ({
+      ...paragraph,
+      text: typeof paragraph.text === 'string' ? rewriteParagraph(paragraph.text) : paragraph.text,
+    })),
+  }));
+
+  return { ...v1_2_story, pages, contextualText: entries };
+};
+
 interface MigrationStep {
   from: string | number;
   to: string | number;
@@ -344,6 +409,7 @@ const migrationSteps: MigrationStep[] = [
   { from: '0.9.0', to: '1.0.0', migrate: migrateV0_9_0_to_V1_0_0 },
   { from: '1.0.0', to: '1.1.0', migrate: migrateV1_0_0_to_V1_1_0 },
   { from: '1.1.0', to: '1.2.0', migrate: migrateV1_1_0_to_V1_2_0 },
+  { from: '1.2.0', to: '1.3.0', migrate: migrateV1_2_0_to_V1_3_0 },
 ];
 
 export function migrateStory(storyJson: unknown): StoryData {

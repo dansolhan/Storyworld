@@ -21,6 +21,7 @@ export const useHealthReport = (): HealthReport => {
       audio: state.audio,
       atmospheres: state.atmospheres,
       startPageId: state.startPageId,
+      contextualText: state.contextualText,
     }))
   );
   const usage = useUsageIndex();
@@ -34,6 +35,7 @@ export const useHealthReport = (): HealthReport => {
         audio: sources.audio ?? {},
         atmospheres: sources.atmospheres ?? {},
         startPageId: sources.startPageId ?? null,
+        contextualText: sources.contextualText ?? {},
         usage,
       }),
     [sources, usage]

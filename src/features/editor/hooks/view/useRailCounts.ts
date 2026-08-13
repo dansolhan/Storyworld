@@ -3,31 +3,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useHealthReport } from '../data/useHealthReport';
 import type { RailCountKey } from '../../components/EditorShell/railConfig';
-import type { Page } from '../../../../domain/Page/Page';
 
 export type RailCounts = Record<RailCountKey, number>;
-
-/**
- * Contextual entries have no collection of their own — they live as marks
- * inside paragraph HTML. `ContextManager` extracts them with a DOMParser,
- * which is far more than a rail badge needs, so the count is taken from the
- * class token directly.
- */
-const CONTEXTUAL_MARK_CLASS = 'contextual-text-mark';
-
-const countContextualMarks = (pages: Record<string, Page>): number => {
-  let total = 0;
-  for (const page of Object.values(pages)) {
-    for (const paragraph of page.paragraphs) {
-      let index = paragraph.text.indexOf(CONTEXTUAL_MARK_CLASS);
-      while (index !== -1) {
-        total += 1;
-        index = paragraph.text.indexOf(CONTEXTUAL_MARK_CLASS, index + CONTEXTUAL_MARK_CLASS.length);
-      }
-    }
-  }
-  return total;
-};
 
 /**
  * The trailing figures on the rail's DATA items. Recomputed only when the
@@ -43,7 +20,7 @@ export const useRailCounts = (): RailCounts => {
       audio: state.audio,
       atmospheres: state.atmospheres,
       statusData: state.statusData,
-      pages: state.pages,
+      contextualText: state.contextualText,
     }))
   );
 
@@ -55,7 +32,12 @@ export const useRailCounts = (): RailCounts => {
       audio: Object.keys(collections.audio ?? {}).length,
       atmospheres: Object.keys(collections.atmospheres ?? {}).length,
       statusData: (collections.statusData ?? []).length,
-      context: countContextualMarks(collections.pages ?? {}),
+      /*
+       * Entries, not marks. They were the same figure until 1.3.0 made entries
+       * shared — an entry marked on three pages is one thing to edit, and the
+       * workspace lists one row for it.
+       */
+      context: Object.keys(collections.contextualText ?? {}).length,
     }),
     [collections, health.breakingCount]
   );

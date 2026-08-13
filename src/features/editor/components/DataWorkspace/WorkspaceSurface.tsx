@@ -6,13 +6,13 @@ import { AtmospheresWorkspace } from '../Atmospheres/AtmospheresWorkspace';
 import { AudioWorkspace } from '../Audio/AudioWorkspace';
 import { HealthWorkspace } from '../Health/HealthWorkspace';
 import { StatusDataWorkspace } from '../StatusData/StatusDataWorkspace';
+import { ContextualTextWorkspace } from '../ContextualText/ContextualTextWorkspace';
 
 /**
  * Whichever data workspace the rail has selected, or nothing when the graph is
  * showing.
  *
- * Contextual text is still a modal over the canvas, until the design's own screen
- * for it is built at 5a.
+ * Every data surface has its own screen now; the six modal managers are gone.
  */
 export const WorkspaceSurface: React.FC = () => {
   const { activeWorkspace } = useActiveWorkspace();
@@ -23,5 +23,6 @@ export const WorkspaceSurface: React.FC = () => {
   if (activeWorkspace === 'audio') return <AudioWorkspace />;
   if (activeWorkspace === 'health') return <HealthWorkspace />;
   if (activeWorkspace === 'statusData') return <StatusDataWorkspace />;
+  if (activeWorkspace === 'context') return <ContextualTextWorkspace />;
   return null;
 };

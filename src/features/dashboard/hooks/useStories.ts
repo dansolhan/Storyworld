@@ -97,7 +97,8 @@ export const useStories = () => {
       subplots: exampleStory.subplots || [],
       audio: exampleStory.audio || {},
       atmospheres: exampleStory.atmospheres || {},
-      statusData: exampleStory.statusData || []
+      statusData: exampleStory.statusData || [],
+      contextualText: exampleStory.contextualText || {}
     });
     setHasHydrated(true);
     onOpen();
@@ -137,7 +138,8 @@ export const useStories = () => {
           subplots: parsedData.subplots || [],
           audio: parsedData.audio || {},
           atmospheres: parsedData.atmospheres || {},
-          statusData: parsedData.statusData || []
+          statusData: parsedData.statusData || [],
+          contextualText: parsedData.contextualText || {}
         });
         setHasHydrated(true);
         onOpen();

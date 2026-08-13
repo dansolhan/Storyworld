@@ -6,6 +6,7 @@ import { ItalicFeature } from '../../../../components/ui/RichTextEditor/features
 import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/features/ContextualTextFeature';
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import { RuleEditor } from '../RuleEditor/RuleEditor';
+import { ContextualMarkPicker } from '../ContextualText/ContextualMarkPicker';
 import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
 import styles from './ParagraphBlock.module.css';
 
@@ -25,7 +26,18 @@ export const ParagraphBlock = React.memo(
   ({ paragraph, pageId, isLocked, isActive, onActivate, onToggleLock, onChange }: ParagraphBlockProps) => {
     // Built per block so two editors never share feature instances.
     const features = useMemo(
-      () => [new BoldFeature(), new ItalicFeature(), new ContextualTextFeature(), new InsertVariableFeature()],
+      () => [
+        new BoldFeature(),
+        new ItalicFeature(),
+        /*
+         * The picker is injected rather than imported by the feature: choosing an
+         * entry needs the story's entries, and the rich-text editor is generic UI.
+         */
+        new ContextualTextFeature({
+          renderPicker: (props) => <ContextualMarkPicker {...props} />,
+        }),
+        new InsertVariableFeature(),
+      ],
       []
     );
 

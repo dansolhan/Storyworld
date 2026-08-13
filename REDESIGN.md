@@ -360,6 +360,60 @@ Two things the demo exposed:
   condition from a newer build shows the entry rather than silently swallowing it.
   The preview inherits that by sharing the function, which is the point.
 
+## Done — steps 5a & 6a, contextual text as shared entries
+
+The second schema step. **`CURRENT_VERSION` 1.2.0 → 1.3.0**, with a migration and
+migration tests.
+
+- **Entries are first-class and shared.** Before this, every mark carried its own
+  copy of the note inside the paragraph HTML, so the same explanation written on
+  three pages was three unrelated copies — editing one changed nothing else. A mark
+  now holds only `data-context-id`, and the note lives in `contextualText`.
+- **The migration interprets nothing.** Every existing mark becomes its own entry.
+  Deciding that two identical notes are "the same" would be an irreversible guess
+  about intent, so the workspace *offers* the join instead — "these say exactly the
+  same thing · Use one entry for all of these" — and `mergeContextualEntries`
+  repoints every mark. That is how an existing story reaches the REUSED group, by
+  the author's choice rather than ours.
+- **The rewrite is surgical.** Only the matched span's attributes change; every
+  other byte of the author's prose survives. Parsing and reserialising through
+  `innerHTML` would normalise entity encoding, attribute quoting and self-closing
+  tags — silently editing writing the migration was not asked to touch. A test
+  asserts the prose either side of a mark is byte-identical.
+- **Marking is a picker, not a blank form** (6a). Selecting a phrase and choosing
+  Contextual text lists the existing entries with what each says and where it is
+  used; writing a new one is the fallback. This is what makes sharing possible at
+  all — before, marking always wrote another copy.
+- **The picker is injected, not imported.** `RichTextEditor` is generic UI, so the
+  feature raises "attach an entry to this range" and `ParagraphBlock` supplies the
+  store-aware picker. A `useEditorStore` import in `components/ui` would tie every
+  consumer of the editor to the editor feature.
+- **`usedOnPageIds` is deliberately not stored.** Where an entry appears is derived
+  from the marks, like item and variable usage — a stored list would drift the
+  first time a paragraph was edited.
+- **A dangling mark renders as ordinary prose**, and Story Health gained a
+  breaking check naming the page. A reader never meets a phrase that looks
+  clickable and does nothing; deleting an entry does not rewrite the author's
+  paragraphs behind their back.
+- **Retired**: `ContextManager` and its modal — so all six modal managers are now
+  gone and `EditorDashboard` holds only the story-settings drawer. `ItemManager`
+  went too: nothing had mounted it since `3a`.
+
+Three things this step surfaced:
+
+- **The migration nearly did nothing at all.** `new RegExp(`${name}=…`)` inside
+  a template literal put a *backspace character* in the pattern, not a word
+  boundary, so no attribute ever matched. Every story would have kept its old
+  marks while the extension stopped reading them — every popover silently dead.
+  Caught by the migration tests, which is exactly what they are for.
+- **"Reused" has to count marks, not pages.** Two phrases in one paragraph pointing
+  at the same entry is reuse, and grouping by page count called it "used once" —
+  a lie, since editing it changes two places. Found by marking a second phrase in
+  the running app; the unit tests had only covered the across-pages case.
+- **The rail counts entries, not marks.** They were the same figure until entries
+  became shared. The old count scanned paragraph HTML for a class token, which is
+  now both wrong and unnecessary.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -368,13 +422,10 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **Schema work**, one hop per step:
-   - `5a`/`6a` contextual text as first-class shared entries — needs a
-     `CURRENT_VERSION` bump, a migration and a migration test. The risky one: the
-     entries have to be extracted out of paragraph HTML.
-   - `7a` **Derived text** — a new capability; inline token plus reusable entries.
-     Likely needs **no bump**: a new optional collection plus marks that only
-     exist where an author adds them, so an old story has nothing to upcast.
+1. **`7a` Derived text** — a new capability; inline token plus reusable entries.
+   Likely needs **no bump**: a new optional collection plus marks that only exist
+   where an author adds them, so an old story has nothing to upcast.
+   `ConditionListEditor` from `5d` is what each outcome's condition wants.
 2. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
 3. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
@@ -391,6 +442,10 @@ Roughly in dependency order. — fold the six modal managers into one workspace
   tell an intended ending from a page whose choices were forgotten, which is why
   the check is an inventory rather than a fault. Adding one is a schema change:
   `CURRENT_VERSION`, a migration and a migration test.
+- **The 5a "returning state" round trip** — the design's "See all entries — the
+  mark is kept, and you come straight back", with `pendingContextualMark` in the
+  store and a returning bar above the workspace header. The picker covers the
+  common case; this is for when an author wants the whole list mid-sentence.
 - **Rail items `Outline` and `Text search`** — in the design, absent from the
   codebase. The rail lists only places you can actually go, so they were left
   out rather than shipped disabled. Add to `RAIL_SECTIONS` when built. Text

@@ -8,6 +8,10 @@ import type { Item } from '../../../domain/Item/Item';
 import type { AudioItem } from '../../../domain/Story/Audio';
 import type { Page } from '../../../domain/Page/Page';
 import type { StatusData } from '../../../domain/Story/StatusData';
+import type {
+  ContextualEntries,
+  ContextualEntry,
+} from '../../../domain/ContextualText/ContextualEntry';
 import type { EditorWorkspace } from './editorWorkspace';
 import type { EditorDialog } from './editorDialog';
 import type { InspectorTab } from './inspectorTab';
@@ -86,6 +90,7 @@ export interface EditorState {
     audio?: Record<string, AudioItem>;
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
     statusData?: StatusData[];
+    contextualText?: ContextualEntries;
   }) => void;
   organizeGraph: () => void;
 
@@ -109,6 +114,15 @@ export interface EditorState {
   addStatusData: (entry: StatusData) => void;
   updateStatusData: (id: string, updates: Partial<StatusData>) => void;
   removeStatusData: (id: string) => void;
+
+  // Contextual text — shared entries, referenced from paragraph marks.
+  contextualText: ContextualEntries;
+  setContextualText: (entries: ContextualEntries) => void;
+  addContextualEntry: (entry: ContextualEntry) => string;
+  updateContextualEntry: (id: string, updates: Partial<ContextualEntry>) => void;
+  removeContextualEntry: (id: string) => void;
+  /** Points every mark on `fromId` at `intoId`, then drops `fromId`. */
+  mergeContextualEntries: (fromIds: string[], intoId: string) => void;
 
   // UI Handlers
   selectedPageId: string | null;

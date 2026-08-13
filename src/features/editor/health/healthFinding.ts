@@ -11,6 +11,7 @@ export type HealthCheckId =
   | 'no-start-page'
   | 'unreachable-pages'
   | 'dangling-targets'
+  | 'dangling-marks'
   | 'endings'
   | 'inert-choices'
   | 'unwritten-pages'

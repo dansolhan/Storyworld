@@ -7,8 +7,8 @@ export interface ContextualTextOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     contextualText: {
-      setContextualText: (attributes: { context: string; title?: string }) => ReturnType;
-      toggleContextualText: (attributes: { context: string; title?: string }) => ReturnType;
+      setContextualText: (attributes: { contextId: string }) => ReturnType;
+      toggleContextualText: (attributes: { contextId: string }) => ReturnType;
       unsetContextualText: () => ReturnType;
     };
   }
@@ -25,29 +25,22 @@ export const ContextualText = Mark.create<ContextualTextOptions>({
     };
   },
 
+  /*
+   * The mark carries a reference, not a copy. Before schema 1.3.0 it held the note
+   * itself in `data-context`, which is why the same note on three pages was three
+   * unrelated copies — editing one changed nothing else.
+   */
   addAttributes() {
     return {
-      context: {
+      contextId: {
         default: null,
-        parseHTML: element => element.getAttribute('data-context'),
+        parseHTML: element => element.getAttribute('data-context-id'),
         renderHTML: attributes => {
-          if (!attributes.context) {
+          if (!attributes.contextId) {
             return {};
           }
           return {
-            'data-context': attributes.context,
-          };
-        },
-      },
-      title: {
-        default: null,
-        parseHTML: element => element.getAttribute('data-title'),
-        renderHTML: attributes => {
-          if (!attributes.title) {
-            return {};
-          }
-          return {
-            'data-title': attributes.title,
+            'data-context-id': attributes.contextId,
           };
         },
       },
@@ -57,7 +50,7 @@ export const ContextualText = Mark.create<ContextualTextOptions>({
   parseHTML() {
     return [
       {
-        tag: 'span[data-context]',
+        tag: 'span[data-context-id]',
       },
     ];
   },

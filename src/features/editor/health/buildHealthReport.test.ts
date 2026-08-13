@@ -39,6 +39,7 @@ const report = (over: Partial<HealthSources> = {}) => {
     audio: {},
     atmospheres: {},
     startPageId: null,
+    contextualText: {},
     usage: emptyUsageIndex(),
     ...over,
   };
@@ -55,6 +56,7 @@ describe('buildHealthReport', () => {
       'no-start-page',
       'unreachable-pages',
       'dangling-targets',
+      'dangling-marks',
       'endings',
       'inert-choices',
       'unwritten-pages',
