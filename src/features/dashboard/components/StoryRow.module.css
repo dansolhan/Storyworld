@@ -1,0 +1,111 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  /* From the design: 20px vertical padding, rows separated by a hairline. */
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  /* 24px — an interface heading, so capped at 600. */
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.description {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-dim);
+}
+
+.noDescription {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-meta);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-kicker);
+}
+
+.metaPart[data-problem] {
+  color: var(--color-accent);
+}
+
+/* — actions — */
+
+.actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.play,
+.open {
+  padding: var(--space-1) var(--space-4);
+  background: none;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+/* Open takes the accent outline: of the two, it is the one you meant. */
+.open {
+  border-color: var(--color-accent-line);
+  color: var(--color-accent);
+}
+
+.play:hover {
+  border-color: var(--color-text-faint);
+  color: var(--color-text);
+}
+
+.open:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.delete {
+  margin-right: var(--space-2);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: var(--color-danger);
+}

@@ -4,35 +4,33 @@ import { useEditorStore } from '../../editor/store/useEditorStore';
 import { parseStoryToGraph } from '../../../lib/storyMapper';
 import { migrateStory } from '../../../domain/Story/migrations/migrations';
 import exampleStoryRaw from '../../../data/exampleStory.json';
+import { summariseStory, type StorySummary } from '../storySummary';
 
 const exampleStory = migrateStory(exampleStoryRaw);
 
-export interface StoryIndexItem {
-  id: string;
-  title: string;
-  description: string;
-}
-
 export const useStories = () => {
-  const [stories, setStories] = useState<StoryIndexItem[]>([]);
+  const [stories, setStories] = useState<StorySummary[]>([]);
   const { setStoryId, loadStory, setHasHydrated } = useEditorStore();
 
   const loadStoriesList = useCallback(async () => {
     try {
       const allKeys = await keys();
       const storyKeys = allKeys.filter(k => typeof k === 'string' && k.startsWith('story-'));
-      const loadedStories: StoryIndexItem[] = [];
+      const loadedStories: StorySummary[] = [];
 
       for (const key of storyKeys) {
         const data = await get(key);
         if (data && data.state) {
-          loadedStories.push({
-            id: (key as string).replace('story-', ''),
-            title: data.state.storyTitle || 'Untitled Story',
-            description: data.state.storyDescription || 'No description',
-          });
+          loadedStories.push(summariseStory((key as string).replace('story-', ''), data));
         }
       }
+
+      /*
+       * Most recently edited first, which is almost always the one being opened.
+       * A story saved before the envelope carried a timestamp sorts last rather
+       * than jumping to the top on a missing value.
+       */
+      loadedStories.sort((a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0));
       setStories(loadedStories);
     } catch (error) {
       console.error('Failed to load stories list', error);
@@ -149,11 +147,10 @@ export const useStories = () => {
     }
   }, [loadStory, setStoryId, setHasHydrated]);
 
+  /* Confirmation is the caller's job now — `DeleteStoryDialog` can say what is lost. */
   const handleDelete = useCallback(async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this story? It cannot be undone.')) {
-      await del(`story-${id}`);
-      await loadStoriesList();
-    }
+    await del(`story-${id}`);
+    await loadStoriesList();
   }, [loadStoriesList]);
 
   return {

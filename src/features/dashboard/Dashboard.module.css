@@ -1,0 +1,81 @@
+.dashboard {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  /* A reading column: rows this wide already stretch further than the eye tracks. */
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-8) var(--space-12);
+  background-color: var(--color-bg-canvas);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.wordmark {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-heading);
+  /* 36px — a display size, so the lighter cut. */
+  font-size: 2.25rem;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.primary {
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* The two alternatives read as links, so "+ New story" stays the one thing to do. */
+.link {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-line-strong);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  border-bottom-color: var(--color-accent-line);
+  color: var(--color-accent);
+}
+
+.shelf {
+  display: flex;
+  flex-direction: column;
+  /* The first row takes its rule from the header's own bottom edge. */
+  border-top: 1px solid var(--color-line);
+}

@@ -43,6 +43,7 @@ function App() {
       {mode === 'dashboard' ? (
         <Dashboard
           onOpenStory={() => setMode('editor')}
+          onPlayStory={() => handlePlay()}
           onImportClick={handleImportClick}
         />
       ) : mode === 'editor' ? (

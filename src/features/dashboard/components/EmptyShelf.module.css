@@ -1,0 +1,83 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-8);
+  /*
+   * Dashed, because the panel is a placeholder for content that does not exist
+   * yet — the same reasoning that makes an unwritten node fade on the canvas.
+   */
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+}
+
+.kicker {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-heading);
+  /* 30px — a display size, so the lighter cut. */
+  font-size: 1.875rem;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.guidance {
+  max-width: 46ch;
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text-dim);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.primary {
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* Underlined links, not buttons — they are alternatives, not equals. */
+.link {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-line-strong);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  border-bottom-color: var(--color-accent-line);
+  color: var(--color-accent);
+}

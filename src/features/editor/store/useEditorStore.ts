@@ -156,9 +156,17 @@ useEditorStore.subscribe((state) => {
     // We get the LATEST state from the store itself at the time of execution
     const state = useEditorStore.getState();
 
-    // Essential state snapshot for persistence — performed only after debouncing
+    /*
+     * Essential state snapshot for persistence — performed only after debouncing.
+     *
+     * `savedAt` sits on the envelope rather than inside `state` on purpose: it is
+     * not store state, so it cannot trip `hasPersistedChange` and restart the
+     * autosave loop the way `lastSavedAt` would. The dashboard reads it for
+     * "edited 2 hours ago"; a story saved before this existed simply has none.
+     */
     const snapshot = {
       version: 3,
+      savedAt: Date.now(),
       state: {
         nodes: state.nodes,
         edges: state.edges,

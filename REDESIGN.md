@@ -263,6 +263,48 @@ One thing fell out of it, and it changed a check:
   meant, with `end_story` noted where present. A screen that flags every ending in
   every story is a screen nobody reads twice.
 
+## Done — step 4a, the dashboard
+
+- **Rows, not cards**, most recently edited first — which is almost always the one
+  you came to open. A story saved before timestamps existed sorts last rather than
+  jumping to the top on a missing value.
+- **The meta line is real counts**: pages, choices, subplots, things to fix, last
+  edited. Where the design said "dead ends" it says **things to fix**, taken from
+  the same `buildHealthReport` the Story health screen reads — so the shelf and
+  that screen can never disagree about how many problems a story has. `4b`
+  established that a page with no choices is how an ending is written, so a
+  dead-end count would have been a fiction. "Nothing to fix" is stated rather than
+  omitted, and `0 subplots` is left out because a story that never had them does
+  not need telling.
+- **`savedAt` rides on the autosave envelope, not in the store.** `lastSavedAt`
+  deliberately is not persisted — it is the guard that stops autosave looping —
+  so the timestamp goes on the snapshot wrapper instead, where it cannot trip
+  `hasPersistedChange`. Not a `StoryData` change, so **no `CURRENT_VERSION`
+  bump**; a story saved before it shows no timestamp rather than a wrong one.
+- **`Play` loads the story and hands it straight to the player**, from its own
+  start page. It is the same load path as `Open` — only what happens afterwards
+  differs — so leaving the player lands you in that story's editor, which is what
+  an author expects.
+- **The empty state** is the design's dashed panel: kicker `WITH NOTHING ON THE
+  SHELF`, "Begin a story", one sentence, then `+ New story` with demo and import
+  as underlined links. Once there is a shelf, the same three actions move to the
+  header with the same weighting, so nothing has to be learned twice.
+- **Deleting a story says what it costs** — "24 pages and 46 choices. Autosave
+  lives in this browser only, so there is no copy to fall back on." Its own dialog
+  rather than the Data workspace's: what is lost is the story, not a reference to
+  it, so the sentence differs. Replaces a `window.confirm` that could say neither.
+- **`relativeTime`** is shared, pure and takes `now` as a parameter. It stops
+  being relative after a week, because "edited 23 days ago" is harder to place
+  than a date.
+
+Two smaller things:
+
+- **This was the last screen built out of inline styles**, and the last one
+  reaching for the deprecated `--font-family-sans` / `--color-text-*-primary`
+  aliases. Those aliases still have callers in `Drawer`, `RichTextEditor` and
+  `ExpandableBottomPanel`, so none can be deleted yet.
+- `StoryGrid` and `StoryCard` are gone, replaced by `StoryRow` and `EmptyShelf`.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -271,17 +313,16 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`4a` Dashboard**.
-2. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+1. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-3. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-4. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+2. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+3. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-5. **`6c` History & export**, **`6d` shortcut sheet**.
+4. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
