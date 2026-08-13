@@ -149,7 +149,7 @@ export const buildUsageIndex = ({ pages, items, atmospheres, statusData }: Usage
     for (const name of variableTokensIn(entry.value ?? '')) {
       add('variable', name, 'shown in status');
     }
-    walkLegacy(undefined, entry.conditionals);
+    walkLogicTree(entry.condition);
   }
 
   // Indirect: an item referenced only from another item's context choice.

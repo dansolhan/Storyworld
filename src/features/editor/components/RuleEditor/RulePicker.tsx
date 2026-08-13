@@ -12,6 +12,12 @@ import styles from './RulePicker.module.css';
 export interface RulePickerProps {
   /** Where the chosen rule will go, for the footer's hint. */
   destination: string;
+  /**
+   * Narrows what can be picked. Status-data visibility and derived-text outcomes
+   * ask a question rather than doing something, so offering them actions would
+   * offer something the evaluator would never run.
+   */
+  only?: RuleOption['kind'];
   onCancel: () => void;
   onPick: (option: RuleOption) => void;
 }
@@ -26,14 +32,17 @@ type Selection = BlueprintCategory | typeof ALL;
  * each row showing the sentence it will become, then the blueprint's name and how
  * often this story already uses it.
  */
-export const RulePicker: React.FC<RulePickerProps> = ({ destination, onCancel, onPick }) => {
+export const RulePicker: React.FC<RulePickerProps> = ({ destination, only, onCancel, onPick }) => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<Selection>(ALL);
   const [activeIndex, setActiveIndex] = useState(0);
   const [lastKey, setLastKey] = useState(`${query}|${category}`);
 
   const usage = useBlueprintUsage();
-  const all = useMemo(() => ruleOptions(), []);
+  const all = useMemo(
+    () => (only ? ruleOptions().filter((option) => option.kind === only) : ruleOptions()),
+    [only]
+  );
 
   const matching = useMemo(() => filterRuleOptions(all, query), [all, query]);
   const counts = useMemo(() => countByCategory(matching), [matching]);
@@ -93,7 +102,7 @@ export const RulePicker: React.FC<RulePickerProps> = ({ destination, onCancel, o
   return (
     <Dialog open onOpenChange={(open) => (open ? undefined : onCancel())}>
       <DialogContent
-        title="Add a rule"
+        title={only === 'condition' ? 'Add a condition' : 'Add a rule'}
         hideTitle
         showCloseButton={false}
         padded={false}

@@ -36,7 +36,7 @@ const STATUS: StatusData = {
   id: 'status-1',
   title: 'Gold',
   value: '{{gold}}',
-  conditionals: [{ id: 'cond-2', blueprintId: 'has_item', params: {} }],
+  condition: [{ id: 'cond-2', type: 'condition', name: 'Has Item', blueprintId: 'has_item' }],
 };
 
 const usage = () => renderHook(() => useBlueprintUsage()).result.current;

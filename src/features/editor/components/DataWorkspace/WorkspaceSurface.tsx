@@ -5,13 +5,14 @@ import { VariablesWorkspace } from './VariablesWorkspace';
 import { AtmospheresWorkspace } from '../Atmospheres/AtmospheresWorkspace';
 import { AudioWorkspace } from '../Audio/AudioWorkspace';
 import { HealthWorkspace } from '../Health/HealthWorkspace';
+import { StatusDataWorkspace } from '../StatusData/StatusDataWorkspace';
 
 /**
  * Whichever data workspace the rail has selected, or nothing when the graph is
  * showing.
  *
- * Status data and Contextual text are still modals over the canvas, until the
- * design's own screens for them are built at 5d and 5a.
+ * Contextual text is still a modal over the canvas, until the design's own screen
+ * for it is built at 5a.
  */
 export const WorkspaceSurface: React.FC = () => {
   const { activeWorkspace } = useActiveWorkspace();
@@ -21,5 +22,6 @@ export const WorkspaceSurface: React.FC = () => {
   if (activeWorkspace === 'atmospheres') return <AtmospheresWorkspace />;
   if (activeWorkspace === 'audio') return <AudioWorkspace />;
   if (activeWorkspace === 'health') return <HealthWorkspace />;
+  if (activeWorkspace === 'statusData') return <StatusDataWorkspace />;
   return null;
 };

@@ -315,4 +315,126 @@ describe('Story Migrations', () => {
     });
     expect(migrated.pages[0].choices[0].targetPageId).toBeUndefined();
   });
+
+  describe('1.1.0 → 1.2.0: status conditions become a logic tree', () => {
+    const storyWithStatus = (statusData: unknown) => ({
+      version: '1.1.0',
+      pages: [{ id: 'page-1', paragraphs: [], choices: [] }],
+      statusData,
+    });
+
+    const statusEntries = (story: ReturnType<typeof migrateStory>): Record<string, unknown>[] =>
+      (story.statusData ?? []) as unknown as Record<string, unknown>[];
+
+    it('converts a conditional into a condition node the evaluator can read', () => {
+      const migrated = migrateStory(
+        storyWithStatus([
+          {
+            id: 'sd-1',
+            title: 'Curse',
+            conditionals: [{ id: 'cond-1', blueprintId: 'has_item', params: { itemId: 'amulet' } }],
+          },
+        ])
+      );
+
+      const [entry] = statusEntries(migrated);
+      expect(entry.condition).toEqual([
+        {
+          id: 'cond-1',
+          // The field a `Conditional` never had, and the reason it evaluated to nothing.
+          type: 'condition',
+          name: 'has_item',
+          blueprintId: 'has_item',
+          params: { itemId: 'amulet' },
+        },
+      ]);
+    });
+
+    it('drops the old field rather than leaving two representations', () => {
+      const migrated = migrateStory(
+        storyWithStatus([
+          { id: 'sd-1', title: 'Curse', conditionals: [{ id: 'c1', blueprintId: 'has_item' }] },
+        ])
+      );
+
+      expect(statusEntries(migrated)[0]).not.toHaveProperty('conditionals');
+    });
+
+    it('gives a nested group its branch_conditions, where a group reads its operands', () => {
+      const migrated = migrateStory(
+        storyWithStatus([
+          {
+            id: 'sd-1',
+            title: 'Curse',
+            conditionals: [
+              {
+                id: 'group-1',
+                blueprintId: 'and_group',
+                children: [
+                  { id: 'c1', blueprintId: 'has_item', params: { itemId: 'amulet' } },
+                  { id: 'c2', blueprintId: 'first_visit', params: { not: false } },
+                ],
+              },
+            ],
+          },
+        ])
+      );
+
+      const [root] = statusEntries(migrated)[0].condition as Record<string, unknown>[];
+      const children = root.children as Record<string, unknown>[];
+
+      expect(children).toHaveLength(1);
+      expect(children[0].type).toBe('branch_conditions');
+      expect((children[0].children as unknown[]).map((child) => (child as Record<string, unknown>).id)).toEqual([
+        'c1',
+        'c2',
+      ]);
+    });
+
+    it('leaves an entry with no conditions alone rather than giving it an empty one', () => {
+      const migrated = migrateStory(storyWithStatus([{ id: 'sd-1', title: 'HP', value: '{{hp}}' }]));
+
+      expect(statusEntries(migrated)[0]).not.toHaveProperty('condition');
+      expect(statusEntries(migrated)[0].title).toBe('HP');
+    });
+
+    it('keeps the rest of the entry', () => {
+      const migrated = migrateStory(
+        storyWithStatus([
+          {
+            id: 'sd-1',
+            title: 'Gold',
+            value: '{{gold}}',
+            priority: 90,
+            color: '#c9a84c',
+            conditionals: [{ id: 'c1', blueprintId: 'has_item' }],
+          },
+        ])
+      );
+
+      expect(statusEntries(migrated)[0]).toMatchObject({
+        id: 'sd-1',
+        title: 'Gold',
+        value: '{{gold}}',
+        priority: 90,
+        color: '#c9a84c',
+      });
+    });
+
+    it('tolerates a save whose statusData is not a list', () => {
+      expect(statusEntries(migrateStory(storyWithStatus('nonsense')))).toEqual([]);
+      expect(statusEntries(migrateStory(storyWithStatus(undefined)))).toEqual([]);
+    });
+
+    it('carries a 1.0.0 story all the way through both hops', () => {
+      const migrated = migrateStory({
+        version: '1.0.0',
+        pages: [{ id: 'page-1', paragraphs: [], choices: [] }],
+        statusData: [{ id: 'sd-1', title: 'Curse', conditionals: [{ id: 'c1', blueprintId: 'has_item' }] }],
+      });
+
+      expect(migrated.version).toBe(CURRENT_VERSION);
+      expect(statusEntries(migrated)[0].condition).toHaveLength(1);
+    });
+  });
 });

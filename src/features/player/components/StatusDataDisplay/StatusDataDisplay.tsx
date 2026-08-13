@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { useEngineStore } from '../../adapter/useEngineStore';
-import { evaluateVisibility } from '../../../../lib/engine/logic/evaluator';
+import {
+  byStatusPriority,
+  statusEntryIsVisible,
+} from '../../../../lib/engine/logic/statusVisibility';
 import styles from './StatusDataDisplay.module.css';
-import { conditionalsToLogicTree } from '../../../../domain/Conditionals/conditionalsToLogicTree';
 
 /**
  * Interpolates {{ varName }} placeholders in a template string using the
@@ -37,19 +39,7 @@ export const StatusDataDisplay: React.FC = () => {
 
   const visibleEntries = useMemo(() => {
     const entries = storyData?.statusData ?? [];
-    return entries
-      .slice() // don't mutate
-      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
-      .filter((entry) =>
-        evaluateVisibility(
-          {
-            events: entry.conditionals
-              ? [{ id: 'status', name: 'onEvaluate', logicTree: conditionalsToLogicTree(entry.conditionals) }]
-              : [],
-          },
-          evalContext
-        )
-      );
+    return byStatusPriority(entries).filter((entry) => statusEntryIsVisible(entry, evalContext));
   }, [storyData?.statusData, evalContext]);
 
   if (visibleEntries.length === 0) return null;

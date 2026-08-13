@@ -305,6 +305,61 @@ Two smaller things:
   `ExpandableBottomPanel`, so none can be deleted yet.
 - `StoryGrid` and `StoryCard` are gone, replaced by `StoryRow` and `EmptyShelf`.
 
+## Done — step 5d, status data on its own page
+
+The first of the schema steps. **`CURRENT_VERSION` 1.1.0 → 1.2.0**, with a
+migration and migration tests, per `claude.md`.
+
+- **One migration per step, not one for all three.** The version number is a claim
+  about the shape of the data: bumping once up front and implementing over three
+  commits would stamp every autosave `1.2.0` while the data still lacked the later
+  shapes — and since the runner matches on `from`, those stories would never
+  receive the migration they needed. Separate hops also isolate `5a`, the risky
+  one, where a repair can be added as a further hop; a combined migration that has
+  already run on someone's story cannot be safely edited.
+- **`condition: LogicNode[]` replaces `conditionals: Conditional[]`.** An array
+  rather than the design's single node, so it is the same shape as every other
+  condition in the story — `RuleEditor` renders it and `evaluateEventVisibility`
+  reads it with no adapter between. Empty means always; several roots are ANDed.
+- **The migration is written against `LegacyRecord`, not against today's types.**
+  It deliberately does not import `conditionalsToLogicTree`: a migration is frozen
+  history and has to keep producing the shape *this* version expected, so
+  importing today's adapter would silently re-point the hop at a future shape and
+  corrupt the chain for anyone upgrading through it.
+- **The preview and the player share one function.** `statusEntryIsVisible` is
+  used by both, because the design greys hidden entries in the editor and omits
+  them in the player — which only works if the two agree about *which* are hidden.
+  Two implementations would eventually disagree and the preview would be lying.
+  Verified against the demo: the ledger preview greys "☠ Poisoned" and the player
+  omits it.
+- **The hidden reason names the entry's own condition** — "hidden — needs:
+  isPoisoned equal true" — rather than working out which clause failed. Always
+  true, and it points at exactly what to edit. A second evaluator that reported
+  rather than decided could disagree with the real one.
+- **Up/down rather than drag**, consistent with the rule rows from 3b and with no
+  new dependency. Order is stored as `priority`, so moving a row swaps the two
+  rows' priorities rather than reindexing — everything else reads priority,
+  including the player.
+- **`ConditionListEditor` is new and reusable**: a bare `LogicNode[]` in, a
+  changed one out, using the same sentences and the same picker as the rules.
+  `RulePicker` gained an `only` prop, since a status entry asks a question and an
+  action there would never be run. `7a`'s outcomes will want exactly this.
+- **`conditionText`** renders a condition as flat text for the SHOWN WHEN column
+  and the preview's reason, mirroring `BlueprintToken`'s labels — the two are read
+  side by side, and a difference between them would make both untrustworthy.
+- **Retired**: `StatusDataManager` and its modal. `EditorDashboard` is down to
+  Contextual text alone.
+
+Two things the demo exposed:
+
+- **An empty title is a real shape, not an unfinished one** — the demo's "☠
+  Poisoned" entry carries its label in the value. The preview rendered a bare
+  ":" for it until it was taught what the player already knew, and the table now
+  says "value only" rather than calling it untitled.
+- **The evaluator fails open on a blueprint it does not recognise**, so a
+  condition from a newer build shows the entry rather than silently swallowing it.
+  The preview inherits that by sharing the function, which is the point.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -313,12 +368,13 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
-   migration test, per `claude.md`):
-   - `5d` per-entry visibility conditions on status data
-   - `5a`/`6a` contextual text as first-class shared entries
-   - `7a` **Derived text** — a new capability; inline token plus reusable
-     entries
+1. **Schema work**, one hop per step:
+   - `5a`/`6a` contextual text as first-class shared entries — needs a
+     `CURRENT_VERSION` bump, a migration and a migration test. The risky one: the
+     entries have to be extracted out of paragraph HTML.
+   - `7a` **Derived text** — a new capability; inline token plus reusable entries.
+     Likely needs **no bump**: a new optional collection plus marks that only
+     exist where an author adds them, so an old story has nothing to upcast.
 2. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
 3. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.

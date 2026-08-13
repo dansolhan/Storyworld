@@ -53,9 +53,7 @@ export const useBlueprintUsage = (): Record<string, number> => {
       }
     }
 
-    for (const entry of statusData ?? []) {
-      for (const conditional of entry.conditionals ?? []) count(conditional.blueprintId);
-    }
+    for (const entry of statusData ?? []) walkTree(entry.condition);
 
     return counts;
   }, [pages, items, statusData]);

@@ -8,7 +8,7 @@ import {
   recordList,
 } from './legacyStory';
 
-export const CURRENT_VERSION = '1.1.0';
+export const CURRENT_VERSION = '1.2.0';
 
 type MigrationFunction = (oldStory: LegacyRecord) => LegacyRecord;
 
@@ -275,6 +275,56 @@ const migrateV0_9_0_to_V1_0_0: MigrationFunction = (v0_9_story) => {
   return { ...v0_9_story, pages };
 };
 
+/**
+ * Status-data visibility becomes a logic tree, like every other condition.
+ *
+ * Deliberately written against `LegacyRecord` rather than importing
+ * `conditionalsToLogicTree`: a migration is frozen history and has to keep
+ * producing the shape that *this* version expected, even after the domain types
+ * move on again. Importing today's adapter would silently re-point this hop at a
+ * future shape and corrupt the chain for anyone upgrading through it.
+ */
+const migrateV1_1_0_to_V1_2_0: MigrationFunction = (v1_1_story) => {
+  const toLogicNode = (conditional: LegacyRecord): LegacyRecord => {
+    const node: LegacyRecord = {
+      id: optionalString(conditional.id) ?? newId(),
+      type: 'condition',
+      name: optionalString(conditional.blueprintId) ?? 'condition',
+      blueprintId: optionalString(conditional.blueprintId),
+      params: paramsOf(conditional.params),
+    };
+
+    const children = recordList(conditional.children);
+    if (children.length > 0) {
+      // Group blueprints read their operands from this branch, not from `children`.
+      node.children = [
+        {
+          id: `${node.id as string}-conditions`,
+          type: 'branch_conditions',
+          name: 'Conditions',
+          children: children.map(toLogicNode),
+        },
+      ];
+    }
+
+    return node;
+  };
+
+  const statusData = recordList(v1_1_story.statusData).map((entry) => {
+    const legacyConditions = recordList(entry.conditionals);
+    // `conditionals` is dropped by being named here.
+    const { conditionals, ...rest } = entry;
+    void conditionals;
+
+    if (legacyConditions.length > 0) {
+      rest.condition = legacyConditions.map(toLogicNode);
+    }
+    return rest;
+  });
+
+  return { ...v1_1_story, statusData };
+};
+
 interface MigrationStep {
   from: string | number;
   to: string | number;
@@ -293,6 +343,7 @@ const migrationSteps: MigrationStep[] = [
   { from: '0.8.0', to: '0.9.0', migrate: (story) => ({ ...story }) },
   { from: '0.9.0', to: '1.0.0', migrate: migrateV0_9_0_to_V1_0_0 },
   { from: '1.0.0', to: '1.1.0', migrate: migrateV1_0_0_to_V1_1_0 },
+  { from: '1.1.0', to: '1.2.0', migrate: migrateV1_1_0_to_V1_2_0 },
 ];
 
 export function migrateStory(storyJson: unknown): StoryData {

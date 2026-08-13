@@ -1,15 +1,14 @@
 import React, { useCallback } from 'react';
 import { useActiveWorkspace } from '../../hooks/view/useActiveWorkspace';
 import { StorySettingsDrawer } from '../StorySettings/StorySettingsDrawer';
-import { StatusDataManager } from '../StatusDataManager/StatusDataManager';
 import { ContextManager } from '../ContextManager/ContextManager';
 
 /**
  * The data surfaces still living as modals over the canvas.
  *
- * Items, Variables, Atmospheres and Audio have their own workspaces now. Status
- * data and Contextual text keep their modals until 5d and 5a, at which point
- * this component and `ExpandableBottomPanel` go with them.
+ * Only Contextual text is left; everything else has its own workspace. Story
+ * settings is a drawer by choice — it is a handful of fields, not a surface. When
+ * `5a` lands, this component and `ExpandableBottomPanel` go with it.
  */
 export const EditorDashboard: React.FC = React.memo(() => {
   const { activeWorkspace, setActiveWorkspace } = useActiveWorkspace();
@@ -19,7 +18,6 @@ export const EditorDashboard: React.FC = React.memo(() => {
   return (
     <>
       <StorySettingsDrawer isOpen={activeWorkspace === 'settings'} onClose={returnToGraph} />
-      <StatusDataManager isOpen={activeWorkspace === 'statusData'} onClose={returnToGraph} />
       <ContextManager isOpen={activeWorkspace === 'context'} onClose={returnToGraph} />
     </>
   );

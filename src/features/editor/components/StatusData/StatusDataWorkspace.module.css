@@ -1,0 +1,403 @@
+.workspace {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--color-bg-app);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.header {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-8) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  /* 26px — a display size, so the lighter cut. */
+  font-size: 1.625rem;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.explanation {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+}
+
+.new {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.new:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.newIcon {
+  width: 12px;
+  height: 12px;
+}
+
+/* — the table — */
+
+.table {
+  flex: none;
+  padding: var(--space-4) var(--space-8) 0;
+}
+
+.tableHeader {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0 var(--space-2) var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.orderHeading {
+  text-align: right;
+}
+
+.row {
+  display: grid;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-2);
+  /* Reserved at rest so selecting a row never shifts it. */
+  border-left: 2px solid transparent;
+  border-bottom: 1px solid var(--color-line-soft);
+  font-size: var(--text-sm);
+  color: var(--color-text-body);
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: var(--color-accent-hover-row);
+}
+
+.row[data-selected] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-tint);
+}
+
+.rowTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--color-text);
+}
+
+.colourDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--radius-full);
+}
+
+.valueOnly {
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.rowValue {
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+
+.rowCondition {
+  min-width: 0;
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+}
+
+.rowAlways {
+  min-width: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.rowOrder {
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.control {
+  display: inline-flex;
+  padding: 1px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.control:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.control:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.controlIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4) var(--space-2);
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+/* — the inline editor — */
+
+.editor {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-6) var(--space-8) var(--space-8);
+  padding: var(--space-4);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.input {
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-app);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.valueRow {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.insert {
+  flex: none;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-app);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-dim);
+  cursor: pointer;
+}
+
+.swatches {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.swatch[data-selected],
+.swatchNone[data-selected] {
+  /* From the design: the selected swatch takes an offset outline. */
+  outline: 1px solid var(--color-text);
+  outline-offset: 1px;
+}
+
+.swatchNone {
+  padding: 1px var(--space-1);
+  background: none;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.delete {
+  align-self: flex-start;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: var(--color-danger);
+}
+
+/* — the ledger preview — */
+
+.preview {
+  /* Fixed: a layout contract, matching the inspector's column. */
+  width: 320px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-5);
+  overflow-y: auto;
+  background-color: var(--color-bg-panel);
+  border-left: 1px solid var(--color-line);
+}
+
+.previewTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.previewNote {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
+
+.previewEmpty {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.previewList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.previewEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* From the design: hidden entries at 40%, with an italic reason. */
+.previewEntry[data-hidden] {
+  opacity: 0.4;
+}
+
+.previewRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.previewLabel {
+  font-size: var(--text-ui);
+  color: var(--color-text-dim);
+}
+
+.previewValue {
+  font-size: var(--text-ui);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text);
+}
+
+.previewReason {
+  font-size: var(--text-meta);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.previewFootnote {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line-soft);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}
