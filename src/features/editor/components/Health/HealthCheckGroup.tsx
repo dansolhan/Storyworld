@@ -1,5 +1,6 @@
 import React from 'react';
-import { Crosshair } from 'lucide-react';
+import { Crosshair, HelpCircle } from 'lucide-react';
+import { Tooltip } from '../../../../components/ui/Tooltip/Tooltip';
 import type { HealthCheck } from '../../health/healthFinding';
 import styles from './HealthWorkspace.module.css';
 
@@ -20,15 +21,27 @@ export const HealthCheckGroup: React.FC<HealthCheckGroupProps> = ({ check, onRev
   <section className={styles.group}>
     <header className={styles.groupHeader}>
       <h2 className={styles.groupTitle}>{check.title}</h2>
+
+      {/*
+        Why the check matters, behind an icon rather than under every heading. Ten
+        groups of standing explanation crowded out the findings, which are the thing
+        worth reading — but the explanation still has to be reachable, so it is a
+        focusable button and not a hover-only affordance.
+      */}
+      <Tooltip content={check.explanation}>
+        <button type="button" className={styles.help} aria-label={`What “${check.title}” means`}>
+          <HelpCircle className={styles.helpIcon} aria-hidden="true" />
+        </button>
+      </Tooltip>
+
       <span
         className={styles.groupCount}
         data-severity={check.findings.length > 0 ? check.severity : undefined}
+        data-clear={check.findings.length === 0 || undefined}
       >
         {check.findings.length > 0 ? check.findings.length : '✓'}
       </span>
     </header>
-
-    <p className={styles.groupExplanation}>{check.explanation}</p>
 
     {check.findings.length === 0 ? (
       <p className={styles.clear}>{check.clear}</p>

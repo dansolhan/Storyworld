@@ -41,3 +41,7 @@ design-snapshot.zip
 coverage
 
 **/example_music
+
+# Throwaway Playwright probes used to drive the app while debugging.
+# They must live at the repo root so `playwright` resolves, so they are ignored here.
+.probe*.mjs

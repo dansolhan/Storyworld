@@ -152,10 +152,13 @@
 
   /*
    * Semantic colours. Warning folds into the accent — on this ground a second
-   * amber would only muddy it. Danger stays distinct because destructive
-   * actions must not read as ordinary accent.
+   * amber would only muddy it. Danger and success stay distinct, because neither
+   * "destroyed" nor "all clear" should read as ordinary accent.
+   *
+   * The green is desaturated to the same weight as the danger red, so the pair
+   * reads as siblings on the warm ground rather than as a traffic light.
    */
-  --color-success: var(--color-accent);
+  --color-success: #8bb073;
   --color-warning: var(--color-accent);
   --color-danger: #cf7d6c;
   --color-danger-line: #a85b4c;

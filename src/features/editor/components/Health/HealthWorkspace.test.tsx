@@ -73,6 +73,29 @@ describe('HealthWorkspace', () => {
     });
 
     /*
+     * Behind an icon rather than under every heading: ten standing explanations
+     * crowded out the findings, which are the thing worth reading. Still reachable
+     * by keyboard, not by hover alone.
+     */
+    it('keeps each check’s explanation available without printing it', async () => {
+      renderHealth();
+
+      expect(screen.queryByText(/No path from the start page arrives here/)).toBeNull();
+
+      await userEvent.hover(screen.getByRole('button', { name: 'What “Unreachable pages” means' }));
+
+      expect(await screen.findByText(/No path from the start page arrives here/)).toBeTruthy();
+    });
+
+    it('gives every check a way to ask what it means', () => {
+      renderHealth();
+
+      /* One per group, whatever the checks grow to — the invariant, not a count. */
+      const groups = screen.getAllByRole('heading', { level: 2 });
+      expect(screen.getAllByRole('button', { name: /^What “.+” means$/ })).toHaveLength(groups.length);
+    });
+
+    /*
      * A passing check keeps its group and says what it verified — one that
      * vanished would leave the author unsure whether it had run at all.
      */
@@ -119,7 +142,10 @@ describe('HealthWorkspace', () => {
 
     it('reveals a page on the canvas when its finding is clicked', async () => {
       renderHealth();
-      await userEvent.click(within(group('Unreachable pages')).getByRole('button'));
+      /* The finding itself, not the group's help icon. */
+      await userEvent.click(
+        within(group('Unreachable pages')).getByRole('button', { name: /The Sunken Hall/ })
+      );
 
       expect(useEditorStore.getState().selectedPageId).toBe('page-3');
       expect(useEditorStore.getState().activeWorkspace).toBe('graph');
@@ -146,7 +172,8 @@ describe('HealthWorkspace', () => {
       const unused = group('Unused data');
       expect(within(unused).getByText('a spare lamp')).toBeTruthy();
       expect(within(unused).getByText('item, never given or tested')).toBeTruthy();
-      expect(within(unused).queryByRole('button')).toBeNull();
+      /* Nothing to reveal: an entity is not on the canvas, so its row is inert. */
+      expect(within(unused).queryByRole('button', { name: /a spare lamp/ })).toBeNull();
     });
   });
 

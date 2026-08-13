@@ -107,7 +107,7 @@
 }
 
 .groupTitle {
-  flex: 1;
+  flex: none;
   min-width: 0;
   margin: 0;
   font-family: var(--font-heading);
@@ -118,11 +118,45 @@
   color: var(--color-text-muted);
 }
 
+/* The help icon sits with the title; the count keeps the far edge. */
+.help {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-text-faint);
+  cursor: help;
+}
+
+.help:hover {
+  color: var(--color-text-muted);
+}
+
+.help:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.helpIcon {
+  width: 13px;
+  height: 13px;
+}
+
 .groupCount {
   font-family: var(--font-heading);
   font-size: var(--text-ui);
   font-feature-settings: var(--font-features-tabular);
   color: var(--color-text-faint);
+}
+
+/* A check that found nothing says so in green — the one place this ground uses it. */
+.groupCount[data-clear] {
+  color: var(--color-success);
+  font-size: var(--text-sm);
 }
 
 /*
@@ -131,12 +165,6 @@
  */
 .groupCount[data-severity='breaks'] {
   color: var(--color-accent);
-}
-
-.groupExplanation {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-xs);
-  color: var(--color-text-faint);
 }
 
 .clear {

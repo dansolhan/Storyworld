@@ -97,8 +97,10 @@
   margin: 0;
 }
 
+/* The accent, as in the player — one gold, and `--color-success` is a green now. */
 .editorContent :global(.contextual-text-mark) {
-  color: var(--color-success);
+  color: var(--color-accent);
+  border-bottom: 1px dotted var(--color-accent-line);
   cursor: help;
   transition: opacity 0.2s;
 }
