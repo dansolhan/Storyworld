@@ -511,6 +511,44 @@ Two notes for later:
   like paper while the editor stays flat. They are different rooms, which is why the
   handoff keeps `player-theme.css` separate in the first place.
 
+## Done — step 5c, crossings and plot navigation (lanes deliberately not built)
+
+**The design's lanes were rejected, on purpose.** 5c draws subplots as horizontal
+lanes across one canvas. That contradicts what subplots are *for*: isolating a group
+of pages into an abstraction you enter, the same way you fold a function body. Lanes
+flatten it — five 20-page subplots become 100 nodes on one canvas, which is the mess
+subplots exist to avoid — and they scale badly in the one direction a canvas cannot
+buy more of. The filtered model stays.
+
+What survives is 5c's own criticism of the old portal, which holds regardless:
+*"portals as a labelled crossing rather than a mystery node."*
+
+- **The crossing card** replaces the 44px glyph with a tooltip. 190px, ringed in the
+  accent because it is a doorway rather than a page, and it says what it stands for:
+  the plot, **how many pages are on the other side**, the page you arrive at, and the
+  choice that takes you there — "2 pages · from The Awakening · *Lift the floorboard*".
+  An abstraction should hide detail, not hide what it is.
+- **The rail lists the plots**, with each plot's colour and its page count, plus
+  `+ New subplot`. Plots sit between STORY and DATA: they are places on the canvas,
+  not a collection you edit. The toolbar picker stays — the design draws both, and
+  they read the same `currentPlotId`.
+- **Subplots have a colour**, an optional field with a colour derived from the plot's
+  position when it is absent — so every existing story gets distinct dots with **no
+  migration**.
+- **Cross-plot edges are dashed in the accent**, replacing a hard-coded purple from
+  before the redesign.
+
+One thing had to be fixed before any of it could be seen:
+
+- **Synthetic nodes had been dead since schema 1.0.0.** `syncSyntheticNodes` read a
+  choice's behaviour from `choice.actions`, and the 1.0.0 migration moves actions
+  into `events` and *drops* that field — so for every migrated story the loop found
+  nothing and the canvas silently stopped drawing crossings and action markers. The
+  demo has three crossings and seven action-only choices, and rendered **zero** of
+  them. `choiceInvocations` now reads both shapes, walking to the bottom of a logic
+  tree, and tests pin the events case. There was no mystery node to relabel; there
+  was no node at all.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -519,12 +557,14 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
-   replaces portal nodes with labelled crossing cards.
-2. **`6c` History & export**, **`6d` shortcut sheet**.
+1. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
+- **Lanes as an opt-in overview.** Rejected as the canvas's normal state, but a
+  deliberate "All plots" view — filtering by default, lanes when asked for — would
+  give the whole-story picture without costing the abstraction. Worth revisiting if
+  orientation across plots turns out to be a real need rather than a supposed one.
 - **A cross-workspace entity reveal.** Story Health's unused-data rows would
   like to open Items with that row selected, but each data workspace holds its
   selection in local state. A `revealEntity` alongside `revealRequest` would

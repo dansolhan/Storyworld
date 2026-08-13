@@ -98,3 +98,29 @@
   font-feature-settings: var(--font-features-tabular);
   color: var(--color-text-faint);
 }
+
+/* — plots — */
+
+/* The plot's colour, matching its crossing cards out on the canvas. */
+.plotDot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: var(--radius-full);
+}
+
+.newPlot {
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+  text-align: left;
+  cursor: pointer;
+}
+
+.newPlot:hover {
+  background-color: var(--color-accent-hover-row);
+}

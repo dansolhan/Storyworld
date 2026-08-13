@@ -1,50 +1,69 @@
 /*
- * A crossing into another subplot. Like the action marker it is synthetic, and
- * its dashed edge says "this leads elsewhere" without borrowing the accent,
- * which means selection. Replaced by a labelled crossing card at screen 5c.
+ * A crossing card, per 5c: the same material as a page node but ringed in the accent,
+ * because it is a doorway rather than a page. 190px so the meta line has room to name
+ * the page and the choice without wrapping to three lines.
  */
 .node {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--color-line-strong);
-  background-color: var(--color-bg-raised);
+  width: 190px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: var(--color-bg-selected);
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 3px rgba(225, 173, 102, 0.12);
   cursor: pointer;
-  transition:
-    box-shadow var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .node:hover {
-  background-color: var(--color-bg-selected);
-  border-color: var(--color-text-faint);
-}
-
-:global(.react-flow__node.selected) .node {
-  background-color: var(--color-bg-selected);
-  border-color: var(--color-accent-line);
   box-shadow: 0 0 0 3px var(--color-accent-ring);
 }
 
-/* Disable transitions during interactions to prevent jitter/ghosting */
-:global(.react-flow__node.selected) .node,
-:global(.react-flow__node.dragging) .node {
-  transition: none !important;
+:global(.react-flow__node.selected) .node {
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-accent-line);
+}
+
+/* The plot's own colour, so the card matches its entry in the rail. */
+.dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: var(--radius-full);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.0625rem; /* 17px, as a page node's title */
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.15;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--text-meta);
+  line-height: 1.4;
   color: var(--color-text-dim);
+  overflow-wrap: anywhere;
 }
 
-.handle {
-  background-color: var(--color-line-strong);
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--color-bg-canvas);
+.source {
+  color: var(--color-accent);
 }

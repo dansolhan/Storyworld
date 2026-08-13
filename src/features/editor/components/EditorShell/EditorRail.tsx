@@ -3,6 +3,7 @@ import { useActiveWorkspace } from '../../hooks/view/useActiveWorkspace';
 import { useRailCounts } from '../../hooks/view/useRailCounts';
 import { useLastSavedLabel } from '../../hooks/view/useLastSavedLabel';
 import { RAIL_SECTIONS } from './railConfig';
+import { RailPlots } from './RailPlots';
 import styles from './EditorRail.module.css';
 
 /**
@@ -17,7 +18,13 @@ export const EditorRail: React.FC = React.memo(() => {
 
   return (
     <nav className={styles.rail} aria-label="Editor sections">
-      {RAIL_SECTIONS.map((section) => (
+      {/*
+        Plots sit between STORY and DATA: they are places on the canvas, not a
+        collection you edit, so they belong with the navigation rather than the data.
+      */}
+      {RAIL_SECTIONS.map((section, index) => (
+        <React.Fragment key={section.heading}>
+        {index === 1 && <RailPlots />}
         <section key={section.heading} className={styles.section}>
           <h2 className={styles.heading}>{section.heading}</h2>
           <ul className={styles.list}>
@@ -49,6 +56,7 @@ export const EditorRail: React.FC = React.memo(() => {
             })}
           </ul>
         </section>
+        </React.Fragment>
       ))}
 
       <p className={styles.footer}>{lastSavedLabel}</p>

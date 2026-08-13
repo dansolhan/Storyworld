@@ -6,6 +6,7 @@ import type { PortalNodeType } from '../nodes/PortalNode';
 import type { PageNodeType } from '../nodes/PageNode';
 import type { Page } from '../../../domain/Page/Page';
 import { updateGraphVisibility } from './visibility';
+import { choiceInvocations } from '../../../domain/Choice/choiceInvocations';
 
 const SYNTHETIC_LABEL_STYLE = {
   fontSize: 10,
@@ -64,16 +65,26 @@ export function syncSyntheticNodes(
     (pageDomain.choices || []).forEach((choice) => {
       if (choice.targetPageId) return; // connected to a real page
 
-      const choiceActions = Array.isArray(choice.actions) ? choice.actions : [];
-      if (choiceActions.length === 0) return;
+      /*
+       * Read from events as well as the legacy `actions`. Only the latter was read
+       * until now, and the 1.0.0 migration drops it — so for every migrated story
+       * this loop found nothing and the canvas quietly lost its crossings and its
+       * action markers.
+       */
+      const invocations = choiceInvocations(choice);
+      if (invocations.length === 0) return;
 
-      const portalAction = choiceActions.find((a) => a.blueprintId === 'go_to_subplot');
+      const portalAction = invocations.find((a) => a.blueprintId === 'go_to_subplot');
 
       if (portalAction) {
-        const params = portalAction.params as Record<string, string>;
-        const subplotName = subplots.find((s) => s.id === params.subplotId)?.name || 'Unknown Subplot';
+        const params = portalAction.params as Record<string, string | null>;
+        const crossingSubplotId = params.subplotId ?? null;
+        /* A null subplot is a crossing back to the main plot, not an unknown one. */
+        const subplotName = crossingSubplotId
+          ? subplots.find((s) => s.id === crossingSubplotId)?.name || 'Unknown subplot'
+          : 'Main Plot';
 
-        const targetPage = pages[params.targetPageId];
+        const targetPage = params.targetPageId ? pages[params.targetPageId] : undefined;
         const targetPageName = targetPage?.title || params.targetPageId || '?';
         const nodeId = `portal-node-${choice.id}`;
 
@@ -86,13 +97,19 @@ export function syncSyntheticNodes(
           id: nodeId,
           type: 'portalNode',
           position: existingPositions[nodeId] || { x: pagePos.x + hOffset, y: pagePos.y - 120 },
-          width: 44,
-          height: 44,
+          /* The crossing card, per 5c: a 190px card, not a 44px glyph. */
+          width: 190,
           data: {
             sourcePageId: page.id,
+            sourcePageTitle: pageDomain.title,
             sourceSubplotId: page.data.subplotId,
-            subplotId: params.subplotId ?? '',
+            choiceText: choice.text,
+            subplotId: crossingSubplotId ?? '',
             subplotName,
+            /* How much is on the other side — the point of abstracting it away. */
+            subplotPageCount: Object.values(pages).filter((candidate) =>
+              crossingSubplotId ? candidate.subplotId === crossingSubplotId : !candidate.subplotId
+            ).length,
             targetPageName: String(targetPageName),
           },
           selectable: true,
@@ -109,10 +126,11 @@ export function syncSyntheticNodes(
           label: choice.text,
           labelStyle: SYNTHETIC_LABEL_STYLE,
           labelShowBg: false,
-          style: { stroke: 'rgba(147,51,234,0.7)', strokeDasharray: '6 3' },
+          /* Dashed and in the accent: a crossing leaves this plot. */
+          style: { stroke: 'var(--color-accent-line)', strokeDasharray: '5 4' },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: 'rgba(147,51,234,0.7)'
+            color: 'var(--color-accent-line)'
           }
         });
       } else {
@@ -133,7 +151,7 @@ export function syncSyntheticNodes(
             sourceSubplotId: page.data.subplotId,
             choiceId: choice.id,
             choiceText: choice.text || 'Action Choice',
-            actionNames: choiceActions.map((a) => a.blueprintId),
+            actionNames: invocations.map((a) => a.blueprintId),
           },
           selectable: true,
           draggable: true,
