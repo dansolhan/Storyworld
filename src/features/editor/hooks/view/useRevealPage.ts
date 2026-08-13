@@ -1,11 +1,9 @@
 import { useCallback } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useEditorStore } from '../../store/useEditorStore';
+import { useFramePage } from './useFramePage';
 import type { InspectorTab } from '../../store/inspectorTab';
 import type { RevealRequest } from '../../store/revealRequest';
-
-const FRAME_DURATION = 800;
-const FRAME_MAX_ZOOM = 1;
 
 export type RevealPage = (request: RevealRequest, tab?: InspectorTab) => void;
 
@@ -19,7 +17,8 @@ export type RevealPage = (request: RevealRequest, tab?: InspectorTab) => void;
  * `ReactFlowProvider` — true of everything in the editor shell.
  */
 export const useRevealPage = (): RevealPage => {
-  const { fitView, setNodes } = useReactFlow();
+  const { setNodes } = useReactFlow();
+  const framePage = useFramePage();
 
   return useCallback(
     (request, tab) => {
@@ -34,12 +33,8 @@ export const useRevealPage = (): RevealPage => {
 
       setNodes((nodes) => nodes.map((node) => ({ ...node, selected: node.id === request.pageId })));
 
-      // React Flow needs the selection committed before it can frame the node.
-      setTimeout(
-        () => fitView({ nodes: [{ id: request.pageId }], duration: FRAME_DURATION, maxZoom: FRAME_MAX_ZOOM }),
-        50
-      );
+      framePage(request.pageId);
     },
-    [fitView, setNodes]
+    [framePage, setNodes]
   );
 };

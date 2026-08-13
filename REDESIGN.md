@@ -180,6 +180,48 @@ Three things fell out of it:
   old stories still display. "Add a moment" also dedupes by label, so a story
   carrying the old name is not offered its replacement.
 
+## Done — step 3c, choice-first branching
+
+- **`⌘⏎` while writing a choice branches to a new page.** The page comes into
+  existence, the choice points at it, and the camera moves to show it — but the
+  selection does not, so the author stays in the choice list they were writing.
+  Plain Enter is deliberately left alone: it does nothing in a single-line input,
+  and claiming it would let a stray keystroke create a page. Both `⌘` and `Ctrl`
+  are accepted, as everywhere else.
+- **A choice that already had a target is simply repointed**, and the toast says
+  so. Stopping to confirm would defeat the point of a shortcut; the undo is what
+  makes that safe.
+- **Undo is a scoped toast**, not an editor-wide stack: "New page created, and
+  the choice repointed at it. — Undo" deletes the page and puts the old target
+  back. Order matters inside it, because deleting a page clears any choice naming
+  it, so the old target has to be restored afterwards.
+- **A page with no prose is drawn as unwritten** — kicker `Location · Unwritten`,
+  a faint border and a dimmed title. Derived from `paragraphs`, so nothing has to
+  remember to clear a flag, and no schema change: **no `CURRENT_VERSION` bump**.
+  An action-only page carries the mark permanently, which is honest — it has
+  nothing for the reader to read.
+- **Dashed still means "plot / action".** The design gives dashed to unwritten
+  pages, but the canvas already spends that stroke on page type, and one border
+  cannot carry two facts. Unwritten fades instead, so an unwritten plot page
+  reads as *both*.
+
+Three things fell out of it:
+
+- **There was no way to delete a page.** React Flow's own delete removes the
+  *node* and leaves `pages[id]` behind — an orphan the compiler still emitted,
+  with choices elsewhere still naming it as a destination. `deletePage` now
+  clears all four places a page exists: the node, the page record, the edges
+  touching it, and any choice pointing at it. It also drops the selection and the
+  start page when they were the deleted page.
+- **`useRevealPage` did two things at once.** Revealing a page selects it and
+  hands the inspector over; branching only wants the camera. `useFramePage` is
+  the camera half, and `useRevealPage` now builds on it.
+- **A `Toast` primitive**, on `@radix-ui/react-toast` per the Radix + CSS Modules
+  rule, holding exactly one message: two stacked Undos would leave the author
+  guessing which belonged to which action. `src/test/setup.ts` gained a
+  pointer-capture stub, because jsdom implements pointer events but not pointer
+  capture and Radix's swipe gesture reaches for it.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -188,23 +230,20 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`3c` Choice-first branching** — `⌘⏎` in a choice creates and links a page;
-   dashed `NEW · UNWRITTEN` node; undo toast. The Choices tab already has the
-   structure and both buttons.
-2. **`4b` Story health** — pure derivation over existing state: unreachable
+1. **`4b` Story health** — pure derivation over existing state: unreachable
    pages, dead ends, unconnected choices, unused items/variables/audio/
    atmospheres. Add `'health'` to `EditorWorkspace`.
-3. **`4a` Dashboard**.
-4. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+2. **`4a` Dashboard**.
+3. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-5. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-6. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+4. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+5. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-7. **`6c` History & export**, **`6d` shortcut sheet**.
+6. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
@@ -233,6 +272,17 @@ Roughly in dependency order. — fold the six modal managers into one workspace
   while unauthorable.
 
 ## Known rot
+
+Still open:
+
+- **Deleting a node on the canvas still orphans its page.** `onNodesChange`
+  applies React Flow's `remove` change to `nodes` and nothing else, so the page
+  record, its edges and any choice pointing at it survive. `deletePage` (added in
+  `3c`) is the fix — routing `remove` changes for page nodes through it is a small
+  change with a real behaviour shift, so it wants its own commit rather than
+  riding along with a design step.
+- **A general undo stack.** `3c` built a scoped toast instead. Worth doing
+  properly: it touches every slice and needs its own testing.
 
 Fixed after step 1b:
 

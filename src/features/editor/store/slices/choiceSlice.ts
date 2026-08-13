@@ -157,14 +157,15 @@ export const createChoiceSlice: StateCreator<
   createPageFromChoice: (sourcePageId: string, choiceId: string) => {
     const { nodes, addPage, setChoiceDestination } = get();
     const sourceNode = nodes.find((n) => n.id === sourcePageId);
+    if (!sourceNode) return undefined;
 
-    if (sourceNode) {
-      // Find a smart position to avoid overlap
-      const { x, y } = findSmartNodePosition(nodes, sourceNode.position.x, sourceNode.position.y);
-      const atmosphereId = sourceNode.type === 'pageNode' ? sourceNode.data.atmosphereId : undefined;
+    // Find a smart position to avoid overlap
+    const { x, y } = findSmartNodePosition(nodes, sourceNode.position.x, sourceNode.position.y);
+    const atmosphereId = sourceNode.type === 'pageNode' ? sourceNode.data.atmosphereId : undefined;
 
-      const newPageId = addPage(x, y, atmosphereId as string | undefined);
-      setChoiceDestination(sourcePageId, choiceId, newPageId);
-    }
+    const newPageId = addPage(x, y, atmosphereId as string | undefined);
+    setChoiceDestination(sourcePageId, choiceId, newPageId);
+    // Returned so the caller can frame the node and offer to undo the whole thing.
+    return newPageId;
   }
 });

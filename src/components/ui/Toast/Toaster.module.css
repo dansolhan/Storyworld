@@ -1,0 +1,95 @@
+/*
+ * Bottom right, clear of the editor's 32px footer bar — the footer already says
+ * what the canvas is doing, so a toast landing on top of it would cover the
+ * message it is reporting about.
+ */
+.viewport {
+  position: fixed;
+  right: var(--space-4);
+  bottom: 44px;
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  outline: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-float);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+}
+
+.toast[data-state='open'] {
+  animation: slide-in var(--duration-base) var(--ease-standard);
+}
+
+.toast[data-state='closed'] {
+  animation: fade-out var(--duration-fast) var(--ease-standard);
+}
+
+.toast[data-swipe='move'] {
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+
+.toast[data-swipe='end'] {
+  animation: fade-out var(--duration-fast) var(--ease-standard);
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(var(--space-2));
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.message {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-body);
+}
+
+/* The accent as a stroke: Undo is the reason the toast exists, so it reads as a link. */
+.action {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-accent-line);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.action:hover {
+  border-bottom-color: var(--color-accent);
+}
+
+.close {
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: var(--text-ui);
+  line-height: 1;
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--color-text);
+}

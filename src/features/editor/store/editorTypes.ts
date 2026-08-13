@@ -162,6 +162,7 @@ export interface EditorState {
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updatePageType: (pageId: string, newType: 'location' | 'plot') => void;
   updatePageAtmosphere: (pageId: string, atmosphereId: string | undefined) => void;
+  deletePage: (pageId: string) => void;
 
   // Domain Handlers - Paragraph
   addParagraph: (pageId: string) => void;
@@ -173,7 +174,8 @@ export interface EditorState {
   updateChoiceText: (pageId: string, choiceId: string, newText: string) => void;
   setChoiceDestination: (sourcePageId: string, choiceId: string, targetPageId: string | undefined) => void;
   setChoiceActions: (pageId: string, choiceId: string, actions: import('../../../domain/Actions/Action').Action[]) => void;
-  createPageFromChoice: (sourcePageId: string, choiceId: string) => void;
+  /** Returns the new page's id, so a caller can frame it or undo the creation. */
+  createPageFromChoice: (sourcePageId: string, choiceId: string) => string | undefined;
 
   // Domain Handlers - Events (Unified for Page, Choice, Paragraph)
   addEvent: (targetType: 'page' | 'choice' | 'paragraph', pageId: string, targetId: string, name: string) => void;

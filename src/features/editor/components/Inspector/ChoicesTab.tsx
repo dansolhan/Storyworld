@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Crosshair, Plus } from 'lucide-react';
 import { useChoiceActions } from '../../hooks/page/useChoiceActions';
+import { useBranchToNewPage } from '../../hooks/page/useBranchToNewPage';
 import { useConnectingChoice } from '../../hooks/page/useConnectingChoice';
 import { useRevealPage } from '../../hooks/view/useRevealPage';
+import { hasShortcutModifier, shortcutLabel } from '../../../../utils/platform';
 import { useEditorStore } from '../../store/useEditorStore';
 import { RuleEditor } from '../RuleEditor/RuleEditor';
 import type { Page } from '../../../../domain/Page/Page';
@@ -15,13 +17,13 @@ export interface ChoicesTabProps {
 /**
  * The page's outbound choices.
  *
- * Structure follows the design — a row per choice with its target, a retarget
- * control and its logic. The choice-first shortcuts it also draws (⌘⏎ to
- * create and link a page, the unwritten-node treatment, the undo toast) belong
- * to their own step and are deliberately absent rather than half-built.
+ * A row per choice with its target, a retarget control and its logic. `⌘⏎` while
+ * writing a choice branches straight to a new page, so an author can outline a
+ * whole fork without leaving this list — see `useBranchToNewPage`.
  */
 export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
-  const { addChoice, updateChoiceText, setConnectingChoice, createPageFromChoice } = useChoiceActions();
+  const { addChoice, updateChoiceText, setConnectingChoice } = useChoiceActions();
+  const branchToNewPage = useBranchToNewPage();
   const connectingChoice = useConnectingChoice();
   const pages = useEditorStore((state) => state.pages);
   const revealRequest = useEditorStore((state) => state.revealRequest);
@@ -65,7 +67,15 @@ export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
                 className={styles.choiceText}
                 value={choice.text}
                 onChange={(event) => updateChoiceText(page.id, choice.id, event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter' || !hasShortcutModifier(event)) return;
+                  // Plain Enter is left alone: it does nothing in a single-line input,
+                  // and claiming it would make a stray keystroke create a page.
+                  event.preventDefault();
+                  branchToNewPage(page.id, choice.id);
+                }}
                 placeholder={`Choice ${index + 1}...`}
+                title={`${shortcutLabel('⏎')} branches to a new page`}
               />
 
               <div className={styles.choiceTarget}>
@@ -99,7 +109,7 @@ export const ChoicesTab: React.FC<ChoicesTabProps> = ({ page }) => {
                   <button
                     type="button"
                     className={styles.rowButton}
-                    onClick={() => createPageFromChoice(page.id, choice.id)}
+                    onClick={() => branchToNewPage(page.id, choice.id)}
                   >
                     To new page
                   </button>

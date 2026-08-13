@@ -27,6 +27,20 @@
   border-style: dashed;
 }
 
+/*
+ * A page with no prose yet fades rather than changing stroke style: dashed
+ * already means "plot / action", and one border cannot carry two facts. The
+ * stroke keeps its style and drops a step in weight, and the title dims — so an
+ * unwritten plot page still reads as dashed *and* as unwritten.
+ */
+.card[data-unwritten] {
+  border-color: var(--color-line-soft);
+}
+
+.card[data-unwritten] .title {
+  color: var(--color-text-muted);
+}
+
 .card:hover {
   border-color: var(--color-text-faint);
 }
@@ -50,7 +64,14 @@
 .kicker {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  /*
+   * Wraps rather than truncates: "Location · Start · Unwritten" outgrows the
+   * node's 160px, and a clipped kicker would hide the very fact it is there to
+   * report. The tight line-height keeps a two-line kicker reading as one label.
+   */
+  flex-wrap: wrap;
+  gap: 0 var(--space-1);
+  line-height: 1.3;
   margin: 0;
   font-family: var(--font-heading);
   font-size: var(--text-kicker-sm);

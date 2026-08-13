@@ -4,6 +4,7 @@ import '@xyflow/react/dist/style.css';
 import { EditorMenuBar } from './components/EditorShell/EditorMenuBar';
 import { EditorRail } from './components/EditorShell/EditorRail';
 import { NewSubplotDialog } from './components/EditorShell/NewSubplotDialog';
+import { Toaster } from '../../components/ui/Toast/Toaster';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { WorkspaceSurface } from './components/DataWorkspace/WorkspaceSurface';
 import { Inspector } from './components/Inspector/Inspector';
@@ -78,6 +79,7 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
       <EditorDashboard />
       <NewSubplotDialog />
       <CommandPalette menus={menus} />
+      <Toaster />
     </div>
   );
 };

@@ -52,4 +52,82 @@ describe('pageSlice', () => {
 
     expect(state.nodes[0].data.type).toBe('plot');
   });
+
+  describe('deletePage', () => {
+    /*
+     * React Flow's own delete only removes the node, so `pages[id]` used to be
+     * left behind as an orphan the compiler still emitted. These pin the four
+     * places a page exists.
+     */
+    const twoLinkedPages = () => {
+      const first = useEditorStore.getState().addPage(0, 0);
+      const second = useEditorStore.getState().addPage(300, 0);
+      useEditorStore.getState().addChoice(first);
+      const choiceId = useEditorStore.getState().pages[first].choices[0].id;
+      useEditorStore.getState().setChoiceDestination(first, choiceId, second);
+      return { first, second, choiceId };
+    };
+
+    it('removes the page record and its node together', () => {
+      const { second } = twoLinkedPages();
+
+      useEditorStore.getState().deletePage(second);
+      const state = useEditorStore.getState();
+
+      expect(state.pages[second]).toBeUndefined();
+      expect(state.nodes.find((node) => node.id === second)).toBeUndefined();
+    });
+
+    it('unlinks any choice that pointed at it, rather than leaving a dangling id', () => {
+      const { first, second, choiceId } = twoLinkedPages();
+
+      useEditorStore.getState().deletePage(second);
+      const state = useEditorStore.getState();
+
+      expect(state.pages[first].choices.find((c) => c.id === choiceId)?.targetPageId).toBeUndefined();
+      expect(state.edges.filter((edge) => edge.target === second)).toEqual([]);
+    });
+
+    it('drops the edges leaving the deleted page too', () => {
+      const { first, second } = twoLinkedPages();
+
+      useEditorStore.getState().deletePage(first);
+
+      expect(useEditorStore.getState().edges.filter((edge) => edge.source === first)).toEqual([]);
+      expect(useEditorStore.getState().pages[second]).toBeDefined();
+    });
+
+    it('clears the selection and the start page when they were the deleted page', () => {
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      useEditorStore.getState().setSelectedPage(pageId);
+      useEditorStore.getState().setStartPageId(pageId);
+
+      useEditorStore.getState().deletePage(pageId);
+      const state = useEditorStore.getState();
+
+      expect(state.selectedPageId).toBeNull();
+      expect(state.startPageId).toBeNull();
+    });
+
+    it('leaves an unrelated selection alone', () => {
+      const { first, second } = twoLinkedPages();
+      useEditorStore.getState().setSelectedPage(first);
+
+      useEditorStore.getState().deletePage(second);
+
+      expect(useEditorStore.getState().selectedPageId).toBe(first);
+    });
+
+    it('ignores a page that is not there', () => {
+      const { first } = twoLinkedPages();
+      const before = useEditorStore.getState();
+
+      useEditorStore.getState().deletePage('no-such-page');
+      const after = useEditorStore.getState();
+
+      expect(after.pages).toBe(before.pages);
+      expect(after.nodes).toBe(before.nodes);
+      expect(after.pages[first]).toBeDefined();
+    });
+  });
 });

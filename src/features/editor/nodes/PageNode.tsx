@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Handle, Position, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 import type { Page } from '../../../domain/Page/Page';
+import { isUnwritten } from '../../../domain/Page/pageStatus';
 import { useEditorStore } from '../store/useEditorStore';
 import styles from './PageNode.module.css';
 
@@ -23,6 +24,10 @@ const pluralise = (count: number, singular: string): string =>
  * Type is carried by the kicker and the border's stroke style — a dashed edge
  * for plot/action pages — rather than by a coloured fill, so the canvas stays
  * one material and the accent means "selected" everywhere it appears.
+ *
+ * Having no prose yet is a separate fact from being a plot page, so it is drawn
+ * separately: the stroke keeps saying what the page *is* and fades to say it is
+ * not written. Otherwise dashed would have to mean two things at once.
  */
 export const PageNode = React.memo(
   ({ data, id }: NodeProps<PageNodeType>) => {
@@ -30,6 +35,7 @@ export const PageNode = React.memo(
 
     const pageTitle = useEditorStore((state) => state.pages?.[id]?.title);
     const pageChoices = useEditorStore((state) => state.pages?.[id]?.choices);
+    const pageParagraphs = useEditorStore((state) => state.pages?.[id]?.paragraphs);
     const pageEvents = useEditorStore((state) => state.pages?.[id]?.events);
     const title = pageTitle || data.title || 'Untitled Page';
     const choices = pageChoices || data.choices || [];
@@ -49,11 +55,14 @@ export const PageNode = React.memo(
     }, [choices.length, id, updateNodeInternals]);
 
     const isPlot = data.type === 'plot';
+    const unwritten = isUnwritten({ paragraphs: pageParagraphs ?? data.paragraphs ?? [] });
 
     // The kicker says what this page is, or that you are editing it right now.
     const kicker = isEditing
       ? 'Editing'
-      : `${isPlot ? 'Plot / Action' : 'Location'}${isStartNode ? ' · Start' : ''}`;
+      : [isPlot ? 'Plot / Action' : 'Location', isStartNode ? 'Start' : null, unwritten ? 'Unwritten' : null]
+          .filter(Boolean)
+          .join(' · ');
 
     const meta = [
       pluralise(choices.length, 'choice'),
@@ -74,7 +83,11 @@ export const PageNode = React.memo(
         <Handle type="target" position={Position.Left} id="t-left" style={HIDDEN} />
         <Handle type="target" position={Position.Right} id="t-right" style={HIDDEN} />
 
-        <article className={styles.card} data-plot={isPlot || undefined}>
+        <article
+          className={styles.card}
+          data-plot={isPlot || undefined}
+          data-unwritten={unwritten || undefined}
+        >
           <p className={styles.kicker} data-editing={isEditing || undefined}>
             {atmosphereColor && (
               <span
