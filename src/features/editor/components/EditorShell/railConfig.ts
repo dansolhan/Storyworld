@@ -7,6 +7,7 @@ import {
   CloudFog,
   Gauge,
   Quote,
+  Stethoscope,
   type LucideIcon,
 } from 'lucide-react';
 import type { EditorWorkspace } from '../../store/editorWorkspace';
@@ -16,6 +17,7 @@ import type { EditorWorkspace } from '../../store/editorWorkspace';
  * settings — show no trailing figure.
  */
 export type RailCountKey =
+  | 'health'
   | 'items'
   | 'variables'
   | 'audio'
@@ -39,7 +41,7 @@ export interface RailSection {
  * The editor's navigation. Only surfaces that exist are listed — a rail item
  * that cannot be reached reads as a bug rather than as a promise.
  *
- * Still to join STORY once built: Outline, Text search, Story health.
+ * Still to join STORY once built: Outline and Text search.
  */
 export const RAIL_SECTIONS: RailSection[] = [
   {
@@ -47,6 +49,12 @@ export const RAIL_SECTIONS: RailSection[] = [
     items: [
       { workspace: 'graph', label: 'Graph', icon: Waypoints },
       { workspace: 'settings', label: 'Settings', icon: Settings2 },
+      /*
+       * The figure counts only what breaks a story. Counting unwritten pages and
+       * unused variables too would leave it permanently lit on any draft, and a
+       * badge that never reaches zero stops being read.
+       */
+      { workspace: 'health', label: 'Story health', icon: Stethoscope, countKey: 'health' },
     ],
   },
   {

@@ -1,0 +1,207 @@
+.workspace {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-bg-app);
+}
+
+.header {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-8) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  /*
+   * Same column as `.body`, so the tally sits above the findings rather than
+   * stranded at the far right of a wide window, and this rule ends where the
+   * group rules below it do.
+   */
+  max-width: 860px;
+}
+
+.heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-heading);
+  /* 26px — a display size, so the lighter cut. */
+  font-size: 1.625rem;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.explanation {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+}
+
+/* — the tally — */
+
+.tally {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.tallyFigure {
+  font-family: var(--font-heading);
+  font-size: 1.375rem; /* 22px */
+  font-weight: var(--font-weight-regular);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-muted);
+}
+
+.tallyFigure[data-severity='breaks'] {
+  color: var(--color-accent);
+}
+
+.tallyLabel {
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.tallyLabel:not(:last-child) {
+  margin-right: var(--space-4);
+}
+
+/* — the checks — */
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-8) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  /* Findings are a reading column, not a table — long stories should not stretch. */
+  max-width: 860px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.groupHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-line-soft);
+}
+
+.groupTitle {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.groupCount {
+  font-family: var(--font-heading);
+  font-size: var(--text-ui);
+  font-feature-settings: var(--font-features-tabular);
+  color: var(--color-text-faint);
+}
+
+/*
+ * The accent is the only colour that carries weight here, so it is spent on the
+ * findings that actually break a story. A note keeps the neutral figure.
+ */
+.groupCount[data-severity='breaks'] {
+  color: var(--color-accent);
+}
+
+.groupExplanation {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+}
+
+.clear {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.findings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.finding {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: none;
+  border: none;
+  /* Reserved at rest so the hover marker never shifts the row. */
+  border-left: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  text-align: left;
+  color: var(--color-text-body);
+  cursor: pointer;
+}
+
+.finding[data-inert] {
+  cursor: default;
+}
+
+.finding:hover:not([data-inert]) {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-hover-row);
+}
+
+.findingIcon {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  /* Nudged onto the text baseline; the icon box has no descender to align to. */
+  transform: translateY(2px);
+  color: var(--color-text-faint);
+}
+
+.finding:hover:not([data-inert]) .findingIcon {
+  color: var(--color-accent);
+}
+
+.findingLabel {
+  flex: none;
+  color: var(--color-text);
+}
+
+.findingDetail {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}

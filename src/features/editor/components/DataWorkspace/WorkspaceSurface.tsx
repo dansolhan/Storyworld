@@ -4,6 +4,7 @@ import { ItemsWorkspace } from './ItemsWorkspace';
 import { VariablesWorkspace } from './VariablesWorkspace';
 import { AtmospheresWorkspace } from '../Atmospheres/AtmospheresWorkspace';
 import { AudioWorkspace } from '../Audio/AudioWorkspace';
+import { HealthWorkspace } from '../Health/HealthWorkspace';
 
 /**
  * Whichever data workspace the rail has selected, or nothing when the graph is
@@ -19,5 +20,6 @@ export const WorkspaceSurface: React.FC = () => {
   if (activeWorkspace === 'variables') return <VariablesWorkspace />;
   if (activeWorkspace === 'atmospheres') return <AtmospheresWorkspace />;
   if (activeWorkspace === 'audio') return <AudioWorkspace />;
+  if (activeWorkspace === 'health') return <HealthWorkspace />;
   return null;
 };

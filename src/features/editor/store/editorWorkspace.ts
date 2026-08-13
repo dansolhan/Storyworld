@@ -5,8 +5,8 @@
  * behaviour structural instead of something every setter has to remember to
  * enforce.
  *
- * This union grows as the redesign lands: `outline`, `search`, `health`,
- * `contextualText`, `derivedText` and `history` are all future members.
+ * This union grows as the redesign lands: `outline`, `search`, `contextualText`,
+ * `derivedText` and `history` are all future members.
  */
 export type EditorWorkspace =
   | 'graph'
@@ -16,7 +16,8 @@ export type EditorWorkspace =
   | 'audio'
   | 'atmospheres'
   | 'statusData'
-  | 'context';
+  | 'context'
+  | 'health';
 
 export const DEFAULT_WORKSPACE: EditorWorkspace = 'graph';
 

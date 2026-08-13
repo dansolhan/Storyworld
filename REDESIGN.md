@@ -222,6 +222,47 @@ Three things fell out of it:
   pointer-capture stub, because jsdom implements pointer events but not pointer
   capture and Radix's swipe gesture reaches for it.
 
+## Done — step 4b, story health
+
+- **Eight checks, grouped by check**, each with its own count and a line saying
+  why it matters. A group that finds nothing keeps its place and says what it
+  verified — "every page can be reached" — because a group that vanished on
+  passing would leave the author unsure it had run.
+- **Nothing is stored.** `buildHealthReport` is a pure function over the same
+  collections the editor edits, memoised on their identity, so the report cannot
+  go stale and there is no "re-run checks" button. **No `CURRENT_VERSION` bump.**
+- **The rail counts only what breaks a story** — unreachable pages, choices whose
+  target has been deleted, a missing start page. Unwritten pages and unused data
+  are notes: a draft always has some, and a badge that never reaches zero stops
+  being read. The screen shows both figures, `1 BREAKING · 4 TO LOOK AT`.
+- **Reachability is walked forward from the start page**, not counted inbound. A
+  cluster of pages linking only to each other passes an inbound count while a
+  reader can reach none of them; walking forward catches the whole island. Both
+  edges the engine actually follows are included — a choice's `targetPageId` and
+  the `go_to_subplot` action, at any depth of branch. Posting a message is not
+  movement.
+- **The bias is against false positives.** A jump inside an item's context choice
+  counts as reachable from anywhere, because the item can be carried anywhere. An
+  action-only choice — no target, but rules — is a supported shape, so only a
+  choice with neither is reported. Without a start page the reachability check
+  does not run at all and says why, rather than reporting every page as
+  unreachable.
+- **Clicking a page finding reveals it on the canvas.** Unused data rows name the
+  entity without a jump: selection inside a data workspace is local state, and a
+  cross-workspace reveal is real plumbing that wants its own step.
+
+One thing fell out of it, and it changed a check:
+
+- **"Dead ends" was a false-positive generator.** It reported pages with no
+  choices and no `end_story` rule — but the player ends the story whenever a page
+  offers no visible choices, and `end_story` only *records data* on the way out.
+  Running it against the demo proved it: both of that story's intended endings
+  were flagged, and no story anywhere uses `end_story`. Nothing in the data
+  distinguishes "an ending" from "I forgot the choices", so the check became
+  **Endings** — an inventory for the author to check against the endings they
+  meant, with `end_story` noted where present. A screen that flags every ending in
+  every story is a screen nobody reads twice.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -230,23 +271,29 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`4b` Story health** — pure derivation over existing state: unreachable
-   pages, dead ends, unconnected choices, unused items/variables/audio/
-   atmospheres. Add `'health'` to `EditorWorkspace`.
-2. **`4a` Dashboard**.
-3. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
+1. **`4a` Dashboard**.
+2. **Schema work** (each needs a `CURRENT_VERSION` bump, a migration and a
    migration test, per `claude.md`):
    - `5d` per-entry visibility conditions on status data
    - `5a`/`6a` contextual text as first-class shared entries
    - `7a` **Derived text** — a new capability; inline token plus reusable
      entries
-4. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-5. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+3. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+4. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-6. **`6c` History & export**, **`6d` shortcut sheet**.
+5. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
+- **A cross-workspace entity reveal.** Story Health's unused-data rows would
+  like to open Items with that row selected, but each data workspace holds its
+  selection in local state. A `revealEntity` alongside `revealRequest` would
+  serve Health, the palette and Story Settings — worth doing once, deliberately,
+  rather than as a side effect of a design step.
+- **An explicit "this is an ending" marker on `Page`.** Without one, `4b` cannot
+  tell an intended ending from a page whose choices were forgotten, which is why
+  the check is an inventory rather than a fault. Adding one is a schema change:
+  `CURRENT_VERSION`, a migration and a migration test.
 - **Rail items `Outline` and `Text search`** — in the design, absent from the
   codebase. The rail lists only places you can actually go, so they were left
   out rather than shipped disabled. Add to `RAIL_SECTIONS` when built. Text
@@ -262,7 +309,6 @@ Roughly in dependency order. — fold the six modal managers into one workspace
 - **Visual regression** via the installed Playwright runner — worth having once
   the design stops moving; against a design mid-implementation it is a
   snapshot-churn machine.
-- **Story health count badge** on the rail — arrives with `4b`.
 - **`Item.contextChoices` is authorable nowhere.** The player's inventory reads
   it — Examine, Use — but `ItemManager` only ever wrote `[]`, and the item detail
   panel does not add it either. `3b` has now built the editor this needs:

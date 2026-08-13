@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore } from '../../store/useEditorStore';
+import { useHealthReport } from '../data/useHealthReport';
 import type { RailCountKey } from '../../components/EditorShell/railConfig';
 import type { Page } from '../../../../domain/Page/Page';
 
@@ -34,6 +35,7 @@ const countContextualMarks = (pages: Record<string, Page>): number => {
  * ordinary UI churn never re-counts.
  */
 export const useRailCounts = (): RailCounts => {
+  const health = useHealthReport();
   const collections = useEditorStore(
     useShallow((state) => ({
       items: state.items,
@@ -47,6 +49,7 @@ export const useRailCounts = (): RailCounts => {
 
   return useMemo(
     () => ({
+      health: health.breakingCount,
       items: Object.keys(collections.items ?? {}).length,
       variables: Object.keys(collections.variables ?? {}).length,
       audio: Object.keys(collections.audio ?? {}).length,
@@ -54,6 +57,6 @@ export const useRailCounts = (): RailCounts => {
       statusData: (collections.statusData ?? []).length,
       context: countContextualMarks(collections.pages ?? {}),
     }),
-    [collections]
+    [collections, health.breakingCount]
   );
 };
