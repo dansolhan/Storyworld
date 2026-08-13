@@ -613,14 +613,27 @@ Roughly in dependency order. — fold the six modal managers into one workspace
 
 Still open:
 
-- **Deleting a node on the canvas still orphans its page.** `onNodesChange`
-  applies React Flow's `remove` change to `nodes` and nothing else, so the page
-  record, its edges and any choice pointing at it survive. `deletePage` (added in
-  `3c`) is the fix — routing `remove` changes for page nodes through it is a small
-  change with a real behaviour shift, so it wants its own commit rather than
-  riding along with a design step.
-- **A general undo stack.** `3c` built a scoped toast instead. Worth doing
-  properly: it touches every slice and needs its own testing.
+- **A general undo stack.** `3c` built a scoped toast instead, and page deletion now
+  has one too. Worth doing properly: it touches every slice and needs its own testing.
+
+Fixed after the design steps:
+
+- **Deleting a node on the canvas orphaned its page.** `onNodesChange` applied React
+  Flow's `remove` change to `nodes` alone, so the node vanished while the page record,
+  its edges and every choice pointing at it survived — invisible, unreachable, and
+  still emitted by the compiler. Removals now route through `deletePage`.
+
+  Closing it made the deletion *real*, which meant it could destroy prose, so
+  `deletePage` returns what it removed and the canvas offers it back: "Deleted 'The
+  Locked Door'. — Undo". The restore is targeted rather than a wholesale state
+  rollback, so an author who deletes a page, edits something else, then reaches for
+  Undo gets the page back and keeps the edit. Verified on the demo: 22 pages → 21 with
+  Story Health noticing the page the removal orphaned, then Undo returning both to
+  where they were.
+
+  Synthetic nodes are deliberately not removable — a crossing card and an action
+  marker are derived from a choice, so deleting one would only have it reappear on the
+  next sync. The choice is the thing to edit.
 
 Fixed after step 1b:
 

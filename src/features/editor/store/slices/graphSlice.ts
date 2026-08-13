@@ -1,6 +1,6 @@
 import type { StateCreator } from 'zustand';
 import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
-import type { EditorState } from '../editorTypes';
+import type { DeletedPage, EditorState } from '../editorTypes';
 import { updateGraphVisibility } from '../../utils/visibility';
 import { autoLayoutGraph } from '../../utils/layout';
 
@@ -8,10 +8,35 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
   nodes: [],
   edges: [],
 
+  /**
+   * React Flow's node changes, with removals routed through `deletePage`.
+   *
+   * Applying a `remove` change to `nodes` alone was how a deleted page became an
+   * orphan: the node vanished from the canvas while the page record, its edges and
+   * every choice pointing at it survived — invisible, unreachable, and still emitted
+   * by the compiler. `deletePage` clears all four.
+   *
+   * Synthetic nodes are not removable: a crossing card and an action marker are
+   * derived from a choice, so deleting one would only have it reappear on the next
+   * sync. The choice is the thing to edit.
+   */
   onNodesChange: (changes) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes) as EditorState['nodes'],
-    });
+    const removals = changes.filter((change) => change.type === 'remove');
+    const rest = changes.filter((change) => change.type !== 'remove');
+
+    if (rest.length > 0) {
+      set({ nodes: applyNodeChanges(rest, get().nodes) as EditorState['nodes'] });
+    }
+
+    const deleted: DeletedPage[] = [];
+    for (const removal of removals) {
+      const node = get().nodes.find((candidate) => candidate.id === removal.id);
+      if (node?.type !== 'pageNode') continue;
+      const removed = get().deletePage(removal.id);
+      if (removed) deleted.push(removed);
+    }
+
+    return deleted;
   },
 
   onEdgesChange: (changes) => {

@@ -21,6 +21,15 @@ import type { RevealRequest } from './revealRequest';
 export type EditorNode = PageNodeType | ActionNodeType | PortalNodeType;
 
 // The combined state of all our domain slices and graph slices.
+/** Everything needed to put a deleted page back where it was. */
+export interface DeletedPage {
+  page: Page;
+  node: EditorNode | undefined;
+  /** Choices that pointed at it, so undo can re-link them. */
+  inbound: { pageId: string; choiceId: string }[];
+  wasStartPage: boolean;
+}
+
 export interface EditorState {
   // Graph State
   nodes: EditorNode[];
@@ -69,7 +78,11 @@ export interface EditorState {
   deleteSubplot: (id: string) => void;
 
   // React Flow Handlers
-  onNodesChange: OnNodesChange<EditorNode>;
+  /**
+   * React Flow's own signature returns void; this returns the pages it deleted so a
+   * caller can offer them back. React Flow ignores the value.
+   */
+  onNodesChange: (...args: Parameters<OnNodesChange<EditorNode>>) => DeletedPage[];
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: EditorNode[]) => void;
@@ -185,7 +198,9 @@ export interface EditorState {
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updatePageType: (pageId: string, newType: 'location' | 'plot') => void;
   updatePageAtmosphere: (pageId: string, atmosphereId: string | undefined) => void;
-  deletePage: (pageId: string) => void;
+  /** Returns what was removed, so a caller can offer it back. */
+  deletePage: (pageId: string) => DeletedPage | undefined;
+  restoreDeletedPage: (deleted: DeletedPage) => void;
 
   // Domain Handlers - Paragraph
   addParagraph: (pageId: string) => void;

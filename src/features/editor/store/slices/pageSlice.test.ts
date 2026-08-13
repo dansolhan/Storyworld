@@ -130,4 +130,107 @@ describe('pageSlice', () => {
       expect(after.pages[first]).toBeDefined();
     });
   });
+
+  describe('deleting through the canvas', () => {
+    /*
+     * The rot this closes: React Flow's `remove` change used to be applied to `nodes`
+     * alone, so the page record, its edges and every choice pointing at it survived —
+     * invisible, unreachable, and still emitted by the compiler.
+     */
+    const linkedPair = () => {
+      const first = useEditorStore.getState().addPage(0, 0);
+      const second = useEditorStore.getState().addPage(300, 0);
+      useEditorStore.getState().addChoice(first);
+      const choiceId = useEditorStore.getState().pages[first].choices[0].id;
+      useEditorStore.getState().setChoiceDestination(first, choiceId, second);
+      return { first, second, choiceId };
+    };
+
+    it('routes a node removal through deletePage', () => {
+      const { first, second, choiceId } = linkedPair();
+
+      useEditorStore.getState().onNodesChange([{ id: second, type: 'remove' }]);
+      const state = useEditorStore.getState();
+
+      expect(state.pages[second]).toBeUndefined();
+      expect(state.nodes.find((node) => node.id === second)).toBeUndefined();
+      expect(state.pages[first].choices.find((c) => c.id === choiceId)?.targetPageId).toBeUndefined();
+    });
+
+    it('still applies the changes that are not removals', () => {
+      const { first } = linkedPair();
+
+      useEditorStore.getState().onNodesChange([{ id: first, type: 'select', selected: true }]);
+
+      expect(useEditorStore.getState().nodes.find((node) => node.id === first)?.selected).toBe(true);
+    });
+
+    /* A crossing card is derived from a choice; deleting it would only bring it back. */
+    it('refuses to delete a synthetic node', () => {
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      useEditorStore.getState().addChoice(pageId);
+      const choiceId = useEditorStore.getState().pages[pageId].choices[0].id;
+      useEditorStore.getState().updateEventLogicTree('choice', pageId, choiceId, 'missing', []);
+
+      const before = useEditorStore.getState().nodes.length;
+      useEditorStore.getState().onNodesChange([{ id: 'action-node-nope', type: 'remove' }]);
+
+      expect(useEditorStore.getState().nodes).toHaveLength(before);
+    });
+
+    it('reports what it deleted, so it can be offered back', () => {
+      const { first, second, choiceId } = linkedPair();
+      useEditorStore.getState().updatePageTitle(second, 'The Sunken Hall');
+
+      const deleted = useEditorStore.getState().onNodesChange([{ id: second, type: 'remove' }]);
+
+      expect(deleted).toHaveLength(1);
+      expect(deleted[0].page.title).toBe('The Sunken Hall');
+      expect(deleted[0].inbound).toEqual([{ pageId: first, choiceId }]);
+    });
+  });
+
+  describe('restoreDeletedPage', () => {
+    it('puts the page, its position and its inbound choice back', () => {
+      const first = useEditorStore.getState().addPage(0, 0);
+      const second = useEditorStore.getState().addPage(300, 120);
+      useEditorStore.getState().addChoice(first);
+      const choiceId = useEditorStore.getState().pages[first].choices[0].id;
+      useEditorStore.getState().setChoiceDestination(first, choiceId, second);
+      useEditorStore.getState().updatePageTitle(second, 'The Sunken Hall');
+
+      const [deleted] = useEditorStore.getState().onNodesChange([{ id: second, type: 'remove' }]);
+      useEditorStore.getState().restoreDeletedPage(deleted);
+      const state = useEditorStore.getState();
+
+      expect(state.pages[second].title).toBe('The Sunken Hall');
+      expect(state.nodes.find((node) => node.id === second)?.position).toEqual({ x: 300, y: 120 });
+      expect(state.pages[first].choices.find((c) => c.id === choiceId)?.targetPageId).toBe(second);
+      expect(state.edges.filter((edge) => edge.target === second)).toHaveLength(1);
+    });
+
+    it('gives back the start page role when it had it', () => {
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      useEditorStore.getState().setStartPageId(pageId);
+
+      const [deleted] = useEditorStore.getState().onNodesChange([{ id: pageId, type: 'remove' }]);
+      expect(useEditorStore.getState().startPageId).toBeNull();
+
+      useEditorStore.getState().restoreDeletedPage(deleted);
+      expect(useEditorStore.getState().startPageId).toBe(pageId);
+    });
+
+    /* An author who deletes, edits elsewhere, then undoes should keep the edit. */
+    it('leaves an unrelated edit made in the meantime alone', () => {
+      const first = useEditorStore.getState().addPage(0, 0);
+      const second = useEditorStore.getState().addPage(300, 0);
+
+      const [deleted] = useEditorStore.getState().onNodesChange([{ id: second, type: 'remove' }]);
+      useEditorStore.getState().updatePageTitle(first, 'Still here');
+      useEditorStore.getState().restoreDeletedPage(deleted);
+
+      expect(useEditorStore.getState().pages[first].title).toBe('Still here');
+      expect(useEditorStore.getState().pages[second]).toBeDefined();
+    });
+  });
 });

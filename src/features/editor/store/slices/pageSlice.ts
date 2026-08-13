@@ -1,9 +1,10 @@
 import type { StateCreator } from 'zustand';
 import type { EditorState, EditorNode } from '../editorTypes';
 import type { Page } from '../../../../domain/Page/Page';
+import type { DeletedPage } from '../editorTypes';
 import { syncSyntheticNodes } from '../../utils/syncSyntheticNodes';
 
-export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType' | 'updatePageAtmosphere' | 'deletePage'>> = (set, get) => ({
+export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType' | 'updatePageAtmosphere' | 'deletePage' | 'restoreDeletedPage'>> = (set, get) => ({
   pages: {},
   setPages: (pages) => set({ pages }),
   addPage: (x, y, atmosphereId) => {
@@ -91,8 +92,27 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
    * choice still naming it as a destination.
    */
   deletePage: (pageId) => {
+    /*
+     * Captured before the write, so the caller can offer the page back. Deleting a
+     * page destroys prose, and until this returned something there was no way to
+     * undo it — the Delete key was a one-way door.
+     */
+    let deleted: DeletedPage | undefined;
+
     set((state) => {
-      if (!state.pages[pageId]) return state;
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      deleted = {
+        page,
+        node: state.nodes.find((node) => node.id === pageId),
+        inbound: Object.values(state.pages).flatMap((candidate) =>
+          (candidate.choices || [])
+            .filter((choice) => choice.targetPageId === pageId)
+            .map((choice) => ({ pageId: candidate.id, choiceId: choice.id }))
+        ),
+        wasStartPage: state.startPageId === pageId,
+      };
 
       const nextPages: Record<string, Page> = {};
       for (const [id, page] of Object.entries(state.pages)) {
@@ -116,6 +136,61 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
         // A deleted page cannot stay selected, or the inspector reads a hole.
         selectedPageId: state.selectedPageId === pageId ? null : state.selectedPageId,
         startPageId: state.startPageId === pageId ? null : state.startPageId,
+      };
+    });
+
+    return deleted;
+  },
+
+  /**
+   * Puts a deleted page back, with its position, its inbound choices and its role.
+   *
+   * Targeted rather than a wholesale state restore: an author who deletes a page,
+   * edits something else, then reaches for Undo should get the page back and keep the
+   * edit.
+   */
+  restoreDeletedPage: (deleted) => {
+    set((state) => {
+      const nextPages = { ...state.pages, [deleted.page.id]: deleted.page };
+
+      for (const { pageId, choiceId } of deleted.inbound) {
+        const owner = nextPages[pageId];
+        if (!owner) continue;
+        nextPages[pageId] = {
+          ...owner,
+          choices: (owner.choices || []).map((choice) =>
+            choice.id === choiceId ? { ...choice, targetPageId: deleted.page.id } : choice
+          ),
+        };
+      }
+
+      const nodes = deleted.node && !state.nodes.some((node) => node.id === deleted.page.id)
+        ? [...state.nodes, deleted.node]
+        : state.nodes;
+
+      /*
+       * The edges are rebuilt from the choices rather than restored: `setChoiceDestination`
+       * owns that mapping, and a stale edge would outlive whatever the author changed
+       * in the meantime.
+       */
+      const edges = state.edges.filter((edge) => edge.target !== deleted.page.id);
+      const restoredEdges = [
+        ...edges,
+        ...deleted.inbound.map(({ pageId, choiceId }) => ({
+          id: `e-${pageId}-${choiceId}`,
+          source: pageId,
+          target: deleted.page.id,
+          sourceHandle: choiceId,
+          type: 'floating',
+        })),
+      ];
+
+      const synced = syncSyntheticNodes(nodes, restoredEdges, nextPages, state.subplots || [], state.currentPlotId);
+      return {
+        pages: nextPages,
+        nodes: synced.nodes,
+        edges: synced.edges,
+        startPageId: deleted.wasStartPage ? deleted.page.id : state.startPageId,
       };
     });
   },
