@@ -175,7 +175,12 @@
   color: var(--player-text-muted);
 }
 
-.headKicker:last-child {
+/*
+ * Only a second kicker is pushed to the outer edge. `:last-child` did this until the
+ * right-hand slot was dropped, at which point the story title — now the only child —
+ * was the one being pushed.
+ */
+.headKicker + .headKicker {
   margin-left: auto;
 }
 
@@ -214,16 +219,6 @@
   color: var(--player-title);
 }
 
-/*
- * A comfortable measure, which the Classical guide asks for by name. The prototype
- * card is a mock at one width; at 1360px its recto gives ~95 characters a line, and
- * justification turns that into rivers. Only the prose is capped — the running heads
- * sit at the page edges and a choice is one short line, so neither needs a measure.
- */
-.paragraphs {
-  max-width: 64ch;
-}
-
 .paragraphs {
   display: flex;
   flex-direction: column;
@@ -233,10 +228,10 @@
 .paragraphText {
   font-family: var(--font-body);
   /*
-   * Hyphenation is what makes justification work: without it, a long word forces
-   * the line to stretch its word-spaces and the page grows rivers. The Classical
-   * guide asks for justified copy at a comfortable measure, and this is the half of
-   * that the browser has to be told about.
+   * Hyphenation tightens justified copy: without it a long word forces the line to
+   * stretch its word-spaces and the page grows rivers. It does this without
+   * narrowing the page, which capping the measure did — the recto runs full width,
+   * as the prototype draws it.
    */
   hyphens: auto;
   font-size: var(--text-lg);

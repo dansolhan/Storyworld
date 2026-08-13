@@ -470,15 +470,16 @@ should not rewrite an author's paragraphs behind their back.
   recto, `--player-bg-ledger` the verso. The gutter is a 1px gradient that fades at
   head and foot, so it reads as a fold rather than a panel divider ruled edge to
   edge.
-- **The recto is a printed page**: running heads (story on the left, where you are
-  on the right), a 42px title flush left, the `─ ✦ ─` ornament, and a drop cap on
-  the opening paragraph. "Last page" rather than a chapter number — a branching
-  story has no linear count to give.
-- **Justified prose at a comfortable measure.** The Classical guide asks for
-  justified body copy by name, and for a comfortable measure; the prototype card is
-  a mock at one width, and at 1360px its recto gives ~95 characters a line, which
-  justification turned into rivers. The prose is capped and hyphenated; the running
-  heads and choices stay at page width, since neither needs a measure.
+- **The recto is a printed page**: a running head, a 42px title flush left, the
+  `─ ✦ ─` ornament, and a drop cap on the opening paragraph. The design's right-hand
+  running head holds "CHAPTER ONE", which a branching story has no equivalent for —
+  so that slot stays empty and speaks up only at an ending, with "Last page". It
+  briefly said "This page", which was filling a slot rather than saying anything.
+- **Justified prose, hyphenated, at the page's full width.** Hyphenation is what
+  tightens justified copy — without it a long word stretches the line's word-spaces
+  and the page grows rivers. Capping the measure was tried and **reverted**: it
+  wrapped the text well short of the page and read as a fault rather than as
+  typesetting. The recto runs full width, as the prototype draws it.
 - **Choices are numbered lines**, accent numeral in a fixed 14px column so the texts
   align down the page, hairlines between them, sitting at the foot of the page via
   `margin-top: auto` — so a short page still reads as a page.

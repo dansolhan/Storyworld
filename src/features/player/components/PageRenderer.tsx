@@ -56,13 +56,14 @@ export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
   return (
     <div className={styles.textContent}>
       {/*
-        The running heads of a printed page: the story on the left, where you are in
-        it on the right. "Last page" rather than a chapter number, because a
-        branching story has no linear count to give.
+        The running head of a printed page. The design's right-hand slot holds
+        "CHAPTER ONE", which a branching story has no equivalent for — so it is left
+        empty rather than filled with something that says nothing, and only speaks up
+        when there is a fact to state.
       */}
       <div className={styles.runningHead}>
         <span className={styles.headKicker}>{storyData.title || 'Untitled story'}</span>
-        <span className={styles.headKicker}>{isEnding ? 'Last page' : 'This page'}</span>
+        {isEnding && <span className={styles.headKicker}>Last page</span>}
       </div>
 
       <h2 className={styles.pageTitle}>{page.title}</h2>
