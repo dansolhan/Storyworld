@@ -3,6 +3,8 @@ import { useEngine } from '../adapter/useEngine';
 import { useEngineStore } from '../adapter/useEngineStore';
 import { parseTextTokens } from '../../../utils/textParser';
 import { stripUnresolvedMarks } from '../../../domain/ContextualText/contextualMark';
+import { resolveDerivedTokens } from '../../../domain/DerivedText/derivedToken';
+import { resolveDerivedText } from '../../../domain/DerivedText/resolveDerivedText';
 import styles from '../Player.module.css';
 
 export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
@@ -10,7 +12,9 @@ export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
   const storyData = useEngineStore((s) => s.storyData);
   const variables = useEngineStore((s) => s.variables);
   const messages = useEngineStore((s) => s.messages);
-  
+  const visitedPageIds = useEngineStore((s) => s.visitedPageIds);
+  const inventory = useEngineStore((s) => s.inventory);
+
   if (!storyData) return null;
 
   const page = storyData.pages.find((p) => p.id === pageId);
@@ -24,10 +28,26 @@ export const PageRenderer: React.FC<{ pageId: string }> = ({ pageId }) => {
    * is a phrase that looks clickable and does nothing, which reads to a reader as
    * a bug rather than as prose. Story Health names them for the author.
    */
-  const renderProse = (html: string): string =>
-    stripUnresolvedMarks(parseTextTokens(html, variables), (entryId) => Boolean(entries[entryId]))
+  const evalContext = { variables, visitedPageIds, currentPageId: pageId, inventory };
+
+  /*
+   * Derived texts resolve before `{{variable}}` substitution, so an outcome can
+   * itself contain a token — "the {{title}} nods" is a reasonable thing to write.
+   * A token whose derived text has gone resolves to nothing and the sentence closes
+   * over it; Story Health names the page.
+   */
+  const renderProse = (html: string): string => {
+    const resolved = resolveDerivedTokens(html, (id) => {
+      const derived = (storyData.derivedTexts ?? {})[id];
+      return derived ? resolveDerivedText(derived, evalContext) : '';
+    });
+
+    return stripUnresolvedMarks(parseTextTokens(resolved, variables), (entryId) =>
+      Boolean(entries[entryId])
+    )
       .replace(/<\/p>\n/g, '</p>')
       .replace(/<br\s*\/?>\n/g, '<br>');
+  };
 
   const filteredMessages = messages.filter((m) => !m.pageId || m.pageId === pageId);
 

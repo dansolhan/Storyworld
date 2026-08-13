@@ -42,7 +42,8 @@ export const useStoryImport = () => {
             audio: parsedData.audio || {},
             atmospheres: parsedData.atmospheres || {},
             statusData: parsedData.statusData || [],
-            contextualText: parsedData.contextualText || {}
+            contextualText: parsedData.contextualText || {},
+            derivedTexts: parsedData.derivedTexts || {}
           });
         } else {
           alert("Invalid story format.");

@@ -414,6 +414,50 @@ Three things this step surfaced:
   became shared. The old count scanned paragraph HTML for a class token, which is
   now both wrong and unnecessary.
 
+## Done — step 7a, derived text
+
+A new capability, and the last of the schema work — **with no `CURRENT_VERSION`
+bump**, as predicted. `derivedTexts` is a new optional collection and the tokens
+only exist where an author put one, so an old story has nothing to upcast. The
+migration rule covers *breaking* changes; this breaks nothing.
+
+- **One collection, not two.** The handoff proposed keeping inline outcomes inside
+  paragraph HTML and only named ones on the story. That would put structured data
+  back into prose — invisible to Story Health, awkward to edit, and the exact shape
+  schema 1.3.0 had just migrated away from. All derived texts live in
+  `derivedTexts`; "reusable" is only `name` being set.
+- **An inline atom node, not a mark.** A mark wraps words that already exist; a
+  derived text *is* the placeholder, and what it says depends on state. The node
+  serialises empty — the player replaces the whole element — so nothing is ever a
+  second copy of what lives in the collection.
+- **The chip shows the alternatives**, `{Old Gil / a stranger}`, through a React
+  node view. Reading what a sentence might say without opening anything is the
+  point of the design's chip. `white-space: nowrap` is load-bearing, per the
+  design: the chip is inline-flex inside justified prose and a wrap lets the text
+  escape its own border box.
+- **The node view is injected, not imported** — the same layering as 6a's picker.
+  Showing outcomes needs the store, and `RichTextEditor` is generic UI.
+- **Order is the semantics.** The first outcome whose condition holds wins, so the
+  list is explicitly ordered and the badge says which one resolves under the
+  starting values — evaluated by the same `evaluateEventVisibility` the player
+  uses, so the badge cannot disagree with the reader. Up/down rather than the
+  design's drag handles, matching the rule rows and status entries.
+- **Conditions are `LogicNode[]`**, so `ConditionListEditor` from 5d took them
+  unchanged, and an empty condition reads as "otherwise — the fallback". The design
+  proposed `LogicNode | null`; an empty array says the same thing in the shape the
+  rest of the codebase speaks.
+- **Derived texts resolve before `{{variable}}` substitution**, so an outcome can
+  itself contain a token — "the {{title}} nods" is a reasonable thing to write.
+- **Story Health gained a breaking check**: a derived text with no unconditional
+  outcome, no outcomes at all, or a deleted entry can leave a gap in a sentence,
+  and none of that is visible while writing — the chip looks the same either way.
+  The editor also says so at the point of editing.
+
+One thing worth noting: a token whose derived text has been deleted resolves to
+nothing and the sentence closes over it, rather than showing a reader scaffolding.
+That is the same bargain contextual entries strike, and the same reason: deleting
+should not rewrite an author's paragraphs behind their back.
+
 ## Next
 
 Roughly in dependency order. — fold the six modal managers into one workspace
@@ -422,14 +466,10 @@ Roughly in dependency order. — fold the six modal managers into one workspace
    true modal that covers the rail, so while it is open the rail — the
    navigation model — cannot be reached. Escape now backs out of any workspace,
    which patches it, but the modal should not be covering the rail at all.
-1. **`7a` Derived text** — a new capability; inline token plus reusable entries.
-   Likely needs **no bump**: a new optional collection plus marks that only exist
-   where an author adds them, so an old story has nothing to upcast.
-   `ConditionListEditor` from `5d` is what each outcome's condition wants.
-2. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
-3. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
+1. **Player pass** — `2c` two-column reading view, `6b` bare end-of-story.
+2. **`5c` Subplots as lanes**, which changes how `FlowView` positions nodes and
    replaces portal nodes with labelled crossing cards.
-4. **`6c` History & export**, **`6d` shortcut sheet**.
+3. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
 
@@ -442,6 +482,14 @@ Roughly in dependency order. — fold the six modal managers into one workspace
   tell an intended ending from a page whose choices were forgotten, which is why
   the check is an inventory rather than a fault. Adding one is a schema change:
   `CURRENT_VERSION`, a migration and a migration test.
+- **Naming a derived text reusable, and its own workspace.** `7a` shipped inline
+  derived texts end to end; `name` exists on the model but nothing sets it yet, so
+  there is no rail item and no `{merchantName}` addressing. The collection is
+  already shaped for it.
+- **"Try another state" in the derived-text preview** — setting variable values to
+  see which outcome wins under other conditions. It needs a scratch evaluation
+  context the editor has no notion of; the "resolves now" badge covers the starting
+  state.
 - **The 5a "returning state" round trip** — the design's "See all entries — the
   mark is kept, and you come straight back", with `pendingContextualMark` in the
   store and a returning bar above the workspace header. The picker covers the

@@ -1,0 +1,183 @@
+/* — the inline chip — */
+
+.chipWrapper {
+  /*
+   * Required, per the design: the chip is inline-flex inside justified prose, and a
+   * wrap lets the text escape its own border box.
+   */
+  white-space: nowrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  padding: 1px var(--space-2);
+  background-color: var(--color-accent-tint);
+  border: 1px solid var(--color-accent-line);
+  /* 3px: an inline chip inside a text line, per the radius scale. */
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  text-align: left;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.chip:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* A token whose derived text has gone. The player closes over it silently. */
+.chip[data-missing] {
+  border-style: dashed;
+  border-color: var(--color-line-strong);
+  background: none;
+  color: var(--color-text-faint);
+}
+
+.brace {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--color-accent-line);
+}
+
+/* — the outcome editor — */
+
+.outcomes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.noOutcomes {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+.outcome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  /* Reserved at rest so the resolving marker never shifts the row. */
+  border-left: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.outcome[data-resolves] {
+  border-left-color: var(--color-accent-line);
+  background-color: var(--color-accent-tint);
+}
+
+.outcomeHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.outcomeText {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-app);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text);
+}
+
+.outcomeText:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The one solid accent fill in the app: a badge that has to shout. */
+.resolves {
+  flex: none;
+  padding: 1px var(--space-2);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-bg-canvas);
+}
+
+.outcomeControls {
+  flex: none;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.control {
+  display: inline-flex;
+  padding: 1px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.control:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.control:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.controlIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.outcomeCondition {
+  /* Indented behind the text it qualifies, as a rule's branches are. */
+  padding-left: 18px;
+}
+
+.footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.addOutcome {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.addIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.hint {
+  margin: 0;
+  text-align: right;
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+}

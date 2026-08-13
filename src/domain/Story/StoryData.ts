@@ -4,6 +4,7 @@ import type { StoryVariable } from './Variable';
 import type { AudioItem } from './Audio';
 import type { StatusData } from './StatusData';
 import type { ContextualEntries } from '../ContextualText/ContextualEntry';
+import type { DerivedTexts } from '../DerivedText/DerivedText';
 
 export interface StoryData {
   version: string | number;
@@ -21,6 +22,14 @@ export interface StoryData {
   statusData?: StatusData[];
   /** Shared contextual entries, referenced from paragraph marks. Schema 1.3.0. */
   contextualText?: ContextualEntries;
+  /**
+   * Derived texts, referenced from paragraph tokens.
+   *
+   * Optional and additive: a story written before this has none, and the tokens
+   * only exist where an author put one — so there is nothing to upcast and no
+   * `CURRENT_VERSION` bump.
+   */
+  derivedTexts?: DerivedTexts;
   /**
    * Editor layout, opaque to the domain: React Flow nodes and edges, whose
    * shape belongs to the editor feature. `storyMapper` is the only place that

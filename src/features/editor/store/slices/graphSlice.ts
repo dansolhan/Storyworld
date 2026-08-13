@@ -46,7 +46,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
     nodes: autoLayoutGraph(state.nodes, state.edges)
   })),
 
-  loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres, statusData, contextualText }) => set((state) => {
+  loadStory: ({ nodes, edges, pages, variables, items, metadata, subplots, audio, atmospheres, statusData, contextualText, derivedTexts }) => set((state) => {
     const visibleGraph = updateGraphVisibility(nodes, edges, null);
     return {
       nodes: visibleGraph.nodes,
@@ -65,6 +65,7 @@ export const createGraphSlice: StateCreator<EditorState, [], [], Pick<EditorStat
       atmospheres: atmospheres || {},
       statusData: statusData || [],
       contextualText: contextualText || {},
+      derivedTexts: derivedTexts || {},
     };
   }),
 });

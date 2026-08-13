@@ -40,6 +40,7 @@ const report = (over: Partial<HealthSources> = {}) => {
     atmospheres: {},
     startPageId: null,
     contextualText: {},
+    derivedTexts: {},
     usage: emptyUsageIndex(),
     ...over,
   };
@@ -57,6 +58,7 @@ describe('buildHealthReport', () => {
       'unreachable-pages',
       'dangling-targets',
       'dangling-marks',
+      'derived-gaps',
       'endings',
       'inert-choices',
       'unwritten-pages',

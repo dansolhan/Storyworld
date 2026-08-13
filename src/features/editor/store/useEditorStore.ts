@@ -14,6 +14,7 @@ import { createAtmosphereSlice } from './slices/atmosphereSlice';
 import { createItemSlice } from './slices/itemSlice';
 import { createStatusDataSlice } from './slices/statusDataSlice';
 import { createContextualTextSlice } from './slices/contextualTextSlice';
+import { createDerivedTextSlice } from './slices/derivedTextSlice';
 
 /**
  * useEditorStore is now simply the central coordinator that combines all our
@@ -33,6 +34,7 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createItemSlice(...a),
   ...createStatusDataSlice(...a),
   ...createContextualTextSlice(...a),
+  ...createDerivedTextSlice(...a),
 }));
 
 /**
@@ -54,6 +56,7 @@ interface PersistedSnapshot {
     | 'subplots'
     | 'statusData'
     | 'contextualText'
+    | 'derivedTexts'
     | 'storyTitle'
     | 'storyTitleLocId'
     | 'storyDescription'
@@ -109,6 +112,7 @@ const PERSISTED_KEYS = [
   'subplots',
   'statusData',
   'contextualText',
+  'derivedTexts',
   'storyTitle',
   'storyTitleLocId',
   'storyDescription',
@@ -182,6 +186,7 @@ useEditorStore.subscribe((state) => {
         subplots: state.subplots || [],
         statusData: state.statusData || [],
         contextualText: state.contextualText || {},
+        derivedTexts: state.derivedTexts || {},
         storyTitle: state.storyTitle,
         storyTitleLocId: state.storyTitleLocId,
         storyDescription: state.storyDescription,

@@ -7,6 +7,9 @@ import { ContextualTextFeature } from '../../../../components/ui/RichTextEditor/
 import { InsertVariableFeature } from '../../../../components/ui/RichTextEditor/features/InsertVariableFeature';
 import { RuleEditor } from '../RuleEditor/RuleEditor';
 import { ContextualMarkPicker } from '../ContextualText/ContextualMarkPicker';
+import { DerivedTextChip } from '../DerivedText/DerivedTextChip';
+import { DerivedTextFeature } from '../../../../components/ui/RichTextEditor/features/DerivedTextFeature';
+import { useEditorStore } from '../../store/useEditorStore';
 import type { Paragraph } from '../../../../domain/Paragraph/Paragraph';
 import styles from './ParagraphBlock.module.css';
 
@@ -37,6 +40,18 @@ export const ParagraphBlock = React.memo(
           renderPicker: (props) => <ContextualMarkPicker {...props} />,
         }),
         new InsertVariableFeature(),
+        new DerivedTextFeature({
+          renderChip: DerivedTextChip,
+          /*
+           * Reads the store at call time rather than closing over it, so the feature
+           * — built once per block — never holds a stale action.
+           */
+          createDerivedText: () => {
+            const id = `dt-${crypto.randomUUID().slice(0, 8)}`;
+            useEditorStore.getState().addDerivedText({ id, outcomes: [] });
+            return id;
+          },
+        }),
       ],
       []
     );

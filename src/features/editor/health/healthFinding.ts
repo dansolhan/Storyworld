@@ -12,6 +12,7 @@ export type HealthCheckId =
   | 'unreachable-pages'
   | 'dangling-targets'
   | 'dangling-marks'
+  | 'derived-gaps'
   | 'endings'
   | 'inert-choices'
   | 'unwritten-pages'

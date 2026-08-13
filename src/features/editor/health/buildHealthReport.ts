@@ -5,6 +5,9 @@ import type { StoryVariable } from '../../../domain/Story/Variable';
 import type { AudioItem } from '../../../domain/Story/Audio';
 import { isUnwritten } from '../../../domain/Page/pageStatus';
 import { contextIdsIn } from '../../../domain/ContextualText/contextualMark';
+import { derivedIdsIn } from '../../../domain/DerivedText/derivedToken';
+import { hasFallback } from '../../../domain/DerivedText/resolveDerivedText';
+import type { DerivedTexts } from '../../../domain/DerivedText/DerivedText';
 import type { ContextualEntries } from '../../../domain/ContextualText/ContextualEntry';
 import { buildPageGraph, reachableFrom } from './pageLinks';
 import type { UsageIndex } from '../usage/usageReference';
@@ -18,6 +21,7 @@ export interface HealthSources {
   atmospheres: Record<string, Atmosphere>;
   startPageId: string | null;
   contextualText: ContextualEntries;
+  derivedTexts: DerivedTexts;
   /** So "unused" means exactly what the Data workspace's USED ON column means. */
   usage: UsageIndex;
 }
@@ -46,6 +50,7 @@ export const buildHealthReport = ({
   atmospheres,
   startPageId,
   contextualText,
+  derivedTexts,
   usage,
 }: HealthSources): HealthReport => {
   const allPages = Object.values(pages ?? {});
@@ -138,6 +143,44 @@ export const buildHealthReport = ({
             detail: 'a marked phrase has lost its entry',
             pageId: page.id,
           }))
+      )
+    ),
+  });
+
+  /*
+   * A derived text that can come out empty: either its token has lost the entry, or
+   * every outcome carries a condition and none need hold. Both read to a reader as a
+   * sentence with a hole in it, and neither is visible while writing — the chip
+   * looks the same either way.
+   */
+  checks.push({
+    id: 'derived-gaps',
+    title: 'Derived text that could say nothing',
+    explanation:
+      'Every outcome has a condition, or the derived text has been deleted, so the sentence can come out with a gap in it.',
+    severity: 'breaks',
+    clear: 'Every derived text will always resolve to something.',
+    findings: allPages.flatMap((page) =>
+      page.paragraphs.flatMap((paragraph) =>
+        derivedIdsIn(paragraph.text)
+          .map((id) => {
+            const derived = (derivedTexts ?? {})[id];
+            if (!derived) return { reason: 'its derived text has been deleted' };
+            if (derived.outcomes.length === 0) return { reason: 'it has no outcomes yet' };
+            if (!hasFallback(derived)) return { reason: 'no outcome is unconditional' };
+            return null;
+          })
+          .map((gap, index) =>
+            gap
+              ? {
+                  id: `derived-gap:${paragraph.id}:${index}`,
+                  label: titleOf(page),
+                  detail: gap.reason,
+                  pageId: page.id,
+                }
+              : null
+          )
+          .filter((finding): finding is NonNullable<typeof finding> => finding !== null)
       )
     ),
   });

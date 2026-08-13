@@ -12,6 +12,7 @@ import type {
   ContextualEntries,
   ContextualEntry,
 } from '../../../domain/ContextualText/ContextualEntry';
+import type { DerivedText, DerivedTexts } from '../../../domain/DerivedText/DerivedText';
 import type { EditorWorkspace } from './editorWorkspace';
 import type { EditorDialog } from './editorDialog';
 import type { InspectorTab } from './inspectorTab';
@@ -91,6 +92,7 @@ export interface EditorState {
     atmospheres?: Record<string, import('../../../domain/Atmosphere/Atmosphere').Atmosphere>;
     statusData?: StatusData[];
     contextualText?: ContextualEntries;
+    derivedTexts?: DerivedTexts;
   }) => void;
   organizeGraph: () => void;
 
@@ -123,6 +125,13 @@ export interface EditorState {
   removeContextualEntry: (id: string) => void;
   /** Points every mark on `fromId` at `intoId`, then drops `fromId`. */
   mergeContextualEntries: (fromIds: string[], intoId: string) => void;
+
+  // Derived text — one collection; a `name` is what makes an entry reusable.
+  derivedTexts: DerivedTexts;
+  setDerivedTexts: (texts: DerivedTexts) => void;
+  addDerivedText: (text: DerivedText) => string;
+  updateDerivedText: (id: string, updates: Partial<DerivedText>) => void;
+  removeDerivedText: (id: string) => void;
 
   // UI Handlers
   selectedPageId: string | null;
