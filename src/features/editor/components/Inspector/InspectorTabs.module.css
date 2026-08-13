@@ -202,3 +202,23 @@
   border-color: var(--color-accent-line);
   color: var(--color-accent);
 }
+
+/*
+ * Quiet, and at the foot of the tab: destructive, but undoable, so it does not need
+ * to shout. Matches the delete on every other entity's detail panel.
+ */
+.deletePage {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.deletePage:hover {
+  color: var(--color-danger);
+}

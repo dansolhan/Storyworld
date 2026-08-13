@@ -79,6 +79,11 @@ export const FlowView: React.FC = React.memo(() => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        /*
+         * React Flow binds Backspace alone by default, so the Delete key did nothing —
+         * which reads as the feature being broken rather than as a different shortcut.
+         */
+        deleteKeyCode={['Backspace', 'Delete']}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

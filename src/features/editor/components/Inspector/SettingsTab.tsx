@@ -1,5 +1,6 @@
 import React from 'react';
 import { usePageActions } from '../../hooks/page/usePageActions';
+import { useDeletePages } from '../../hooks/page/useDeletePages';
 import { useAtmospheres } from '../../hooks/page/useAtmospheres';
 import { useEditorStore } from '../../store/useEditorStore';
 import type { Page, PageType } from '../../../../domain/Page/Page';
@@ -12,6 +13,7 @@ export interface SettingsTabProps {
 /** What the page is, rather than what it says. */
 export const SettingsTab: React.FC<SettingsTabProps> = ({ page }) => {
   const { updatePageTitle, updatePageType, updatePageAtmosphere } = usePageActions();
+  const { deletePages } = useDeletePages();
   const atmospheres = useAtmospheres();
   const startPageId = useEditorStore((state) => state.startPageId);
   const setStartPageId = useEditorStore((state) => state.setStartPageId);
@@ -72,6 +74,19 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ page }) => {
       </div>
 
       <p className={styles.pageId}>{page.id}</p>
+
+      {/*
+        The only visible way to delete a page — until now it was the canvas keyboard
+        or nothing, while every other entity in the app had a button. No confirmation:
+        the delete is undoable, and `useDeletePages` says so.
+      */}
+      <button
+        type="button"
+        className={styles.deletePage}
+        onClick={() => deletePages([page.id])}
+      >
+        Delete this page
+      </button>
     </div>
   );
 };

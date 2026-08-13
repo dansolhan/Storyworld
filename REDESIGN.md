@@ -618,6 +618,21 @@ Still open:
 
 Fixed after the design steps:
 
+- **A page could only be deleted by keyboard, on the canvas.** Every other entity in
+  the app — items, variables, atmospheres, audio, status entries, contextual entries,
+  whole stories — had a visible delete; a page had none. The inspector's Settings tab
+  now carries "Delete this page", where the rest of what a page *is* already lives.
+
+  Neither route confirms first: the delete is undoable, and a confirmation on every
+  delete makes the ordinary case tedious. Both go through `useDeletePages`, so the
+  message and the restore are defined once — the canvas deletes inside
+  `onNodesChange`, because React Flow hands removals to the store rather than to a
+  component, and then hands back what went so this can say the same thing about it.
+
+  React Flow also binds **Backspace alone** by default, so the Delete key did nothing
+  — which reads as the feature being broken rather than as a different shortcut. Both
+  are bound now.
+
 - **Opening a story wiped its contextual entries.** The autosave snapshot never
   recorded the *story schema* version, so `handleOpenExisting` passed the snapshot
   envelope's `version: 3` to `migrateStory` — and every open re-ran the whole
