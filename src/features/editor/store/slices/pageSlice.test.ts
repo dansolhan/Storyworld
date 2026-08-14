@@ -233,4 +233,120 @@ describe('pageSlice', () => {
       expect(useEditorStore.getState().pages[second]).toBeDefined();
     });
   });
+
+  describe('updatePageSubplot', () => {
+    /*
+     * The capability this adds: `addPage` was the only thing that ever set
+     * `subplotId`, so a page written in the wrong plot was stuck there for good.
+     */
+    it('moves a page into a subplot', () => {
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      useEditorStore.getState().addSubplot('The Cellar', 'Below the room');
+      const subplotId = useEditorStore.getState().subplots[0].id;
+
+      useEditorStore.getState().updatePageSubplot(pageId, subplotId);
+
+      expect(useEditorStore.getState().pages[pageId].subplotId).toBe(subplotId);
+    });
+
+    it('copies the move onto the node, so the canvas agrees', () => {
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      useEditorStore.getState().addSubplot('The Cellar', '');
+      const subplotId = useEditorStore.getState().subplots[0].id;
+
+      useEditorStore.getState().updatePageSubplot(pageId, subplotId);
+
+      expect(
+        useEditorStore.getState().nodes.find((node) => node.id === pageId)?.data.subplotId
+      ).toBe(subplotId);
+    });
+
+    it('moves a page back out to the main plot', () => {
+      useEditorStore.getState().addSubplot('The Cellar', '');
+      const subplotId = useEditorStore.getState().subplots[0].id;
+      useEditorStore.getState().setCurrentPlotId(subplotId);
+      const pageId = useEditorStore.getState().addPage(0, 0);
+      expect(useEditorStore.getState().pages[pageId].subplotId).toBe(subplotId);
+
+      useEditorStore.getState().updatePageSubplot(pageId, undefined);
+
+      expect(useEditorStore.getState().pages[pageId].subplotId).toBeUndefined();
+    });
+
+    it('ignores a page that is not there', () => {
+      const before = useEditorStore.getState().pages;
+      useEditorStore.getState().updatePageSubplot('nope', undefined);
+      expect(useEditorStore.getState().pages).toBe(before);
+    });
+  });
+
+  describe('duplicatePage', () => {
+    const written = () => {
+      const pageId = useEditorStore.getState().addPage(40, 60);
+      useEditorStore.getState().updatePageTitle(pageId, 'The Locked Door');
+      useEditorStore.getState().addParagraph(pageId);
+      useEditorStore.getState().addChoice(pageId);
+      return pageId;
+    };
+
+    it('copies the prose and the choices', () => {
+      const source = written();
+      const copyId = useEditorStore.getState().duplicatePage(source)!;
+      const copy = useEditorStore.getState().pages[copyId];
+
+      expect(copy.title).toBe('The Locked Door (copy)');
+      expect(copy.paragraphs).toHaveLength(1);
+      expect(copy.choices).toHaveLength(1);
+    });
+
+    /* Sharing ids would mean editing one edited both. */
+    it('gives the copy fresh ids throughout', () => {
+      const source = written();
+      const copyId = useEditorStore.getState().duplicatePage(source)!;
+      const original = useEditorStore.getState().pages[source];
+      const copy = useEditorStore.getState().pages[copyId];
+
+      expect(copyId).not.toBe(source);
+      expect(copy.paragraphs[0].id).not.toBe(original.paragraphs[0].id);
+      expect(copy.choices[0].id).not.toBe(original.choices[0].id);
+    });
+
+    it('lands beside the original rather than on top of it', () => {
+      const source = written();
+      const copyId = useEditorStore.getState().duplicatePage(source)!;
+      const node = useEditorStore.getState().nodes.find((entry) => entry.id === copyId);
+
+      expect(node?.position).toEqual({ x: 240, y: 140 });
+    });
+
+    /* An author decides what reaches the copy; it is not silently linked. */
+    it('leaves nothing pointing at the copy', () => {
+      const first = written();
+      const second = useEditorStore.getState().addPage(400, 0);
+      const choiceId = useEditorStore.getState().pages[first].choices[0].id;
+      useEditorStore.getState().setChoiceDestination(first, choiceId, second);
+
+      const copyId = useEditorStore.getState().duplicatePage(second)!;
+
+      const inbound = Object.values(useEditorStore.getState().pages).flatMap((page) =>
+        page.choices.filter((choice) => choice.targetPageId === copyId)
+      );
+      expect(inbound).toEqual([]);
+    });
+
+    it('keeps the copy in the same plot as the original', () => {
+      useEditorStore.getState().addSubplot('The Cellar', '');
+      const subplotId = useEditorStore.getState().subplots[0].id;
+      const source = written();
+      useEditorStore.getState().updatePageSubplot(source, subplotId);
+
+      const copyId = useEditorStore.getState().duplicatePage(source)!;
+
+      expect(useEditorStore.getState().pages[copyId].subplotId).toBe(subplotId);
+    });
+
+    it('has nothing to copy for a page that is not there', () => {
+      expect(useEditorStore.getState().duplicatePage('nope')).toBeUndefined();
+    });
+  });
 });

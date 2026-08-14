@@ -1,0 +1,67 @@
+/*
+ * A zero-size element at the click point. The menu needs something to hang from and
+ * the cursor is not a DOM node, so this stands in for it.
+ */
+.anchor {
+  position: fixed;
+  width: 0;
+  height: 0;
+}
+
+.menu {
+  min-width: 200px;
+  padding: var(--space-1) 0;
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  z-index: 2200;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  /* Radix moves focus with the pointer, so highlighted is the only state. */
+  outline: none;
+}
+
+.item[data-highlighted] {
+  background-color: var(--color-accent-tint);
+  color: var(--color-accent);
+}
+
+.item[data-disabled] {
+  color: var(--color-text-faint);
+  cursor: default;
+}
+
+/* Destructive, so it does not borrow the accent on hover. */
+.item[data-danger][data-highlighted] {
+  background-color: rgba(207, 125, 108, 0.12);
+  color: var(--color-danger);
+}
+
+.separator {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background-color: var(--color-line);
+}
+
+.more {
+  margin-left: auto;
+  color: var(--color-text-faint);
+}
+
+/* The plot's colour, matching the rail and the crossing cards. */
+.dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: var(--radius-full);
+}

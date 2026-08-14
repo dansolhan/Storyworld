@@ -4,7 +4,7 @@ import type { Page } from '../../../../domain/Page/Page';
 import type { DeletedPage } from '../editorTypes';
 import { syncSyntheticNodes } from '../../utils/syncSyntheticNodes';
 
-export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType' | 'updatePageAtmosphere' | 'deletePage' | 'restoreDeletedPage'>> = (set, get) => ({
+export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState, 'pages' | 'setPages' | 'addPage' | 'updatePageTitle' | 'updatePageType' | 'updatePageAtmosphere' | 'updatePageSubplot' | 'duplicatePage' | 'deletePage' | 'restoreDeletedPage'>> = (set, get) => ({
   pages: {},
   setPages: (pages) => set({ pages }),
   addPage: (x, y, atmosphereId) => {
@@ -81,6 +81,93 @@ export const createPageSlice: StateCreator<EditorState, [], [], Pick<EditorState
       const synced = syncSyntheticNodes(state.nodes, state.edges, nextPages, state.subplots || [], state.currentPlotId);
       return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
     });
+  },
+
+  /**
+   * Moves a page to another plot, or out of them all.
+   *
+   * A page kept whatever plot it was created in, because `addPage` was the only thing
+   * that ever set `subplotId` — so a page written in the wrong plot had to be rebuilt
+   * by hand. The crossings that reach it are unaffected: they name the page, not the
+   * plot it sits in.
+   */
+  updatePageSubplot: (pageId, subplotId) => {
+    set((state) => {
+      const page = state.pages[pageId];
+      if (!page) return state;
+
+      /* The page is the only thing to write: `syncSyntheticNodes` copies `subplotId`
+         onto the node, and it also re-runs visibility so the page appears in its new
+         plot and vanishes from the old one. */
+      const nextPages = { ...state.pages, [pageId]: { ...page, subplotId } };
+      const synced = syncSyntheticNodes(
+        state.nodes,
+        state.edges,
+        nextPages,
+        state.subplots || [],
+        state.currentPlotId
+      );
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
+    });
+  },
+
+  /**
+   * Copies a page beside the original.
+   *
+   * Fresh ids throughout — the page, its paragraphs, its choices and its events — or
+   * the copy would share identity with the original and editing one would edit both.
+   * Choice targets are kept, so the copy leads where the original led, but nothing
+   * points *at* the copy: an author decides what reaches it.
+   */
+  duplicatePage: (pageId) => {
+    const source = get().pages[pageId];
+    if (!source) return undefined;
+
+    const newId = `page-${crypto.randomUUID()}`;
+    const reId = <T extends { id: string }>(item: T): T => ({ ...item, id: crypto.randomUUID() });
+
+    const copy: Page = {
+      ...source,
+      id: newId,
+      title: `${source.title} (copy)`,
+      titleLocId: crypto.randomUUID(),
+      paragraphs: source.paragraphs.map(reId),
+      choices: source.choices.map(reId),
+      events: (source.events ?? []).map(reId),
+    };
+
+    const sourceNode = get().nodes.find((node) => node.id === pageId);
+    const position = sourceNode
+      ? { x: sourceNode.position.x + 200, y: sourceNode.position.y + 80 }
+      : { x: 0, y: 0 };
+
+    set((state) => {
+      const nextPages = { ...state.pages, [newId]: copy };
+      const newNode: EditorNode = {
+        id: newId,
+        type: 'pageNode',
+        position,
+        data: {
+          type: copy.type ?? 'location',
+          title: copy.title,
+          paragraphs: copy.paragraphs,
+          choices: copy.choices,
+          ...(copy.subplotId ? { subplotId: copy.subplotId } : {}),
+          ...(copy.atmosphereId ? { atmosphereId: copy.atmosphereId } : {}),
+        },
+      };
+
+      const synced = syncSyntheticNodes(
+        [...state.nodes, newNode],
+        state.edges,
+        nextPages,
+        state.subplots || [],
+        state.currentPlotId
+      );
+      return { pages: nextPages, nodes: synced.nodes, edges: synced.edges };
+    });
+
+    return newId;
   },
 
   /**

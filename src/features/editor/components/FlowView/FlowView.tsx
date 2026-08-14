@@ -1,5 +1,5 @@
-import React from "react";
-import { ReactFlow, Background, Controls, MiniMap, Panel } from "@xyflow/react";
+import React, { useCallback, useState } from "react";
+import { ReactFlow, Background, Controls, MiniMap, Panel, useReactFlow } from "@xyflow/react";
 import { Wand2 } from "lucide-react";
 import { useNodes } from "../../hooks/graph/useNodes";
 import { useEdges } from "../../hooks/graph/useEdges";
@@ -14,6 +14,7 @@ import { FloatingEdge } from "../../edges/FloatingEdge";
 import { EdgeMarkers } from "../../edges/EdgeMarkers";
 import { EdgePairProvider, buildEdgePairMap } from "../../edges/edgePairs";
 import { Button } from "../../../../components/ui/Button/Button";
+import { CanvasContextMenu, type CanvasMenuTarget } from "./CanvasContextMenu";
 
 import styles from "../../GraphEditor.module.css";
 
@@ -27,11 +28,35 @@ const edgeTypes = {
   floating: FloatingEdge,
 };
 
-export const FlowView: React.FC = React.memo(() => {
+export interface FlowViewProps {
+  /** Plays the story from a given page, for the context menu's "Play from here". */
+  onPlayFromPage: (pageId: string) => void;
+}
+
+export const FlowView: React.FC<FlowViewProps> = React.memo(({ onPlayFromPage }) => {
   const nodes = useNodes();
   const edges = useEdges();
   const { onNodesChange, onEdgesChange, onConnect } = useGraphHandlers();
   const { isDragging } = useInteractionState();
+  const { screenToFlowPosition } = useReactFlow();
+
+  /* Where the right-click landed, and on what. Null when no menu is open. */
+  const [menu, setMenu] = useState<{ x: number; y: number; target: CanvasMenuTarget } | null>(null);
+
+  const openNodeMenu = useCallback((event: React.MouseEvent, node: { id: string }) => {
+    event.preventDefault();
+    setMenu({ x: event.clientX, y: event.clientY, target: { kind: 'node', pageId: node.id } });
+  }, []);
+
+  const openPaneMenu = useCallback(
+    (event: React.MouseEvent | MouseEvent) => {
+      event.preventDefault();
+      /* Flow coordinates, so "Add a page here" means where the cursor actually was. */
+      const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+      setMenu({ x: event.clientX, y: event.clientY, target: { kind: 'pane', flowPosition } });
+    },
+    [screenToFlowPosition]
+  );
 
   const {
     interactionStrategy,
@@ -88,6 +113,8 @@ export const FlowView: React.FC = React.memo(() => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={handleNodeClick}
+        onNodeContextMenu={openNodeMenu}
+        onPaneContextMenu={openPaneMenu}
         onNodeDoubleClick={handleNodeDoubleClick}
         onPaneClick={handlePaneClick}
         onNodeDragStart={onNodeDragStart}
@@ -125,6 +152,16 @@ export const FlowView: React.FC = React.memo(() => {
         </Panel>
       </ReactFlow>
       </EdgePairProvider>
+
+      {menu && (
+        <CanvasContextMenu
+          x={menu.x}
+          y={menu.y}
+          target={menu.target}
+          onClose={() => setMenu(null)}
+          onPlayFromPage={onPlayFromPage}
+        />
+      )}
     </div>
   );
 });

@@ -70,7 +70,7 @@ export const GraphEditor: React.FC<GraphEditorProps> = ({ menus, onPlay }) => {
         */}
         <main className={styles.surface} data-hidden={showsGraph ? undefined : true}>
           <EditorToolbar />
-          <FlowView />
+          <FlowView onPlayFromPage={onPlay} />
         </main>
 
         {showsGraph ? <Inspector onPlayFromPage={onPlay} /> : <WorkspaceSurface />}

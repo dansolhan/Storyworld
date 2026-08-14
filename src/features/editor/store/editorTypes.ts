@@ -198,6 +198,10 @@ export interface EditorState {
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updatePageType: (pageId: string, newType: 'location' | 'plot') => void;
   updatePageAtmosphere: (pageId: string, atmosphereId: string | undefined) => void;
+  /** Moves a page to another plot, or out of them all when given undefined. */
+  updatePageSubplot: (pageId: string, subplotId: string | undefined) => void;
+  /** Copies a page beside the original with fresh ids. Returns the copy's id. */
+  duplicatePage: (pageId: string) => string | undefined;
   /** Returns what was removed, so a caller can offer it back. */
   deletePage: (pageId: string) => DeletedPage | undefined;
   restoreDeletedPage: (deleted: DeletedPage) => void;

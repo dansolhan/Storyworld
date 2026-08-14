@@ -618,6 +618,25 @@ Still open:
 
 Fixed after the design steps:
 
+- **A right-click menu on the canvas**, and with it a capability that was missing
+  entirely: **a page could not change plot.** `addPage` was the only thing that ever
+  set `subplotId`, so a page written in the wrong plot stayed there — it had to be
+  rebuilt by hand. `updatePageSubplot` fixes that, and the menu's "Move to plot"
+  submenu is where it lives.
+
+  The rest of the menu gathers things the canvas could already do but only from
+  elsewhere: Play from here (the inspector footer), Start the story here (the Settings
+  tab or the settings drawer), Delete this page — plus **Duplicate this page**, which
+  copies prose, choices and rules with fresh ids, lands beside the original and has
+  nothing pointing at it. Right-clicking the empty canvas offers "Add a page here",
+  created under the cursor rather than at the toolbar's fixed drop point.
+
+  One controlled menu driven by React Flow's own `onNodeContextMenu` and
+  `onPaneContextMenu`, rather than a Radix trigger wrapped round each node: nesting a
+  pane trigger inside a node trigger would leave which one opens up to event order.
+  Built on the dropdown primitive already in the app, so keyboard navigation, Escape
+  and submenus come with it and no dependency was added.
+
 - **A schema upgrade now keeps the story it replaced.** An upgrade is the one edit an
   author never asked for, and there is a single snapshot per story — so a migration
   that gets something wrong overwrites the only copy of the original, which is exactly
