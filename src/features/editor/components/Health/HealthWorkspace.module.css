@@ -111,6 +111,7 @@
   min-width: 0;
   margin: 0;
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);
@@ -148,6 +149,7 @@
 
 .groupCount {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-ui);
   font-feature-settings: var(--font-features-tabular);
   color: var(--color-text-faint);

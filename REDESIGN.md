@@ -551,12 +551,6 @@ One thing had to be fixed before any of it could be seen:
 
 ## Next
 
-Roughly in dependency order. — fold the six modal managers into one workspace
-   behind the rail. Retires `ExpandableBottomPanel` and `SidePanel`, still used
-   by six managers. **This also removes a real trap**: the Audio manager is a
-   true modal that covers the rail, so while it is open the rail — the
-   navigation model — cannot be reached. Escape now backs out of any workspace,
-   which patches it, but the modal should not be covering the rail at all.
 1. **`6c` History & export**, **`6d` shortcut sheet**.
 
 ## Deferred, with reasons
@@ -615,6 +609,11 @@ Still open:
 
 - **A general undo stack.** `3c` built a scoped toast instead, and page deletion now
   has one too. Worth doing properly: it touches every slice and needs its own testing.
+- **`ExpandableBottomPanel` and `SidePanel` outlived the managers they were built
+  for.** All six modal managers are gone, but `SidePanel` still carries
+  `StorySettingsDrawer` and `VariableManager` is still in the tree. Neither is a trap
+  any more — the Audio modal that used to cover the rail is what made this urgent —
+  so this is now a deletion waiting for its last caller to move.
 
 Fixed after the design steps:
 
@@ -653,6 +652,43 @@ Fixed after the design steps:
   them is `6c`'s job. Reverting confirms first — unlike a page delete it cannot be
   undone — and keeps the backup afterwards, since reverting is usually the first step
   in working out what went missing rather than the last.
+
+- **Small heading text was not filling its own line, and it was the face.** Cormorant
+  Garamond's x-height is 0.39em against Lora's 0.50, so at the same declared size its
+  letters render about a fifth shorter. Measured with `actualBoundingBoxAscent` after
+  `document.fonts.ready`: Cormorant 0.39, Lora 0.50, Georgia 0.48, system-ui 0.50. A
+  10px kicker was therefore drawing 3.9px of letter where a 10px anything else draws
+  5.0px — which is why 12px and 14px interface text read as too small while the
+  reader's 18px Lora prose read as fine. Not a rendering fault and not the weights,
+  which are already at 600.
+
+  `font-size-adjust: ex-height 0.5` is the exact tool: it scales the glyphs to a
+  common x-height and **leaves the line box alone**, so nothing reflows. Verified on a
+  10px kicker in the app — 65.5px wide to 80.6px, line box unchanged at 15.5px.
+  `--font-adjust-heading` in `theme.css` carries it, and it is declared beside
+  `--font-heading` in all 33 rules whose size is under 16px. Display sizes are
+  deliberately left alone: they were set by eye against the design reference and want
+  the face's own delicacy — a 42px page title normalised to a 0.5 x-height is a
+  different and worse title.
+
+  The size tokens were not touched, so the design's specified pixels still hold, and
+  Lora is unaffected because its x-height is already 0.50. It corrects the Georgia
+  fallback too, if the webfont never arrives — which is what the property was invented
+  for. `headingAdjust.test.ts` reads the `.module.css` sources and fails on any small
+  heading rule that lacks the correction, or any display rule that has it: nothing
+  renders a webfont in jsdom, so a source check is the only thing that can notice, and
+  without it the app drifts back one new kicker at a time.
+
+- **The reader put half a blank line between paragraphs.** At 18px on 1.9 leading a
+  paragraph already ends with 16px of its own line box below the last line; a further
+  16px of `margin-bottom` on each `<p>` made the page read as a list of fragments
+  rather than continuous prose. Halved to 8px — measured 16px to 8px between blocks in
+  the running player. The leading is untouched, as the Classical direction asks.
+
+  The last `<p>` keeps its margin on purpose: `.paragraphs` has no `gap`, so that
+  margin is also the space *between* blocks, and zeroing it would have collapsed
+  adjacent paragraphs together. Which is the right answer anyway — a reader should not
+  be able to see where one authored paragraph record ends and the next begins.
 
 - **A page could only be deleted by keyboard, on the canvas.** Every other entity in
   the app — items, variables, atmospheres, audio, status entries, contextual entries,

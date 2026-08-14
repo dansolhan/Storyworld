@@ -10,6 +10,7 @@
 
 .label {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);

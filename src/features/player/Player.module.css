@@ -127,6 +127,7 @@
   flex: 1;
   min-width: 0;
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
@@ -169,6 +170,7 @@
 
 .headKicker {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
@@ -290,10 +292,23 @@
   box-sizing: border-box;
 }
 
+/*
+ * Half a step between paragraphs, not a full one.
+ *
+ * At 18px on 1.9 leading a paragraph already ends with 16px of its own line box
+ * below the last line; another 16px of margin on top put half a blank line
+ * between blocks and the page read as a list of fragments rather than continuous
+ * prose. 8px is enough to mark the break and no more. The leading itself is
+ * untouched — the Classical direction is explicit about not crowding body copy.
+ *
+ * The last `<p>` keeps its margin: `.paragraphs` has no gap, so this is also the
+ * space *between* blocks, and a reader should not be able to see where one
+ * authored paragraph record ends and the next begins.
+ */
 .paragraphText p,
 .messageText p,
 .popoverText p {
-  margin: 0 0 var(--space-4) 0;
+  margin: 0 0 var(--space-2) 0;
 }
 
 .choicesList {
@@ -328,6 +343,7 @@
 
 .choiceNumber {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-feature-settings: var(--font-features-tabular);
   font-size: var(--text-sm);
   color: var(--player-accent);

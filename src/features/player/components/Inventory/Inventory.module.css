@@ -9,6 +9,7 @@
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--player-border);
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;

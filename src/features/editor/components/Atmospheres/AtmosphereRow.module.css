@@ -23,6 +23,8 @@
 .collapsedName {
   flex: none;
   font-family: var(--font-heading);
+  /* Inherits the body's 14px, so it wants the same correction as a kicker. */
+  font-size-adjust: var(--font-adjust-heading);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
@@ -167,6 +169,7 @@
 
 .settingLabel {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);

@@ -84,6 +84,7 @@
   padding: 0 var(--space-2) var(--space-2);
   border-bottom: 1px solid var(--color-line);
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);
@@ -226,6 +227,7 @@
 
 .fieldLabel {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);

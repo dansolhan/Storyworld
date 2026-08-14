@@ -74,6 +74,7 @@
   line-height: 1.3;
   margin: 0;
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker-sm);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);

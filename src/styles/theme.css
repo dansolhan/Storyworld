@@ -72,6 +72,21 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /*
+   * X-height normalisation for the heading face at interface sizes.
+   *
+   * Cormorant's x-height is 0.39em against Lora's 0.50, so a 10px kicker draws
+   * letters 3.9px tall where the body face would draw 5.0px — small heading
+   * text reads as though it is not filling its own line, because it isn't.
+   * `ex-height` scales the glyphs to a common x-height while leaving the
+   * declared size and the line box alone, so nothing reflows. It corrects the
+   * Georgia fallback the same way if the webfont never arrives.
+   *
+   * Declare it beside `--font-heading` wherever the size is under 16px. Display
+   * sizes are set by eye against the design and want the face's own delicacy.
+   */
+  --font-adjust-heading: ex-height 0.5;
+
   /* Letter-spacing — uppercase kickers only, plus the wordmark. */
   --tracking-wordmark: 0.08em;
   --tracking-kicker: 0.18em;

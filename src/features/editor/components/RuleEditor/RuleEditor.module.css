@@ -29,6 +29,7 @@
 .sectionTitle {
   margin: 0;
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);
@@ -108,6 +109,7 @@
   flex: none;
   padding-top: 2px;
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);
@@ -221,6 +223,7 @@
 
 .addMomentLabel {
   font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-kicker);
