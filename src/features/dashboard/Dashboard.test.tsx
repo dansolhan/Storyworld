@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, cleanup, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { get, keys, del } from 'idb-keyval';
+import { get, keys, del, set } from 'idb-keyval';
 import { Dashboard } from './Dashboard';
 import { useEditorStore } from '../editor/store/useEditorStore';
 
@@ -191,6 +191,91 @@ describe('Dashboard', () => {
 
       // The dangling target, and page-2 left unreachable by it.
       expect(within(row).getByText('2 to fix')).toBeTruthy();
+    });
+  });
+
+  describe('a story that was upgraded', () => {
+    /*
+     * The safety net for the one edit an author never asked for. A schema upgrade
+     * rewrites the only saved copy, so it takes a backup first — and the shelf is where
+     * you would look when a story comes back looking wrong.
+     */
+    const upgraded = () => {
+      const blob = storyBlob('The Awakening', 'A short demo.', NOW);
+      shelf({
+        'story-a': blob,
+        'story-backup-a': {
+          takenAt: NOW - 60 * 60 * 1000,
+          fromVersion: '1.2.0',
+          toVersion: '1.3.0',
+          snapshot: storyBlob('The Awakening', 'Before the upgrade.', NOW - 2 * 60 * 60 * 1000),
+        },
+      });
+    };
+
+    it('says it was upgraded, and from what', async () => {
+      upgraded();
+      renderDashboard();
+
+      expect(
+        await screen.findByRole('button', { name: /Upgraded from version 1\.2\.0/ })
+      ).toBeTruthy();
+    });
+
+    it('does not list the backup as a story of its own', async () => {
+      upgraded();
+      renderDashboard();
+      await screen.findByRole('heading', { name: 'The Awakening' });
+
+      expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(1);
+    });
+
+    it('offers nothing to revert to on a story that was never upgraded', async () => {
+      shelf({ 'story-a': storyBlob('The Awakening', '', NOW) });
+      renderDashboard();
+      await screen.findByRole('heading', { name: 'The Awakening' });
+
+      expect(screen.queryByRole('button', { name: /Upgraded from/ })).toBeNull();
+    });
+
+    /* Unlike a page delete this cannot be undone, so it asks and says what is traded. */
+    it('warns that reverting loses everything written since', async () => {
+      upgraded();
+      renderDashboard();
+      await userEvent.click(await screen.findByRole('button', { name: /Upgraded from/ }));
+
+      expect(screen.getByText(/Anything written since then is lost/)).toBeTruthy();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Keep the current version' }));
+      expect(vi.mocked(set)).not.toHaveBeenCalled();
+    });
+
+    it('puts the pre-upgrade copy back when confirmed', async () => {
+      upgraded();
+      renderDashboard();
+      await userEvent.click(await screen.findByRole('button', { name: /Upgraded from/ }));
+      await userEvent.click(screen.getByRole('button', { name: 'Revert' }));
+
+      await waitFor(() =>
+        expect(vi.mocked(set)).toHaveBeenCalledWith(
+          'story-a',
+          expect.objectContaining({
+            state: expect.objectContaining({ storyDescription: 'Before the upgrade.' }),
+          })
+        )
+      );
+    });
+
+    it('drops the backup with the story', async () => {
+      upgraded();
+      renderDashboard();
+      const row = (await screen.findByRole('heading', { name: 'The Awakening' })).closest('article')!;
+
+      await userEvent.click(within(row).getByRole('button', { name: 'Delete' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+
+      await waitFor(() => expect(vi.mocked(del)).toHaveBeenCalledWith('story-a'));
+      expect(vi.mocked(del)).toHaveBeenCalledWith('story-backup-a');
     });
   });
 });

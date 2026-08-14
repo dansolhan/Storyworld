@@ -55,6 +55,27 @@
   color: var(--color-accent);
 }
 
+/*
+ * The upgrade notice, in the accent because it reports something the app did to the
+ * author's story rather than something they did.
+ */
+.revert {
+  flex: none;
+  align-self: center;
+  padding: 1px var(--space-2);
+  background: none;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.revert:hover {
+  background-color: var(--color-accent-hover);
+}
+
 /* — actions — */
 
 .actions {

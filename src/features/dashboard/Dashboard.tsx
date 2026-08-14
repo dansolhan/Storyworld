@@ -3,6 +3,7 @@ import { useStories } from './hooks/useStories';
 import { StoryRow } from './components/StoryRow';
 import { EmptyShelf } from './components/EmptyShelf';
 import { DeleteStoryDialog } from './components/DeleteStoryDialog';
+import { RevertStoryDialog } from './components/RevertStoryDialog';
 import type { StorySummary } from './storySummary';
 import styles from './Dashboard.module.css';
 
@@ -23,8 +24,10 @@ export interface DashboardProps {
  * report the Story health screen reads.
  */
 export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onPlayStory, onImportClick }) => {
-  const { stories, handleCreateNew, handleLoadDemo, handleOpenExisting, handleDelete } = useStories();
+  const { stories, handleCreateNew, handleLoadDemo, handleOpenExisting, handleDelete, handleRevertToBackup } =
+    useStories();
   const [pendingDelete, setPendingDelete] = useState<StorySummary | null>(null);
+  const [pendingRevert, setPendingRevert] = useState<StorySummary | null>(null);
 
   const createNew = () => handleCreateNew(onOpenStory);
   const loadDemo = () => handleLoadDemo(onOpenStory);
@@ -65,10 +68,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenStory, onPlayStory, 
                */
               onPlay={(id) => handleOpenExisting(id, onPlayStory)}
               onDelete={setPendingDelete}
+              onRevert={setPendingRevert}
             />
           ))}
         </div>
       )}
+
+      <RevertStoryDialog
+        story={pendingRevert}
+        onCancel={() => setPendingRevert(null)}
+        onConfirm={(id) => {
+          setPendingRevert(null);
+          void handleRevertToBackup(id);
+        }}
+      />
 
       <DeleteStoryDialog
         story={pendingDelete}

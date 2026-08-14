@@ -5,6 +5,13 @@ import { parseStoryToGraph } from '../../../lib/storyMapper';
 import { migrateStory } from '../../../domain/Story/migrations/migrations';
 import exampleStoryRaw from '../../../data/exampleStory.json';
 import { summariseStory, type StorySummary } from '../storySummary';
+import {
+  deleteStoryBackup,
+  readStoryBackup,
+  restoreStoryBackup,
+  saveStoryBackup,
+} from '../storyBackup';
+import { CURRENT_VERSION } from '../../../domain/Story/migrations/migrations';
 
 const exampleStory = migrateStory(exampleStoryRaw);
 
@@ -15,13 +22,21 @@ export const useStories = () => {
   const loadStoriesList = useCallback(async () => {
     try {
       const allKeys = await keys();
-      const storyKeys = allKeys.filter(k => typeof k === 'string' && k.startsWith('story-'));
+      /* `story-backup-…` also starts with `story-`, and is not a story on the shelf. */
+      const storyKeys = allKeys.filter(
+        (k) => typeof k === 'string' && k.startsWith('story-') && !k.startsWith('story-backup-')
+      );
       const loadedStories: StorySummary[] = [];
 
       for (const key of storyKeys) {
         const data = await get(key);
         if (data && data.state) {
-          loadedStories.push(summariseStory((key as string).replace('story-', ''), data));
+          const storyId = (key as string).replace('story-', '');
+          const backup = await readStoryBackup(storyId);
+          loadedStories.push({
+            ...summariseStory(storyId, data),
+            backup: backup && { takenAt: backup.takenAt, fromVersion: backup.fromVersion },
+          });
         }
       }
 
@@ -109,6 +124,17 @@ export const useStories = () => {
     try {
       const data = await get(`story-${id}`);
       if (data && data.state) {
+        /*
+         * Back the story up before upgrading it, and before anything can autosave over
+         * it. An upgrade is the one edit an author never asked for, and there is a
+         * single snapshot per story — so without this, a migration that gets something
+         * wrong overwrites the only copy of the original.
+         */
+        const storedVersion = data.storyVersion ? String(data.storyVersion) : undefined;
+        if (storedVersion !== CURRENT_VERSION) {
+          await saveStoryBackup(id, data, storedVersion, CURRENT_VERSION);
+        }
+
         setHasHydrated(false);
         setStoryId(id);
         
@@ -171,11 +197,20 @@ export const useStories = () => {
   /* Confirmation is the caller's job now — `DeleteStoryDialog` can say what is lost. */
   const handleDelete = useCallback(async (id: string) => {
     await del(`story-${id}`);
+    /* Its backup goes with it, so deleting a story does not leave one orphaned. */
+    await deleteStoryBackup(id);
+    await loadStoriesList();
+  }, [loadStoriesList]);
+
+  /** Puts a story back as it was before its last schema upgrade. */
+  const handleRevertToBackup = useCallback(async (id: string) => {
+    await restoreStoryBackup(id);
     await loadStoriesList();
   }, [loadStoriesList]);
 
   return {
     stories,
+    handleRevertToBackup,
     handleCreateNew,
     handleLoadDemo,
     handleOpenExisting,

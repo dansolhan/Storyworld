@@ -1,5 +1,7 @@
 import React from 'react';
+import { relativeTime } from '../../../utils/relativeTime';
 import { storyMetaLine } from '../storyMetaLine';
+import { upgradedFrom } from '../upgradedFrom';
 import type { StorySummary } from '../storySummary';
 import styles from './StoryRow.module.css';
 
@@ -8,6 +10,8 @@ export interface StoryRowProps {
   onOpen: (id: string) => void;
   onPlay: (id: string) => void;
   onDelete: (story: StorySummary) => void;
+  /** Offered only when a schema upgrade left a pre-upgrade copy. */
+  onRevert: (story: StorySummary) => void;
 }
 
 /**
@@ -17,7 +21,7 @@ export interface StoryRowProps {
  * between two stories, and a grid of cards pushes them into a corner. Play and
  * Open sit together on the right — the two things you actually came to do.
  */
-export const StoryRow: React.FC<StoryRowProps> = ({ story, onOpen, onPlay, onDelete }) => (
+export const StoryRow: React.FC<StoryRowProps> = ({ story, onOpen, onPlay, onDelete, onRevert }) => (
   <article className={styles.row}>
     <div className={styles.detail}>
       <h2 className={styles.title}>{story.title}</h2>
@@ -41,6 +45,18 @@ export const StoryRow: React.FC<StoryRowProps> = ({ story, onOpen, onPlay, onDel
         ))}
       </p>
     </div>
+
+    {/*
+      Only after an upgrade, and stated plainly: an upgrade is the one edit an author
+      never asked for, so the way back belongs where they can see it before opening the
+      story rather than buried inside it.
+    */}
+    {story.backup && (
+      <button type="button" className={styles.revert} onClick={() => onRevert(story)}>
+        Upgraded from {upgradedFrom(story.backup.fromVersion)}{' '}
+        {relativeTime(story.backup.takenAt)} · Revert
+      </button>
+    )}
 
     <div className={styles.actions}>
       <button type="button" className={styles.delete} onClick={() => onDelete(story)}>

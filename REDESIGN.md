@@ -618,6 +618,23 @@ Still open:
 
 Fixed after the design steps:
 
+- **A schema upgrade now keeps the story it replaced.** An upgrade is the one edit an
+  author never asked for, and there is a single snapshot per story — so a migration
+  that gets something wrong overwrites the only copy of the original, which is exactly
+  how the contextual-text loss became unrecoverable.
+
+  Opening a story whose recorded version is not current writes `story-backup-${id}`
+  first, before anything can autosave over it, and the dashboard row says so:
+  "Upgraded from version 1.2.0, 2 hours ago · Revert". A save that never recorded a
+  version reads "an earlier version" rather than the snapshot envelope's own number,
+  which is not a schema version and would name something the author never saw.
+
+  One backup per story, replaced by each upgrade: it answers "the upgrade I just took
+  broke my story", and an older copy would be missing every edit since. A chain of
+  them is `6c`'s job. Reverting confirms first — unlike a page delete it cannot be
+  undone — and keeps the backup afterwards, since reverting is usually the first step
+  in working out what went missing rather than the last.
+
 - **A page could only be deleted by keyboard, on the canvas.** Every other entity in
   the app — items, variables, atmospheres, audio, status entries, contextual entries,
   whole stories — had a visible delete; a page had none. The inspector's Settings tab

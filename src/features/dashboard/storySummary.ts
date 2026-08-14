@@ -44,6 +44,8 @@ export interface StorySummary {
   problemCount: number;
   /** Undefined for a story last saved before the envelope carried a timestamp. */
   savedAt?: number;
+  /** Present when a schema upgrade left a pre-upgrade copy to revert to. */
+  backup?: { takenAt: number; fromVersion?: string };
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
