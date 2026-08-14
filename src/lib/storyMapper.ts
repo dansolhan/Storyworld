@@ -34,7 +34,8 @@ export const compileGraphToStory = (
   atmospheres?: Record<string, import('../domain/Atmosphere/Atmosphere').Atmosphere>,
   statusData?: import('../domain/Story/StatusData').StatusData[],
   contextualText?: import('../domain/ContextualText/ContextualEntry').ContextualEntries,
-  derivedTexts?: import('../domain/DerivedText/DerivedText').DerivedTexts
+  derivedTexts?: import('../domain/DerivedText/DerivedText').DerivedTexts,
+  debugSnapshots?: import('../domain/Story/DebugSnapshot').DebugSnapshot[]
 ): StoryData => {
   const pageNodes = nodes.filter((n): n is PageNodeType => n.type === 'pageNode');
 
@@ -77,6 +78,7 @@ export const compileGraphToStory = (
     statusData,
     contextualText,
     derivedTexts,
+    debugSnapshots,
     title: metadata?.title || 'Untitled Story',
     description: metadata?.description || '',
     startPageId: metadata?.startPageId || undefined,

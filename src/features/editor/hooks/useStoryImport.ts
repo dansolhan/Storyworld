@@ -43,7 +43,8 @@ export const useStoryImport = () => {
             atmospheres: parsedData.atmospheres || {},
             statusData: parsedData.statusData || [],
             contextualText: parsedData.contextualText || {},
-            derivedTexts: parsedData.derivedTexts || {}
+            derivedTexts: parsedData.derivedTexts || {},
+            debugSnapshots: parsedData.debugSnapshots || []
           });
         } else {
           alert("Invalid story format.");

@@ -13,6 +13,7 @@ import type {
   ContextualEntry,
 } from '../../../domain/ContextualText/ContextualEntry';
 import type { DerivedText, DerivedTexts } from '../../../domain/DerivedText/DerivedText';
+import type { DebugSnapshot } from '../../../domain/Story/DebugSnapshot';
 import type { EditorWorkspace } from './editorWorkspace';
 import type { EditorDialog } from './editorDialog';
 import type { InspectorTab } from './inspectorTab';
@@ -106,6 +107,7 @@ export interface EditorState {
     statusData?: StatusData[];
     contextualText?: ContextualEntries;
     derivedTexts?: DerivedTexts;
+    debugSnapshots?: DebugSnapshot[];
   }) => void;
   organizeGraph: () => void;
 
@@ -145,6 +147,13 @@ export interface EditorState {
   addDerivedText: (text: DerivedText) => string;
   updateDerivedText: (id: string, updates: Partial<DerivedText>) => void;
   removeDerivedText: (id: string) => void;
+
+  // Debug snapshots — named runtime states saved from the player's debug console.
+  debugSnapshots: DebugSnapshot[];
+  setDebugSnapshots: (snapshots: DebugSnapshot[]) => void;
+  addDebugSnapshot: (snapshot: DebugSnapshot) => string;
+  renameDebugSnapshot: (id: string, name: string) => void;
+  removeDebugSnapshot: (id: string) => void;
 
   // UI Handlers
   selectedPageId: string | null;

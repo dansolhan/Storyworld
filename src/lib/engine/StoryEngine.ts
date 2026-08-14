@@ -1,6 +1,8 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { EngineState, StoryMessage, StoryEffect, PlayerMessage } from './types';
-import type { StoryVariable } from '../../domain/Story/Variable';
+import { assignVariableValue, type StoryVariable } from '../../domain/Story/Variable';
+import type { DebugSnapshot } from '../../domain/Story/DebugSnapshot';
+import { reconcileSnapshot } from '../../domain/Story/reconcileSnapshot';
 import { atmosphereSettings } from '../../domain/Atmosphere/atmosphereSettings';
 import type { StoryData } from '../../domain/Story/StoryData';
 import type { ActionContext } from '../../domain/Actions/Action';
@@ -74,7 +76,81 @@ export class StoryEngine {
       case 'RESTART':
         this.restart();
         break;
+      case 'DEBUG_SET_VARIABLE':
+        this.debugSetVariable(message.payload.key, message.payload.value);
+        break;
+      case 'DEBUG_SET_INVENTORY':
+        this.debugSetInventory(message.payload.itemId, message.payload.count);
+        break;
+      case 'DEBUG_SET_VISITED':
+        this.debugSetVisited(message.payload.pageId, message.payload.visited);
+        break;
+      case 'DEBUG_APPLY_SNAPSHOT':
+        this.debugApplySnapshot(message.payload.snapshot);
+        break;
+      case 'DEBUG_REENTER_PAGE': {
+        const { currentPageId } = this.store.getState();
+        if (currentPageId) this.enterPage(currentPageId);
+        break;
+      }
+      case 'DEBUG_GO_TO_PAGE':
+        this.enterPage(message.payload.pageId);
+        break;
     }
+  }
+
+  /**
+   * Writes a variable the way an action would, through the same coercion, so a
+   * value typed into the console behaves identically to one the story set.
+   */
+  private debugSetVariable(key: string, value: string | number | boolean) {
+    const { variables } = this.store.getState();
+    this.store.setState({
+      variables: { ...variables, [key]: assignVariableValue(variables[key], value) },
+    });
+  }
+
+  private debugSetInventory(itemId: string, count: number) {
+    const next = { ...this.store.getState().inventory };
+    if (count <= 0) delete next[itemId];
+    else next[itemId] = count;
+    this.store.setState({ inventory: next });
+  }
+
+  private debugSetVisited(pageId: string, visited: boolean) {
+    const current = this.store.getState().visitedPageIds;
+    if (visited === current.includes(pageId)) return;
+    this.store.setState({
+      visitedPageIds: visited
+        ? [...current, pageId]
+        : current.filter((id) => id !== pageId),
+    });
+  }
+
+  /**
+   * Swaps the reader's accumulated state without moving or re-entering the page.
+   *
+   * Deliberately not routed through `enterPage`: its `onEnter` events would run
+   * against the state that was just loaded and overwrite it — the author would
+   * watch their restored variables revert on arrival. `DEBUG_REENTER_PAGE` is the
+   * separate, explicit way to ask for that.
+   *
+   * `messages` and `choiceOverrides` are cleared rather than restored. Both are
+   * transient page-scoped chatter, and re-hanging a message that belongs to a
+   * page you are not standing on reads as a bug.
+   */
+  private debugApplySnapshot(snapshot: DebugSnapshot) {
+    const { storyData } = this.store.getState();
+    if (!storyData) return;
+
+    const { variables, inventory, visitedPageIds } = reconcileSnapshot(snapshot, storyData);
+    this.store.setState({
+      variables,
+      inventory,
+      visitedPageIds,
+      messages: [],
+      choiceOverrides: {},
+    });
   }
 
   private initialize(storyData: StoryData, startPageId?: string) {
@@ -340,12 +416,7 @@ export class StoryEngine {
     return {
       variables: scriptState.variables,
       setVariable: (key: string, value: unknown) => {
-          const currentVar = scriptState.variables[key];
-          const type = currentVar ? currentVar.type : (typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string');
-          scriptState.variables[key] = { 
-            type, 
-            value: type === 'number' ? Number(value) : type === 'boolean' ? Boolean(value) : String(value) 
-          };
+          scriptState.variables[key] = assignVariableValue(scriptState.variables[key], value);
       },
       modifyInventory: (itemId: string, amount: number) => {
           const current = scriptState.inventory[itemId] || 0;

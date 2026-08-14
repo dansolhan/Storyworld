@@ -1,0 +1,316 @@
+/*
+ * The author's console: a slim instrument docked beside the book.
+ *
+ * It borrows the player's grounds so it reads as part of the same desk, but drops
+ * the paper texture and the serif measure — this is apparatus, not prose, and it
+ * should never be mistaken for something the reader is meant to see.
+ */
+
+/* Structural widths, not spacing: the console is a layout contract. */
+.console {
+  width: 340px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: var(--space-6) var(--space-6) var(--space-6) 0;
+  background-color: var(--player-bg-ledger);
+  border: 1px solid var(--player-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.rail {
+  width: 36px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  margin: var(--space-6) var(--space-6) var(--space-6) 0;
+  background-color: var(--player-bg-ledger);
+  border: 1px solid var(--player-border);
+  border-radius: var(--radius-md);
+  color: var(--player-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.rail:hover {
+  color: var(--player-accent);
+  border-color: var(--color-accent-line);
+}
+
+.railLabel {
+  writing-mode: vertical-rl;
+  font-family: var(--font-body);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--player-border);
+}
+
+.kicker {
+  font-family: var(--font-heading);
+  font-size-adjust: var(--font-adjust-heading);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--player-text-muted);
+}
+
+.tabsRoot {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.tabList {
+  display: flex;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--player-border);
+}
+
+.tabTrigger {
+  flex: 1;
+  padding: var(--space-2) 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--player-text-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.tabTrigger:hover {
+  color: var(--player-text);
+}
+
+.tabTrigger[data-state='active'] {
+  color: var(--player-accent);
+  border-bottom-color: var(--color-accent-line);
+}
+
+.tabContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.tabBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Rows sit directly on the ledger with a hairline between them, rather than as
+ * cards. A hundred variables as a hundred raised panels is unreadable; a ruled
+ * list is exactly what an instrument panel wants.
+ */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--player-border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowCurrent {
+  background-color: var(--color-accent-tint);
+}
+
+.rowLabel {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  cursor: inherit;
+}
+
+.rowName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--player-text);
+}
+
+.rowMeta {
+  flex: none;
+  font-family: var(--font-body);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--player-text-muted);
+  font-feature-settings: var(--font-features-tabular);
+}
+
+/* The whole "what has this playthrough touched" signal, in four pixels. */
+.dirtyDot {
+  flex: none;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent);
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--player-bg-lighter);
+  border: 1px solid var(--player-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--player-text);
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--color-accent-line);
+}
+
+.fieldNumeric,
+.fieldCount {
+  flex: none;
+  width: 72px;
+  text-align: right;
+  font-feature-settings: var(--font-features-tabular);
+}
+
+.fieldCount {
+  width: 48px;
+  text-align: center;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--player-text-dim);
+  cursor: pointer;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--player-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.iconButton:hover:not(:disabled) {
+  color: var(--player-accent);
+  background-color: var(--color-accent-tint);
+}
+
+.iconButton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.action {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid var(--player-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--player-text-dim);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.action:hover:not(:disabled) {
+  color: var(--player-accent);
+  border-color: var(--color-accent-line);
+}
+
+.action:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.notice {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 1px solid var(--color-accent-line);
+  background-color: var(--color-accent-tint);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--player-text-dim);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-3) 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-style: italic;
+  color: var(--player-text-muted);
+}

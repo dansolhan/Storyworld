@@ -34,8 +34,12 @@ export const exportToJson = (data: StoryData, filename = 'game_data.json') => {
  * Helps prevent casual players from reading/spoiling the story easily.
  */
 export const exportToStoryworld = (data: StoryData, filename = 'game_data.storyworld') => {
-  // Editor positions are not part of the player bundle; naming uiMetadata here drops it.
-  const { uiMetadata, ...gameData } = data;
+  /*
+   * Authoring data is not part of the player bundle; naming these here drops them.
+   * Debug snapshots go with the positions — they are the author's test states, and
+   * a reader receiving a list of named end-game saves is a spoiler in a file.
+   */
+  const { uiMetadata, debugSnapshots, ...gameData } = data;
   const jsonString = JSON.stringify(gameData);
   // btoa encodes to Base64
   const base64String = btoa(unescape(encodeURIComponent(jsonString)));

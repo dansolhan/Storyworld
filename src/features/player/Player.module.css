@@ -52,11 +52,23 @@
 }
 
 /*
+ * The desk's surface: the volume, and whatever else is laid out beside it. Only
+ * the author's debug console ever is, and docking it narrows the book instead of
+ * covering the ledger.
+ */
+.stage {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/*
  * A volume lying on a desk. The 26px inset is the desk showing around the book —
  * without it the page would run to the window edge and stop reading as an object.
  */
 .book {
   flex: 1;
+  min-width: 0;
   display: flex;
   min-height: 0;
   margin: var(--space-6);

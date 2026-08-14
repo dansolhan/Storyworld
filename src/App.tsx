@@ -6,6 +6,7 @@ import { useStoryImport } from './features/editor/hooks/useStoryImport';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MainLayout } from './layout/MainLayout';
 import { useAppActions, type PlaySession } from './hooks/useAppActions';
+import { usePlayerDebugBridge } from './hooks/usePlayerDebugBridge';
 import { getMenuConfig } from './config/menuConfig';
 import styles from './App.module.css';
 
@@ -15,6 +16,11 @@ function App() {
   const { fileInputRef, handleImportClick, handleFileChange } = useStoryImport();
 
   const { handlePlay, handleExportJson, handleExportStoryworld } = useAppActions(setMode, setPlaySession);
+  /*
+   * Every play launched from here is an author previewing their own work, so it
+   * gets the console. A story opened as a published bundle would not pass this.
+   */
+  const debugBridge = usePlayerDebugBridge();
 
   const menus = useMemo(() =>
     getMenuConfig(setMode, handleImportClick, handleExportJson, handleExportStoryworld),
@@ -47,6 +53,7 @@ function App() {
             storyData={playSession.story}
             startPageId={playSession.startPageId}
             onExit={() => setMode('editor')}
+            debug={debugBridge}
           />
         )
       )}

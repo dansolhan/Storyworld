@@ -184,7 +184,8 @@ export const useStories = () => {
           atmospheres: parsedData.atmospheres || {},
           statusData: parsedData.statusData || [],
           contextualText: parsedData.contextualText || {},
-          derivedTexts: parsedData.derivedTexts || {}
+          derivedTexts: parsedData.derivedTexts || {},
+          debugSnapshots: parsedData.debugSnapshots || []
         });
         setHasHydrated(true);
         onOpen();

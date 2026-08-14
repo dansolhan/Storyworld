@@ -15,6 +15,7 @@ import { createItemSlice } from './slices/itemSlice';
 import { createStatusDataSlice } from './slices/statusDataSlice';
 import { createContextualTextSlice } from './slices/contextualTextSlice';
 import { createDerivedTextSlice } from './slices/derivedTextSlice';
+import { createDebugSnapshotSlice } from './slices/debugSnapshotSlice';
 import { CURRENT_VERSION } from '../../../domain/Story/migrations/migrations';
 
 /**
@@ -36,6 +37,7 @@ export const useEditorStore = create<EditorState>()((...a) => ({
   ...createStatusDataSlice(...a),
   ...createContextualTextSlice(...a),
   ...createDerivedTextSlice(...a),
+  ...createDebugSnapshotSlice(...a),
 }));
 
 /**
@@ -58,6 +60,7 @@ interface PersistedSnapshot {
     | 'statusData'
     | 'contextualText'
     | 'derivedTexts'
+    | 'debugSnapshots'
     | 'storyTitle'
     | 'storyTitleLocId'
     | 'storyDescription'
@@ -114,6 +117,7 @@ const PERSISTED_KEYS = [
   'statusData',
   'contextualText',
   'derivedTexts',
+  'debugSnapshots',
   'storyTitle',
   'storyTitleLocId',
   'storyDescription',
@@ -194,6 +198,7 @@ useEditorStore.subscribe((state) => {
         statusData: state.statusData || [],
         contextualText: state.contextualText || {},
         derivedTexts: state.derivedTexts || {},
+        debugSnapshots: state.debugSnapshots || [],
         storyTitle: state.storyTitle,
         storyTitleLocId: state.storyTitleLocId,
         storyDescription: state.storyDescription,

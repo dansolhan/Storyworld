@@ -9,6 +9,27 @@ export interface PlaySession {
   startPageId?: string;
 }
 
+/**
+ * Compiles whatever the editor is currently holding into a story.
+ *
+ * Play, JSON export and storyworld export all wanted the identical fifteen-field
+ * destructure, so the argument list had been copied out three times — and a new
+ * field like `debugSnapshots` had to be threaded through each of them or one path
+ * would quietly ship without it.
+ */
+const compileCurrentStory = (): StoryData => {
+  const {
+    nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId,
+    audio, atmospheres, statusData, contextualText, derivedTexts, debugSnapshots,
+  } = useEditorStore.getState();
+
+  return compileGraphToStory(
+    nodes, edges, pages, variables, items,
+    { title: storyTitle, description: storyDescription, startPageId },
+    audio, atmospheres, statusData, contextualText, derivedTexts, debugSnapshots
+  );
+};
+
 export const useAppActions = (
   setMode: (mode: 'dashboard' | 'editor' | 'player') => void,
   setPlaySession: (session: PlaySession | null) => void
@@ -19,35 +40,13 @@ export const useAppActions = (
    * page, so nothing about the schema changes.
    */
   const handlePlay = (startAtPageId?: string) => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText, derivedTexts } = useEditorStore.getState();
-    const compiledStory = compileGraphToStory(nodes, edges, pages, variables, items, {
-      title: storyTitle,
-      description: storyDescription,
-      startPageId
-    }, audio, atmospheres, statusData, contextualText, derivedTexts);
-    setPlaySession({ story: compiledStory, startPageId: startAtPageId });
+    setPlaySession({ story: compileCurrentStory(), startPageId: startAtPageId });
     setMode('player');
   };
 
-  const handleExportJson = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText, derivedTexts } = useEditorStore.getState();
-    const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
-      title: storyTitle,
-      description: storyDescription,
-      startPageId
-    }, audio, atmospheres, statusData, contextualText, derivedTexts);
-    exportToJson(storyData);
-  };
+  const handleExportJson = () => exportToJson(compileCurrentStory());
 
-  const handleExportStoryworld = () => {
-    const { nodes, edges, pages, variables, items, storyTitle, storyDescription, startPageId, audio, atmospheres, statusData, contextualText, derivedTexts } = useEditorStore.getState();
-    const storyData = compileGraphToStory(nodes, edges, pages, variables, items, {
-      title: storyTitle,
-      description: storyDescription,
-      startPageId
-    }, audio, atmospheres, statusData, contextualText, derivedTexts);
-    exportToStoryworld(storyData);
-  };
+  const handleExportStoryworld = () => exportToStoryworld(compileCurrentStory());
 
   return {
     handlePlay,
